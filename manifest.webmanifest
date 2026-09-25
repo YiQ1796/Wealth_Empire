@@ -1,0 +1,12 @@
+{
+  "name": "財富帝國 V18.3 WEB",
+  "short_name": "財富帝國",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#dfe8f3",
+  "theme_color": "#102d4f",
+  "lang": "zh-Hant",
+  "description": "56格多人網頁大富翁遊戲"
+}
