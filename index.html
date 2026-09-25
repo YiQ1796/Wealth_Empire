@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>財富帝國 V18.3.3 WEB｜手機小遊戲統一版</title>
+<title>財富帝國 V19.0 WEB｜都會核心擴充版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V18.3.3 WEB - 56格多人網頁大富翁遊戲">
+<meta name="description" content="財富帝國 V19.0 WEB - 56格多人網頁大富翁遊戲">
 <link rel="manifest" href="./manifest.webmanifest">
 
 <style>
@@ -5402,6 +5402,154 @@ button:not(:disabled):active{transform:scale(.96)}
   }
 }
 
+
+/* ===== V19 leader / remaining rounds / public downtown ===== */
+.round-hud{
+  min-width:230px;
+  padding:7px 10px;
+  border-radius:12px;
+  background:linear-gradient(135deg,#132f52,#1a4d7d);
+  color:#fff;
+  box-shadow:0 8px 22px rgba(21,54,91,.16);
+}
+.round-hud-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  font-size:11px;
+  font-weight:900;
+}
+.round-hud-top b{font-size:16px;color:#ffe278}
+.round-hud-top strong{
+  padding:3px 7px;
+  border-radius:999px;
+  background:#ffdf66;
+  color:#624500;
+  font-size:12px;
+}
+.round-progress{
+  height:6px;
+  margin-top:6px;
+  border-radius:999px;
+  overflow:hidden;
+  background:rgba(255,255,255,.16);
+}
+.round-progress i{
+  display:block;
+  height:100%;
+  width:0;
+  background:linear-gradient(90deg,#6ed19d,#ffd85d,#ff7b68);
+  border-radius:999px;
+  transition:width .35s ease;
+}
+
+.player{position:relative;overflow:visible!important}
+.player.leader{
+  border:2px solid #e9b632!important;
+  border-left:7px solid #e9b632!important;
+  background:linear-gradient(135deg,#fffdf2,#fff8d9)!important;
+  box-shadow:0 0 0 3px rgba(235,184,50,.16),0 10px 25px rgba(174,119,7,.16)!important;
+  animation:leaderGlow 1.6s ease-in-out infinite alternate;
+}
+@keyframes leaderGlow{
+  from{box-shadow:0 0 0 2px rgba(235,184,50,.13),0 8px 20px rgba(174,119,7,.10)}
+  to{box-shadow:0 0 0 4px rgba(255,209,71,.28),0 12px 30px rgba(174,119,7,.22)}
+}
+.leader-crown{
+  position:absolute;
+  z-index:8;
+  top:-13px;
+  right:10px;
+  padding:4px 8px;
+  border-radius:999px;
+  background:linear-gradient(180deg,#ffed86,#efb928);
+  color:#6b4800;
+  border:2px solid #fff6c8;
+  box-shadow:0 6px 14px rgba(173,119,8,.25);
+  font-size:11px;
+  font-weight:1000;
+  white-space:nowrap;
+}
+.leader-crown span{vertical-align:1px}
+.rank-chip{
+  position:absolute;
+  z-index:7;
+  top:5px;
+  right:5px;
+  min-width:28px;
+  height:22px;
+  padding:3px 6px;
+  border-radius:999px;
+  background:#eef3fa;
+  color:#53677e;
+  font-size:10px;
+  font-weight:1000;
+}
+.rank-chip.rank-2{background:#edf1f5;color:#536171}
+.rank-chip.rank-3{background:#f8eee7;color:#8b6244}
+
+.public-project-hero{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  padding:12px;
+  border-radius:15px;
+  background:linear-gradient(135deg,#eef6ff,#f9fbff);
+  border:1px solid #d9e7f5;
+}
+.pp-icon{
+  width:54px;height:54px;min-width:54px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:15px;background:#fff;
+  font-size:30px;box-shadow:0 8px 18px rgba(37,68,105,.10);
+}
+.pp-title{font-size:19px;font-weight:1000;color:#244568}
+.pp-desc{margin-top:3px;font-size:11px;font-weight:800;color:#687c94}
+.public-project-stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:7px;
+  margin:9px 0;
+}
+.public-project-stats>div{
+  padding:9px;
+  border-radius:11px;
+  background:#f6f9fd;
+  border:1px solid #dfe8f3;
+}
+.public-project-stats span{display:block;font-size:9px;font-weight:900;color:#718096}
+.public-project-stats b{display:block;margin-top:3px;font-size:14px;color:#284d72}
+.public-level-track{
+  height:10px;
+  border-radius:999px;
+  overflow:hidden;
+  background:#e3e9f1;
+}
+.public-level-track i{
+  display:block;height:100%;
+  background:linear-gradient(90deg,#4e93df,#52bd91,#e9bd42);
+}
+.pp-next{margin:5px 0 9px;text-align:right;font-size:10px;font-weight:900;color:#61748a}
+.public-invest-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.public-hub-card{border-top:4px solid #5d9ade!important}
+
+@media(max-width:980px) and (orientation:landscape){
+  .round-hud{display:none!important}
+  #mobileLeader,#mobileRoundsLeft{
+    display:block!important;
+    margin-top:2px!important;
+    font-size:clamp(6px,1.4dvh,8px)!important;
+    color:#ffe279!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+  .public-project-stats{grid-template-columns:repeat(2,1fr)}
+  .public-project-stats>div{padding:5px}
+  .public-invest-buttons button{min-height:34px!important;font-size:9px!important}
+}
+
 </style>
 </head>
 <body>
@@ -5445,15 +5593,19 @@ button:not(:disabled):active{transform:scale(.96)}
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V18.3.3 WEB｜手機小遊戲統一版｜56格大地圖</div><div class="sub">公平 P2P 同步｜高價強制徵收・城市公庫回饋・股票股息・所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.0 WEB｜都會核心擴充版｜56格大地圖</div><div class="sub">公平 P2P 同步｜高價強制徵收・城市公庫回饋・股票股息・所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
-      <div class="room-pill">房間 <span id="topRoom">-----</span>｜ROUND <span id="roundText">1</span></div>
+      <div class="room-pill">房間 <span id="topRoom">-----</span></div>
+      <div class="round-hud">
+        <div class="round-hud-top"><span>ROUND <b id="roundText">1</b> / 30</span><strong>剩 <span id="roundsLeft">30</span> 回合</strong></div>
+        <div class="round-progress"><i id="roundProgressFill"></i></div>
+      </div>
     </div>
   </div>
   <div id="mobileTurnBar" class="mobile-turn-bar">
-      <div class="mt-main"><span class="mt-label">目前回合</span><b id="mobileTurnName">—</b></div>
-      <div><span class="mt-label">ROUND</span><b id="mobileRound">1</b></div>
+      <div class="mt-main"><span class="mt-label">目前回合</span><b id="mobileTurnName">—</b><small id="mobileLeader">👑 第一：—</small></div>
+      <div><span class="mt-label">ROUND</span><b id="mobileRound">1 / 30</b><small id="mobileRoundsLeft">剩 30 回合</small></div>
       <div><span class="mt-label">你的現金</span><b id="mobileCash">$0</b></div>
       <div class="mt-tile"><span class="mt-label">目前位置</span><b id="mobileTileName">—</b><small id="mobileTileDetail">—</small></div>
     </div>
@@ -5764,6 +5916,15 @@ const CITY_MISSIONS={
   stock:{name:"市場交易員",icon:"📈",target:2,reward:1800,desc:"完成 2 次股票買賣"},
   minigame:{name:"競技明星",icon:"🏆",target:1,reward:3000,desc:"贏得 1 次小遊戲"}
 };
+const GAME_MAX_ROUNDS=30;
+const PUBLIC_PROJECTS={
+  night:{name:"都會夜市",icon:"夜",emoji:"🏮",yieldRate:.07,desc:"人氣商圈，每 4 ROUND 依持分發放 7% 分紅。"},
+  tower:{name:"智慧科技塔",icon:"科",emoji:"🏙️",yieldRate:.10,desc:"高波動科技開發，每 4 ROUND 依持分發放 10% 分紅。"},
+  harbor:{name:"觀光碼頭",icon:"港",emoji:"⚓",yieldRate:.08,desc:"觀光與交通建設，每 4 ROUND 依持分發放 8% 分紅。"},
+  green:{name:"綠能公園",icon:"綠",emoji:"🌿",yieldRate:.06,desc:"穩定公共建設，每 4 ROUND 依持分發放 6% 分紅。"}
+};
+const PUBLIC_LEVELS=[0,6000,15000,30000];
+
 const CITY_PROJECTS={
   plaza:{name:"商圈改造",icon:"🏬",cost:3000,rounds:2,success:.75,win:4800,fail:1500},
   tech:{name:"科技研發",icon:"🧪",cost:5000,rounds:2,success:.65,win:8500,fail:2500},
@@ -5779,7 +5940,11 @@ const HUB_ZONES=[
   {key:"bank",x:915,y:270,w:290,h:145},
   {key:"insurance",x:275,y:545,w:290,h:145},
   {key:"metro",x:915,y:545,w:290,h:145},
-  {key:"project",x:642,y:382,w:196,h:176}
+  {key:"project",x:642,y:382,w:196,h:176},
+  {key:"public_night",x:548,y:292,w:112,h:76},
+  {key:"public_tower",x:820,y:292,w:112,h:76},
+  {key:"public_harbor",x:548,y:592,w:112,h:76},
+  {key:"public_green",x:820,y:592,w:112,h:76}
 ];
 
 function hiLowRates(){
@@ -5810,7 +5975,7 @@ function player(name,seat,ai=false){
   return {
     seat,name,ai,ready:ai,connected:true,cash:45000,pos:0,properties:[],
     stocks:Object.fromEntries(Object.keys(STOCK_DEFS).map(c=>[c,{qty:0,avg:0}])),
-    realizedPnl:0,lastRaceRound:0,lastWheelRound:0,acquireSubsidy:0,lastAcquireRound:0,lastForcedAcquireRound:0,lastTradeRound:0,freeBuild:0,bankDeposit:null,rentShield:0,cityProject:null,cityMission:null,lastTransitRound:-99,bankrupt:false,
+    realizedPnl:0,lastRaceRound:0,lastWheelRound:0,acquireSubsidy:0,lastAcquireRound:0,lastForcedAcquireRound:0,lastTradeRound:0,freeBuild:0,bankDeposit:null,rentShield:0,cityProject:null,cityMission:null,lastTransitRound:-99,lastPublicInvestRound:-99,bankrupt:false,
     stats:{rentPaid:0,rentReceived:0,landSpent:0,buildSpent:0,stockRealized:0,miniGameNet:0,raceWins:0,wheelWins:0,diceWins:0,treasureNet:0,noodleWins:0,hiLowWins:0,bonusWins:0,largestRent:0,acquisitions:0,acquisitionSpent:0,acquisitionEarned:0,forcedAcquisitions:0,forcedSpent:0,forcedEarned:0,trades:0,auctionWins:0,upgrades:0,stockTrades:0}
   }
 }
@@ -5836,12 +6001,12 @@ function buildTiles(){
 }
 function newState(hostName){
   return{
-    version:17,status:"lobby",round:1,current:0,rolled:false,
+    version:19,status:"lobby",round:1,current:0,rolled:false,
     players:[player(hostName,0,false),null,null,null],
     tiles:buildTiles(),
     stocks:Object.fromEntries(Object.entries(STOCK_DEFS).map(([c,d])=>[c,{name:d.name,price:d.price,prev:d.price,history:[d.price]}])),
     cityEvent:{name:"正常景氣",rentMult:1,buildMult:1,stockBias:0,startBonus:0,until:3},
-    jackpot:5000,cityPool:0,groupGame:null,pending:null,events:[],eventId:0,winner:null
+    jackpot:5000,cityPool:0,publicInvestments:Object.fromEntries(Object.keys(PUBLIC_PROJECTS).map(k=>[k,{total:0,bySeat:{}}])),groupGame:null,pending:null,events:[],eventId:0,winner:null
   }
 }
 function addEvent(kind,text,data={}){state.eventId++;state.events.push({id:state.eventId,kind,text,data,ts:Date.now()});state.events=state.events.slice(-80)}
@@ -6394,6 +6559,9 @@ function hostAction(seat,msg){
   if(msg.action==="hub_project"){
     startCityProject(p,String(msg.project||""));broadcast();return;
   }
+  if(msg.action==="public_invest"){
+    investPublicProject(p,String(msg.project||""),Number(msg.amount));broadcast();return;
+  }
   if(msg.action==="hub_metro"){
     useMetro(p,String(msg.route||""));return;
   }
@@ -6865,6 +7033,78 @@ function resolveAuction(){
 }
 
 
+
+function ensurePublicInvestments(){
+  if(!state.publicInvestments)state.publicInvestments={};
+  for(const key of Object.keys(PUBLIC_PROJECTS)){
+    if(!state.publicInvestments[key])state.publicInvestments[key]={total:0,bySeat:{}};
+    if(!state.publicInvestments[key].bySeat)state.publicInvestments[key].bySeat={}
+  }
+}
+function publicProjectLevel(key){
+  ensurePublicInvestments();
+  const total=state.publicInvestments[key]?.total||0;
+  let level=0;
+  for(let i=1;i<PUBLIC_LEVELS.length;i++)if(total>=PUBLIC_LEVELS[i])level=i;
+  return level
+}
+function publicContribution(seat,key){
+  ensurePublicInvestments();
+  return Number(state.publicInvestments[key]?.bySeat?.[seat]||0)
+}
+function publicInvestmentValue(p){
+  if(!p)return 0;
+  ensurePublicInvestments();
+  return Object.keys(PUBLIC_PROJECTS).reduce((sum,key)=>sum+publicContribution(p.seat,key),0)
+}
+function investPublicProject(p,key,amount){
+  if(!hubActionAllowed(p))throw Error("只能在自己的回合、擲骰前投資公共建設");
+  if(p.lastPublicInvestRound===state.round)throw Error("本 ROUND 已投資過一次公共建設");
+  const def=PUBLIC_PROJECTS[key];
+  if(!def)throw Error("公共建設不存在");
+  amount=Math.round(Number(amount)||0);
+  if(![1000,3000,5000].includes(amount))throw Error("投資金額不正確");
+  if(p.cash<amount)throw Error("現金不足");
+
+  ensurePublicInvestments();
+  const pr=state.publicInvestments[key];
+  const before=publicProjectLevel(key);
+  p.cash-=amount;
+  pr.total=(pr.total||0)+amount;
+  pr.bySeat[p.seat]=Number(pr.bySeat[p.seat]||0)+amount;
+  p.lastPublicInvestRound=state.round;
+  const after=publicProjectLevel(key);
+
+  addEvent("public_invest",`${p.name} 投資 ${def.name} ${amount.toLocaleString()}。`,
+    {seat:p.seat,key,amount,level:after,title:def.name});
+
+  if(after>before){
+    addEvent("public_levelup",`🏙 ${def.name} 升級到 Lv.${after}！城市景觀同步升級。`,
+      {key,level:after,title:"公共建設升級"})
+  }
+}
+function processPublicDividends(){
+  ensurePublicInvestments();
+  if(state.round%4!==0)return;
+  const payouts=[];
+  for(const [key,def] of Object.entries(PUBLIC_PROJECTS)){
+    const pr=state.publicInvestments[key];
+    for(const [seatRaw,principalRaw] of Object.entries(pr.bySeat||{})){
+      const seat=Number(seatRaw),principal=Number(principalRaw||0),p=state.players[seat];
+      if(!p||p.bankrupt||principal<=0)continue;
+      const level=publicProjectLevel(key);
+      const levelBonus=1+level*.10;
+      const amount=Math.max(1,Math.round(principal*def.yieldRate*levelBonus));
+      p.cash+=amount;
+      payouts.push({seat,key,amount,principal})
+    }
+  }
+  if(payouts.length){
+    const total=payouts.reduce((a,b)=>a+b.amount,0);
+    addEvent("public_dividend",`🏙 公共建設分紅日：全城共發出 ${total.toLocaleString()}。`,
+      {payouts,total,title:"公共建設分紅"})
+  }
+}
 
 function hubActionAllowed(p){
   return !!(p&&state?.status==="playing"&&state.current===p.seat&&!state.rolled&&!state.pending&&!state.groupGame&&!p.bankrupt)
@@ -8040,7 +8280,7 @@ function aiBuyDecision(p,t){
 }
 function stockValue(p){return Object.entries(p.stocks).reduce((s,[c,h])=>s+h.qty*state.stocks[c].price,0)}
 function propertyValue(p){return p.properties.reduce((s,id)=>{const t=state.tiles[id];return s+t.price+Math.round(Math.min(PROPERTY_MAX_LEVEL,t.level||0)*t.price*.50)},0)}
-function wealth(p){return p.cash+stockValue(p)+propertyValue(p)}
+function wealth(p){return p.cash+stockValue(p)+propertyValue(p)+publicInvestmentValue(p)}
 function rankingData(){
   return state.players.filter(Boolean).map(p=>({
     seat:p.seat,name:p.name,bankrupt:p.bankrupt,cash:p.cash,
@@ -8052,12 +8292,12 @@ function rankingData(){
 }
 function finishIfNeeded(reason){
   const alive=state.players.filter(p=>p&&!p.bankrupt);
-  if(alive.length<=1 || state.round>30){
+  if(alive.length<=1 || state.round>GAME_MAX_ROUNDS){
     state.status="finished";
     const ranking=rankingData();
     state.winner=ranking[0]?.seat??null;
     addEvent("finish",ranking[0]?`${ranking[0].name} 獲勝！`:"遊戲結束",
-      {reason:alive.length<=1?"最後存活玩家":(reason||"30 回合總資產結算"),ranking});
+      {reason:alive.length<=1?"最後存活玩家":(reason||`${GAME_MAX_ROUNDS} 回合總資產結算`),ranking});
     broadcast();
     return true
   }
@@ -8066,6 +8306,7 @@ function finishIfNeeded(reason){
 
 function roundCashFlow(){
   processHubMaturities();
+  processPublicDividends();
   const alive=state.players.filter(p=>p&&!p.bankrupt);
 
   // 每 ROUND 固定城市流通補助
@@ -8122,7 +8363,7 @@ function nextTurn(){
     }
     guard++
   }while(state.players[state.current]?.bankrupt&&guard<5);
-  if(finishIfNeeded(state.round>30?"30 回合總資產結算":"回合結算"))return;
+  if(finishIfNeeded(state.round>GAME_MAX_ROUNDS?`${GAME_MAX_ROUNDS} 回合總資產結算`:"回合結算"))return;
   addEvent("turn",`輪到 ${state.players[state.current]?.name||"玩家"} 行動。`,{seat:state.current,round:state.round});
   broadcast();maybeRunAI()
 }
@@ -8141,7 +8382,14 @@ function maybeRunAI(){
 }
 function render(){
   if(!state)return;
-  updateMobileTurnBar();$("topRoom").textContent=roomCode;$("roundText").textContent=state.round;renderLobby();renderPlayers();renderMarket();renderEvents();renderControls();drawBoard();renderGroupGame();handlePending();handleIncomingEvents()
+  updateMobileTurnBar();
+  ensurePublicInvestments();
+  $("topRoom").textContent=roomCode;
+  const left=Math.max(0,GAME_MAX_ROUNDS-state.round+1);
+  $("roundText").textContent=state.round;
+  if($("roundsLeft"))$("roundsLeft").textContent=left;
+  if($("roundProgressFill"))$("roundProgressFill").style.width=`${Math.min(100,Math.max(0,(state.round-1)/GAME_MAX_ROUNDS*100))}%`;
+  renderLobby();renderPlayers();renderMarket();renderEvents();renderControls();drawBoard();renderGroupGame();handlePending();handleIncomingEvents()
 }
 
 
@@ -8256,7 +8504,8 @@ function playerTotalWealth(p){
     const t=state.tiles[id];
     return s+(t?.price||0)+Math.round((t?.level||0)*(t?.price||0)*0.45)
   },0);
-  return (p.cash||0)+sv+pv
+  const civ=publicInvestmentValue(p);
+  return (p.cash||0)+sv+pv+civ
 }
 function renderLobby(){
   if(state.status!=="lobby"){$("lobby").classList.add("hidden");return}
@@ -8270,6 +8519,10 @@ function renderLobby(){
   $("startBtn").title=allReady?"任何真人玩家都可以開始":"等待所有真人玩家準備並保持連線";
 }
 function renderPlayers(){
+  const ranked=state.players.filter(Boolean).filter(p=>!p.bankrupt).sort((a,b)=>playerTotalWealth(b)-playerTotalWealth(a));
+  const rankMap=new Map(ranked.map((p,idx)=>[p.seat,idx+1]));
+  const leaderSeat=ranked[0]?.seat;
+
   $("players").innerHTML=state.players.map((p,i)=>{
     if(!p){
       return `<div class="player" style="border-left-color:${COLORS[i]}">
@@ -8285,24 +8538,29 @@ function renderPlayers(){
         </div>
       </div>`
     }
+
     const wealth=playerTotalWealth(p);
-    const stockVal=Object.entries(p.stocks).reduce((s,[c,h])=>s+h.qty*state.stocks[c].price,0);
-    return `<div class="player ${i===state.current?"current":""}" style="border-left-color:${COLORS[i]}">
+    const stockVal=Object.entries(p.stocks).reduce((sum,[c,h])=>sum+h.qty*state.stocks[c].price,0);
+    const rank=rankMap.get(i)||null;
+    const isLeader=state.status==="playing"&&!p.bankrupt&&i===leaderSeat;
+
+    return `<div class="player ${i===state.current?"current":""} ${isLeader?"leader":""}" style="border-left-color:${COLORS[i]}">
+      ${isLeader?'<div class="leader-crown">👑 <span>目前第 1 名</span></div>':rank? `<div class="rank-chip rank-${rank}">#${rank}</div>`:""}
       <div class="player-shell">
         <div class="player-avatar" style="background:${seatGradient(i)}">${PLAYER_FACES[i]}</div>
         <div class="player-meta">
           <div class="player-topline">
             <div>
               <div class="pname">${i===state.current?"▶ ":""}${p.name}${p.ai?" 🤖":i===mySeat?"（你）":""}</div>
-              <div class="player-wealth">總資產約 $${Math.round(wealth).toLocaleString()}</div>
+              <div class="player-wealth">${isLeader?"🏆 ":""}總資產約 $${Math.round(wealth).toLocaleString()}</div>
             </div>
-            <div class="player-badge">${p.bankrupt?"已破產":PLAYER_TITLES[i]}</div>
+            <div class="player-badge">${p.bankrupt?"已破產":isLeader?"🥇 資產領先":PLAYER_TITLES[i]}</div>
           </div>
           <div class="pstats">
             <div class="stat"><div class="k">現金</div><div class="v">$${p.cash.toLocaleString()}</div></div>
             <div class="stat"><div class="k">地產</div><div class="v">${p.properties.length}</div></div>
             <div class="stat"><div class="k">股票</div><div class="v">$${stockVal.toLocaleString()}</div></div>
-            <div class="stat"><div class="k">位置</div><div class="v">${p.pos+1}</div></div>
+            <div class="stat"><div class="k">排名</div><div class="v">${rank?"#"+rank:"—"}</div></div>
           </div>
         </div>
       </div>
@@ -8556,8 +8814,58 @@ function openHubFacility(key){
   else if(key==="bank")openBankHub();
   else if(key==="insurance")openInsuranceHub();
   else if(key==="metro")openMetroHub();
-  else if(key==="project")openProjectHub()
+  else if(key==="project")openProjectHub();
+  else if(String(key).startsWith("public_"))openPublicInvestment(String(key).slice(7))
 }
+function openPublicInvestment(key){
+  ensurePublicInvestments();
+  const me=state.players[mySeat],def=PUBLIC_PROJECTS[key],pr=state.publicInvestments[key];
+  if(!def||!me)return;
+  const can=hubCanAct()&&me.lastPublicInvestRound!==state.round;
+  const mine=publicContribution(mySeat,key),level=publicProjectLevel(key);
+  const next=PUBLIC_LEVELS[level+1]??null;
+  const leader=Object.entries(pr.bySeat||{}).sort((a,b)=>Number(b[1])-Number(a[1]))[0];
+  const leaderName=leader?state.players[Number(leader[0])]?.name:"尚無";
+  const nextDividend=Math.round(mine*def.yieldRate*(1+level*.10));
+
+  showModal(`${def.emoji} ${def.name}`,
+    `<div class="public-project-hero">
+      <div class="pp-icon">${def.emoji}</div>
+      <div><div class="pp-title">${def.name}｜Lv.${level}</div>
+      <div class="pp-desc">${def.desc}</div></div>
+    </div>
+    <div class="public-project-stats">
+      <div><span>全城投入</span><b>${Number(pr.total||0).toLocaleString()}</b></div>
+      <div><span>你的持分</span><b>${mine.toLocaleString()}</b></div>
+      <div><span>預估下次分紅</span><b>+${nextDividend.toLocaleString()}</b></div>
+      <div><span>最大投資人</span><b>${leaderName||"尚無"}</b></div>
+    </div>
+    <div class="public-level-track"><i style="width:${next?Math.min(100,(pr.total/next)*100):100}%"></i></div>
+    <div class="pp-next">${next?`距離 Lv.${level+1} 尚差 ${Math.max(0,next-pr.total).toLocaleString()}`:"已達最高城市等級"}</div>
+    <div class="public-invest-buttons">
+      ${[1000,3000,5000].map(v=>`<button class="primary" ${(!can||me.cash<v)?"disabled":""} onclick="sendAction('public_invest',{project:'${key}',amount:${v}})">投資 ${v.toLocaleString()}</button>`).join("")}
+    </div>
+    <div class="hub-rule" style="margin-top:9px">每位玩家每 ROUND 最多投資一次公共建設。持分會計入總資產；每 4 ROUND 自動發放分紅。</div>`,
+    [["關閉","ghost",closeModal]]
+  )
+}
+function openPublicInvestmentCenter(){
+  ensurePublicInvestments();
+  const cards=Object.entries(PUBLIC_PROJECTS).map(([key,d])=>{
+    const pr=state.publicInvestments[key],lv=publicProjectLevel(key),mine=publicContribution(mySeat,key);
+    return `<div class="hub-card public-hub-card">
+      <div class="hicon">${d.emoji}</div><div class="hname">${d.name}｜Lv.${lv}</div>
+      <div class="hdesc">${d.desc}</div>
+      <div class="hvalue">全城 ${Number(pr.total||0).toLocaleString()}｜你 ${mine.toLocaleString()}</div>
+      <button class="primary" onclick="closeModal();openPublicInvestment('${key}')">查看 / 投資</button>
+    </div>`
+  }).join("");
+  showModal("🏙 公共建設投資",
+    `<div class="hub-rule">中央都會新增 4 個公共開發點。玩家可以搶先累積持分、推高城市等級並定期領分紅。</div><div class="hub-grid">${cards}</div>`,
+    [["關閉","ghost",closeModal]]
+  )
+}
+
 function openMissionHub(){
   const me=state.players[mySeat],can=hubCanAct();
   if(me.cityMission){
@@ -10031,19 +10339,23 @@ function hubStatusText(key){
   return""
 }
 function drawCity(){
+  ensurePublicInvestments();
   const pulse=(Math.sin(cityPulse)+1)/2,CX=740,CY=470;
   const lawn=ctx.createLinearGradient(210,185,210,755);
-  lawn.addColorStop(0,"#dcebd7");lawn.addColorStop(1,"#cfe1ce");
+  lawn.addColorStop(0,"#dcebd7");lawn.addColorStop(1,"#c9dfcb");
   ctx.fillStyle=lawn;ctx.fillRect(210,185,1060,570);
 
-  // City roads connect all five interactive facilities.
+  // Road network
   ctx.fillStyle="#c5d1dd";ctx.fillRect(615,185,250,570);ctx.fillRect(210,416,1060,108);
   ctx.fillStyle="#eee7d9";ctx.fillRect(646,185,188,570);ctx.fillRect(210,446,1060,48);
   ctx.save();ctx.setLineDash([14,12]);ctx.strokeStyle="rgba(255,255,255,.82)";ctx.lineWidth=3;
   ctx.beginPath();ctx.moveTo(CX,196);ctx.lineTo(CX,744);ctx.moveTo(220,CY);ctx.lineTo(1260,CY);ctx.stroke();ctx.restore();
 
-  ctx.fillStyle="#163b64";rr(CX-155,202,310,52,14,true,false);
-  ctx.fillStyle="#fff";ctx.textAlign="center";ctx.font='1000 25px "Microsoft JhengHei"';ctx.fillText("都 會 核 心",CX,235);
+  // Header + live city economy label
+  ctx.fillStyle="#163b64";rr(CX-160,202,320,52,14,true,false);
+  ctx.fillStyle="#fff";ctx.textAlign="center";ctx.font='1000 25px "Microsoft JhengHei"';ctx.fillText("都 會 核 心",CX,232);
+  ctx.font='900 10px "Microsoft JhengHei"';ctx.fillStyle="#cfe2f6";
+  ctx.fillText(`目前景氣：${state.cityEvent?.name||"正常景氣"}｜公庫 $${Number(state.cityPool||0).toLocaleString()}`,CX,247);
 
   const hubs=[
     {key:"mission",x:275,y:270,w:290,h:145,title:"城市委託中心",tag:"任",sub:hubStatusText("mission"),a:"#d9ebff",b:"#c9ddf6"},
@@ -10055,7 +10367,7 @@ function drawCity(){
   hubs.forEach(v=>{
     const hover=hoverCenterSpot===v.key;
     ctx.save();
-    if(hover){ctx.shadowColor="rgba(55,116,205,.28)";ctx.shadowBlur=22}
+    if(hover){ctx.shadowColor="rgba(55,116,205,.32)";ctx.shadowBlur=24}
     const g=ctx.createLinearGradient(v.x,v.y,v.x,v.y+v.h);
     g.addColorStop(0,v.a);g.addColorStop(1,v.b);
     ctx.fillStyle=g;rr(v.x,v.y,v.w,v.h,25,true,false);
@@ -10063,32 +10375,60 @@ function drawCity(){
     ctx.lineWidth=hover?4:2;rr(v.x,v.y,v.w,v.h,25,false,true);
     ctx.restore();
 
-    ctx.fillStyle="rgba(255,255,255,.52)";rr(v.x+14,v.y+12,v.w-28,42,18,true,false);
+    ctx.fillStyle="rgba(255,255,255,.55)";rr(v.x+14,v.y+12,v.w-28,42,18,true,false);
     ctx.fillStyle="#284765";ctx.font='1000 20px "Microsoft JhengHei"';ctx.fillText(v.title,v.x+v.w/2,v.y+39);
 
     ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(v.x+v.w/2,v.y+91,27,0,Math.PI*2);ctx.fill();
     ctx.fillStyle="#31567e";ctx.font='1000 21px "Microsoft JhengHei"';ctx.fillText(v.tag,v.x+v.w/2,v.y+98);
-
     ctx.fillStyle="#536d8a";ctx.font='900 12px "Microsoft JhengHei"';ctx.fillText(v.sub,v.x+v.w/2,v.y+132,v.w-28);
   });
 
-  // Central city hall / project office.
+  // Four public investment points fill previously empty downtown space.
+  const publicNodes=[
+    {key:"night",x:548,y:292,w:112,h:76,c:"#e95f73"},
+    {key:"tower",x:820,y:292,w:112,h:76,c:"#5f8fe8"},
+    {key:"harbor",x:548,y:592,w:112,h:76,c:"#3fa7b5"},
+    {key:"green",x:820,y:592,w:112,h:76,c:"#49a969"}
+  ];
+  publicNodes.forEach(n=>{
+    const def=PUBLIC_PROJECTS[n.key],pr=state.publicInvestments[n.key],lv=publicProjectLevel(n.key);
+    const hover=hoverCenterSpot==="public_"+n.key;
+    const glow=8+lv*4+(hover?12:0);
+    ctx.save();
+    ctx.shadowColor=n.c;ctx.shadowBlur=glow;
+    ctx.fillStyle="rgba(255,255,255,.94)";
+    ctx.strokeStyle=n.c;ctx.lineWidth=hover?4:2.5;
+    rr(n.x,n.y,n.w,n.h,16,true,true);
+    ctx.restore();
+    ctx.fillStyle=n.c;ctx.font='1000 20px "Microsoft JhengHei"';ctx.fillText(def.icon,n.x+25,n.y+30);
+    ctx.fillStyle="#26425f";ctx.font='1000 12px "Microsoft JhengHei"';ctx.fillText(def.name,n.x+n.w/2+10,n.y+26,n.w-42);
+    ctx.fillStyle="#6c7c90";ctx.font='900 9px "Microsoft JhengHei"';ctx.fillText(`Lv.${lv}｜$${Number(pr.total||0).toLocaleString()}`,n.x+n.w/2,n.y+51,n.w-12);
+    ctx.fillStyle=n.c;rr(n.x+12,n.y+n.h-12,(n.w-24)*Math.min(1,(pr.total||0)/(PUBLIC_LEVELS[Math.min(3,lv+1)]||1)),5,3,true,false)
+  });
+
+  // Central policy core / city tender
   const projectHover=hoverCenterSpot==="project";
   ctx.save();
-  if(projectHover){ctx.shadowColor="rgba(219,160,42,.35)";ctx.shadowBlur=24}
-  ctx.beginPath();ctx.arc(CX,CY,102+5*pulse,0,Math.PI*2);ctx.fillStyle="rgba(255,208,93,.18)";ctx.fill();
-  ctx.beginPath();ctx.arc(CX,CY,78,0,Math.PI*2);ctx.fillStyle="#fffaf0";ctx.fill();
-  ctx.strokeStyle=projectHover?"#d59b26":"#dfbc68";ctx.lineWidth=projectHover?7:5;ctx.beginPath();ctx.arc(CX,CY,63,0,Math.PI*2);ctx.stroke();
+  if(projectHover){ctx.shadowColor="rgba(219,160,42,.50)";ctx.shadowBlur=30}
+  ctx.beginPath();ctx.arc(CX,CY,106+7*pulse,0,Math.PI*2);ctx.fillStyle="rgba(255,208,93,.20)";ctx.fill();
+  ctx.beginPath();ctx.arc(CX,CY,80,0,Math.PI*2);ctx.fillStyle="#fffaf0";ctx.fill();
+  ctx.strokeStyle=projectHover?"#d59b26":"#dfbc68";ctx.lineWidth=projectHover?8:5;ctx.beginPath();ctx.arc(CX,CY,64,0,Math.PI*2);ctx.stroke();
   ctx.restore();
 
-  ctx.fillStyle="#74551c";ctx.font='1000 14px "Microsoft JhengHei"';ctx.fillText("市 政 標 案",CX,CY-13);
-  ctx.font='1000 25px "Microsoft JhengHei"';ctx.fillText("標",CX,CY+19);
-  ctx.fillStyle="#8c7445";ctx.font='900 10px "Microsoft JhengHei"';ctx.fillText(hubStatusText("project"),CX,CY+40,155);
+  ctx.fillStyle="#74551c";ctx.font='1000 13px "Microsoft JhengHei"';ctx.fillText("城市政策核心",CX,CY-18);
+  ctx.font='1000 25px "Microsoft JhengHei"';ctx.fillText("標",CX,CY+14);
+  ctx.fillStyle="#8c7445";ctx.font='900 9px "Microsoft JhengHei"';
+  ctx.fillText(`${state.cityEvent?.name||"正常景氣"}｜點擊承接標案`,CX,CY+38,170);
 
-  ctx.fillStyle="#55718e";ctx.font='900 11px "Microsoft JhengHei"';
-  ctx.fillText("點擊中央設施直接操作｜不是裝飾",CX,CY+128);
+  // Animated policy ring dots
+  for(let i=0;i<8;i++){
+    const a=performance.now()/1200+i*Math.PI/4;
+    const rr2=89+3*Math.sin(cityPulse+i);
+    ctx.beginPath();ctx.arc(CX+Math.cos(a)*rr2,CY+Math.sin(a)*rr2,3.5,0,Math.PI*2);
+    ctx.fillStyle=i%2?"#f3c75e":"#66a4e8";ctx.fill()
+  }
 
-  // Decorative buildings make the district feel occupied.
+  // Decorative city skyline
   const blocks=[[320,705],[390,696],[460,710],[525,700],[890,704],[965,695],[1037,708],[1105,698]];
   blocks.forEach(([x,y],i)=>{
     ctx.fillStyle=["#8fb6d8","#87acd0","#7ca0c3","#6e92b6"][i%4];rr(x,y,42,46,8,true,false);
@@ -10096,7 +10436,15 @@ function drawCity(){
     for(let r=0;r<2;r++)for(let c=0;c<2;c++)ctx.fillRect(x+9+c*13,y+9+r*14,6,8);
   });
 
-  // Animated city traffic makes the board feel alive without blocking gameplay.
+  // Fountain / plaza particles in otherwise empty lower center area.
+  for(let i=0;i<7;i++){
+    const a=(i/7)*Math.PI*2+cityPulse*.4;
+    const rx=740+Math.cos(a)*145,ry=690+Math.sin(a)*18;
+    ctx.beginPath();ctx.arc(rx,ry,2.5+1.5*pulse,0,Math.PI*2);
+    ctx.fillStyle="rgba(88,166,225,.75)";ctx.fill()
+  }
+
+  // Traffic
   const tm=(performance.now()/35)%1040;
   const cars=[
     {x:210+tm,y:458,w:27,h:11,c:"#ef5b58"},
@@ -10105,12 +10453,9 @@ function drawCity(){
     {x:757,y:755-(tm*.48)%570,w:11,h:25,c:"#70c894"}
   ];
   cars.forEach(v=>{
-    ctx.save();
-    ctx.shadowColor=v.c;ctx.shadowBlur=10;
-    ctx.fillStyle=v.c;rr(v.x,v.y,v.w,v.h,5,true,false);
+    ctx.save();ctx.shadowColor=v.c;ctx.shadowBlur=10;ctx.fillStyle=v.c;rr(v.x,v.y,v.w,v.h,5,true,false);
     ctx.fillStyle="rgba(255,255,255,.85)";
-    if(v.w>v.h)ctx.fillRect(v.x+v.w-6,v.y+2,3,2);
-    else ctx.fillRect(v.x+2,v.y+3,2,3);
+    if(v.w>v.h)ctx.fillRect(v.x+v.w-6,v.y+2,3,2);else ctx.fillRect(v.x+2,v.y+3,2,3);
     ctx.restore()
   });
 }
@@ -10378,7 +10723,11 @@ function updateMobileTurnBar(){
   const me=state.players?.[mySeat];
   const tile=cur?state.tiles?.[cur.pos]:null;
   if($("mobileTurnName"))$("mobileTurnName").textContent=cur?.name||"—";
-  if($("mobileRound"))$("mobileRound").textContent=state.round||1;
+  const roundsLeft=Math.max(0,GAME_MAX_ROUNDS-(state.round||1)+1);
+  if($("mobileRound"))$("mobileRound").textContent=`${state.round||1} / ${GAME_MAX_ROUNDS}`;
+  if($("mobileRoundsLeft"))$("mobileRoundsLeft").textContent=`剩 ${roundsLeft} 回合`;
+  const ranked=state.players.filter(Boolean).filter(p=>!p.bankrupt).sort((a,b)=>playerTotalWealth(b)-playerTotalWealth(a));
+  if($("mobileLeader"))$("mobileLeader").textContent=`👑 第一：${ranked[0]?.name||"—"}`;
   if($("mobileCash"))$("mobileCash").textContent=`$${(me?.cash||0).toLocaleString()}`;
   if($("mobileTileName"))$("mobileTileName").textContent=tile?.name||"—";
   if($("mobileTileDetail")){
@@ -10481,7 +10830,7 @@ function openMobileHubMenu(){
        <div class="hub-card"><div class="hicon">🏦</div><div class="hname">都會銀行</div><div class="hdesc">2 ROUND 定存，管理閒置現金。</div><button class="success" onclick="closeModal();openHubFacility('bank')">開啟</button></div>
        <div class="hub-card"><div class="hicon">🛡️</div><div class="hname">租金保險</div><div class="hdesc">降低下一次踩別人地產的現金壓力。</div><button class="primary" onclick="closeModal();openHubFacility('insurance')">開啟</button></div>
        <div class="hub-card"><div class="hicon">🚇</div><div class="hname">捷運樞紐</div><div class="hdesc">不用擲骰，改走短／中／長快線。</div><button class="warn" onclick="closeModal();openHubFacility('metro')">開啟</button></div>
-       <div class="hub-card"><div class="hicon">🏛️</div><div class="hname">市政標案</div><div class="hdesc">承接有風險的城市投資案。</div><button class="warn" onclick="closeModal();openHubFacility('project')">開啟</button></div>
+       <div class="hub-card"><div class="hicon">🏛️</div><div class="hname">市政標案</div><div class="hdesc">承接有風險的城市投資案。</div><button class="warn" onclick="closeModal();openHubFacility('project')">開啟</button></div><div class="hub-card"><div class="hicon">🏙️</div><div class="hname">公共建設</div><div class="hdesc">投資夜市、科技塔、碼頭與綠能公園，累積持分並領分紅。</div><button class="primary" onclick="closeModal();openPublicInvestmentCenter()">查看</button></div>
      </div>`,
     [["關閉","ghost",closeModal]]
   )
