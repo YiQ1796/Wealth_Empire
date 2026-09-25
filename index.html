@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>財富帝國 V18.3.2 WEB｜重連＋互動特效版</title>
+<title>財富帝國 V18.3.3 WEB｜手機小遊戲統一版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V18.3.2 WEB - 56格多人網頁大富翁遊戲">
+<meta name="description" content="財富帝國 V18.3.3 WEB - 56格多人網頁大富翁遊戲">
 <link rel="manifest" href="./manifest.webmanifest">
 
 <style>
@@ -5125,6 +5125,283 @@ button:not(:disabled):active{transform:scale(.96)}
   .stock-pnl-chip small,.stock-pnl-chip span{font-size:7px}
 }
 
+
+/* ===== V18.3.3 mobile minigame unified viewport ===== */
+@media(max-width:980px) and (orientation:landscape){
+  .group-game-overlay,
+  .minigame-overlay{
+    position:fixed!important;
+    inset:0!important;
+    width:100dvw!important;
+    height:100dvh!important;
+    padding:
+      max(5px,env(safe-area-inset-top))
+      calc(var(--phone-side-w) + max(5px,env(safe-area-inset-right)))
+      max(5px,env(safe-area-inset-bottom))
+      max(5px,env(safe-area-inset-left))!important;
+    display:none;
+    align-items:stretch!important;
+    justify-content:stretch!important;
+    overflow:hidden!important;
+    background:rgba(8,19,34,.78)!important;
+    backdrop-filter:blur(7px)!important;
+  }
+  .group-game-overlay.open,
+  .minigame-overlay.open{
+    display:flex!important;
+  }
+
+  .group-game-card,
+  .minigame-overlay .minigame-card,
+  .minigame-overlay .minigame-card.wheel-big-card,
+  .minigame-card.race-theme,
+  .minigame-card.dice-theme,
+  .minigame-card.treasure-theme,
+  .minigame-card.noodle-theme,
+  .minigame-card.hilow-theme{
+    box-sizing:border-box!important;
+    width:100%!important;
+    height:100%!important;
+    min-width:0!important;
+    min-height:0!important;
+    max-width:none!important;
+    max-height:none!important;
+    margin:0!important;
+    padding:8px!important;
+    border-radius:14px!important;
+    overflow:hidden!important;
+    display:flex!important;
+    flex-direction:column!important;
+    background:#fff!important;
+    box-shadow:0 22px 70px rgba(0,0,0,.30)!important;
+  }
+
+  .group-game-head,
+  .minigame-head,
+  .wheel-topbar{
+    flex:0 0 auto!important;
+    min-height:42px!important;
+    max-height:58px!important;
+    padding:5px 7px!important;
+    margin:0 0 5px!important;
+    border-radius:9px!important;
+  }
+
+  .group-game-title,
+  .minigame-title,
+  .wheel-machine-title{
+    font-size:clamp(15px,3.6dvh,21px)!important;
+    line-height:1.05!important;
+  }
+  .group-game-trigger,
+  .minigame-sub,
+  .wheel-machine-sub{
+    font-size:clamp(8px,1.7dvh,10px)!important;
+    line-height:1.2!important;
+  }
+  .minigame-icon-badge{
+    width:34px!important;
+    height:34px!important;
+    min-width:34px!important;
+    font-size:20px!important;
+  }
+
+  .group-status{
+    flex:0 0 auto!important;
+    display:grid!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    gap:4px!important;
+    margin:0 0 5px!important;
+  }
+  .group-seat{
+    min-width:0!important;
+    padding:5px!important;
+    border-radius:8px!important;
+  }
+  .group-seat .name{font-size:clamp(8px,1.8dvh,10px)!important}
+  .group-seat .status{font-size:clamp(7px,1.5dvh,9px)!important}
+
+  .group-bet-panel,
+  .mg-panel,
+  .race-track,
+  .race-result,
+  .themed-results,
+  #treasureArena,
+  #hilowResultBody,
+  #noodleTrack,
+  #noodleResult,
+  #diceArena,
+  #diceGameResult,
+  #raceTrack,
+  #raceResult{
+    min-height:0!important;
+    max-height:none!important;
+  }
+
+  .group-bet-panel{
+    flex:1 1 auto!important;
+    overflow:auto!important;
+    overscroll-behavior:contain!important;
+    padding:4px!important;
+  }
+
+  .minigame-card > .mg-panel,
+  .minigame-card > .race-track,
+  .minigame-card > .treasure-arena,
+  .minigame-card > #hilowResultBody,
+  .minigame-card > #noodleTrack,
+  .minigame-card > #diceArena{
+    flex:1 1 auto!important;
+    overflow:auto!important;
+  }
+
+  .minigame-card > .race-result,
+  .minigame-card > #diceGameResult,
+  .minigame-card > #noodleResult{
+    flex:0 1 34%!important;
+    overflow:auto!important;
+  }
+
+  .minigame-card > .actions,
+  .group-game-card > .actions{
+    flex:0 0 auto!important;
+    position:sticky!important;
+    bottom:0!important;
+    margin-top:5px!important;
+    padding:5px 0 0!important;
+    background:#fff!important;
+    z-index:5!important;
+  }
+  .minigame-card > .actions button,
+  .group-game-card > .actions button{
+    min-height:34px!important;
+    font-size:10px!important;
+  }
+
+  /* Wheel no longer gets a special giant frame on phones. */
+  .wheel-big-card .wheel-machine{
+    width:100%!important;
+    height:100%!important;
+    min-height:0!important;
+    overflow:hidden!important;
+    display:flex!important;
+    flex-direction:column!important;
+  }
+  .wheel-big-card .wheel-shell{
+    flex:1 1 auto!important;
+    min-height:0!important;
+    height:auto!important;
+    display:grid!important;
+    grid-template-columns:clamp(180px,26%,240px) minmax(0,1fr)!important;
+    gap:6px!important;
+    overflow:hidden!important;
+  }
+  .wheel-big-card .wheel-left-panel,
+  .wheel-big-card .wheel-right-panel{
+    min-width:0!important;
+    min-height:0!important;
+    height:100%!important;
+    overflow:auto!important;
+    padding:5px!important;
+  }
+  .wheel-result-layout,
+  .wheel-bet-layout{
+    height:100%!important;
+    min-height:0!important;
+    overflow:hidden!important;
+  }
+  .wheel-big-card .wheel-live-grid,
+  .wheel-big-card .wheel-preview-grid{
+    gap:3px!important;
+  }
+  .wheel-big-card .wheel-live-cell,
+  .wheel-big-card .wheel-preview-cell{
+    min-height:clamp(31px,7dvh,43px)!important;
+    font-size:clamp(16px,4.2dvh,23px)!important;
+  }
+
+  /* Horse race */
+  .race-lane{
+    height:clamp(38px,9dvh,48px)!important;
+    margin:3px 0!important;
+  }
+  .runner{font-size:clamp(24px,6dvh,30px)!important;top:4px!important}
+  .lane-label{top:11px!important;font-size:9px!important}
+
+  /* Dice / high-low / treasure */
+  .big-die{
+    width:clamp(54px,15dvh,78px)!important;
+    height:clamp(54px,15dvh,78px)!important;
+    font-size:clamp(34px,9dvh,52px)!important;
+  }
+  .dice-live{gap:8px!important;margin:5px 0!important}
+  .treasure-grid,
+  .bonus-choice-grid{
+    gap:6px!important;
+  }
+  .treasure-choice,
+  .bonus-choice{
+    min-height:clamp(70px,18dvh,100px)!important;
+    padding:6px!important;
+  }
+
+  /* Noodle / reaction / coin rush fit the same height. */
+  .coinrush-arena{
+    min-height:0!important;
+    height:clamp(120px,33dvh,180px)!important;
+  }
+  .reaction-arena{
+    min-height:0!important;
+    padding:6px!important;
+  }
+  .reaction-button{
+    min-height:50px!important;
+  }
+
+  /* Results are readable without forcing card growth. */
+  .result-table{
+    max-height:29dvh!important;
+    overflow:auto!important;
+  }
+  .result-row{
+    min-height:28px!important;
+    padding:4px 5px!important;
+    font-size:9px!important;
+  }
+  .money-callout{
+    margin-top:5px!important;
+    padding:6px!important;
+    font-size:12px!important;
+  }
+
+  .minigame-close-top{
+    min-height:32px!important;
+    padding:4px 8px!important;
+    font-size:9px!important;
+  }
+}
+
+/* Very short landscape iPhones: keep the frame identical, only content density changes. */
+@media(max-height:390px) and (orientation:landscape){
+  .group-game-card,
+  .minigame-overlay .minigame-card,
+  .minigame-overlay .minigame-card.wheel-big-card{
+    padding:6px!important;
+  }
+  .group-game-head,
+  .minigame-head,
+  .wheel-topbar{
+    min-height:36px!important;
+    max-height:44px!important;
+    margin-bottom:3px!important;
+  }
+  .group-status{margin-bottom:3px!important}
+  .result-table{max-height:24dvh!important}
+  .wheel-big-card .wheel-shell{
+    grid-template-columns:170px minmax(0,1fr)!important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -5168,7 +5445,7 @@ button:not(:disabled):active{transform:scale(.96)}
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V18.3.2 WEB｜重連＋互動特效版｜56格大地圖</div><div class="sub">公平 P2P 同步｜高價強制徵收・城市公庫回饋・股票股息・所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V18.3.3 WEB｜手機小遊戲統一版｜56格大地圖</div><div class="sub">公平 P2P 同步｜高價強制徵收・城市公庫回饋・股票股息・所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span>｜ROUND <span id="roundText">1</span></div>
