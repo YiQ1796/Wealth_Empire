@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>財富帝國 V18.3.1 WEB｜好友同步修正版</title>
+<title>財富帝國 V18.3.2 WEB｜重連＋互動特效版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V18.3 WEB - 56格多人網頁大富翁遊戲">
+<meta name="description" content="財富帝國 V18.3.2 WEB - 56格多人網頁大富翁遊戲">
 <link rel="manifest" href="./manifest.webmanifest">
 
 <style>
@@ -4984,6 +4984,147 @@ body.force-mobile-preview #market .stock-grid{
   :root{--phone-side-w:190px}
 }
 
+
+/* ===== V18.3.2 reconnect / modal / stock / interaction polish ===== */
+.modal-card{
+  position:relative!important;
+  max-height:min(88vh,760px)!important;
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:hidden!important;
+}
+#modalTitle{
+  flex:none!important;
+  padding-right:46px!important;
+}
+#modalBody{
+  min-height:0!important;
+  overflow:auto!important;
+  overscroll-behavior:contain;
+  padding-right:5px;
+}
+#modalActions{
+  flex:none!important;
+  position:sticky!important;
+  bottom:0!important;
+  z-index:4!important;
+  margin-top:8px!important;
+  padding:9px 0 2px!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.78),#fff 35%)!important;
+}
+.modal-close-top{
+  position:absolute;
+  z-index:10;
+  top:10px;
+  right:10px;
+  width:38px;
+  height:38px;
+  min-width:38px;
+  padding:0!important;
+  border:0;
+  border-radius:50%;
+  background:#172d4b;
+  color:#fff;
+  font-size:25px;
+  font-weight:1000;
+  line-height:36px;
+  box-shadow:0 8px 20px rgba(20,42,70,.20);
+  cursor:pointer;
+}
+.modal-close-top:hover{transform:scale(1.08);background:#d64a4a}
+.upgrade-center{
+  max-height:none!important;
+}
+@media(max-height:800px){
+  .upgrade-card{padding:9px!important}
+  .upgrade-road{margin:6px 0!important}
+  .upgrade-rule{padding:7px 9px!important;margin-bottom:8px!important}
+}
+
+/* Portfolio P/L is now a focal element, not tiny metadata. */
+.pnl-summary{
+  grid-template-columns:1fr 1.15fr 1.15fr!important;
+  gap:7px!important;
+  margin-bottom:8px!important;
+}
+.portfolio-stat{
+  min-height:58px;
+  padding:7px 8px!important;
+  border-radius:11px!important;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  border:1px solid #dfe7f2!important;
+  box-shadow:0 5px 14px rgba(31,54,89,.06);
+}
+.portfolio-stat .mk{font-size:9px!important;font-weight:1000!important}
+.portfolio-stat .mv{font-size:17px!important;line-height:1.1!important}
+.portfolio-stat .pnl-pct{font-size:9px;font-weight:1000;margin-top:3px}
+.portfolio-stat.value{background:linear-gradient(180deg,#f7faff,#edf4ff)!important}
+.portfolio-stat.profit{background:linear-gradient(180deg,#fff4f3,#ffe8e6)!important;border-color:#ffc7c2!important;color:#c92e2e}
+.portfolio-stat.loss{background:linear-gradient(180deg,#f1fff5,#e1f7e8)!important;border-color:#bfe8cc!important;color:#13773a}
+.portfolio-stat.flat{background:linear-gradient(180deg,#f8fafc,#eef2f6)!important;color:#4a5a70}
+.stock-pnl-chip{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:5px;
+  min-height:35px;
+  margin-top:5px;
+  padding:5px 7px;
+  border-radius:9px;
+  font-size:9px;
+  font-weight:1000;
+  border:1px solid #e1e8f2;
+}
+.stock-pnl-chip>div{display:flex;flex-direction:column;gap:1px}
+.stock-pnl-chip b{font-size:10px}
+.stock-pnl-chip small{font-size:8px}
+.stock-pnl-chip.profit{background:#fff1f0;color:#cc2f2f;border-color:#ffd1ce}
+.stock-pnl-chip.loss{background:#effcf3;color:#11763a;border-color:#ccecd6}
+.stock-pnl-chip.flat{background:#f6f8fb;color:#6a788b}
+.stock-day{font-weight:1000}
+.stock{transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.stock:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(32,60,100,.10)}
+.stock-flash-up{animation:stockFlashUp 1s ease}
+.stock-flash-down{animation:stockFlashDown 1s ease}
+.stock-flash-neutral{animation:stockFlashNeutral 1s ease}
+@keyframes stockFlashUp{0%,100%{box-shadow:none}35%{box-shadow:0 0 0 3px rgba(230,64,64,.28),0 0 28px rgba(230,64,64,.22);transform:scale(1.02)}}
+@keyframes stockFlashDown{0%,100%{box-shadow:none}35%{box-shadow:0 0 0 3px rgba(40,160,84,.28),0 0 28px rgba(40,160,84,.22);transform:scale(1.02)}}
+@keyframes stockFlashNeutral{0%,100%{box-shadow:none}35%{box-shadow:0 0 0 3px rgba(70,110,170,.22)}}
+
+/* Stronger board interaction */
+.player.current{
+  animation:currentPlayerGlow 1.5s ease-in-out infinite alternate;
+}
+@keyframes currentPlayerGlow{
+  from{box-shadow:0 0 0 1px rgba(53,113,220,.10)}
+  to{box-shadow:0 0 0 3px rgba(53,113,220,.25),0 10px 24px rgba(53,113,220,.16)}
+}
+#board{filter:saturate(1.04) contrast(1.015)}
+.board-panel{box-shadow:inset 0 0 40px rgba(64,115,177,.07)}
+button:not(:disabled){transition:transform .12s ease,box-shadow .12s ease,filter .12s ease}
+button:not(:disabled):hover{filter:brightness(1.04);box-shadow:0 7px 18px rgba(31,59,99,.13)}
+button:not(:disabled):active{transform:scale(.96)}
+.fx-card{backdrop-filter:blur(7px)}
+.fx-card.good{box-shadow:0 0 0 1px rgba(255,255,255,.18),0 25px 80px rgba(16,115,72,.34)}
+.fx-card.bad{box-shadow:0 0 0 1px rgba(255,255,255,.18),0 25px 80px rgba(156,39,39,.34)}
+
+@media(max-width:980px) and (orientation:landscape){
+  .modal-card{
+    max-height:92dvh!important;
+  }
+  .modal-close-top{
+    top:6px;right:6px;width:34px;height:34px;min-width:34px;font-size:22px;line-height:32px;
+  }
+  .pnl-summary{grid-template-columns:repeat(3,1fr)!important}
+  .portfolio-stat{min-height:48px;padding:5px!important}
+  .portfolio-stat .mv{font-size:13px!important}
+  .stock-pnl-chip{min-height:28px;margin-top:3px;padding:3px 5px}
+  .stock-pnl-chip b{font-size:9px}
+  .stock-pnl-chip small,.stock-pnl-chip span{font-size:7px}
+}
+
 </style>
 </head>
 <body>
@@ -5027,7 +5168,7 @@ body.force-mobile-preview #market .stock-grid{
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V18.3.1 WEB｜好友同步修正版｜56格大地圖</div><div class="sub">公平 P2P 同步｜高價強制徵收・城市公庫回饋・股票股息・所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V18.3.2 WEB｜重連＋互動特效版｜56格大地圖</div><div class="sub">公平 P2P 同步｜高價強制徵收・城市公庫回饋・股票股息・所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span>｜ROUND <span id="roundText">1</span></div>
@@ -5104,7 +5245,7 @@ body.force-mobile-preview #market .stock-grid{
   </div>
 </div>
 
-<div id="modal" class="modal"><div class="modal-card"><h2 id="modalTitle"></h2><div id="modalBody"></div><div id="modalActions" class="actions"></div></div></div>
+<div id="modal" class="modal"><div class="modal-card"><button class="modal-close-top" onclick="closeModal()" aria-label="關閉視窗">×</button><h2 id="modalTitle"></h2><div id="modalBody"></div><div id="modalActions" class="actions"></div></div></div>
 <div id="toast" class="toast"></div>
 
 
@@ -5381,7 +5522,7 @@ BIO:{name:"新紀生技",price:82,vol:.120,drift:.004},
 FOOD:{name:"豐盛食品",price:54,vol:.045,drift:.001},
 RETL:{name:"都會零售",price:72,vol:.075,drift:.002}
 };
-let peer=null,isHost=false,roomCode="",mySeat=null,state=null,hostConn=null,joinTimeoutTimer=null,clientJoinName="",clientReconnectTimer=null,clientReconnectAttempts=0,heartbeatTimer=null;
+let peer=null,isHost=false,roomCode="",mySeat=null,state=null,hostConn=null,joinTimeoutTimer=null,clientJoinName="",clientReconnectToken="",clientReconnectTimer=null,clientReconnectAttempts=0,heartbeatTimer=null; const seatReconnectTokens=new Map();
 let hoverCenterSpot=null, cityPulse=0, visualLoopStarted=false;
 let conns=new Map(),pendingJoinNames=new Map(),lastEventId=0,seq=0,rolling=false;
 let fxQueue=[],fxRunning=false,victoryShownEvent=0,groupGameTimer=null,groupUiTimer=null,auctionTimer=null,auctionUiTimer=null,noodleAiTimer=null,coinRushAiTimer=null,reactionAiTimer=null;
@@ -5549,23 +5690,58 @@ function showIPhoneConnectionNotice(){
     :"✅ 好友房連線環境正常。";
   return true
 }
+function reconnectStorageKey(code){return "wealth_reconnect_"+String(code||"").toUpperCase()}
+function makeReconnectToken(){
+  try{return crypto.randomUUID()}catch{return "rt_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2)}
+}
+function readReconnectSession(code){
+  try{
+    const raw=localStorage.getItem(reconnectStorageKey(code));
+    if(!raw)return null;
+    const obj=JSON.parse(raw);
+    if(!obj?.token||!obj?.name)return null;
+    return obj
+  }catch{return null}
+}
+function saveReconnectSession(code,name,seat,token){
+  try{
+    const data={room:String(code||"").toUpperCase(),name,seat,token,updatedAt:Date.now()};
+    localStorage.setItem(reconnectStorageKey(code),JSON.stringify(data));
+    localStorage.setItem("wealth_last_room",data.room);
+    localStorage.setItem("wealth_player_name",name)
+  }catch{}
+}
+function getOrCreateReconnectToken(code,name){
+  const old=readReconnectSession(code);
+  if(old&&old.name===name&&old.token)return old.token;
+  const token=makeReconnectToken();
+  saveReconnectSession(code,name,null,token);
+  return token
+}
 function loadInviteRoomFromUrl(){
   try{
     const u=new URL(location.href);
-    const code=(u.searchParams.get("room")||"").trim().toUpperCase();
+    const urlCode=(u.searchParams.get("room")||"").trim().toUpperCase();
+    const lastCode=(localStorage.getItem("wealth_last_room")||"").trim().toUpperCase();
+    const code=urlCode||lastCode;
     if(!code)return;
+
+    const saved=readReconnectSession(code);
     const input=$("joinRoom");
     if(input)input.value=code;
+    if(saved?.name&&$("joinName"))$("joinName").value=saved.name;
+
     const notice=$("iosOnlineNotice");
     if(notice){
       notice.classList.remove("hidden","bad");
       notice.classList.add("good");
-      notice.innerHTML=`📩 好友邀請房號已帶入：<b>${code}</b><br>輸入你的暱稱後，按「加入房間」即可。`
+      notice.innerHTML=saved
+        ? `🔄 偵測到上次房間：<b>${code}</b><br>按「加入房間」即可嘗試回到原本的座位。`
+        : `📩 好友邀請房號已帶入：<b>${code}</b><br>輸入暱稱後，按「加入房間」即可。`
     }
     setTimeout(()=>$("joinName")?.focus(),180)
   }catch{}
 }
-
 
 let peerLoadPromise=null;
 function ensurePeerLibrary(){
@@ -5685,37 +5861,48 @@ function handleIncomingConnection(conn){
         return
       }
 
-      const resumeSeat=Number.isInteger(msg.resumeSeat)?msg.resumeSeat:null;
+      const requestedName=(msg.name||"玩家").slice(0,12);
+      const token=String(msg.token||"");
+      let resumeSeat=Number.isInteger(msg.resumeSeat)?msg.resumeSeat:null;
+
+      if(token){
+        for(const [seat,savedToken] of seatReconnectTokens.entries()){
+          if(savedToken===token){resumeSeat=seat;break}
+        }
+      }
+
       if(resumeSeat!=null&&resumeSeat>0&&resumeSeat<state.players.length){
         const p=state.players[resumeSeat];
-        const sameName=p&&!p.ai&&p.name===(msg.name||"玩家").slice(0,12);
-        if(sameName){
+        const tokenMatches=token&&seatReconnectTokens.get(resumeSeat)===token;
+        const legacyMatch=!token&&p&&!p.ai&&p.name===requestedName;
+        if(p&&!p.ai&&(tokenMatches||legacyMatch)){
           const oldConn=conns.get(resumeSeat);
           conns.set(resumeSeat,conn);
           conn.__seat=resumeSeat;
           conn.__lastPong=Date.now();
           p.connected=true;
           try{if(oldConn&&oldConn!==conn)oldConn.close()}catch{}
-          addEvent("reconnect",`${p.name} 已重新連線。`);
+          addEvent("reconnect",`${p.name} 已回到原本座位。`,{seat:resumeSeat});
           conn.send({type:"welcome",seat:resumeSeat,state:snapshot(),resumed:true});
-          sendToSeat(resumeSeat,{type:"state",state:snapshot()});
+          setTimeout(()=>sendToSeat(resumeSeat,{type:"state",state:snapshot(),forced:true}),120);
           broadcast();
           return
         }
       }
 
       if(state.status!=="lobby"){
-        conn.send({type:"reject",reason:"遊戲已開始，只有原本玩家可以重新連線"});
+        conn.send({type:"reject",reason:"遊戲已開始。請使用原本那支手機重新加入，系統會找回你的座位。"});
         setTimeout(()=>conn.close(),200);
         return
       }
 
       const seat=state.players.findIndex((p,i)=>i>0&&!p);
       if(seat<0){conn.send({type:"reject",reason:"房間已滿"});setTimeout(()=>conn.close(),200);return}
-      state.players[seat]=player((msg.name||"玩家").slice(0,12),seat,false);
+      state.players[seat]=player(requestedName,seat,false);
       conns.set(seat,conn);
       conn.__seat=seat;
       conn.__lastPong=Date.now();
+      if(token)seatReconnectTokens.set(seat,token);
       addEvent("join",`${state.players[seat].name} 加入房間。`);
       conn.send({type:"welcome",seat,state:snapshot()});
       broadcast();
@@ -5741,7 +5928,7 @@ function handleIncomingConnection(conn){
     if(seat==null||!state?.players?.[seat])return;
     if(conns.get(seat)!==conn)return;
     state.players[seat].connected=false;
-    addEvent("disconnect",`${state.players[seat].name} 已斷線，等待重新連線。`);
+    addEvent("disconnect",`${state.players[seat].name} 已暫時離線，可用原本手機重新加入。`,{seat});
     broadcast();
   });
 }
@@ -5766,7 +5953,9 @@ async function joinInternetRoom(){
   isHost=false;
   roomCode=code;
   clientJoinName=name;
+  clientReconnectToken=getOrCreateReconnectToken(code,name);
   clientReconnectAttempts=0;
+  try{localStorage.setItem("wealth_last_room",roomCode)}catch{}
   showWaiting();
   startClientPeer(name,false)
 }
@@ -5818,7 +6007,7 @@ function wireHostConn(conn,name){
   const sendJoinOnce=()=>{
     if(joinSent||!conn.open)return;
     joinSent=true;
-    conn.send({type:"join",name,resumeSeat:mySeat})
+    conn.send({type:"join",name,resumeSeat:mySeat,token:clientReconnectToken})
   };
   conn.on("open",()=>{
     clientReconnectAttempts=0;
@@ -5831,7 +6020,9 @@ function wireHostConn(conn,name){
       clearTimeout(joinTimeoutTimer);
       mySeat=msg.seat;
       state=msg.state;
-      $("connectionText").textContent=msg.resumed?"✅ 已重新連線並同步最新進度":"✅ 已成功加入房間";
+      saveReconnectSession(roomCode,name,mySeat,clientReconnectToken);
+      if(msg.resumed)lastEventId=state?.eventId||lastEventId;
+      $("connectionText").textContent=msg.resumed?"✅ 已回到原本座位並同步最新進度":"✅ 已成功加入房間";
       render();handleIncomingEvents()
     }
     else if(msg.type==="state"){
@@ -7655,6 +7846,7 @@ function nextTurn(){
     guard++
   }while(state.players[state.current]?.bankrupt&&guard<5);
   if(finishIfNeeded(state.round>30?"30 回合總資產結算":"回合結算"))return;
+  addEvent("turn",`輪到 ${state.players[state.current]?.name||"玩家"} 行動。`,{seat:state.current,round:state.round});
   broadcast();maybeRunAI()
 }
 function maybeRunAI(){
@@ -7858,16 +8050,19 @@ function renderMarket(){
     const d=s.price-s.prev,dayPct=s.prev?d/s.prev*100:0,h=me.stocks?.[c]||{qty:0,avg:0};
     const qty=Number(h.qty||0),avg=Number(h.avg||0),value=qty*s.price,cost=qty*avg,pnl=value-cost,pct=cost?pnl/cost*100:0;
     totalValue+=value;totalCost+=cost;
-    const pc=pnl>0?"profit":pnl<0?"loss":"";
-    return `<div class="stock">
+    const pc=pnl>0?"profit":pnl<0?"loss":"flat";
+    const holdingText=qty
+      ? `<b>未實現 ${pnl>=0?"+":"-"}$${Math.abs(Math.round(pnl)).toLocaleString()}</b><small>${pct>=0?"+":""}${pct.toFixed(1)}%</small>`
+      : `<b>尚未持有</b><small>買入後顯示即時損益</small>`;
+    return `<div class="stock" data-code="${c}">
       <div class="stop">
         <div><div class="sname">${s.name}</div><div class="scode">${c}｜持股 ${qty}</div></div>
         <div class="sprice">$${s.price}</div>
-        <div class="${d>0?"up":d<0?"down":""}">${d>0?"▲":d<0?"▼":"●"} ${dayPct>=0?"+":""}${dayPct.toFixed(1)}%</div>
+        <div class="stock-day ${d>0?"up":d<0?"down":"flat"}">${d>0?"▲":d<0?"▼":"●"} ${dayPct>=0?"+":""}${dayPct.toFixed(1)}%</div>
       </div>
-      <div class="compact-stock-meta">
+      <div class="stock-pnl-chip ${pc}">
+        <div>${holdingText}</div>
         <span>均價 ${qty?"$"+Math.round(avg).toLocaleString():"—"}</span>
-        <span class="${pc}">未實現 ${qty?`${pnl>=0?"+":"-"}$${Math.abs(Math.round(pnl)).toLocaleString()} (${pct>=0?"+":""}${pct.toFixed(1)}%)`:"—"}</span>
       </div>
       <div class="sbottom">
         <input id="q_${c}" type="number" min="1" value="1">
@@ -7876,14 +8071,29 @@ function renderMarket(){
       </div>
     </div>`
   }).join("");
+
   const totalPnl=totalValue-totalCost,totalPct=totalCost?totalPnl/totalCost*100:0;
+  const unrealClass=totalPnl>0?"profit":totalPnl<0?"loss":"flat";
+  const realized=Number(me.realizedPnl||0),realClass=realized>0?"profit":realized<0?"loss":"flat";
+
   $("market").innerHTML=`
-    <div class="market-summary-v10">
-      <div><div class="mk">總市值</div><div class="mv">$${Math.round(totalValue).toLocaleString()}</div></div>
-      <div><div class="mk">未實現</div><div class="mv ${totalPnl>0?"up":totalPnl<0?"down":""}">${totalCost?`${totalPnl>=0?"+":"-"}$${Math.abs(Math.round(totalPnl)).toLocaleString()}`:"—"}</div></div>
-      <div><div class="mk">已實現</div><div class="mv ${(me.realizedPnl||0)>=0?"up":"down"}">${(me.realizedPnl||0)>=0?"+":"-"}$${Math.abs(Math.round(me.realizedPnl||0)).toLocaleString()}</div></div>
+    <div class="market-summary-v10 pnl-summary">
+      <div class="portfolio-stat value">
+        <div class="mk">持股總市值</div>
+        <div class="mv">$${Math.round(totalValue).toLocaleString()}</div>
+      </div>
+      <div class="portfolio-stat unrealized ${unrealClass}">
+        <div class="mk">未實現損益</div>
+        <div class="mv">${totalCost?`${totalPnl>=0?"+":"-"}$${Math.abs(Math.round(totalPnl)).toLocaleString()}`:"—"}</div>
+        <div class="pnl-pct">${totalCost?`${totalPct>=0?"+":""}${totalPct.toFixed(1)}%`:"尚未持股"}</div>
+      </div>
+      <div class="portfolio-stat realized ${realClass}">
+        <div class="mk">已實現損益</div>
+        <div class="mv">${realized>=0?"+":"-"}$${Math.abs(Math.round(realized)).toLocaleString()}</div>
+        <div class="pnl-pct">已完成交易累計</div>
+      </div>
     </div>
-    <div class="stock-grid">${rows}</div>`;
+    <div class="stock-grid">${rows}</div>`
 }
 function renderEvents(){$("events").innerHTML=[...state.events].reverse().map(e=>`<div class="event">#${e.id} ${e.text}</div>`).join("")}
 function stockAction(action,c){const q=Math.max(1,parseInt($(`q_${c}`).value||"1",10));sendAction(action,{code:c,qty:q})}
@@ -8399,8 +8609,21 @@ function openProperties(){
   }).join("")||"尚未持有地產";
   showModal("🏘 我的房產",rows,[["🏗 開啟升級中心","warn",openUpgradeCenter],["關閉","ghost",closeModal]])
 }
-function showModal(t,b,acts){$("modalTitle").textContent=t;$("modalBody").innerHTML=b;$("modalActions").innerHTML="";acts.forEach(([l,c,f])=>{const x=document.createElement("button");x.textContent=l;x.className=c;x.onclick=f;$("modalActions").appendChild(x)});$("modal").classList.add("open")}
+function showModal(t,b,acts){
+  $("modalTitle").textContent=t;
+  $("modalBody").innerHTML=b;
+  $("modalActions").innerHTML="";
+  acts.forEach(([l,c,f])=>{
+    const x=document.createElement("button");
+    x.textContent=l;x.className=c;x.onclick=f;
+    $("modalActions").appendChild(x)
+  });
+  $("modal").classList.add("open");
+  const body=$("modalBody");if(body)body.scrollTop=0
+}
 function closeModal(){$("modal").classList.remove("open")}
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
+$("modal")?.addEventListener("pointerdown",e=>{if(e.target===$("modal"))closeModal()});
 let selectedGroupHorse=0;
 
 let selectedDicePick="small",selectedTreasureChest=0,selectedHiLowPick="high",selectedNoodleStyle="steady",selectedRps="rock",selectedNumber=5,selectedCup=0,selectedBomb=10,selectedCard=0,selectedLane=1;
@@ -9303,12 +9526,45 @@ function showVictory(e){
   $("victoryOverlay").classList.add("open")
 }
 function closeVictory(){$("victoryOverlay").classList.remove("open")}
+function flashStockCard(code,dir=0){
+  const el=document.querySelector(`.stock[data-code="${code}"]`);
+  if(!el)return;
+  el.classList.remove("stock-flash-up","stock-flash-down","stock-flash-neutral");
+  void el.offsetWidth;
+  el.classList.add(dir>0?"stock-flash-up":dir<0?"stock-flash-down":"stock-flash-neutral");
+  setTimeout(()=>el.classList.remove("stock-flash-up","stock-flash-down","stock-flash-neutral"),1100)
+}
+function pulseTile(tile,seat=null){
+  window.__tileImpact={tile,seat,until:Date.now()+1300};
+  if(seat!=null){window.__tokenPulseSeat=seat;window.__tokenPulseUntil=Date.now()+1300}
+}
+function turnBannerFx(seat){
+  const p=state.players?.[seat];
+  if(!p)return;
+  queueFx({html:`<div class="fx-title">🎯 回合切換</div><div class="fx-money" style="font-size:30px">${p.name}</div><div class="fx-sub">輪到 ${p.name} 行動</div>`,duration:950})
+}
+function eventImpactFx(e){
+  if(e.kind==="land"){pulseTile(e.data?.tile,e.data?.seat);return}
+  if(e.kind==="move"){window.__tokenPulseSeat=e.data?.seat;window.__tokenPulseUntil=Date.now()+1000;return}
+  if(e.kind==="buy"||e.kind==="upgrade"){
+    if(e.data?.tile!=null)pulseTile(e.data.tile,e.data.seat);
+    burstParticles(e.kind==="buy"?"coin":"confetti",e.kind==="buy"?18:24)
+  }
+  if(e.kind==="market"){
+    const code=e.data?.code;
+    const s=code?state.stocks?.[code]:null;
+    if(code)flashStockCard(code,s?(s.price-s.prev):0)
+  }
+}
 function handleIncomingEvents(){
   const fresh=state.events.filter(e=>e.id>lastEventId);
   if(!fresh.length)return;
   lastEventId=Math.max(...fresh.map(e=>e.id),lastEventId);
   fresh.forEach(e=>{
-    if(e.kind==="roll"&&!rolling)animateDice(e.data.d1,e.data.d2,state.players[e.data.seat]?.name||"玩家");
+    eventImpactFx(e);
+    if(e.kind==="turn")turnBannerFx(e.data?.seat);
+    else if(e.kind==="reconnect")queueFx({html:`<div class="fx-title">🔄 玩家重新連線</div><div class="fx-money" style="font-size:27px">${state.players[e.data?.seat]?.name||"玩家"}</div><div class="fx-sub">已回到原本座位並同步最新進度。</div>`,duration:1300});
+    else if(e.kind==="roll"&&!rolling)animateDice(e.data.d1,e.data.d2,state.players[e.data.seat]?.name||"玩家");
     else if(e.kind==="rent")rentFx(e);
     else if(["buy","upgrade","fee","cash","chance","fate"].includes(e.kind)&&typeof e.data?.amount==="number"){
       moneyFx(`${e.kind==="buy"?"🏠 ":e.kind==="upgrade"?"🏗 ":e.kind==="fee"?"💸 ":"💰 "}${e.data.title||e.text}`,e.data.amount,state.players[e.data.seat]?.name||"")
@@ -9562,6 +9818,24 @@ function drawCity(){
     ctx.fillStyle="rgba(255,255,255,.72)";
     for(let r=0;r<2;r++)for(let c=0;c<2;c++)ctx.fillRect(x+9+c*13,y+9+r*14,6,8);
   });
+
+  // Animated city traffic makes the board feel alive without blocking gameplay.
+  const tm=(performance.now()/35)%1040;
+  const cars=[
+    {x:210+tm,y:458,w:27,h:11,c:"#ef5b58"},
+    {x:1270-tm,y:482,w:25,h:10,c:"#f5c451"},
+    {x:724,y:185+(tm*.55)%570,w:11,h:27,c:"#5f9fe8"},
+    {x:757,y:755-(tm*.48)%570,w:11,h:25,c:"#70c894"}
+  ];
+  cars.forEach(v=>{
+    ctx.save();
+    ctx.shadowColor=v.c;ctx.shadowBlur=10;
+    ctx.fillStyle=v.c;rr(v.x,v.y,v.w,v.h,5,true,false);
+    ctx.fillStyle="rgba(255,255,255,.85)";
+    if(v.w>v.h)ctx.fillRect(v.x+v.w-6,v.y+2,3,2);
+    else ctx.fillRect(v.x+2,v.y+3,2,3);
+    ctx.restore()
+  });
 }
 function tcolor(t){return{start:"#ffc94d",chance:"#f28d43",fate:"#8957dd",stock:"#3dbd7d",tax:"#e65757",station:"#4ca6ca",park:"#8ebf55",auction:"#dfb934",hospital:"#5eb6aa",court:"#8390a2",market:"#ed79a7",race:"#d5a13b",wheel:"#d66bb1",dicegame:"#5f8ed3",treasure:"#c58c25",hilow:"#4a79c7",noodle:"#d78a45",acquire_center:"#2f8b88",renewal:"#6d7fb8",property:"#fff"}[t.type]||"#fff"}
 
@@ -9589,13 +9863,14 @@ function drawTile(t,x,y,index){
   const phone=mobileReadableBoard();
   const currentPos=state?.players?.[state.current]?.pos;
   const isCurrentTile=currentPos===index;
+  const impact=window.__tileImpact&&window.__tileImpact.tile===index&&Date.now()<window.__tileImpact.until;
   const icon=TILE_ICONS[t.type]||"property";
 
-  if(isCurrentTile){
+  if(isCurrentTile||impact){
     ctx.save();
-    ctx.shadowColor="rgba(255,193,7,.60)";
-    ctx.shadowBlur=phone?28:22;
-    ctx.fillStyle="rgba(255,215,80,.28)";
+    ctx.shadowColor=impact?"rgba(73,184,255,.95)":"rgba(255,193,7,.60)";
+    ctx.shadowBlur=impact?(phone?42:34):(phone?28:22);
+    ctx.fillStyle=impact?"rgba(85,194,255,.32)":"rgba(255,215,80,.28)";
     rr(x-w/2-6,y-h/2-6,w+12,h+12,15,true,false);
     ctx.restore()
   }
@@ -9692,6 +9967,7 @@ function drawToken(p,i){
   const phone=mobileReadableBoard();
   const [x,y]=POS[p.pos],o=phone?[[-21,-20],[21,-20],[-21,20],[21,20]][i]:[[-19,-18],[19,-18],[-19,18],[19,18]][i];
   const isCurrent=i===state.current;
+  const pulse=window.__tokenPulseSeat===i&&Date.now()<(window.__tokenPulseUntil||0);
   const tx=x+o[0],ty=y+o[1];
   if(isCurrent){
     ctx.beginPath(); ctx.arc(tx,ty,19+Math.sin(cityPulse*2)*2,0,Math.PI*2);
@@ -9702,7 +9978,7 @@ function drawToken(p,i){
   ctx.shadowBlur=10; ctx.shadowOffsetY=3;
   const g=ctx.createLinearGradient(tx,ty-14,tx,ty+14);
   g.addColorStop(0,COLORS[i]); g.addColorStop(1,"#17324f");
-  ctx.beginPath(); ctx.arc(tx,ty,phone?20:14,0,Math.PI*2);
+  ctx.beginPath(); ctx.arc(tx,ty,pulse?(phone?25:19):(phone?20:14),0,Math.PI*2);
   ctx.fillStyle=g; ctx.fill();
   ctx.strokeStyle="#ffffff"; ctx.lineWidth=phone?5:3; ctx.stroke();
   ctx.restore();
