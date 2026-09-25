@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>財富帝國 V19.0 WEB｜都會核心擴充版</title>
+<title>財富帝國 V19.1 WEB｜手機介面優化版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.0 WEB - 56格多人網頁大富翁遊戲">
+<meta name="description" content="財富帝國 V19.1 WEB - 56格多人網頁大富翁遊戲">
 <link rel="manifest" href="./manifest.webmanifest">
 
 <style>
@@ -5550,6 +5550,214 @@ button:not(:disabled):active{transform:scale(.96)}
   .public-invest-buttons button{min-height:34px!important;font-size:9px!important}
 }
 
+
+/* ===== V19.1 landscape phone readability pass ===== */
+@media(max-width:980px) and (orientation:landscape){
+  :root{
+    --phone-side-w:clamp(202px,23dvw,232px);
+  }
+
+  /* Right dashboard uses hierarchy rather than tiny equal cells. */
+  .mobile-turn-bar{
+    height:clamp(128px,31dvh,154px)!important;
+    grid-template-columns:1.15fr .85fr!important;
+    grid-template-rows:minmax(42px,.9fr) minmax(42px,.9fr) minmax(44px,1fr)!important;
+    gap:4px!important;
+    padding:5px!important;
+    background:linear-gradient(180deg,#102f54,#0d2746)!important;
+  }
+  .mobile-turn-bar .mt-card{
+    min-width:0!important;
+    padding:5px 7px!important;
+    border-radius:9px!important;
+    background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.055))!important;
+    border:1px solid rgba(255,255,255,.08)!important;
+    text-align:left!important;
+    overflow:hidden!important;
+  }
+  .mobile-turn-bar .mt-turn{grid-column:1!important;grid-row:1!important}
+  .mobile-turn-bar .mt-round{grid-column:2!important;grid-row:1/3!important;background:linear-gradient(180deg,#173f6d,#12375f)!important}
+  .mobile-turn-bar .mt-leader{grid-column:1!important;grid-row:2!important;background:linear-gradient(135deg,rgba(255,210,71,.20),rgba(255,173,36,.10))!important}
+  .mobile-turn-bar .mt-cash{grid-column:1!important;grid-row:3!important}
+  .mobile-turn-bar .mt-tile{grid-column:2!important;grid-row:3!important}
+
+  .mobile-turn-bar .mt-label{
+    font-size:clamp(8px,1.8dvh,10px)!important;
+    letter-spacing:.2px!important;
+    color:#a9c5e2!important;
+    line-height:1!important;
+  }
+  .mobile-turn-bar b{
+    display:block!important;
+    margin-top:3px!important;
+    font-size:clamp(13px,3.1dvh,17px)!important;
+    line-height:1.05!important;
+    color:#fff!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+  .mobile-turn-bar .mt-leader b{color:#ffe276!important}
+  .mobile-turn-bar .mt-cash b{color:#9fe8bd!important}
+  .mobile-turn-bar .mt-round b{
+    font-size:clamp(16px,3.8dvh,21px)!important;
+    color:#fff!important;
+  }
+  #mobileRoundsLeft{
+    display:block!important;
+    margin-top:4px!important;
+    padding:4px 6px!important;
+    border-radius:7px!important;
+    background:#ffd75d!important;
+    color:#604600!important;
+    font-size:clamp(9px,2dvh,11px)!important;
+    line-height:1!important;
+    text-align:center!important;
+    white-space:nowrap!important;
+  }
+  .mobile-turn-bar small{
+    display:block!important;
+    margin-top:3px!important;
+    font-size:clamp(8px,1.7dvh,10px)!important;
+    color:#c5d9ed!important;
+    line-height:1.05!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+
+  /* Controls begin immediately below the status deck. */
+  .controls{
+    top:calc(env(safe-area-inset-top) + clamp(128px,31dvh,154px))!important;
+    height:clamp(158px,40dvh,184px)!important;
+    padding:5px!important;
+    background:linear-gradient(180deg,#f6f9fd,#e9f1fa)!important;
+    border-top:1px solid #d2deec!important;
+  }
+  .control-row{
+    grid-template-rows:clamp(52px,12.5dvh,62px) repeat(2,1fr)!important;
+    gap:5px!important;
+  }
+  .dicebox{
+    padding:4px!important;
+    border-radius:10px!important;
+    background:#fff!important;
+  }
+  .die{
+    width:clamp(30px,7.2dvh,37px)!important;
+    height:clamp(30px,7.2dvh,37px)!important;
+    font-size:clamp(18px,4.4dvh,23px)!important;
+    border-radius:8px!important;
+  }
+  .dlabel{font-size:clamp(8px,1.7dvh,10px)!important}
+  .dtotal{font-size:clamp(15px,3.3dvh,19px)!important}
+  .control-row>button{
+    padding:4px 5px!important;
+    border-radius:9px!important;
+    font-size:clamp(10px,2.15dvh,12px)!important;
+    font-weight:1000!important;
+    line-height:1.12!important;
+    box-shadow:0 5px 13px rgba(40,65,98,.10)!important;
+  }
+  #rollBtn{
+    font-size:clamp(11px,2.4dvh,13px)!important;
+  }
+
+  /* Bottom navigation remains large enough for a thumb. */
+  .mobile-nav{
+    height:calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - clamp(128px,31dvh,154px) - clamp(158px,40dvh,184px))!important;
+    min-height:72px!important;
+    padding:5px!important;
+    gap:4px!important;
+    background:#f9fbfe!important;
+  }
+  .mobile-nav button{
+    min-height:0!important;
+    border-radius:9px!important;
+    padding:4px 2px!important;
+    font-size:clamp(8px,1.7dvh,10px)!important;
+    font-weight:1000!important;
+  }
+  .mobile-nav button b{
+    font-size:clamp(19px,4.8dvh,24px)!important;
+    line-height:1!important;
+  }
+  .mobile-nav button.active{
+    background:#e7f1ff!important;
+    color:#155dc0!important;
+    box-shadow:inset 0 0 0 1px #c7dcf7!important;
+  }
+
+  /* Board itself keeps the full 56 spaces, but the center and edge contrast are improved. */
+  #board{
+    filter:saturate(1.08) contrast(1.04)!important;
+  }
+  .board-panel{
+    background:#e7f0f8!important;
+  }
+
+  /* Market tab: larger text, less wasted space. */
+  #marketPanel,#eventsPanel{
+    padding:7px!important;
+  }
+  #marketPanel h2,#eventsPanel h2{
+    font-size:clamp(16px,3.5dvh,20px)!important;
+    margin-bottom:6px!important;
+  }
+  #market .stock{
+    padding:6px 7px!important;
+    border-radius:10px!important;
+  }
+  #market .sname{font-size:clamp(12px,2.55dvh,15px)!important}
+  #market .scode{font-size:clamp(8px,1.7dvh,10px)!important}
+  #market .sprice{font-size:clamp(14px,3dvh,18px)!important}
+  #market .stock-day{font-size:clamp(10px,2.1dvh,12px)!important}
+  #market .sbottom input,
+  #market .sbottom button{
+    height:34px!important;
+    min-height:34px!important;
+    font-size:10px!important;
+  }
+
+  /* Modal text is never microscopic on phone. */
+  .modal-card{
+    font-size:clamp(11px,2.2dvh,13px)!important;
+  }
+  .modal-card h2{
+    font-size:clamp(18px,4dvh,22px)!important;
+  }
+  .hub-card .hname,
+  .project-option .name{
+    font-size:clamp(12px,2.6dvh,15px)!important;
+  }
+  .hub-card .hdesc,
+  .project-option .desc,
+  .hub-rule{
+    font-size:clamp(9px,1.9dvh,11px)!important;
+    line-height:1.32!important;
+  }
+}
+
+/* Shorter iPhone landscape screens: preserve the same hierarchy instead of shrinking text too much. */
+@media(max-height:400px) and (orientation:landscape){
+  :root{--phone-side-w:194px}
+  .mobile-turn-bar{
+    height:122px!important;
+    grid-template-rows:38px 38px 38px!important;
+  }
+  .controls{
+    top:calc(env(safe-area-inset-top) + 122px)!important;
+    height:150px!important;
+  }
+  .mobile-nav{
+    height:calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 272px)!important;
+    min-height:64px!important;
+  }
+  .mobile-turn-bar b{font-size:12px!important}
+  .mobile-turn-bar .mt-round b{font-size:16px!important}
+  .control-row>button{font-size:9.5px!important}
+}
+
 </style>
 </head>
 <body>
@@ -5593,7 +5801,7 @@ button:not(:disabled):active{transform:scale(.96)}
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.0 WEB｜都會核心擴充版｜56格大地圖</div><div class="sub">公平 P2P 同步｜高價強制徵收・城市公庫回饋・股票股息・所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.1 WEB｜手機介面優化版｜56格大地圖</div><div class="sub">公平 P2P 同步｜高價強制徵收・城市公庫回饋・股票股息・所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -5604,10 +5812,11 @@ button:not(:disabled):active{transform:scale(.96)}
     </div>
   </div>
   <div id="mobileTurnBar" class="mobile-turn-bar">
-      <div class="mt-main"><span class="mt-label">目前回合</span><b id="mobileTurnName">—</b><small id="mobileLeader">👑 第一：—</small></div>
-      <div><span class="mt-label">ROUND</span><b id="mobileRound">1 / 30</b><small id="mobileRoundsLeft">剩 30 回合</small></div>
-      <div><span class="mt-label">你的現金</span><b id="mobileCash">$0</b></div>
-      <div class="mt-tile"><span class="mt-label">目前位置</span><b id="mobileTileName">—</b><small id="mobileTileDetail">—</small></div>
+      <div class="mt-card mt-turn"><span class="mt-label">目前玩家</span><b id="mobileTurnName">—</b></div>
+      <div class="mt-card mt-round"><span class="mt-label">遊戲進度</span><b id="mobileRound">1 / 30</b><strong id="mobileRoundsLeft">剩 30 回合</strong></div>
+      <div class="mt-card mt-leader"><span class="mt-label">目前第一</span><b id="mobileLeader">👑 —</b></div>
+      <div class="mt-card mt-cash"><span class="mt-label">我的現金</span><b id="mobileCash">$0</b></div>
+      <div class="mt-card mt-tile"><span class="mt-label">目前位置</span><b id="mobileTileName">—</b><small id="mobileTileDetail">—</small></div>
     </div>
     <div id="players" class="players"></div>
   <div class="panel controls">
@@ -10526,11 +10735,11 @@ function drawTile(t,x,y,index){
     const label=compactTileName(t.name);
 
     ctx.fillStyle=fg;
-    ctx.font='1000 27px "Microsoft JhengHei","Noto Sans TC",sans-serif';
+    ctx.font='1000 30px "Microsoft JhengHei","Noto Sans TC",sans-serif';
     ctx.fillText(label,x,y-8,w-6);
 
     if(t.price){
-      ctx.font='1000 21px "Microsoft JhengHei","Noto Sans TC",sans-serif';
+      ctx.font='1000 23px "Microsoft JhengHei","Noto Sans TC",sans-serif';
       ctx.fillStyle=t.owner!=null?COLORS[t.owner]:"#40556c";
       const info=t.owner==null?`$${t.price.toLocaleString()}`:`$${rentFor(t).toLocaleString()}`;
       ctx.fillText(info,x,y+15,w-8)
@@ -10727,7 +10936,7 @@ function updateMobileTurnBar(){
   if($("mobileRound"))$("mobileRound").textContent=`${state.round||1} / ${GAME_MAX_ROUNDS}`;
   if($("mobileRoundsLeft"))$("mobileRoundsLeft").textContent=`剩 ${roundsLeft} 回合`;
   const ranked=state.players.filter(Boolean).filter(p=>!p.bankrupt).sort((a,b)=>playerTotalWealth(b)-playerTotalWealth(a));
-  if($("mobileLeader"))$("mobileLeader").textContent=`👑 第一：${ranked[0]?.name||"—"}`;
+  if($("mobileLeader"))$("mobileLeader").textContent=`👑 ${ranked[0]?.name||"—"}`;
   if($("mobileCash"))$("mobileCash").textContent=`$${(me?.cash||0).toLocaleString()}`;
   if($("mobileTileName"))$("mobileTileName").textContent=tile?.name||"—";
   if($("mobileTileDetail")){
