@@ -25,6 +25,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Validate inline JavaScript
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html = Path("index.html").read_text(encoding="utf-8")
+          scripts = re.findall(r"<script(?:\s[^>]*)?>(.*?)</script>", html, re.S | re.I)
+          inline = [s for s in scripts if s.strip()]
+          if not inline:
+              raise SystemExit("No inline script found")
+          Path("/tmp/wealth_empire_inline.js").write_text("\n".join(inline), encoding="utf-8")
+          print(f"Validated extraction: {len(inline)} inline script block(s)")
+          PY
+          node --check /tmp/wealth_empire_inline.js
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
