@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>財富帝國 V19.1 WEB｜手機介面優化版</title>
+<title>財富帝國 V19.1.1 WEB｜第一批正式 ICON</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.1 WEB - 56格多人網頁大富翁遊戲">
+<meta name="description" content="財富帝國 V19.1.1 WEB - 56格多人網頁大富翁遊戲">
 <link rel="manifest" href="./manifest.webmanifest">
 
 <style>
@@ -5758,6 +5758,50 @@ button:not(:disabled):active{transform:scale(.96)}
   .control-row>button{font-size:9.5px!important}
 }
 
+
+/* ===== V19.1.1 first production icon integration ===== */
+.icon-label,.section-icon-title,.game-title-with-icon{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+.icon-label img{width:25px;height:25px;object-fit:contain;filter:drop-shadow(0 2px 2px rgba(18,43,75,.16))}
+.section-icon-title{justify-content:flex-start}
+.section-icon-title img{width:28px;height:28px;object-fit:contain}
+.chip-icon{width:18px;height:18px;object-fit:contain;vertical-align:-4px;margin-right:4px}
+.nav-art-icon{
+  width:27px;height:27px;object-fit:contain;display:block;margin:0 auto 2px;
+  filter:drop-shadow(0 3px 4px rgba(20,48,83,.18));
+}
+.leader-crown{
+  display:flex!important;align-items:center!important;gap:4px!important;
+  padding:3px 8px 3px 4px!important;
+}
+.leader-crown img{
+  width:28px;height:28px;object-fit:contain;
+  filter:drop-shadow(0 3px 4px rgba(118,78,0,.25));
+}
+.hub-card .hicon img{
+  width:54px;height:54px;object-fit:contain;
+  filter:drop-shadow(0 5px 8px rgba(23,53,91,.16));
+}
+.game-title-with-icon img{width:36px;height:36px;object-fit:contain}
+.mt-leader{position:relative!important;padding-right:42px!important}
+.mt-leader::after{
+  content:"";position:absolute;right:6px;top:50%;transform:translateY(-50%);
+  width:34px;height:34px;background:url("assets/first10/status_leader_crown.png") center/contain no-repeat;
+  filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));
+}
+@media(max-width:980px) and (orientation:landscape){
+  .icon-label{gap:5px}
+  .icon-label img{width:23px;height:23px}
+  .nav-art-icon{width:25px;height:25px}
+  .leader-crown img{width:25px;height:25px}
+  .hub-card .hicon img{width:44px;height:44px}
+  .game-title-with-icon img{width:30px;height:30px}
+}
+
 </style>
 </head>
 <body>
@@ -5801,7 +5845,7 @@ button:not(:disabled):active{transform:scale(.96)}
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.1 WEB｜手機介面優化版｜56格大地圖</div><div class="sub">公平 P2P 同步｜高價強制徵收・城市公庫回饋・股票股息・所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.1.1 WEB｜第一批正式 ICON｜56格大地圖</div><div class="sub">公平 P2P 同步｜高價強制徵收・城市公庫回饋・股票股息・所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -5825,10 +5869,10 @@ button:not(:disabled):active{transform:scale(.96)}
         <div id="die1" class="die">⚀</div><div id="die2" class="die">⚀</div>
         <div><div id="diceStatus" class="dlabel">等待遊戲開始</div><div id="diceTotal" class="dtotal">2</div></div>
       </div>
-      <button id="rollBtn" class="primary" onclick="sendAction('roll')">🎲 擲骰子</button>
-      <button class="warn" onclick="openProperties()">🏘 我的房產</button>
-      <button id="upgradeBtn" class="warn" onclick="openUpgradeCenter()">🏗 升級地產</button>
-      <button id="tradeBtn" class="success" onclick="openTradeCenter()">🤝 玩家交易</button>
+      <button id="rollBtn" class="primary" onclick="sendAction('roll')"><span class="icon-label"><img src="assets/first10/action_roll_dice.png" alt="">擲骰子</span></button>
+      <button class="warn" onclick="openProperties()"><span class="icon-label"><img src="assets/first10/action_property.png" alt="">我的房產</span></button>
+      <button id="upgradeBtn" class="warn" onclick="openUpgradeCenter()"><span class="icon-label"><img src="assets/first10/action_upgrade.png" alt="">升級地產</span></button>
+      <button id="tradeBtn" class="success" onclick="openTradeCenter()"><span class="icon-label"><img src="assets/first10/action_trade.png" alt="">玩家交易</span></button>
       <button id="turnLabel" class="ghost" disabled>等待目前玩家</button>
     </div>
   </div>
@@ -5848,12 +5892,12 @@ button:not(:disabled):active{transform:scale(.96)}
         <span><i class="dot" style="background:#e44747"></i>玩家2</span>
         <span><i class="dot" style="background:#18a26e"></i>玩家3</span>
         <span><i class="dot" style="background:#8b5cf6"></i>玩家4</span>
-        <span>粗框＝所有權｜LV.1 / LV.2＝地產升級</span><span class="board-size-chip">🗺 56 格大地圖</span>
+        <span>粗框＝所有權｜LV.1 / LV.2＝地產升級</span><span class="board-size-chip"><img class="chip-icon" src="assets/first10/nav_map.png" alt="">56 格大地圖</span>
       </div>
       <div class="board-map-note">外圈維持 56 格；新增小遊戲仍只從「機會／命運」隨機觸發。中央改為可點擊的都會核心：委託、銀行、租金保險、捷運分支路線與市政標案。</div>
     </div>
     <div class="side">
-      <div id="marketPanel" class="panel market"><h2>📈 股票市場</h2><div id="market"></div></div>
+      <div id="marketPanel" class="panel market"><h2><span class="section-icon-title"><img src="assets/first10/nav_stock.png" alt="">股票市場</span></h2><div id="market"></div></div>
       <div id="eventsPanel" class="panel events"><h2>📜 即時事件</h2><div id="events" class="event-list"></div></div>
     </div>
   </div>
@@ -5865,8 +5909,8 @@ button:not(:disabled):active{transform:scale(.96)}
 </div>
 
 <nav id="mobileNav" class="mobile-nav">
-  <button data-mobile-view="board" class="active" onclick="mobileSetView('board')"><b>🗺️</b><span>地圖</span></button>
-  <button data-mobile-view="market" onclick="mobileSetView('market')"><b>📈</b><span>股票</span></button>
+  <button data-mobile-view="board" class="active" onclick="mobileSetView('board')"><img class="nav-art-icon" src="assets/first10/nav_map.png" alt=""><span>地圖</span></button>
+  <button data-mobile-view="market" onclick="mobileSetView('market')"><img class="nav-art-icon" src="assets/first10/nav_stock.png" alt=""><span>股票</span></button>
   <button onclick="openMobileActions()"><b>⚡</b><span>操作</span></button>
   <button data-mobile-view="events" onclick="mobileSetView('events')"><b>📜</b><span>事件</span></button>
   <button onclick="openMobileHubMenu()"><b>🏙️</b><span>都會</span></button>
@@ -8754,7 +8798,7 @@ function renderPlayers(){
     const isLeader=state.status==="playing"&&!p.bankrupt&&i===leaderSeat;
 
     return `<div class="player ${i===state.current?"current":""} ${isLeader?"leader":""}" style="border-left-color:${COLORS[i]}">
-      ${isLeader?'<div class="leader-crown">👑 <span>目前第 1 名</span></div>':rank? `<div class="rank-chip rank-${rank}">#${rank}</div>`:""}
+      ${isLeader?'<div class="leader-crown"><img src="assets/first10/status_leader_crown.png" alt=""><span>目前第 1 名</span></div>':rank? `<div class="rank-chip rank-${rank}">#${rank}</div>`:""}
       <div class="player-shell">
         <div class="player-avatar" style="background:${seatGradient(i)}">${PLAYER_FACES[i]}</div>
         <div class="player-meta">
@@ -9063,7 +9107,7 @@ function openPublicInvestmentCenter(){
   const cards=Object.entries(PUBLIC_PROJECTS).map(([key,d])=>{
     const pr=state.publicInvestments[key],lv=publicProjectLevel(key),mine=publicContribution(mySeat,key);
     return `<div class="hub-card public-hub-card">
-      <div class="hicon">${d.emoji}</div><div class="hname">${d.name}｜Lv.${lv}</div>
+      <div class="hicon">${key==="tower"?'<img src="assets/first10/public_tech_tower.png" alt="">':d.emoji}</div><div class="hname">${d.name}｜Lv.${lv}</div>
       <div class="hdesc">${d.desc}</div>
       <div class="hvalue">全城 ${Number(pr.total||0).toLocaleString()}｜你 ${mine.toLocaleString()}</div>
       <button class="primary" onclick="closeModal();openPublicInvestment('${key}')">查看 / 投資</button>
@@ -9113,7 +9157,7 @@ function openBankHub(){
     const d=me.bankDeposit;
     showModal("🏦 都會銀行",
       `<div class="hub-rule">你的定存正在計息，不能提前解約。</div>
-       <div class="hub-card active"><div class="hicon">🏦</div><div class="hname">2 ROUND 定存</div>
+       <div class="hub-card active"><div class="hicon"><img src="assets/first10/hub_city_bank.png" alt=""></div><div class="hname">2 ROUND 定存</div>
        <div class="hdesc">本金 $${d.principal.toLocaleString()}｜到期 ROUND ${d.dueRound}</div>
        <div class="hvalue">到期領回 $${d.payout.toLocaleString()}</div></div>`,
       [["關閉","ghost",closeModal]]
@@ -9426,7 +9470,10 @@ function renderGroupGame(){
   if(!g){overlay.classList.remove("open");return}
   overlay.classList.add("open");
   const trigger=state.players[g.triggerSeat],titles={race:"🏇 全民賽馬大賽",wheel:"🎰 全民幸運轉盤",dice:"🎲 全民骰王",treasure:"🎁 寶箱爭奪",hilow:"🎲 高低骰對決",noodle:"🍜 全民吃麵大賽",rps:"✊ 猜拳擂台",number:"🔢 幸運數字",cup:"🏆 魔術金杯",coinrush:"🪙 金幣雨",reaction:"🟢 綠燈反應王",bomb:"💣 數字炸彈",card:"🃏 神秘翻牌",lane:"🚦 幸運車道"};
-  $("groupGameTitle").textContent=titles[g.type]||"全民競技";
+  const groupTitle=titles[g.type]||"全民競技";
+  $("groupGameTitle").innerHTML=g.type==="wheel"
+    ?`<span class="game-title-with-icon"><img src="assets/first10/game_30_wheel.png" alt="">${groupTitle.replace(/^🎰\s*/,"")}</span>`
+    :groupTitle;
   $("groupGameTrigger").textContent=`${trigger?.name||"玩家"} 踩到「${state.tiles[g.tileId]?.name||"競技格"}」── 全房一起玩！`;
 
 
@@ -10918,10 +10965,10 @@ function openMobileActions(){
   showModal("⚡ 手機快速操作",
     `<div class="hub-rule">常用功能集中在這裡，避免手機上一直拉回頂部。</div>
      <div class="hub-grid">
-       <div class="hub-card"><div class="hicon">🎲</div><div class="hname">擲骰子</div><div class="hdesc">目前回合直接擲骰。</div><button class="primary" ${(!myTurn||state.rolled||state.pending||state.groupGame)?"disabled":""} onclick="closeModal();sendAction('roll')">擲骰</button></div>
-       <div class="hub-card"><div class="hicon">🏘️</div><div class="hname">我的房產</div><div class="hdesc">查看地產、等級與過路費。</div><button class="warn" onclick="closeModal();openProperties()">查看</button></div>
-       <div class="hub-card"><div class="hicon">🏗️</div><div class="hname">升級地產</div><div class="hdesc">最高升到 Lv.2，提高過路費。</div><button class="warn" onclick="closeModal();openUpgradeCenter()">升級</button></div>
-       <div class="hub-card"><div class="hicon">🤝</div><div class="hname">玩家交易</div><div class="hdesc">交換地產並可附加現金。</div><button class="success" onclick="closeModal();openTradeCenter()">交易</button></div>
+       <div class="hub-card"><div class="hicon"><img src="assets/first10/action_roll_dice.png" alt=""></div><div class="hname">擲骰子</div><div class="hdesc">目前回合直接擲骰。</div><button class="primary" ${(!myTurn||state.rolled||state.pending||state.groupGame)?"disabled":""} onclick="closeModal();sendAction('roll')">擲骰</button></div>
+       <div class="hub-card"><div class="hicon"><img src="assets/first10/action_property.png" alt=""></div><div class="hname">我的房產</div><div class="hdesc">查看地產、等級與過路費。</div><button class="warn" onclick="closeModal();openProperties()">查看</button></div>
+       <div class="hub-card"><div class="hicon"><img src="assets/first10/action_upgrade.png" alt=""></div><div class="hname">升級地產</div><div class="hdesc">最高升到 Lv.2，提高過路費。</div><button class="warn" onclick="closeModal();openUpgradeCenter()">升級</button></div>
+       <div class="hub-card"><div class="hicon"><img src="assets/first10/action_trade.png" alt=""></div><div class="hname">玩家交易</div><div class="hdesc">交換地產並可附加現金。</div><button class="success" onclick="closeModal();openTradeCenter()">交易</button></div>
      </div>`,
     [["關閉","ghost",closeModal]]
   )
@@ -10936,7 +10983,7 @@ function updateMobileTurnBar(){
   if($("mobileRound"))$("mobileRound").textContent=`${state.round||1} / ${GAME_MAX_ROUNDS}`;
   if($("mobileRoundsLeft"))$("mobileRoundsLeft").textContent=`剩 ${roundsLeft} 回合`;
   const ranked=state.players.filter(Boolean).filter(p=>!p.bankrupt).sort((a,b)=>playerTotalWealth(b)-playerTotalWealth(a));
-  if($("mobileLeader"))$("mobileLeader").textContent=`👑 ${ranked[0]?.name||"—"}`;
+  if($("mobileLeader"))$("mobileLeader").textContent=ranked[0]?.name||"—";
   if($("mobileCash"))$("mobileCash").textContent=`$${(me?.cash||0).toLocaleString()}`;
   if($("mobileTileName"))$("mobileTileName").textContent=tile?.name||"—";
   if($("mobileTileDetail")){
@@ -11036,7 +11083,7 @@ function openMobileHubMenu(){
     `<div class="hub-rule">手機版快捷入口。這五個中央設施跟地圖中間的建築完全相同。</div>
      <div class="hub-grid">
        <div class="hub-card"><div class="hicon">🎯</div><div class="hname">城市委託</div><div class="hdesc">接任務、完成目標後領獎金。</div><button class="primary" onclick="closeModal();openHubFacility('mission')">開啟</button></div>
-       <div class="hub-card"><div class="hicon">🏦</div><div class="hname">都會銀行</div><div class="hdesc">2 ROUND 定存，管理閒置現金。</div><button class="success" onclick="closeModal();openHubFacility('bank')">開啟</button></div>
+       <div class="hub-card"><div class="hicon"><img src="assets/first10/hub_city_bank.png" alt=""></div><div class="hname">都會銀行</div><div class="hdesc">2 ROUND 定存，管理閒置現金。</div><button class="success" onclick="closeModal();openHubFacility('bank')">開啟</button></div>
        <div class="hub-card"><div class="hicon">🛡️</div><div class="hname">租金保險</div><div class="hdesc">降低下一次踩別人地產的現金壓力。</div><button class="primary" onclick="closeModal();openHubFacility('insurance')">開啟</button></div>
        <div class="hub-card"><div class="hicon">🚇</div><div class="hname">捷運樞紐</div><div class="hdesc">不用擲骰，改走短／中／長快線。</div><button class="warn" onclick="closeModal();openHubFacility('metro')">開啟</button></div>
        <div class="hub-card"><div class="hicon">🏛️</div><div class="hname">市政標案</div><div class="hdesc">承接有風險的城市投資案。</div><button class="warn" onclick="closeModal();openHubFacility('project')">開啟</button></div><div class="hub-card"><div class="hicon">🏙️</div><div class="hname">公共建設</div><div class="hdesc">投資夜市、科技塔、碼頭與綠能公園，累積持分並領分紅。</div><button class="primary" onclick="closeModal();openPublicInvestmentCenter()">查看</button></div>
