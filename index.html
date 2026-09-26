@@ -6420,7 +6420,7 @@ BIO:{name:"新紀生技",price:82,vol:.120,drift:.004},
 FOOD:{name:"豐盛食品",price:54,vol:.045,drift:.001},
 RETL:{name:"都會零售",price:72,vol:.075,drift:.002}
 };
-let peer=null,isHost=false,roomCode="",mySeat=null,state=null,hostConn=null,joinTimeoutTimer=null,clientJoinName="",clientReconnectToken="",clientReconnectTimer=null,clientReconnectAttempts=0,heartbeatTimer=null; const seatReconnectTokens=new Map();
+let peer=null,isHost=false,roomCode="",mySeat=null,state=null,hostConn=null,joinTimeoutTimer=null;
 let hoverCenterSpot=null, cityPulse=0, visualLoopStarted=false;
 let conns=new Map(),pendingJoinNames=new Map(),lastEventId=0,seq=0,rolling=false;
 let fxQueue=[],fxRunning=false,victoryShownEvent=0,groupGameTimer=null,groupUiTimer=null,auctionTimer=null,auctionUiTimer=null,noodleAiTimer=null,coinRushAiTimer=null,reactionAiTimer=null;
@@ -6491,22 +6491,6 @@ function sendCriticalState(){
   broadcast();
   setTimeout(()=>{if(isHost&&state)broadcast()},300);
   setTimeout(()=>{if(isHost&&state)broadcast()},950);
-}
-function startHostHeartbeat(){
-  clearInterval(heartbeatTimer);
-  heartbeatTimer=setInterval(()=>{
-    if(!isHost||!state)return;
-    const now=Date.now();
-    for(const [seat,c] of conns.entries()){
-      if(!c?.open)continue;
-      try{c.send({type:"ping",eventId:state.eventId,status:state.status,ts:now})}catch{}
-      const p=state.players?.[seat];
-      if(p&&c.__lastPong&&now-c.__lastPong>9000)p.connected=false;
-    }
-  },2000)
-}
-function requestFreshState(){
-  if(!isHost&&hostConn?.open)try{hostConn.send({type:"sync_request",eventId:state?.eventId??-1,status:state?.status||""})}catch{}
 }
 async function copyTextSafe(textValue){
   try{
@@ -6603,54 +6587,20 @@ function showIPhoneConnectionNotice(){
     :"✅ 好友房連線環境正常。";
   return true
 }
-function reconnectStorageKey(code){return "wealth_reconnect_"+String(code||"").toUpperCase()}
-function makeReconnectToken(){
-  try{return crypto.randomUUID()}catch{return "rt_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2)}
-}
-function readReconnectSession(code){
-  try{
-    const raw=localStorage.getItem(reconnectStorageKey(code));
-    if(!raw)return null;
-    const obj=JSON.parse(raw);
-    if(!obj?.token||!obj?.name)return null;
-    return obj
-  }catch{return null}
-}
-function saveReconnectSession(code,name,seat,token){
-  try{
-    const data={room:String(code||"").toUpperCase(),name,seat,token,updatedAt:Date.now()};
-    localStorage.setItem(reconnectStorageKey(code),JSON.stringify(data));
-    localStorage.setItem("wealth_last_room",data.room);
-    localStorage.setItem("wealth_player_name",name)
-  }catch{}
-}
-function getOrCreateReconnectToken(code,name){
-  const old=readReconnectSession(code);
-  if(old&&old.name===name&&old.token)return old.token;
-  const token=makeReconnectToken();
-  saveReconnectSession(code,name,null,token);
-  return token
-}
 function loadInviteRoomFromUrl(){
   try{
     const u=new URL(location.href);
-    const urlCode=normalizeRoomCode(u.searchParams.get("room")||"");
-    const lastCode=normalizeRoomCode(localStorage.getItem("wealth_last_room")||"");
-    const code=isValidRoomCode(urlCode)?urlCode:(isValidRoomCode(lastCode)?lastCode:"");
-    if(!code)return;
+    const code=normalizeRoomCode(u.searchParams.get("room")||"");
+    if(!isValidRoomCode(code))return;
 
-    const saved=readReconnectSession(code);
     const input=$("joinRoom");
     if(input)input.value=code;
-    if(saved?.name&&$("joinName"))$("joinName").value=saved.name;
 
     const notice=$("iosOnlineNotice");
     if(notice){
       notice.classList.remove("hidden","bad");
       notice.classList.add("good");
-      notice.innerHTML=saved
-        ? `🔄 偵測到上次房間：<b>${code}</b><br>按「加入房間」即可嘗試回到原本的座位。`
-        : `📩 好友邀請房號已帶入：<b>${code}</b><br>輸入暱稱後，按「加入房間」即可。`
+      notice.innerHTML=`📩 好友邀請房號已帶入：<b>${code}</b><br>輸入暱稱後，按「加入房間」即可。`
     }
     setTimeout(()=>$("joinName")?.focus(),180)
   }catch{}
@@ -6702,20 +6652,12 @@ function setLobbyConnectStatus(textValue,isError=false){
 
 function resetPeerTransport(){
   clearTimeout(joinTimeoutTimer);
-  clearInterval(heartbeatTimer);
   joinTimeoutTimer=null;
-  heartbeatTimer=null;
   try{hostConn?.close()}catch{}
   try{peer?.destroy()}catch{}
   hostConn=null;
   peer=null;
-  conns.clear();
-  seatReconnectTokens.clear();
-  clientJoinName="";
-  clientReconnectToken="";
-  clientReconnectAttempts=0;
-  clearTimeout(clientReconnectTimer);
-  clientReconnectTimer=null
+  conns.clear()
 }
 
 async function createInternetRoom(){
