@@ -10895,17 +10895,17 @@ function drawCity(){
     ctx.shadowColor="rgba(38,78,120,.12)";
     ctx.shadowBlur=10;
     ctx.fillStyle="rgba(255,255,255,.94)";
-    ctx.beginPath();ctx.arc(v.x+v.w/2,v.y+91,35,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(v.x+v.w/2,v.y+86,31,0,Math.PI*2);ctx.fill();
     ctx.restore();
     ctx.strokeStyle="rgba(46,79,112,.12)";
     ctx.lineWidth=2;
-    ctx.beginPath();ctx.arc(v.x+v.w/2,v.y+91,35,0,Math.PI*2);ctx.stroke();
+    ctx.beginPath();ctx.arc(v.x+v.w/2,v.y+86,31,0,Math.PI*2);ctx.stroke();
 
     ctx.fillStyle="rgba(255,255,255,.66)";
-    rr(v.x+20,v.y+116,v.w-40,22,11,true,false);
+    rr(v.x+20,v.y+119,v.w-40,21,10.5,true,false);
     ctx.fillStyle="#536d8a";
     ctx.font='900 11px "Microsoft JhengHei"';
-    ctx.fillText(v.sub,v.x+v.w/2,v.y+131,v.w-50);
+    ctx.fillText(v.sub,v.x+v.w/2,v.y+133,v.w-50);
   });
 
   // Four public investment points fill previously empty downtown space.
@@ -11765,10 +11765,10 @@ document.addEventListener("pointerdown",e=>{
   drawCity=function(){
     beforeV194City();
     const points=[
-      ["mission",420,361,66,V194_HUB_IMAGES.mission],
-      ["bank",1060,361,66,V194_BANK_IMAGE],
-      ["insurance",420,636,66,V194_HUB_IMAGES.insurance],
-      ["metro",1060,636,66,V194_HUB_IMAGES.metro],
+      ["mission",420,356,58,V194_HUB_IMAGES.mission],
+      ["bank",1060,356,58,V194_BANK_IMAGE],
+      ["insurance",420,631,58,V194_HUB_IMAGES.insurance],
+      ["metro",1060,631,58,V194_HUB_IMAGES.metro],
       ["policy",740,470,74,V194_HUB_IMAGES.policy]
     ];
     points.forEach(([key,x,y,s,im])=>{
