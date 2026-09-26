@@ -6635,8 +6635,8 @@ function loadInviteRoomFromUrl(){
   try{
     const u=new URL(location.href);
     const urlCode=normalizeRoomCode(u.searchParams.get("room")||"");
-    const lastCode=(localStorage.getItem("wealth_last_room")||"").trim().toUpperCase();
-    const code=urlCode||lastCode;
+    const lastCode=normalizeRoomCode(localStorage.getItem("wealth_last_room")||"");
+    const code=isValidRoomCode(urlCode)?urlCode:(isValidRoomCode(lastCode)?lastCode:"");
     if(!code)return;
 
     const saved=readReconnectSession(code);
