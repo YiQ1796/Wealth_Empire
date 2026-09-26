@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.6.2 WEB｜好友房連線核心回退・快取修正</title>
+<title>財富帝國 V19.6.3 WEB｜房號防呆修正</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -6010,7 +6010,7 @@ button,.bonus-choice,.hilow-pick,.treasure-choice,.reaction-button{touch-action:
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.6.2</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.6.3</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6024,7 +6024,7 @@ button,.bonus-choice,.hilow-pick,.treasure-choice,.reaction-button{touch-action:
       <div class="box">
         <h3>🚪 加入好友房</h3>
         <input id="joinName" maxlength="12" placeholder="你的暱稱">
-        <input id="joinRoom" maxlength="20" placeholder="輸入房號" style="text-transform:uppercase">
+        <input id="joinRoom" maxlength="13" placeholder="輸入房號，例如 WEALTH-ABC123" style="text-transform:uppercase" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" inputmode="text">
         <button id="joinRoomBtn" class="success" style="width:100%" onclick="joinInternetRoom()">加入房間</button>
       </div>
     </div>
@@ -6513,7 +6513,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="1962";
+const APP_BUILD_ID="1963";
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -6621,7 +6621,7 @@ function getOrCreateReconnectToken(code,name){
 function loadInviteRoomFromUrl(){
   try{
     const u=new URL(location.href);
-    const urlCode=(u.searchParams.get("room")||"").trim().toUpperCase();
+    const urlCode=normalizeRoomCode(u.searchParams.get("room")||"");
     const lastCode=(localStorage.getItem("wealth_last_room")||"").trim().toUpperCase();
     const code=urlCode||lastCode;
     if(!code)return;
@@ -6832,11 +6832,27 @@ function handleIncomingConnection(conn){
     broadcast();
   });
 }
+function normalizeRoomCode(rawValue){
+  return String(rawValue||"")
+    .trim()
+    .toUpperCase()
+    .replace(/[\s　]+/g,"")
+}
+function isValidRoomCode(code){
+  return /^WEALTH-[A-HJ-NP-Z2-9]{6}$/.test(code)
+}
 async function joinInternetRoom(){
   showIPhoneConnectionNotice();
-  const code=$("joinRoom").value.trim().toUpperCase(),name=$("joinName").value.trim()||"玩家";
+  const input=$("joinRoom");
+  const code=normalizeRoomCode(input?.value),name=$("joinName").value.trim()||"玩家";
+  if(input)input.value=code;
   try{localStorage.setItem("wealth_player_name",name)}catch{}
   if(!code){toast("請輸入房號");return}
+  if(!isValidRoomCode(code)){
+    setLobbyConnectStatus("❌ 房號格式錯誤。正確格式應為 WEALTH- 加 6 碼，例如 WEALTH-WGF749。",true);
+    toast("房號格式錯誤");
+    return
+  }
 
   const btn=$("joinRoomBtn");
   if(btn){btn.disabled=true;btn.textContent="連線元件載入中…"}
