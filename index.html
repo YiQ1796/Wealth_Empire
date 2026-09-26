@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.6.5 WEB｜房主/加入端切換競態修正</title>
+<title>財富帝國 V19.6.6 WEB｜6位數好友房號</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -6010,7 +6010,7 @@ button,.bonus-choice,.hilow-pick,.treasure-choice,.reaction-button{touch-action:
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.6.5</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.6.6</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6024,7 +6024,7 @@ button,.bonus-choice,.hilow-pick,.treasure-choice,.reaction-button{touch-action:
       <div class="box">
         <h3>🚪 加入好友房</h3>
         <input id="joinName" maxlength="12" placeholder="你的暱稱">
-        <input id="joinRoom" maxlength="13" placeholder="輸入房號，例如 WEALTH-ABC123" style="text-transform:uppercase" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" inputmode="text">
+        <input id="joinRoom" maxlength="6" placeholder="輸入 6 位數房號" autocomplete="off" autocorrect="off" spellcheck="false" inputmode="numeric" pattern="[0-9]*">
         <button id="joinRoomBtn" class="success" style="width:100%" onclick="joinInternetRoom()">加入房間</button>
       </div>
     </div>
@@ -6426,7 +6426,20 @@ let conns=new Map(),pendingJoinNames=new Map(),lastEventId=0,seq=0,rolling=false
 let fxQueue=[],fxRunning=false,victoryShownEvent=0,groupGameTimer=null,groupUiTimer=null,auctionTimer=null,auctionUiTimer=null,noodleAiTimer=null,coinRushAiTimer=null,reactionAiTimer=null;
 
 function toast(msg){const e=$("toast");e.textContent=msg;e.style.display="block";clearTimeout(e._t);e._t=setTimeout(()=>e.style.display="none",2800)}
-function randCode(){const a="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";return "WEALTH-"+Array.from({length:6},()=>a[Math.floor(Math.random()*a.length)]).join("")}
+function randCode(){
+  // Player-facing room code: always six digits, no prefix to type.
+  try{
+    const value=new Uint32Array(1);
+    crypto.getRandomValues(value);
+    return String(100000+(value[0]%900000))
+  }catch{
+    return String(100000+Math.floor(Math.random()*900000))
+  }
+}
+function peerRoomId(code){
+  // Internal namespace stays hidden from players and reduces collisions on the public PeerJS service.
+  return "wealth-empire-"+String(code||"").trim()
+}
 function player(name,seat,ai=false){
   return {
     seat,name,ai,ready:ai,connected:true,cash:45000,pos:0,properties:[],
@@ -6513,7 +6526,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="1965";
+const APP_BUILD_ID="1966";
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -6746,7 +6759,7 @@ function openHostPeer(){
     return
   }
 
-  const hostPeer=peer=new Peer(roomCode,peerOptions());
+  const hostPeer=peer=new Peer(peerRoomId(roomCode),peerOptions());
 
   const hostTimeout=setTimeout(()=>{
     if(!isHost||peer!==hostPeer)return;
@@ -6883,11 +6896,11 @@ function handleIncomingConnection(conn){
 function normalizeRoomCode(rawValue){
   return String(rawValue||"")
     .trim()
-    .toUpperCase()
-    .replace(/[\s　]+/g,"")
+    .replace(/[^0-9]/g,"")
+    .slice(0,6)
 }
 function isValidRoomCode(code){
-  return /^WEALTH-[A-HJ-NP-Z2-9]{6}$/.test(code)
+  return /^[0-9]{6}$/.test(code)
 }
 async function joinInternetRoom(){
   // Switch role before closing old connections so stale host/guest callbacks become harmless.
@@ -6902,7 +6915,7 @@ async function joinInternetRoom(){
   try{localStorage.setItem("wealth_player_name",name)}catch{}
   if(!code){toast("請輸入房號");return}
   if(!isValidRoomCode(code)){
-    setLobbyConnectStatus("❌ 房號格式錯誤。正確格式應為 WEALTH- 加 6 碼，例如 WEALTH-WGF749。",true);
+    setLobbyConnectStatus("❌ 房號格式錯誤。請輸入 6 位數字，例如 483271。",true);
     toast("房號格式錯誤");
     return
   }
@@ -6950,7 +6963,7 @@ function startClientPeer(name,reconnecting=false){
 
   clientPeer.on("open",()=>{
     if(isHost||peer!==clientPeer)return;
-    const conn=clientPeer.connect(roomCode,{reliable:true});
+    const conn=clientPeer.connect(peerRoomId(roomCode),{reliable:true});
     hostConn=conn;
     wireHostConn(conn,name)
   });
