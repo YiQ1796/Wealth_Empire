@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.6.4 WEB｜房主連線恢復修正</title>
+<title>財富帝國 V19.6.5 WEB｜房主/加入端切換競態修正</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -6010,7 +6010,7 @@ button,.bonus-choice,.hilow-pick,.treasure-choice,.reaction-button{touch-action:
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.6.4</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.6.5</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6513,7 +6513,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="1964";
+const APP_BUILD_ID="1965";
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -6687,7 +6687,19 @@ function setLobbyConnectStatus(textValue,isError=false){
   }
 }
 
+function cancelClientReconnectFlow(){
+  clearTimeout(clientReconnectTimer);
+  clearTimeout(joinTimeoutTimer);
+  clientReconnectTimer=null;
+  joinTimeoutTimer=null;
+  clientReconnectAttempts=0;
+  clientJoinName="";
+  try{hostConn?.close()}catch{}
+  hostConn=null
+}
 async function createInternetRoom(){
+  // Switching from guest/reconnect mode to host must cancel every pending guest timer first.
+  cancelClientReconnectFlow();
   showIPhoneConnectionNotice();
   const name=$("hostName").value.trim()||"玩家1";
   try{localStorage.setItem("wealth_player_name",name)}catch{}
@@ -6869,6 +6881,10 @@ function isValidRoomCode(code){
   return /^WEALTH-[A-HJ-NP-Z2-9]{6}$/.test(code)
 }
 async function joinInternetRoom(){
+  // Switching to guest mode must stop host-only heartbeat and discard any prior guest retry timers.
+  clearInterval(heartbeatTimer);
+  heartbeatTimer=null;
+  cancelClientReconnectFlow();
   showIPhoneConnectionNotice();
   const input=$("joinRoom");
   const code=normalizeRoomCode(input?.value),name=$("joinName").value.trim()||"玩家";
@@ -6903,6 +6919,8 @@ async function joinInternetRoom(){
   startClientPeer(name,false)
 }
 function startClientPeer(name,reconnecting=false){
+  // A delayed guest retry must never be allowed to destroy a host Peer.
+  if(isHost)return;
   clearTimeout(clientReconnectTimer);
   try{hostConn?.close()}catch{}
   try{peer?.destroy()}catch{}
@@ -6943,7 +6961,11 @@ function scheduleClientReconnect(name=clientJoinName){
   clearTimeout(clientReconnectTimer);
   clientReconnectAttempts++;
   const wait=Math.min(5000,900+clientReconnectAttempts*500);
-  clientReconnectTimer=setTimeout(()=>startClientPeer(name,true),wait)
+  clientReconnectTimer=setTimeout(()=>{
+    // Re-check role at execution time. The user may have become host after this timer was scheduled.
+    if(isHost)return;
+    startClientPeer(name,true)
+  },wait)
 }
 function wireHostConn(conn,name){
   let joinSent=false;
