@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.6.3 WEB｜房號防呆修正</title>
+<title>財富帝國 V19.6.4 WEB｜房主連線恢復修正</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -6010,7 +6010,7 @@ button,.bonus-choice,.hilow-pick,.treasure-choice,.reaction-button{touch-action:
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.6.3</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.6.4</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6513,7 +6513,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="1963";
+const APP_BUILD_ID="1964";
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -6715,6 +6715,18 @@ async function createInternetRoom(){
   $("connectionText").textContent="正在向好友房 signaling 服務註冊房號…";
   openHostPeer()
 }
+function recoverHostSignalingIfNeeded(reason=""){
+  if(!isHost||!peer||peer.destroyed||!peer.disconnected)return false;
+  try{
+    setLobbyConnectStatus("🔄 房主連線暫時中斷，正在恢復房號…");
+    $("connectionText").textContent="🔄 正在重新連回好友房 signaling 服務…";
+    peer.reconnect();
+    return true
+  }catch(err){
+    console.warn("host signaling reconnect failed",reason,err);
+    return false
+  }
+}
 function openHostPeer(){
   try{peer?.destroy()}catch{}
   if(typeof Peer==="undefined"){
@@ -6737,6 +6749,12 @@ function openHostPeer(){
     render()
   });
   peer.on("connection",conn=>handleIncomingConnection(conn));
+  peer.on("disconnected",()=>{
+    // iPhone Safari 在分享面板、切換 App 或暫時背景化時可能中斷 signaling WebSocket。
+    // 只恢復 PeerServer signaling；不改 WebRTC / STUN / ICE / DataConnection。
+    setLobbyConnectStatus("🔄 房主連線暫時中斷，正在自動恢復房號…");
+    setTimeout(()=>recoverHostSignalingIfNeeded("peer-disconnected"),350)
+  });
   peer.on("error",err=>{
     if(err.type==="unavailable-id"){
       roomCode=randCode();$("roomCode").textContent=roomCode;$("topRoom").textContent=roomCode;openHostPeer();return;
@@ -6752,6 +6770,15 @@ function openHostPeer(){
     $("connectionText").textContent="❌ "+(map[err.type]||("連線失敗："+err.type));
   });
 }
+document.addEventListener("visibilitychange",()=>{
+  if(document.visibilityState==="visible"){
+    setTimeout(()=>recoverHostSignalingIfNeeded("visibility-resume"),250)
+  }
+});
+window.addEventListener("online",()=>{
+  setTimeout(()=>recoverHostSignalingIfNeeded("browser-online"),250)
+});
+
 function handleIncomingConnection(conn){
   conn.on("open",()=>{conn.send({type:"hello_required"});});
   conn.on("data",msg=>{
