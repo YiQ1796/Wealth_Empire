@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.6 WEB｜好友房連線穩定化</title>
+<title>財富帝國 V19.6.1 WEB｜好友房連線核心回退</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.6 WEB - 56格多人網頁大富翁遊戲">
+<meta name="description" content="財富帝國 V19.6.1 WEB - 56格多人網頁大富翁遊戲">
 <link rel="manifest" href="./manifest.webmanifest">
 
 <style>
@@ -6045,7 +6045,7 @@ button,.bonus-choice,.hilow-pick,.treasure-choice,.reaction-button{touch-action:
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.6 WEB｜好友房連線穩定化｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.6.1 WEB｜好友房連線核心回退｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -6549,67 +6549,7 @@ function showWaiting(){
   const b=$("shareInviteBtn");
   if(b)b.style.display=isHost?"inline-block":"none";
 }
-function peerOptions(){
-  return {
-    debug:1,
-    host:"0.peerjs.com",
-    port:443,
-    path:"/",
-    secure:true,
-    pingInterval:5000,
-    config:{
-      iceServers:[
-        {urls:"stun:stun.l.google.com:19302"},
-        {urls:"stun:stun1.l.google.com:19302"}
-      ],
-      iceCandidatePoolSize:8
-    }
-  }
-}
-function isLineInAppBrowser(){
-  return /\bLine\//i.test(navigator.userAgent)||/\bLIFF\b/i.test(navigator.userAgent)
-}
-function setConnectionDetail(textValue=""){
-  const el=$("connectionDetail");
-  if(el)el.textContent=textValue
-}
-function setConnectionText(textValue,detail=""){
-  const el=$("connectionText");
-  if(el)el.textContent=textValue;
-  setConnectionDetail(detail)
-}
-function peerConnectionState(conn){
-  const pc=conn?.peerConnection;
-  if(!pc)return "";
-  return pc.connectionState||pc.iceConnectionState||""
-}
-function attachPeerConnectionDiagnostics(conn,role){
-  if(!conn||conn.__wealthDiagnostics)return;
-  conn.__wealthDiagnostics=true;
-  const bind=()=>{
-    const pc=conn.peerConnection;
-    if(!pc||pc.__wealthBound)return;
-    pc.__wealthBound=true;
-    const sync=()=>{
-      const ice=pc.iceConnectionState||"";
-      const stateName=pc.connectionState||"";
-      conn.__wealthIceState=ice;
-      conn.__wealthConnectionState=stateName;
-      if(stateName==="failed"||ice==="failed"){
-        const detail=`ICE: ${ice||"—"}｜WebRTC: ${stateName||"—"}`;
-        setConnectionText(
-          role==="guest"?"⚠️ 好友資料通道建立失敗，準備重新連線…":"⚠️ 好友資料通道失敗，等待對方重新連線…",
-          detail
-        )
-      }
-    };
-    pc.addEventListener("iceconnectionstatechange",sync);
-    pc.addEventListener("connectionstatechange",sync);
-    sync()
-  };
-  bind();
-  setTimeout(bind,300)
-}
+function peerOptions(){return {debug:1,config:{iceServers:[{urls:"stun:stun.l.google.com:19302"},{urls:"stun:stun1.l.google.com:19302"}]}}}
 
 
 function isIOSDevice(){
@@ -6625,29 +6565,24 @@ function showIPhoneConnectionNotice(){
 
   const ios=isIOSDevice();
   const online=isOnlinePage();
-  const lineBrowser=isLineInAppBrowser();
 
   box.classList.remove("hidden","bad","good","warn");
 
+  // IMPORTANT: Do not disable buttons in local-file mode.
   const c=$("createRoomBtn"),j=$("joinRoomBtn");
   if(c)c.disabled=false;
   if(j)j.disabled=false;
 
   if(ios&&!online){
     box.classList.add("warn");
-    box.innerHTML="⚠️ 你目前不是從正式 HTTPS 網頁開啟。好友房請使用 GitHub Pages 正式網址。";
-    return true
-  }
-  if(lineBrowser){
-    box.classList.add("warn");
-    box.innerHTML="⚠️ 目前是在 LINE 內建瀏覽器。為了讓好友連線更穩定，請用 Safari 開啟同一個邀請網址後再加入。";
+    box.innerHTML="⚠️ 你目前不是從正式 HTTPS 網頁開啟。好友房測試請使用 GitHub Pages 發布網址。";
     return true
   }
 
   box.classList.add("good");
   box.innerHTML=ios
-    ?"✅ Safari / HTTPS 環境正常。建立房號後會等待好友真正完成資料連線。"
-    :"✅ 好友房網頁環境正常。";
+    ?"✅ iPhone 網頁環境正常。建立成功後可直接分享房號給朋友。"
+    :"✅ 好友房連線環境正常。";
   return true
 }
 function reconnectStorageKey(code){return "wealth_reconnect_"+String(code||"").toUpperCase()}
@@ -6760,7 +6695,7 @@ async function createInternetRoom(){
     await ensurePeerLibrary()
   }catch(err){
     if(btn){btn.disabled=false;btn.textContent="建立跨網路房間"}
-    setLobbyConnectStatus("❌ 好友房連線元件載入失敗。請確認 iPhone 有網路，並使用 Safari 開啟正式網址。",true);
+    setLobbyConnectStatus("❌ 好友房連線元件載入失敗。請確認 iPhone 有網路，或改用 Safari 開啟這份 HTML。",true);
     toast("好友連線元件載入失敗");
     return
   }
@@ -6772,13 +6707,13 @@ async function createInternetRoom(){
   mySeat=0;
   state=newState(name);
   showWaiting();
-  setConnectionText("正在建立房號…","正在向免費 signaling 節點註冊房號。");
+  $("connectionText").textContent="正在向好友房 signaling 服務註冊房號…";
   openHostPeer()
 }
 function openHostPeer(){
   try{peer?.destroy()}catch{}
   if(typeof Peer==="undefined"){
-    setConnectionText("❌ 好友連線元件尚未載入","請回上一頁重新建立房間。");
+    $("connectionText").textContent="❌ PeerJS 尚未載入，請回上一頁重新建立房間。";
     return
   }
 
@@ -6786,31 +6721,17 @@ function openHostPeer(){
 
   const hostTimeout=setTimeout(()=>{
     if(peer&&!peer.open){
-      setConnectionText("❌ 房號建立逾時","請確認 Safari 可以正常上網後再重新建立房間。");
+      $("connectionText").textContent="❌ 房號註冊逾時。請確認行動網路 / Wi‑Fi 可連外，再重試。";
     }
-  },15000);
+  },12000);
 
-  peer.on("open",()=>{
+  peer.on("open",id=>{
     clearTimeout(hostTimeout);
-    setLobbyConnectStatus("✅ 房號已建立，現在等待好友真正連線。");
-    setConnectionText("✅ 房號已建立｜等待好友加入","這只代表房號已註冊；好友完成 WebRTC 資料通道後，這裡才會顯示「好友已連線」。");
+    $("connectionText").textContent="✅ 房間已上線！把房號傳給朋友即可加入。";
     startHostHeartbeat();
     render()
   });
-  peer.on("connection",conn=>{
-    setConnectionText("⏳ 偵測到好友，正在建立資料通道…","正在進行 WebRTC / ICE 協商，行動網路第一次可能需要較久。");
-    attachPeerConnectionDiagnostics(conn,"host");
-    handleIncomingConnection(conn)
-  });
-  peer.on("disconnected",()=>{
-    setConnectionText("⚠️ 房號服務暫時中斷，正在自動恢復…","已建立的遊戲狀態不會因此消失。");
-    setTimeout(()=>{
-      try{if(peer&&!peer.destroyed&&peer.disconnected)peer.reconnect()}catch{}
-    },700)
-  });
-  peer.on("close",()=>{
-    if(isHost)setConnectionText("⚠️ 房號服務已關閉","請重新建立房間。")
-  });
+  peer.on("connection",conn=>handleIncomingConnection(conn));
   peer.on("error",err=>{
     if(err.type==="unavailable-id"){
       roomCode=randCode();$("roomCode").textContent=roomCode;$("topRoom").textContent=roomCode;openHostPeer();return;
@@ -6823,18 +6744,11 @@ function openHostPeer(){
       "socket-closed":"signaling 連線已中斷",
       "browser-incompatible":"這個瀏覽器不支援目前的 WebRTC"
     };
-    setConnectionText("❌ "+(map[err.type]||("連線失敗："+err.type)),`PeerJS: ${err.type||"unknown"}`)
+    $("connectionText").textContent="❌ "+(map[err.type]||("連線失敗："+err.type));
   });
 }
 function handleIncomingConnection(conn){
-  attachPeerConnectionDiagnostics(conn,"host");
-  conn.on("open",()=>{
-    setConnectionText("✅ 好友資料通道已建立｜正在確認座位…",`WebRTC: ${peerConnectionState(conn)||"connected"}`);
-    conn.send({type:"hello_required"})
-  });
-  conn.on("error",err=>{
-    setConnectionText("⚠️ 好友資料通道發生錯誤，等待對方重新連線…",`DataConnection: ${err?.type||err?.message||"unknown"}`)
-  });
+  conn.on("open",()=>{conn.send({type:"hello_required"});});
   conn.on("data",msg=>{
     if(msg?.type==="join"){
       if(conn.__seat!=null){
@@ -6865,8 +6779,6 @@ function handleIncomingConnection(conn){
           try{if(oldConn&&oldConn!==conn)oldConn.close()}catch{}
           addEvent("reconnect",`${p.name} 已回到原本座位。`,{seat:resumeSeat});
           conn.send({type:"welcome",seat:resumeSeat,state:snapshot(),resumed:true});
-          setLobbyConnectStatus(`✅ ${p.name} 已重新連線。`);
-          setConnectionText(`✅ 好友已重新連線｜${p.name}`,`座位 ${resumeSeat+1} 已恢復並同步最新遊戲狀態。`);
           setTimeout(()=>sendToSeat(resumeSeat,{type:"state",state:snapshot(),forced:true}),120);
           broadcast();
           return
@@ -6888,8 +6800,6 @@ function handleIncomingConnection(conn){
       if(token)seatReconnectTokens.set(seat,token);
       addEvent("join",`${state.players[seat].name} 加入房間。`);
       conn.send({type:"welcome",seat,state:snapshot()});
-      setLobbyConnectStatus(`✅ ${state.players[seat].name} 已成功連線到好友房。`);
-      setConnectionText(`✅ 好友已連線｜${state.players[seat].name}`,`座位 ${seat+1} 已建立 WebRTC 資料通道，可以準備開始遊戲。`);
       broadcast();
       return
     }
@@ -6913,7 +6823,6 @@ function handleIncomingConnection(conn){
     if(seat==null||!state?.players?.[seat])return;
     if(conns.get(seat)!==conn)return;
     state.players[seat].connected=false;
-    setConnectionText(`⚠️ ${state.players[seat].name} 暫時離線`,"保留原座位；對方用原本邀請網址重新加入即可自動找回座位。");
     addEvent("disconnect",`${state.players[seat].name} 已暫時離線，可用原本手機重新加入。`,{seat});
     broadcast();
   });
@@ -6947,50 +6856,38 @@ async function joinInternetRoom(){
 }
 function startClientPeer(name,reconnecting=false){
   clearTimeout(clientReconnectTimer);
-  clearTimeout(joinTimeoutTimer);
   try{hostConn?.close()}catch{}
   try{peer?.destroy()}catch{}
   hostConn=null;
   peer=null;
 
-  setConnectionText(
-    reconnecting?"🔄 正在重新連線到房間…":"正在尋找好友房…",
-    reconnecting?"保留原座位並重新建立 WebRTC 資料通道。":`房號：${roomCode}`
-  );
+  $("connectionText").textContent=reconnecting?"🔄 正在重新連線到房間…":"正在連線到房間同步節點...";
   peer=new Peer(undefined,peerOptions());
 
+  clearTimeout(joinTimeoutTimer);
   joinTimeoutTimer=setTimeout(()=>{
-    if(hostConn?.open)return;
-    setConnectionText("⏳ 還在建立好友資料通道…","先不切斷連線，額外等待 12 秒讓行動網路完成 ICE 協商。");
-    joinTimeoutTimer=setTimeout(()=>{
-      if(!hostConn?.open){
-        setConnectionText("⚠️ 本次連線逾時，正在自動重試…",`目前狀態：${peerConnectionState(hostConn)||"尚未建立"}`);
-        scheduleClientReconnect(name)
-      }
-    },12000)
-  },12000);
+    if(!hostConn?.open){
+      $("connectionText").textContent="⚠️ 連線暫時中斷，正在自動重試…";
+      scheduleClientReconnect(name)
+    }
+  },10000);
 
   peer.on("open",()=>{
-    setConnectionText("✅ 已找到網路節點｜正在連接房主…","正在建立瀏覽器之間的 WebRTC 資料通道。");
-    hostConn=peer.connect(roomCode,{reliable:true,serialization:"json"});
-    attachPeerConnectionDiagnostics(hostConn,"guest");
+    hostConn=peer.connect(roomCode,{reliable:true});
     wireHostConn(hostConn,name)
   });
   peer.on("disconnected",()=>{
-    if(!isHost){
-      setConnectionText("⚠️ signaling 暫時中斷，正在恢復…","遊戲房號與重新連線資料仍保留。");
-      scheduleClientReconnect(name)
-    }
+    if(!isHost)scheduleClientReconnect(name)
   });
   peer.on("error",err=>{
     const transient=["network","socket-error","socket-closed","server-error","peer-unavailable"];
     if(transient.includes(err.type)){
-      setConnectionText(`⚠️ ${err.type}，正在自動重新連線…`,`PeerJS: ${err.type}`);
+      $("connectionText").textContent=`⚠️ ${err.type}，正在自動重新連線…`;
       scheduleClientReconnect(name);
       return
     }
     toast("連線失敗："+err.type);
-    setConnectionText("❌ "+err.type,`PeerJS: ${err.type||"unknown"}`)
+    $("connectionText").textContent="❌ "+err.type
   })
 }
 function scheduleClientReconnect(name=clientJoinName){
@@ -7001,7 +6898,6 @@ function scheduleClientReconnect(name=clientJoinName){
   clientReconnectTimer=setTimeout(()=>startClientPeer(name,true),wait)
 }
 function wireHostConn(conn,name){
-  attachPeerConnectionDiagnostics(conn,"guest");
   let joinSent=false;
   const sendJoinOnce=()=>{
     if(joinSent||!conn.open)return;
@@ -7011,10 +6907,7 @@ function wireHostConn(conn,name){
   conn.on("open",()=>{
     clientReconnectAttempts=0;
     sendJoinOnce();
-    setConnectionText(
-      mySeat==null?"✅ 已建立好友資料通道｜正在加入座位…":"✅ 已重新建立資料通道｜正在同步…",
-      `WebRTC: ${peerConnectionState(conn)||"connected"}`
-    )
+    $("connectionText").textContent=mySeat==null?"✅ 已連線到房間":"✅ 已重新連線，正在同步最新進度…"
   });
   conn.on("data",msg=>{
     if(msg.type==="hello_required"){sendJoinOnce();}
@@ -7024,11 +6917,7 @@ function wireHostConn(conn,name){
       state=msg.state;
       saveReconnectSession(roomCode,name,mySeat,clientReconnectToken);
       if(msg.resumed)lastEventId=state?.eventId||lastEventId;
-      setLobbyConnectStatus(msg.resumed?"✅ 已回到原本座位並同步最新進度。":"✅ 已成功加入好友房。");
-      setConnectionText(
-        msg.resumed?"✅ 已回到原本座位並同步最新進度":"✅ 已成功加入房間",
-        `座位 ${mySeat+1}｜WebRTC 資料通道正常`
-      );
+      $("connectionText").textContent=msg.resumed?"✅ 已回到原本座位並同步最新進度":"✅ 已成功加入房間";
       render();handleIncomingEvents()
     }
     else if(msg.type==="state"){
@@ -7040,16 +6929,12 @@ function wireHostConn(conn,name){
       if(!state||state.eventId!==msg.eventId||state.status!==msg.status)requestFreshState()
     }
     else if(msg.type==="reject"){
-      clearTimeout(joinTimeoutTimer);toast(msg.reason);setConnectionText("❌ "+msg.reason,"房主已拒絕這次加入要求。")
+      clearTimeout(joinTimeoutTimer);toast(msg.reason);$("connectionText").textContent="❌ "+msg.reason
     }
     else if(msg.type==="error")toast(msg.message)
   });
-  conn.on("error",err=>{
-    setConnectionText("⚠️ 好友資料通道錯誤，正在重新連線…",`DataConnection: ${err?.type||err?.message||"unknown"}`);
-    scheduleClientReconnect(name)
-  });
   conn.on("close",()=>{
-    setConnectionText("⚠️ 與房間暫時斷線，正在自動重新連線…","原房號與座位保留，不需要重新建立角色。");
+    $("connectionText").textContent="⚠️ 與房間暫時斷線，正在自動重新連線…";
     scheduleClientReconnect(name)
   })
 }
