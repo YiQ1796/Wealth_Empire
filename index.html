@@ -6440,6 +6440,12 @@ function peerRoomId(code){
   // Internal namespace stays hidden from players and reduces collisions on the public PeerJS service.
   return "wealth-empire-"+String(code||"").trim()
 }
+function normalizeRoomCode(rawValue){
+  return String(rawValue||"").replace(/[^0-9]/g,"").slice(0,6)
+}
+function isValidRoomCode(code){
+  return /^[0-9]{6}$/.test(String(code||""))
+}
 function player(name,seat,ai=false){
   return {
     seat,name,ai,ready:ai,connected:true,cash:45000,pos:0,properties:[],
