@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.6.7 WEB｜好友房簡化回退</title>
+<title>財富帝國 V19.6.8 WEB｜第六・七批 ICON 整合</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.6.7 WEB - 56格多人網頁大富翁遊戲">
+<meta name="description" content="財富帝國 V19.6.8 WEB - 56格多人網頁大富翁遊戲">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6005,12 +6005,29 @@ button,.bonus-choice,.hilow-pick,.treasure-choice,.reaction-button{touch-action:
   .hub-card .hdesc{min-height:0}
 }
 </style>
+<style>
+/* ===== V19.6.8 batch 6/7 icon integration ===== */
+.minigame-icon-badge img{width:46px;height:46px;object-fit:contain;display:block}
+.pp-icon img{width:48px;height:48px;object-fit:contain;display:block}
+.finance-stat-label{display:flex!important;align-items:center;gap:4px}
+.finance-stat-label img{width:18px;height:18px;object-fit:contain;flex:0 0 auto}
+.stock-action-btn{display:inline-flex!important;align-items:center;justify-content:center;gap:3px}
+.stock-action-btn img{width:18px;height:18px;object-fit:contain;display:block}
+.fx-icon-title{display:flex;align-items:center;justify-content:center;gap:7px}
+.fx-inline-icon{width:30px;height:30px;object-fit:contain;display:block}
+@media(max-width:980px) and (orientation:landscape){
+  .minigame-icon-badge img{width:40px;height:40px}
+  .finance-stat-label img{width:15px;height:15px}
+  .stock-action-btn img{width:15px;height:15px}
+  .fx-inline-icon{width:26px;height:26px}
+}
+</style>
 </head>
 <body>
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.6.7</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.6.8</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6048,7 +6065,7 @@ button,.bonus-choice,.hilow-pick,.treasure-choice,.reaction-button{touch-action:
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.6.7 WEB｜好友房簡化回退｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.6.8 WEB｜第六・七批 ICON 整合｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -6155,7 +6172,7 @@ button,.bonus-choice,.hilow-pick,.treasure-choice,.reaction-button{touch-action:
   <div class="minigame-card race-theme">
     <div class="minigame-head">
       <div class="minigame-head-main">
-        <div class="minigame-icon-badge">🏇</div>
+        <div class="minigame-icon-badge"><img src="assets/sixth10/game_horse_race.png" alt="賽馬"></div>
         <div>
           <div class="minigame-kicker">group minigame</div>
           <div class="minigame-title">財富賽馬場</div>
@@ -6179,7 +6196,7 @@ button,.bonus-choice,.hilow-pick,.treasure-choice,.reaction-button{touch-action:
   <div class="minigame-card dice-theme dice-game-card">
     <div class="minigame-head">
       <div class="minigame-head-main">
-        <div class="minigame-icon-badge">🎲</div>
+        <div class="minigame-icon-badge"><img src="assets/sixth10/game_dice_king.png" alt="骰王"></div>
         <div>
           <div class="minigame-kicker">group minigame</div>
           <div class="minigame-title">全民骰王</div>
@@ -6198,7 +6215,7 @@ button,.bonus-choice,.hilow-pick,.treasure-choice,.reaction-button{touch-action:
   <div class="minigame-card treasure-theme treasure-game-card">
     <div class="minigame-head">
       <div class="minigame-head-main">
-        <div class="minigame-icon-badge">🎁</div>
+        <div class="minigame-icon-badge"><img src="assets/sixth10/game_treasure.png" alt="寶箱"></div>
         <div>
           <div class="minigame-kicker">group minigame</div>
           <div class="minigame-title">寶箱爭奪</div>
@@ -6219,7 +6236,7 @@ button,.bonus-choice,.hilow-pick,.treasure-choice,.reaction-button{touch-action:
   <div class="minigame-card noodle-theme">
     <div class="minigame-head">
       <div class="minigame-head-main">
-        <div class="minigame-icon-badge">🍜</div>
+        <div class="minigame-icon-badge"><img src="assets/sixth10/game_noodle.png" alt="吃麵"></div>
         <div>
           <div class="minigame-kicker">sponsored event</div>
           <div class="minigame-title">全民吃麵大賽</div>
@@ -6239,7 +6256,7 @@ button,.bonus-choice,.hilow-pick,.treasure-choice,.reaction-button{touch-action:
   <div class="minigame-card hilow-theme">
     <div class="minigame-head">
       <div class="minigame-head-main">
-        <div class="minigame-icon-badge">🔮</div>
+        <div class="minigame-icon-badge"><img src="assets/sixth10/game_high_low.png" alt="高低骰"></div>
         <div>
           <div class="minigame-kicker">group minigame</div>
           <div class="minigame-title">高低骰對決</div>
@@ -6358,6 +6375,34 @@ const NOODLE_RACE_MS=12000;
 const PROPERTY_MAX_LEVEL=2;
 const CHANCE_MINIGAME_RATE=0.58;
 const CHANCE_MINIGAMES=["rps","number","cup","coinrush","reaction","bomb","card","lane"];
+const PUBLIC_PROJECT_ICON_ASSETS={
+  night:"assets/sixth10/public_night_market.png",
+  tower:"assets/first10/public_tech_tower.png",
+  harbor:"assets/sixth10/public_harbor.png",
+  green:"assets/sixth10/public_green_park.png"
+};
+const GAME_ICON_ASSETS={
+  race:"assets/sixth10/game_horse_race.png",
+  wheel:"assets/first10/game_30_wheel.png",
+  dice:"assets/sixth10/game_dice_king.png",
+  treasure:"assets/sixth10/game_treasure.png",
+  hilow:"assets/sixth10/game_high_low.png",
+  noodle:"assets/sixth10/game_noodle.png",
+  rps:"assets/sixth10/game_rps.png",
+  number:"assets/sixth10/game_lucky_number.png",
+  cup:"assets/seventh10/game_magic_cup.png",
+  coinrush:"assets/seventh10/game_coin_rain.png",
+  reaction:"assets/seventh10/game_reaction.png"
+};
+const FINANCE_ICON_ASSETS={
+  portfolio:"assets/seventh10/finance_portfolio.png",
+  unrealized:"assets/seventh10/finance_unrealized.png",
+  realized:"assets/seventh10/finance_realized.png",
+  buy:"assets/seventh10/finance_buy.png",
+  sell:"assets/seventh10/finance_sell.png",
+  rent:"assets/seventh10/finance_rent.png",
+  income:"assets/seventh10/finance_income.png"
+};
 const COIN_RUSH_MS=6000;
 const COIN_RUSH_MAX=20;
 const RPS_CHOICES=[{key:"rock",icon:"✊",name:"石頭"},{key:"paper",icon:"✋",name:"布"},{key:"scissors",icon:"✌️",name:"剪刀"}];
@@ -6516,7 +6561,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="1967";
+const APP_BUILD_ID="1968";
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -9037,8 +9082,8 @@ function renderMarket(){
       </div>
       <div class="sbottom">
         <input id="q_${c}" type="number" min="1" value="1">
-        <button class="success" onclick="stockAction('buy_stock','${c}')">買</button>
-        <button class="danger" onclick="stockAction('sell_stock','${c}')">賣</button>
+        <button class="success stock-action-btn" onclick="stockAction('buy_stock','${c}')"><img src="${FINANCE_ICON_ASSETS.buy}" alt="">買</button>
+        <button class="danger stock-action-btn" onclick="stockAction('sell_stock','${c}')"><img src="${FINANCE_ICON_ASSETS.sell}" alt="">賣</button>
       </div>
     </div>`
   }).join("");
@@ -9050,16 +9095,16 @@ function renderMarket(){
   $("market").innerHTML=`
     <div class="market-summary-v10 pnl-summary">
       <div class="portfolio-stat value">
-        <div class="mk">持股總市值</div>
+        <div class="mk finance-stat-label"><img src="${FINANCE_ICON_ASSETS.portfolio}" alt="">持股總市值</div>
         <div class="mv">$${Math.round(totalValue).toLocaleString()}</div>
       </div>
       <div class="portfolio-stat unrealized ${unrealClass}">
-        <div class="mk">未實現損益</div>
+        <div class="mk finance-stat-label"><img src="${FINANCE_ICON_ASSETS.unrealized}" alt="">未實現損益</div>
         <div class="mv">${totalCost?`${totalPnl>=0?"+":"-"}$${Math.abs(Math.round(totalPnl)).toLocaleString()}`:"—"}</div>
         <div class="pnl-pct">${totalCost?`${totalPct>=0?"+":""}${totalPct.toFixed(1)}%`:"尚未持股"}</div>
       </div>
       <div class="portfolio-stat realized ${realClass}">
-        <div class="mk">已實現損益</div>
+        <div class="mk finance-stat-label"><img src="${FINANCE_ICON_ASSETS.realized}" alt="">已實現損益</div>
         <div class="mv">${realized>=0?"+":"-"}$${Math.abs(Math.round(realized)).toLocaleString()}</div>
         <div class="pnl-pct">已完成交易累計</div>
       </div>
@@ -9264,9 +9309,10 @@ function openPublicInvestment(key){
   const leaderName=leader?state.players[Number(leader[0])]?.name:"尚無";
   const nextDividend=Math.round(mine*def.yieldRate*(1+level*.10));
 
-  showModal(`${def.emoji} ${def.name}`,
+  const projectIcon=PUBLIC_PROJECT_ICON_ASSETS[key];
+  showModal(def.name,
     `<div class="public-project-hero">
-      <div class="pp-icon">${def.emoji}</div>
+      <div class="pp-icon">${projectIcon?`<img src="${projectIcon}" alt="${def.name}">`:def.emoji}</div>
       <div><div class="pp-title">${def.name}｜Lv.${level}</div>
       <div class="pp-desc">${def.desc}</div></div>
     </div>
@@ -9290,7 +9336,7 @@ function openPublicInvestmentCenter(){
   const cards=Object.entries(PUBLIC_PROJECTS).map(([key,d])=>{
     const pr=state.publicInvestments[key],lv=publicProjectLevel(key),mine=publicContribution(mySeat,key);
     return `<div class="hub-card public-hub-card">
-      <div class="hicon">${key==="tower"?'<img src="assets/first10/public_tech_tower.png" alt="">':d.emoji}</div><div class="hname">${d.name}｜Lv.${lv}</div>
+      <div class="hicon">${PUBLIC_PROJECT_ICON_ASSETS[key]?`<img src="${PUBLIC_PROJECT_ICON_ASSETS[key]}" alt="${d.name}">`:d.emoji}</div><div class="hname">${d.name}｜Lv.${lv}</div>
       <div class="hdesc">${d.desc}</div>
       <div class="hvalue">全城 ${Number(pr.total||0).toLocaleString()}｜你 ${mine.toLocaleString()}</div>
       <button class="primary" onclick="closeModal();openPublicInvestment('${key}')">查看 / 投資</button>
@@ -9652,10 +9698,11 @@ function renderGroupGame(){
   const g=state?.groupGame,overlay=$("groupGameOverlay");
   if(!g){overlay.classList.remove("open");return}
   overlay.classList.add("open");
-  const trigger=state.players[g.triggerSeat],titles={race:"🏇 全民賽馬大賽",wheel:"🎰 全民幸運轉盤",dice:"🎲 全民骰王",treasure:"🎁 寶箱爭奪",hilow:"🎲 高低骰對決",noodle:"🍜 全民吃麵大賽",rps:"✊ 猜拳擂台",number:"🔢 幸運數字",cup:"🏆 魔術金杯",coinrush:"🪙 金幣雨",reaction:"🟢 綠燈反應王",bomb:"💣 數字炸彈",card:"🃏 神秘翻牌",lane:"🚦 幸運車道"};
+  const trigger=state.players[g.triggerSeat],titles={race:"全民賽馬大賽",wheel:"全民幸運轉盤",dice:"全民骰王",treasure:"寶箱爭奪",hilow:"高低骰對決",noodle:"全民吃麵大賽",rps:"猜拳擂台",number:"幸運數字",cup:"魔術金杯",coinrush:"金幣雨",reaction:"綠燈反應王",bomb:"💣 數字炸彈",card:"🃏 神秘翻牌",lane:"🚦 幸運車道"};
   const groupTitle=titles[g.type]||"全民競技";
-  $("groupGameTitle").innerHTML=g.type==="wheel"
-    ?`<span class="game-title-with-icon"><img src="assets/first10/game_30_wheel.png" alt="">${groupTitle.replace(/^🎰\s*/,"")}</span>`
+  const groupIcon=GAME_ICON_ASSETS[g.type];
+  $("groupGameTitle").innerHTML=groupIcon
+    ?`<span class="game-title-with-icon"><img src="${groupIcon}" alt="">${groupTitle}</span>`
     :groupTitle;
   $("groupGameTrigger").textContent=`${trigger?.name||"玩家"} 踩到「${state.tiles[g.tileId]?.name||"競技格"}」── 全房一起玩！`;
 
@@ -10068,16 +10115,17 @@ function miniGameQuickFx(title, results, extra=""){
   }
 }
 
-function moneyFx(title,amount,sub=""){
+function moneyFx(title,amount,sub="",iconPath=""){
   const good=amount>0,bad=amount<0;
+  const icon=iconPath?`<img class="fx-inline-icon" src="${iconPath}" alt="">`:"";
   queueFx({type:good?"good":bad?"bad":"normal",html:
-    `<div class="fx-title">${title}</div><div class="fx-money">${amount>=0?"+":"-"}$${Math.abs(Math.round(amount)).toLocaleString()}</div><div class="fx-sub">${sub}</div>`})
+    `<div class="fx-title fx-icon-title">${icon}<span>${title}</span></div><div class="fx-money">${amount>=0?"+":"-"}${Math.abs(Math.round(amount)).toLocaleString()}</div><div class="fx-sub">${sub}</div>`})
 }
 function rentFx(e){
   if((e.data.amount||0)>=3000)shakeScreen();burstParticles("coin",16);
   const payer=state.players[e.data.payer],owner=state.players[e.data.owner],amount=e.data.amount,playerPay=e.data.playerPay??amount,insurancePay=e.data.insurancePay||0;
   queueFx({type:"bad",duration:2100,html:
-    `<div class="fx-title">💸 支付過路費</div>
+    `<div class="fx-title fx-icon-title"><img class="fx-inline-icon" src="${FINANCE_ICON_ASSETS.rent}" alt=""><span>支付過路費</span></div>
      <div class="fx-dual">
        <div><div class="fx-person">${payer?.name||"玩家"}</div><div class="fx-money">-$${playerPay.toLocaleString()}</div></div>
        <div class="fx-arrow">💰 ➜</div>
@@ -10455,7 +10503,8 @@ function animateBonusGame(e){
   }[type]||{title:"機會命運小遊戲",icon:"🎮"};
 
   $("bonusOverlayTitle").textContent=meta.title;
-  $("bonusOverlayIcon").textContent=meta.icon;
+  const bonusIcon=GAME_ICON_ASSETS[type];
+  $("bonusOverlayIcon").innerHTML=bonusIcon?`<img src="${bonusIcon}" alt="${meta.title}">`:meta.icon;
 
   let hero="",rows="",myAmount=0;
 
@@ -10591,7 +10640,7 @@ function handleIncomingEvents(){
     else if(e.kind==="roll"&&!rolling)animateDice(e.data.d1,e.data.d2,state.players[e.data.seat]?.name||"玩家");
     else if(e.kind==="rent")rentFx(e);
     else if(["buy","upgrade","fee","cash","chance","fate"].includes(e.kind)&&typeof e.data?.amount==="number"){
-      moneyFx(`${e.kind==="buy"?"🏠 ":e.kind==="upgrade"?"🏗 ":e.kind==="fee"?"💸 ":"💰 "}${e.data.title||e.text}`,e.data.amount,state.players[e.data.seat]?.name||"")
+      moneyFx(`${e.kind==="buy"?"🏠 ":e.kind==="upgrade"?"🏗 ":e.kind==="fee"?"💸 ":""}${e.data.title||e.text}`,e.data.amount,state.players[e.data.seat]?.name||"",e.data.amount>0?FINANCE_ICON_ASSETS.income:"")
     }
     else if(e.kind==="stock"&&typeof e.data?.amount==="number"){
       const s=state.stocks[e.data.code];
