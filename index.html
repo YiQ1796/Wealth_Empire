@@ -2,8 +2,8 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>財富帝國 V19.2 WEB｜手機排版＋互動特效最新版</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>財富帝國 V19.3 WEB｜手機介面整修＋第四五批素材版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.2 WEB - 56格多人網頁大富翁遊戲">
+<meta name="description" content="財富帝國 V19.3 WEB - 56格多人網頁大富翁遊戲">
 <link rel="manifest" href="./manifest.webmanifest">
 
 <style>
@@ -5854,7 +5854,124 @@ button:not(:disabled):active{transform:scale(.97)}
   .control-row>button{font-size:9px!important}
   .group-game-card,.minigame-overlay .minigame-card{padding:5px!important}
 }
-</style></head>
+</style>
+<style id="v193-mobile-fixes">
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+button,.bonus-choice,.hilow-pick,.treasure-choice,.reaction-button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.v193-sprite{display:inline-block;width:38px;height:38px;flex:0 0 auto;background-image:url("./assets/v193/ui_sprite.webp");background-repeat:no-repeat;background-size:500% 400%;background-position:0 0}
+.v193-sprite.sm{width:27px;height:27px}.v193-sprite.lg{width:48px;height:48px}
+.v193-policy{background-position:0% 0%}.v193-metro{background-position:25% 0%}.v193-mission{background-position:50% 0%}.v193-insurance{background-position:75% 0%}
+.v193-acquire{background-position:100% 0%}.v193-auction{background-position:0% 33.333%}.v193-chance{background-position:25% 33.333%}.v193-renewal{background-position:50% 33.333%}.v193-court{background-position:75% 33.333%}.v193-fate{background-position:100% 33.333%}
+.v193-hospital{background-position:0% 66.666%}.v193-station{background-position:25% 66.666%}.v193-stock{background-position:50% 66.666%}.v193-tax{background-position:75% 66.666%}.v193-dice{background-position:100% 66.666%}
+.v193-hilow{background-position:0% 100%}.v193-noodle{background-position:25% 100%}.v193-race{background-position:50% 100%}.v193-treasure{background-position:75% 100%}.v193-wheel{background-position:100% 100%}
+.game-title-with-v193{display:inline-flex;align-items:center;gap:8px}
+.minigame-icon-badge .v193-sprite{width:42px;height:42px}
+.hub-card .hicon .v193-sprite{width:52px;height:52px}
+.coinrush-arena,.coinrush-target{
+  touch-action:none!important;
+  -webkit-user-select:none!important;user-select:none!important;
+  -webkit-touch-callout:none!important;
+  overscroll-behavior:contain!important;
+}
+.coinrush-target{transition:left .055s linear,top .055s linear,transform .055s ease!important}
+.fx-card.v193-turn{min-width:0!important;width:min(310px,72vw)!important;padding:12px 16px!important;border-radius:18px!important;background:rgba(15,39,68,.94)!important}
+.fx-card.v193-turn .fx-title{font-size:14px!important}.fx-card.v193-turn .fx-money{font-size:24px!important;margin:2px 0!important}.fx-card.v193-turn .fx-sub{font-size:11px!important}
+@media(max-width:980px) and (orientation:landscape){
+  body.lobby-mode .mobile-turn-bar,
+  body.lobby-mode .controls,
+  body.lobby-mode .mobile-nav{display:none!important}
+  body.lobby-mode .app{
+    padding:max(3px,env(safe-area-inset-top)) max(3px,env(safe-area-inset-right)) max(3px,env(safe-area-inset-bottom)) max(3px,env(safe-area-inset-left))!important;
+    display:block!important;height:100dvh!important;overflow:hidden!important
+  }
+  body.lobby-mode .top,body.lobby-mode .main{display:none!important}
+  body.lobby-mode .lobby{inset:0!important;padding:max(6px,env(safe-area-inset-top)) max(6px,env(safe-area-inset-right)) max(6px,env(safe-area-inset-bottom)) max(6px,env(safe-area-inset-left))!important;align-items:center!important;justify-content:center!important}
+  body.lobby-mode .lobby-card{width:min(1040px,100%)!important;max-width:1040px!important;height:auto!important;min-height:0!important;max-height:96dvh!important;overflow:auto!important;border-radius:16px!important;padding:12px!important}
+  body.lobby-mode .mode-grid{grid-template-columns:1fr 1fr!important;gap:10px!important}
+  body.lobby-mode .seats{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:7px!important}
+  body.lobby-mode .lobby-title{font-size:clamp(19px,5dvh,28px)!important}
+  body.lobby-mode .box{padding:10px!important}
+  body.lobby-mode .box h3{font-size:clamp(16px,4dvh,22px)!important}
+  body.lobby-mode .box input{padding:9px!important;margin:4px 0 7px!important}
+  body.lobby-mode #readyBtn,body.lobby-mode #startBtn{min-height:44px!important;font-size:14px!important}
+  body.lobby-mode .net{padding:6px 8px!important}
+  body.lobby-mode .room-code{font-size:clamp(18px,4.6dvh,25px)!important}
+
+  body.overlay-active .mobile-turn-bar,
+  body.overlay-active .controls,
+  body.overlay-active .mobile-nav{display:none!important}
+  body.overlay-active .app{padding:0!important}
+  .modal,.group-game-overlay,.minigame-overlay{
+    z-index:165!important;
+    padding:max(5px,env(safe-area-inset-top)) max(6px,env(safe-area-inset-right)) max(5px,env(safe-area-inset-bottom)) max(6px,env(safe-area-inset-left))!important;
+    align-items:center!important;justify-content:center!important
+  }
+  .modal-card,.group-game-card,.minigame-overlay .minigame-card,.minigame-overlay .minigame-card.wheel-big-card{
+    width:min(1040px,100%)!important;max-width:100%!important;
+    height:min(94dvh,720px)!important;max-height:94dvh!important;min-height:0!important;
+    overflow:hidden!important;border-radius:16px!important;padding:8px!important;
+    display:flex!important;flex-direction:column!important
+  }
+  .modal-card>h2,.group-game-head,.minigame-head,.wheel-topbar{flex:0 0 auto!important}
+  #modalBody,#groupBetContent,#hilowResultBody,#bonusResult,.mg-panel,.race-track,.treasure-arena,.noodle-track{
+    flex:1 1 auto!important;min-height:0!important;overflow:auto!important;-webkit-overflow-scrolling:touch
+  }
+  #modalActions{flex:0 0 auto!important;margin-top:5px!important;padding-top:5px!important;background:#fff!important}
+  .minigame-overlay .minigame-card>.actions{display:none!important}
+  .minigame-head,.group-game-head{min-height:42px!important;max-height:none!important;margin-bottom:5px!important;padding:3px 3px 5px!important}
+  .minigame-title,.group-game-title{font-size:clamp(17px,4.4dvh,22px)!important}
+  .minigame-sub,.group-game-trigger{font-size:clamp(9px,2dvh,11px)!important;line-height:1.25!important}
+  .minigame-kicker{font-size:clamp(8px,1.8dvh,10px)!important}
+  .minigame-icon-badge{width:48px!important;height:48px!important;min-width:48px!important}
+  .minigame-icon-badge .v193-sprite{width:42px!important;height:42px!important}
+  .minigame-close-top,.wheel-close-top,.modal-close-top{min-height:36px!important;min-width:42px!important;padding:5px 9px!important;font-size:10px!important}
+
+  .group-status{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:5px!important;margin:0 0 5px!important}
+  .group-seat{min-height:44px!important;padding:5px 7px!important}
+  .group-seat .name{font-size:10px!important}.group-seat .status{font-size:9px!important}
+  .group-bet-panel{padding:7px!important}
+  .bonus-game-rule{padding:6px 9px!important;font-size:10px!important;line-height:1.35!important;margin-bottom:5px!important}
+  .hilow-reference{padding:7px!important;margin:4px 0 6px!important}
+  .hilow-reference .dice{font-size:29px!important}.hilow-reference .sum{font-size:20px!important}
+  .hilow-pick-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important;margin:6px 0!important}
+  .hilow-pick{padding:6px!important;border-radius:12px!important;min-height:82px!important}
+  .hilow-pick .ico{font-size:28px!important}.hilow-pick .nm{font-size:12px!important}.hilow-pick .desc{font-size:9px!important}
+
+  .bonus-result-hero{padding:8px!important;margin-bottom:6px!important;border-radius:13px!important}
+  .bonus-result-hero .title{font-size:17px!important}.bonus-result-hero .big{font-size:clamp(34px,10dvh,52px)!important;margin:2px 0!important}
+  .bonus-result-hero b{font-size:12px!important}
+  .themed-results{min-height:0!important}
+  .bonus-pool-note{padding:6px 8px!important;font-size:9px!important;line-height:1.25!important;margin-bottom:5px!important}
+  .result-table{max-height:34dvh!important;overflow:auto!important}
+  .result-row{min-height:27px!important;padding:4px 6px!important;font-size:9px!important}
+
+  .foreign-property-card{padding:9px!important;overflow:auto!important}
+  .foreign-property-head{margin-bottom:6px!important}
+  .foreign-property-name{font-size:18px!important}
+  .foreign-choice-grid{grid-template-columns:1fr!important;gap:7px!important;margin-top:7px!important}
+  .foreign-choice{padding:8px!important;border-radius:12px!important}
+  .foreign-choice .title{font-size:14px!important}.foreign-choice .money{font-size:22px!important;margin:4px 0!important}.foreign-choice .desc{font-size:10px!important;line-height:1.35!important}
+  .foreign-choice button{min-height:38px!important;margin-top:6px!important;padding:7px!important}
+
+  .coinrush-arena{height:clamp(135px,42dvh,205px)!important;min-height:120px!important;margin-top:6px!important}
+  .coinrush-target{width:70px!important;height:70px!important;font-size:36px!important;border-width:3px!important}
+  .coinrush-hud{padding:6px 9px!important;font-size:11px!important}
+  .coinrush-player-grid{grid-template-columns:repeat(4,1fr)!important;gap:5px!important;margin-top:5px!important}
+  .coinrush-player{padding:5px!important}.coinrush-player .name{font-size:9px!important}.coinrush-player .coins{font-size:14px!important}
+
+  .fx-card.v193-turn{width:min(300px,62vw)!important}
+  .mobile-nav button span{white-space:nowrap!important;word-break:keep-all!important;font-size:9px!important}
+}
+@media(max-height:390px) and (orientation:landscape){
+  body.lobby-mode .lobby-card{max-height:98dvh!important;padding:7px!important}
+  body.lobby-mode .lobby-title{font-size:18px!important}
+  .modal-card,.group-game-card,.minigame-overlay .minigame-card,.minigame-overlay .minigame-card.wheel-big-card{height:97dvh!important;max-height:97dvh!important;padding:5px!important}
+  .group-status{gap:3px!important}.group-seat{min-height:38px!important;padding:3px 5px!important}
+  .coinrush-arena{height:37dvh!important}
+  .bonus-result-hero{padding:5px!important}.result-table{max-height:31dvh!important}
+}
+</style>
+</head>
 <body>
 
 <div id="lobby" class="lobby">
@@ -5896,7 +6013,7 @@ button:not(:disabled):active{transform:scale(.97)}
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.2 WEB｜手機排版＋互動特效最新版｜56格大地圖</div><div class="sub">公平 P2P 同步｜高價強制徵收・城市公庫回饋・股票股息・所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.3 WEB｜手機介面整修＋第四五批素材版｜56格大地圖</div><div class="sub">公平 P2P 同步｜高價強制徵收・城市公庫回饋・股票股息・所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -11220,5 +11337,142 @@ document.addEventListener("pointerdown",e=>{
   b.style.position="relative"; b.style.overflow="hidden"; b.appendChild(r);
   requestAnimationFrame(()=>{r.style.transform="scale(1)";r.style.opacity="0"}); setTimeout(()=>r.remove(),420);
 });
-</script></body>
+</script>
+<script id="v193-runtime-fixes">
+(function(){
+  var SPRITE="./assets/v193/ui_sprite.webp", CELL=96;
+  var pos={
+    policy:[0,0],metro:[1,0],mission:[2,0],insurance:[3,0],acquire:[4,0],
+    auction:[0,1],chance:[1,1],renewal:[2,1],court:[3,1],fate:[4,1],
+    hospital:[0,2],station:[1,2],stock:[2,2],tax:[3,2],dice:[4,2],
+    hilow:[0,3],noodle:[1,3],race:[2,3],treasure:[3,3],wheel:[4,3]
+  };
+  var tileMap={station:"station",chance:"chance",fate:"fate",stock:"stock",tax:"tax",auction:"auction",hospital:"hospital",court:"court",race:"race",wheel:"wheel",dicegame:"dice",treasure:"treasure",hilow:"hilow",noodle:"noodle",acquire_center:"acquire",renewal:"renewal"};
+  var img=new Image(); img.src=SPRITE;
+
+  function spriteHtml(key,cls){
+    var p=pos[key]||[0,0],x=p[0]*25,y=p[1]*(100/3);
+    return '<span class="v193-sprite '+(cls||"")+'" style="background-position:'+x+'% '+y+'%" aria-hidden="true"></span>';
+  }
+  function canvasSprite(key,x,y,size){
+    var p=pos[key]; if(!p||!img.complete||!img.naturalWidth)return false;
+    ctx.drawImage(img,p[0]*CELL,p[1]*CELL,CELL,CELL,x-size/2,y-size/2,size,size); return true;
+  }
+
+  var oldGlyph=drawGlyph;
+  drawGlyph=function(type,x,y,size,color,accent){
+    var key=tileMap[type];
+    if(key&&canvasSprite(key,x,y,size*1.65))return;
+    return oldGlyph(type,x,y,size,color,accent);
+  };
+
+  var oldCity=drawCity;
+  drawCity=function(){
+    oldCity();
+    if(!img.complete||!img.naturalWidth)return;
+    canvasSprite("mission",420,361,46);
+    canvasSprite("insurance",420,636,46);
+    canvasSprite("metro",1060,636,46);
+    canvasSprite("policy",740,470,48);
+  };
+
+  function applyIcons(){
+    var fixed=[["raceOverlay","race"],["diceOverlay","dice"],["treasureOverlay","treasure"],["noodleOverlay","noodle"],["hilowOverlay","hilow"]];
+    fixed.forEach(function(a){
+      var root=document.getElementById(a[0]),badge=root&&root.querySelector(".minigame-icon-badge");
+      if(badge&&!badge.dataset.v193){badge.dataset.v193="1";badge.innerHTML=spriteHtml(a[1],"");}
+    });
+    var g=state&&state.groupGame,gt=document.getElementById("groupGameTitle");
+    if(g&&gt){
+      var key={race:"race",wheel:"wheel",dice:"dice",treasure:"treasure",hilow:"hilow",noodle:"noodle"}[g.type];
+      if(key){
+        var names={race:"全民賽馬大賽",wheel:"全民幸運轉盤",dice:"全民骰王",treasure:"寶箱爭奪",hilow:"高低骰對決",noodle:"全民吃麵大賽"};
+        gt.innerHTML='<span class="game-title-with-v193">'+spriteHtml(key,"sm")+names[g.type]+'</span>';
+      }
+    }
+  }
+
+  function phone(){
+    return matchMedia("(max-width:980px) and (orientation:landscape)").matches;
+  }
+  var overlayIds=["modal","groupGameOverlay","raceOverlay","wheelOverlay","diceOverlay","treasureOverlay","noodleOverlay","hilowOverlay","bonusOverlay","victoryOverlay"];
+  function syncModes(){
+    document.body.classList.toggle("lobby-mode",!!(state&&state.status==="lobby"&&phone()));
+    var active=overlayIds.some(function(id){var e=document.getElementById(id);return e&&e.classList.contains("open")});
+    document.body.classList.toggle("overlay-active",active&&phone());
+    applyIcons();
+  }
+  overlayIds.forEach(function(id){
+    var e=document.getElementById(id);
+    if(e)new MutationObserver(syncModes).observe(e,{attributes:true,attributeFilter:["class"]});
+  });
+
+  function bindCoinRush(){
+    var t=document.getElementById("coinRushTarget");
+    if(!t||t.dataset.v193touch)return;
+    t.dataset.v193touch="1";
+    t.removeAttribute("onclick");
+    t.addEventListener("pointerdown",function(e){
+      if(e.pointerType==="touch")e.preventDefault();
+      e.stopPropagation();
+      coinRushClick();
+    },{passive:false});
+    var a=t.closest(".coinrush-arena");
+    if(a){
+      var last=0;
+      a.addEventListener("touchend",function(e){
+        var now=Date.now();
+        if(now-last<330)e.preventDefault();
+        last=now;
+      },{passive:false});
+      a.addEventListener("touchmove",function(e){if(e.touches&&e.touches.length>1)e.preventDefault()},{passive:false});
+    }
+  }
+  document.addEventListener("gesturestart",function(e){
+    var a=document.querySelector(".group-game-overlay.open .coinrush-arena");
+    if(a)e.preventDefault();
+  },{passive:false});
+
+  var oldRG=renderGroupGame;
+  renderGroupGame=function(){
+    var r=oldRG.apply(this,arguments);
+    applyIcons();
+    if(state&&state.groupGame&&state.groupGame.type==="coinrush")requestAnimationFrame(bindCoinRush);
+    return r;
+  };
+
+  var oldRender=render;
+  render=function(){
+    var r=oldRender.apply(this,arguments);
+    syncModes();
+    return r;
+  };
+
+  turnBannerFx=function(seat){
+    var p=state.players&&state.players[seat]; if(!p)return;
+    queueFx({type:"v193-turn",html:'<div class="fx-title">🎯 回合切換</div><div class="fx-money">'+p.name+'</div><div class="fx-sub">輪到 '+p.name+' 行動</div>',duration:650});
+  };
+
+  openMobileHubMenu=function(){
+    if(!state)return;
+    showModal("都會核心",
+      '<div class="hub-rule">手機快捷入口。第四、第五批正式素材已套進中央設施與特殊格。</div>'+
+      '<div class="hub-grid">'+
+      '<div class="hub-card"><div class="hicon">'+spriteHtml("mission","lg")+'</div><div class="hname">城市委託</div><div class="hdesc">接任務、完成目標後領獎金。</div><button class="primary" onclick="closeModal();openHubFacility(&quot;mission&quot;)">開啟</button></div>'+
+      '<div class="hub-card"><div class="hicon"><img src="assets/first10/hub_city_bank.png" alt=""></div><div class="hname">都會銀行</div><div class="hdesc">2 ROUND 定存，管理閒置現金。</div><button class="success" onclick="closeModal();openHubFacility(&quot;bank&quot;)">開啟</button></div>'+
+      '<div class="hub-card"><div class="hicon">'+spriteHtml("insurance","lg")+'</div><div class="hname">租金保險</div><div class="hdesc">降低下一次踩別人地產的現金壓力。</div><button class="primary" onclick="closeModal();openHubFacility(&quot;insurance&quot;)">開啟</button></div>'+
+      '<div class="hub-card"><div class="hicon">'+spriteHtml("metro","lg")+'</div><div class="hname">捷運樞紐</div><div class="hdesc">不用擲骰，改走短／中／長快線。</div><button class="warn" onclick="closeModal();openHubFacility(&quot;metro&quot;)">開啟</button></div>'+
+      '<div class="hub-card"><div class="hicon">'+spriteHtml("policy","lg")+'</div><div class="hname">市政標案</div><div class="hdesc">承接有風險的城市投資案。</div><button class="warn" onclick="closeModal();openHubFacility(&quot;project&quot;)">開啟</button></div>'+
+      '<div class="hub-card"><div class="hicon">'+spriteHtml("policy","lg")+'</div><div class="hname">公共建設</div><div class="hdesc">投資夜市、科技塔、碼頭與綠能公園。</div><button class="primary" onclick="closeModal();openPublicInvestmentCenter()">查看</button></div>'+
+      '</div>',
+      [["關閉","ghost",closeModal]]
+    );
+  };
+
+  img.addEventListener("load",function(){try{drawBoard();applyIcons()}catch(e){}});
+  syncModes();
+  applyIcons();
+})();
+</script>
+</body>
 </html>
