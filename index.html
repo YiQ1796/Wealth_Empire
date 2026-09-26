@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.4 WEB｜第四五批素材實裝修正版</title>
+<title>財富帝國 V19.5 WEB｜玩家棋子與都會核心視覺整合</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.4 WEB - 56格多人網頁大富翁遊戲">
+<meta name="description" content="財富帝國 V19.5 WEB - 56格多人網頁大富翁遊戲">
 <link rel="manifest" href="./manifest.webmanifest">
 
 <style>
@@ -5984,6 +5984,24 @@ button,.bonus-choice,.hilow-pick,.treasure-choice,.reaction-button{touch-action:
   .v194-hub-icon{width:48px!important;height:48px!important}
 }
 </style>
+<style id="v195-visual-polish">
+.player.current{
+  box-shadow:0 18px 38px rgba(34,90,188,.22),0 0 0 3px rgba(255,190,24,.28)!important;
+}
+.player.current .pname{color:#174f99!important}
+.hub-card .hicon{
+  min-height:58px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.hub-card .hname{margin-top:6px!important}
+.hub-card .hdesc{min-height:32px}
+@media(max-width:980px) and (orientation:landscape){
+  .hub-card .hicon{min-height:46px}
+  .hub-card .hdesc{min-height:0}
+}
+</style>
 </head>
 <body>
 
@@ -10778,15 +10796,61 @@ function hubStatusText(key){
 function drawCity(){
   ensurePublicInvestments();
   const pulse=(Math.sin(cityPulse)+1)/2,CX=740,CY=470;
-  const lawn=ctx.createLinearGradient(210,185,210,755);
-  lawn.addColorStop(0,"#dcebd7");lawn.addColorStop(1,"#c9dfcb");
-  ctx.fillStyle=lawn;ctx.fillRect(210,185,1060,570);
+  // V19.5: layered metropolitan backdrop. Decorative only; never a fake board or route.
+  const cityBg=ctx.createLinearGradient(210,185,1270,755);
+  cityBg.addColorStop(0,"#dce9f3");
+  cityBg.addColorStop(.48,"#d8e6ef");
+  cityBg.addColorStop(1,"#c8dce8");
+  ctx.fillStyle=cityBg;
+  ctx.fillRect(210,185,1060,570);
 
-  // Road network
-  ctx.fillStyle="#c5d1dd";ctx.fillRect(615,185,250,570);ctx.fillRect(210,416,1060,108);
-  ctx.fillStyle="#eee7d9";ctx.fillRect(646,185,188,570);ctx.fillRect(210,446,1060,48);
-  ctx.save();ctx.setLineDash([14,12]);ctx.strokeStyle="rgba(255,255,255,.82)";ctx.lineWidth=3;
-  ctx.beginPath();ctx.moveTo(CX,196);ctx.lineTo(CX,744);ctx.moveTo(220,CY);ctx.lineTo(1260,CY);ctx.stroke();ctx.restore();
+  ctx.save();
+  const cityGlow=ctx.createRadialGradient(CX,CY,70,CX,CY,510);
+  cityGlow.addColorStop(0,"rgba(255,255,255,.82)");
+  cityGlow.addColorStop(.55,"rgba(241,248,253,.48)");
+  cityGlow.addColorStop(1,"rgba(90,135,170,.08)");
+  ctx.fillStyle=cityGlow;
+  ctx.fillRect(210,185,1060,570);
+
+  // Low-contrast skyline silhouettes add depth without looking interactive.
+  const silhouettes=[
+    [225,224,58,118],[289,247,42,95],[339,213,64,129],[410,253,48,89],
+    [1022,244,48,98],[1077,207,67,135],[1151,239,44,103],[1201,218,54,124]
+  ];
+  silhouettes.forEach(([x,y,w,h],idx)=>{
+    ctx.fillStyle=idx%2?"rgba(74,116,151,.10)":"rgba(55,99,138,.13)";
+    rr(x,y,w,h,8,true,false);
+    ctx.fillStyle="rgba(255,255,255,.20)";
+    for(let row=0;row<3;row++)for(let col=0;col<2;col++){
+      ctx.fillRect(x+10+col*17,y+14+row*22,7,9)
+    }
+  });
+
+  // Soft financial-city arcs: atmosphere only, no cells, no clickable-looking UI.
+  ctx.strokeStyle="rgba(61,119,167,.10)";
+  ctx.lineWidth=18;
+  ctx.beginPath();ctx.arc(CX,CY,350,Math.PI*.15,Math.PI*.85);ctx.stroke();
+  ctx.strokeStyle="rgba(225,174,62,.08)";
+  ctx.lineWidth=10;
+  ctx.beginPath();ctx.arc(CX,CY,300,Math.PI*1.12,Math.PI*1.88);ctx.stroke();
+  ctx.restore();
+
+  // Metropolitan boulevard cross keeps the established city-world feeling.
+  ctx.fillStyle="rgba(126,151,174,.30)";
+  ctx.fillRect(610,185,260,570);
+  ctx.fillRect(210,410,1060,120);
+  ctx.fillStyle="rgba(249,246,238,.82)";
+  ctx.fillRect(647,185,186,570);
+  ctx.fillRect(210,447,1060,46);
+
+  // Central plaza rings create depth, but are not a board path.
+  ctx.save();
+  ctx.fillStyle="rgba(255,255,255,.36)";
+  ctx.beginPath();ctx.ellipse(CX,CY,248,184,0,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle="rgba(78,124,162,.10)";
+  ctx.lineWidth=3;
+  ctx.beginPath();ctx.ellipse(CX,CY,216,155,0,0,Math.PI*2);ctx.stroke();
+  ctx.restore();
 
   // Header + live city economy label
   ctx.fillStyle="#163b64";rr(CX-160,202,320,52,14,true,false);
@@ -10795,29 +10859,53 @@ function drawCity(){
   ctx.fillText(`目前景氣：${state.cityEvent?.name||"正常景氣"}｜公庫 $${Number(state.cityPool||0).toLocaleString()}`,CX,247);
 
   const hubs=[
-    {key:"mission",x:275,y:270,w:290,h:145,title:"城市委託中心",tag:"任",sub:hubStatusText("mission"),a:"#d9ebff",b:"#c9ddf6"},
-    {key:"bank",x:915,y:270,w:290,h:145,title:"都會銀行",tag:"銀",sub:hubStatusText("bank"),a:"#e4f3e7",b:"#d2ead8"},
-    {key:"insurance",x:275,y:545,w:290,h:145,title:"租金保險中心",tag:"保",sub:hubStatusText("insurance"),a:"#f0e5ff",b:"#e4d5f4"},
-    {key:"metro",x:915,y:545,w:290,h:145,title:"捷運樞紐",tag:"捷",sub:hubStatusText("metro"),a:"#ffe8cf",b:"#f3d6b5"}
+    {key:"mission",x:275,y:270,w:290,h:145,title:"城市委託中心",sub:hubStatusText("mission"),a:"#e8f3ff",b:"#cfe2f5",accent:"#4e8fd6"},
+    {key:"bank",x:915,y:270,w:290,h:145,title:"都會銀行",sub:hubStatusText("bank"),a:"#edf8ef",b:"#d6ecd9",accent:"#48a274"},
+    {key:"insurance",x:275,y:545,w:290,h:145,title:"租金保險中心",sub:hubStatusText("insurance"),a:"#f6efff",b:"#e5d8f5",accent:"#8867bb"},
+    {key:"metro",x:915,y:545,w:290,h:145,title:"捷運樞紐",sub:hubStatusText("metro"),a:"#fff2e1",b:"#f1d9bd",accent:"#d68a38"}
   ];
 
   hubs.forEach(v=>{
     const hover=hoverCenterSpot===v.key;
     ctx.save();
-    if(hover){ctx.shadowColor="rgba(55,116,205,.32)";ctx.shadowBlur=24}
+    ctx.shadowColor=hover?"rgba(45,106,183,.32)":"rgba(39,65,98,.12)";
+    ctx.shadowBlur=hover?26:14;
+    ctx.shadowOffsetY=hover?3:7;
     const g=ctx.createLinearGradient(v.x,v.y,v.x,v.y+v.h);
     g.addColorStop(0,v.a);g.addColorStop(1,v.b);
-    ctx.fillStyle=g;rr(v.x,v.y,v.w,v.h,25,true,false);
-    ctx.strokeStyle=hover?"#397bd1":"rgba(58,76,98,.18)";
-    ctx.lineWidth=hover?4:2;rr(v.x,v.y,v.w,v.h,25,false,true);
+    ctx.fillStyle=g;
+    rr(v.x,v.y,v.w,v.h,24,true,false);
+    ctx.shadowBlur=0;ctx.shadowOffsetY=0;
+    ctx.strokeStyle=hover?v.accent:"rgba(58,76,98,.16)";
+    ctx.lineWidth=hover?4:2;
+    rr(v.x,v.y,v.w,v.h,24,false,true);
+    ctx.fillStyle=v.accent;
+    rr(v.x+18,v.y+8,v.w-36,5,3,true,false);
     ctx.restore();
 
-    ctx.fillStyle="rgba(255,255,255,.55)";rr(v.x+14,v.y+12,v.w-28,42,18,true,false);
-    ctx.fillStyle="#284765";ctx.font='1000 20px "Microsoft JhengHei"';ctx.fillText(v.title,v.x+v.w/2,v.y+39);
+    // Unified hierarchy: title above, icon pedestal in the middle, status below.
+    ctx.fillStyle="rgba(255,255,255,.60)";
+    rr(v.x+18,v.y+18,v.w-36,31,14,true,false);
+    ctx.fillStyle="#284765";
+    ctx.textAlign="center";
+    ctx.font='1000 19px "Microsoft JhengHei"';
+    ctx.fillText(v.title,v.x+v.w/2,v.y+40);
 
-    ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(v.x+v.w/2,v.y+91,27,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle="#31567e";ctx.font='1000 21px "Microsoft JhengHei"';ctx.fillText(v.tag,v.x+v.w/2,v.y+98);
-    ctx.fillStyle="#536d8a";ctx.font='900 12px "Microsoft JhengHei"';ctx.fillText(v.sub,v.x+v.w/2,v.y+132,v.w-28);
+    ctx.save();
+    ctx.shadowColor="rgba(38,78,120,.12)";
+    ctx.shadowBlur=10;
+    ctx.fillStyle="rgba(255,255,255,.94)";
+    ctx.beginPath();ctx.arc(v.x+v.w/2,v.y+86,31,0,Math.PI*2);ctx.fill();
+    ctx.restore();
+    ctx.strokeStyle="rgba(46,79,112,.12)";
+    ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(v.x+v.w/2,v.y+86,31,0,Math.PI*2);ctx.stroke();
+
+    ctx.fillStyle="rgba(255,255,255,.66)";
+    rr(v.x+20,v.y+119,v.w-40,21,10.5,true,false);
+    ctx.fillStyle="#536d8a";
+    ctx.font='900 11px "Microsoft JhengHei"';
+    ctx.fillText(v.sub,v.x+v.w/2,v.y+133,v.w-50);
   });
 
   // Four public investment points fill previously empty downtown space.
@@ -10843,19 +10931,42 @@ function drawCity(){
     ctx.fillStyle=n.c;rr(n.x+12,n.y+n.h-12,(n.w-24)*Math.min(1,(pr.total||0)/(PUBLIC_LEVELS[Math.min(3,lv+1)]||1)),5,3,true,false)
   });
 
-  // Central policy core / city tender
+  // Central policy core / city tender — title, icon, status use the same hierarchy as the four cards.
   const projectHover=hoverCenterSpot==="project";
   ctx.save();
-  if(projectHover){ctx.shadowColor="rgba(219,160,42,.50)";ctx.shadowBlur=30}
-  ctx.beginPath();ctx.arc(CX,CY,106+7*pulse,0,Math.PI*2);ctx.fillStyle="rgba(255,208,93,.20)";ctx.fill();
-  ctx.beginPath();ctx.arc(CX,CY,80,0,Math.PI*2);ctx.fillStyle="#fffaf0";ctx.fill();
-  ctx.strokeStyle=projectHover?"#d59b26":"#dfbc68";ctx.lineWidth=projectHover?8:5;ctx.beginPath();ctx.arc(CX,CY,64,0,Math.PI*2);ctx.stroke();
+  if(projectHover){ctx.shadowColor="rgba(219,160,42,.48)";ctx.shadowBlur=32}
+  ctx.beginPath();ctx.arc(CX,CY,108+6*pulse,0,Math.PI*2);
+  ctx.fillStyle="rgba(255,205,84,.16)";ctx.fill();
+
+  const policyGrad=ctx.createLinearGradient(CX,CY-84,CX,CY+84);
+  policyGrad.addColorStop(0,"#fffdf6");
+  policyGrad.addColorStop(1,"#f5e8c4");
+  ctx.beginPath();ctx.arc(CX,CY,84,0,Math.PI*2);
+  ctx.fillStyle=policyGrad;ctx.fill();
+  ctx.strokeStyle=projectHover?"#d3971c":"#d8b155";
+  ctx.lineWidth=projectHover?7:4;
+  ctx.stroke();
   ctx.restore();
 
-  ctx.fillStyle="#74551c";ctx.font='1000 13px "Microsoft JhengHei"';ctx.fillText("城市政策核心",CX,CY-18);
-  ctx.font='1000 25px "Microsoft JhengHei"';ctx.fillText("標",CX,CY+14);
-  ctx.fillStyle="#8c7445";ctx.font='900 9px "Microsoft JhengHei"';
-  ctx.fillText(`${state.cityEvent?.name||"正常景氣"}｜點擊承接標案`,CX,CY+38,170);
+  ctx.fillStyle="#8a6522";
+  rr(CX-68,CY-67,136,27,14,true,false);
+  ctx.fillStyle="#fff";
+  ctx.textAlign="center";
+  ctx.font='1000 13px "Microsoft JhengHei"';
+  ctx.fillText("市政標案",CX,CY-48);
+
+  // Icon pedestal. V19.4 policy artwork is drawn on top by the asset layer.
+  ctx.fillStyle="rgba(255,255,255,.96)";
+  ctx.beginPath();ctx.arc(CX,CY,39,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle="rgba(151,109,31,.18)";
+  ctx.lineWidth=2;
+  ctx.stroke();
+
+  ctx.fillStyle="rgba(108,82,34,.86)";
+  rr(CX-77,CY+51,154,24,12,true,false);
+  ctx.fillStyle="#fffaf0";
+  ctx.font='900 10px "Microsoft JhengHei"';
+  ctx.fillText(hubStatusText("project"),CX,CY+67,144);
 
   // Animated policy ring dots
   for(let i=0;i<8;i++){
@@ -11024,27 +11135,98 @@ function drawTile(t,x,y,index){
 }
 function drawToken(p,i){
   const phone=mobileReadableBoard();
-  const [x,y]=POS[p.pos],o=phone?[[-21,-20],[21,-20],[-21,20],[21,20]][i]:[[-19,-18],[19,-18],[-19,18],[19,18]][i];
+  const [x,y]=POS[p.pos];
+  const coLocatedSeats=state.players
+    .map((player,seat)=>player&&!player.bankrupt&&player.pos===p.pos?seat:null)
+    .filter(seat=>seat!==null);
+  const slot=Math.max(0,coLocatedSeats.indexOf(i));
+  const spread=phone?25:20;
+  const layouts={
+    1:[[0,0]],
+    2:[[-spread,0],[spread,0]],
+    3:[[0,-spread*.78],[-spread,spread*.62],[spread,spread*.62]],
+    4:[[-spread,-spread*.62],[spread,-spread*.62],[-spread,spread*.62],[spread,spread*.62]]
+  };
+  const layout=layouts[Math.min(4,Math.max(1,coLocatedSeats.length))]||[[0,0]];
+  const [ox,oy]=layout[slot]||[0,0];
+  const tx=x+ox,ty=y+oy;
   const isCurrent=i===state.current;
-  const pulse=window.__tokenPulseSeat===i&&Date.now()<(window.__tokenPulseUntil||0);
-  const tx=x+o[0],ty=y+o[1];
-  if(isCurrent){
-    ctx.beginPath(); ctx.arc(tx,ty,19+Math.sin(cityPulse*2)*2,0,Math.PI*2);
-    ctx.fillStyle="rgba(255,215,80,.30)"; ctx.fill();
-  }
+  const impact=window.__tokenPulseSeat===i&&Date.now()<(window.__tokenPulseUntil||0);
+  const scale=impact?1.17:1;
+  const headR=phone?9:7;
+  const bodyW=phone?15:12;
+  const bodyH=phone?18:15;
+  const haloR=(phone?31:25)+Math.sin(cityPulse*2)*2;
+
   ctx.save();
-  ctx.shadowColor="rgba(43,63,95,.20)";
-  ctx.shadowBlur=10; ctx.shadowOffsetY=3;
-  const g=ctx.createLinearGradient(tx,ty-14,tx,ty+14);
-  g.addColorStop(0,COLORS[i]); g.addColorStop(1,"#17324f");
-  ctx.beginPath(); ctx.arc(tx,ty,pulse?(phone?25:19):(phone?20:14),0,Math.PI*2);
-  ctx.fillStyle=g; ctx.fill();
-  ctx.strokeStyle="#ffffff"; ctx.lineWidth=phone?5:3; ctx.stroke();
-  ctx.restore();
-  ctx.font=`1000 ${phone?18:13}px "Segoe UI","Microsoft JhengHei",sans-serif`;
+
+  if(isCurrent){
+    const halo=ctx.createRadialGradient(tx,ty,4,tx,ty,haloR);
+    halo.addColorStop(0,"rgba(255,225,114,.28)");
+    halo.addColorStop(.62,"rgba(255,200,45,.18)");
+    halo.addColorStop(1,"rgba(255,185,0,0)");
+    ctx.fillStyle=halo;
+    ctx.beginPath();ctx.arc(tx,ty,haloR,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle="rgba(255,190,24,.88)";
+    ctx.lineWidth=phone?4:3;
+    ctx.beginPath();ctx.arc(tx,ty,haloR-4,0,Math.PI*2);ctx.stroke();
+
+    const arrowY=ty-(phone?38:32);
+    ctx.fillStyle="#f2a800";
+    ctx.beginPath();
+    ctx.moveTo(tx,arrowY+9);
+    ctx.lineTo(tx-(phone?8:7),arrowY);
+    ctx.lineTo(tx+(phone?8:7),arrowY);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  ctx.translate(tx,ty);
+  ctx.scale(scale,scale);
+
+  // Floor shadow makes the marker read as a physical game piece instead of a number badge.
+  ctx.fillStyle="rgba(25,45,70,.20)";
+  ctx.beginPath();ctx.ellipse(0,bodyH*.82,bodyW*.82,phone?4.5:3.5,0,0,Math.PI*2);ctx.fill();
+
+  const pieceGradient=ctx.createLinearGradient(0,-headR*2,0,bodyH);
+  pieceGradient.addColorStop(0,COLORS[i]);
+  pieceGradient.addColorStop(.58,COLORS[i]);
+  pieceGradient.addColorStop(1,"#18334f");
+
+  ctx.shadowColor="rgba(25,48,78,.30)";
+  ctx.shadowBlur=phone?10:8;
+  ctx.shadowOffsetY=3;
+
+  // Pawn body.
+  ctx.beginPath();
+  ctx.moveTo(-bodyW*.55,-1);
+  ctx.quadraticCurveTo(0,-6,bodyW*.55,-1);
+  ctx.lineTo(bodyW*.82,bodyH*.62);
+  ctx.quadraticCurveTo(0,bodyH,-bodyW*.82,bodyH*.62);
+  ctx.closePath();
+  ctx.fillStyle=pieceGradient;
+  ctx.fill();
+  ctx.strokeStyle="#fff";
+  ctx.lineWidth=phone?3.5:2.7;
+  ctx.stroke();
+
+  // Pawn head.
+  ctx.beginPath();ctx.arc(0,-headR,headR,0,Math.PI*2);
+  ctx.fillStyle=pieceGradient;ctx.fill();
+  ctx.strokeStyle="#fff";ctx.lineWidth=phone?3.5:2.7;ctx.stroke();
+  ctx.shadowBlur=0;ctx.shadowOffsetY=0;
+
+  // Seat badge: P1–P4 remains explicit, but no longer carries the whole location signal.
+  const badgeW=phone?24:20,badgeH=phone?12:10;
+  ctx.fillStyle="rgba(18,38,61,.90)";
+  rr(-badgeW/2,bodyH*.30,badgeW,badgeH,badgeH/2,true,false);
+  ctx.fillStyle="#fff";
+  ctx.font=`1000 ${phone?9:8}px "Segoe UI","Microsoft JhengHei",sans-serif`;
   ctx.textAlign="center";
-  ctx.fillStyle="#ffffff";
-  ctx.fillText(String(i+1),tx,ty+4);
+  ctx.textBaseline="middle";
+  ctx.fillText(`P${i+1}`,0,bodyH*.30+badgeH/2+.3);
+
+  ctx.restore();
 }
 function hubAtCanvasPoint(x,y){
   const bx=x/(BOARD_W/1480),by=y/(BOARD_H/940);
@@ -11517,6 +11699,8 @@ document.addEventListener("pointerdown",e=>{
   };
   const V194_IMAGES={};
   const V194_HUB_IMAGES={};
+  const V194_BANK_IMAGE=new Image();
+  V194_BANK_IMAGE.decoding="async";
 
   function loadMap(source,target){
     Object.entries(source).forEach(([key,file])=>{
@@ -11529,6 +11713,8 @@ document.addEventListener("pointerdown",e=>{
   }
   loadMap(V194_PATHS,V194_IMAGES);
   loadMap(V194_HUBS,V194_HUB_IMAGES);
+  V194_BANK_IMAGE.src="./assets/first10/hub_city_bank.png?v=195";
+  V194_BANK_IMAGE.onload=()=>{try{drawBoard()}catch(e){}};
 
   function ready(im){return !!(im&&im.complete&&im.naturalWidth>0)}
   function iconImg(type,cls="v194-ui-icon"){
@@ -11579,13 +11765,13 @@ document.addEventListener("pointerdown",e=>{
   drawCity=function(){
     beforeV194City();
     const points=[
-      ["mission",420,361,66],
-      ["insurance",420,636,66],
-      ["metro",1060,636,66],
-      ["policy",740,470,74]
+      ["mission",420,356,58,V194_HUB_IMAGES.mission],
+      ["bank",1060,356,58,V194_BANK_IMAGE],
+      ["insurance",420,631,58,V194_HUB_IMAGES.insurance],
+      ["metro",1060,631,58,V194_HUB_IMAGES.metro],
+      ["policy",740,470,74,V194_HUB_IMAGES.policy]
     ];
-    points.forEach(([key,x,y,s])=>{
-      const im=V194_HUB_IMAGES[key];
+    points.forEach(([key,x,y,s,im])=>{
       if(!ready(im))return;
       ctx.save();
       ctx.shadowColor="rgba(38,78,120,.20)";
