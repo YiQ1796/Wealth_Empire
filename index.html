@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.6.6 WEB｜6位數好友房號</title>
+<title>財富帝國 V19.6.7 WEB｜好友房簡化回退</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.6.6 WEB - 56格多人網頁大富翁遊戲">
+<meta name="description" content="財富帝國 V19.6.7 WEB - 56格多人網頁大富翁遊戲">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6010,7 +6010,7 @@ button,.bonus-choice,.hilow-pick,.treasure-choice,.reaction-button{touch-action:
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.6.6</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.6.7</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6048,7 +6048,7 @@ button,.bonus-choice,.hilow-pick,.treasure-choice,.reaction-button{touch-action:
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.6.6 WEB｜6位數好友房號｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.6.7 WEB｜好友房簡化回退｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -6420,7 +6420,7 @@ BIO:{name:"新紀生技",price:82,vol:.120,drift:.004},
 FOOD:{name:"豐盛食品",price:54,vol:.045,drift:.001},
 RETL:{name:"都會零售",price:72,vol:.075,drift:.002}
 };
-let peer=null,isHost=false,roomCode="",mySeat=null,state=null,hostConn=null,joinTimeoutTimer=null,clientJoinName="",clientReconnectToken="",clientReconnectTimer=null,clientReconnectAttempts=0,heartbeatTimer=null; const seatReconnectTokens=new Map();
+let peer=null,isHost=false,roomCode="",mySeat=null,state=null,hostConn=null,joinTimeoutTimer=null;
 let hoverCenterSpot=null, cityPulse=0, visualLoopStarted=false;
 let conns=new Map(),pendingJoinNames=new Map(),lastEventId=0,seq=0,rolling=false;
 let fxQueue=[],fxRunning=false,victoryShownEvent=0,groupGameTimer=null,groupUiTimer=null,auctionTimer=null,auctionUiTimer=null,noodleAiTimer=null,coinRushAiTimer=null,reactionAiTimer=null;
@@ -6439,6 +6439,12 @@ function randCode(){
 function peerRoomId(code){
   // Internal namespace stays hidden from players and reduces collisions on the public PeerJS service.
   return "wealth-empire-"+String(code||"").trim()
+}
+function normalizeRoomCode(rawValue){
+  return String(rawValue||"").replace(/[^0-9]/g,"").slice(0,6)
+}
+function isValidRoomCode(code){
+  return /^[0-9]{6}$/.test(String(code||""))
 }
 function player(name,seat,ai=false){
   return {
@@ -6492,22 +6498,6 @@ function sendCriticalState(){
   setTimeout(()=>{if(isHost&&state)broadcast()},300);
   setTimeout(()=>{if(isHost&&state)broadcast()},950);
 }
-function startHostHeartbeat(){
-  clearInterval(heartbeatTimer);
-  heartbeatTimer=setInterval(()=>{
-    if(!isHost||!state)return;
-    const now=Date.now();
-    for(const [seat,c] of conns.entries()){
-      if(!c?.open)continue;
-      try{c.send({type:"ping",eventId:state.eventId,status:state.status,ts:now})}catch{}
-      const p=state.players?.[seat];
-      if(p&&c.__lastPong&&now-c.__lastPong>9000)p.connected=false;
-    }
-  },2000)
-}
-function requestFreshState(){
-  if(!isHost&&hostConn?.open)try{hostConn.send({type:"sync_request",eventId:state?.eventId??-1,status:state?.status||""})}catch{}
-}
 async function copyTextSafe(textValue){
   try{
     if(navigator.clipboard&&window.isSecureContext){
@@ -6526,7 +6516,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="1966";
+const APP_BUILD_ID="1967";
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -6603,54 +6593,20 @@ function showIPhoneConnectionNotice(){
     :"✅ 好友房連線環境正常。";
   return true
 }
-function reconnectStorageKey(code){return "wealth_reconnect_"+String(code||"").toUpperCase()}
-function makeReconnectToken(){
-  try{return crypto.randomUUID()}catch{return "rt_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2)}
-}
-function readReconnectSession(code){
-  try{
-    const raw=localStorage.getItem(reconnectStorageKey(code));
-    if(!raw)return null;
-    const obj=JSON.parse(raw);
-    if(!obj?.token||!obj?.name)return null;
-    return obj
-  }catch{return null}
-}
-function saveReconnectSession(code,name,seat,token){
-  try{
-    const data={room:String(code||"").toUpperCase(),name,seat,token,updatedAt:Date.now()};
-    localStorage.setItem(reconnectStorageKey(code),JSON.stringify(data));
-    localStorage.setItem("wealth_last_room",data.room);
-    localStorage.setItem("wealth_player_name",name)
-  }catch{}
-}
-function getOrCreateReconnectToken(code,name){
-  const old=readReconnectSession(code);
-  if(old&&old.name===name&&old.token)return old.token;
-  const token=makeReconnectToken();
-  saveReconnectSession(code,name,null,token);
-  return token
-}
 function loadInviteRoomFromUrl(){
   try{
     const u=new URL(location.href);
-    const urlCode=normalizeRoomCode(u.searchParams.get("room")||"");
-    const lastCode=normalizeRoomCode(localStorage.getItem("wealth_last_room")||"");
-    const code=isValidRoomCode(urlCode)?urlCode:(isValidRoomCode(lastCode)?lastCode:"");
-    if(!code)return;
+    const code=normalizeRoomCode(u.searchParams.get("room")||"");
+    if(!isValidRoomCode(code))return;
 
-    const saved=readReconnectSession(code);
     const input=$("joinRoom");
     if(input)input.value=code;
-    if(saved?.name&&$("joinName"))$("joinName").value=saved.name;
 
     const notice=$("iosOnlineNotice");
     if(notice){
       notice.classList.remove("hidden","bad");
       notice.classList.add("good");
-      notice.innerHTML=saved
-        ? `🔄 偵測到上次房間：<b>${code}</b><br>按「加入房間」即可嘗試回到原本的座位。`
-        : `📩 好友邀請房號已帶入：<b>${code}</b><br>輸入暱稱後，按「加入房間」即可。`
+      notice.innerHTML=`📩 好友邀請房號已帶入：<b>${code}</b><br>輸入暱稱後，按「加入房間」即可。`
     }
     setTimeout(()=>$("joinName")?.focus(),180)
   }catch{}
@@ -6700,20 +6656,17 @@ function setLobbyConnectStatus(textValue,isError=false){
   }
 }
 
-function cancelClientReconnectFlow(){
-  clearTimeout(clientReconnectTimer);
+function resetPeerTransport(){
   clearTimeout(joinTimeoutTimer);
-  clientReconnectTimer=null;
   joinTimeoutTimer=null;
-  clientReconnectAttempts=0;
-  clientJoinName="";
   try{hostConn?.close()}catch{}
-  hostConn=null
+  try{peer?.destroy()}catch{}
+  hostConn=null;
+  peer=null;
+  conns.clear()
 }
+
 async function createInternetRoom(){
-  // Flip role first so any close/error callback from the old guest session cannot schedule another guest retry.
-  isHost=true;
-  cancelClientReconnectFlow();
   showIPhoneConnectionNotice();
   const name=$("hostName").value.trim()||"玩家1";
   try{localStorage.setItem("wealth_player_name",name)}catch{}
@@ -6726,144 +6679,110 @@ async function createInternetRoom(){
     await ensurePeerLibrary()
   }catch(err){
     if(btn){btn.disabled=false;btn.textContent="建立跨網路房間"}
-    setLobbyConnectStatus("❌ 好友房連線元件載入失敗。請確認 iPhone 有網路，或改用 Safari 開啟這份 HTML。",true);
+    setLobbyConnectStatus("❌ 好友房連線元件載入失敗。請確認 iPhone 有網路，並使用 Safari 開啟正式網址。",true);
     toast("好友連線元件載入失敗");
     return
   }
 
   if(btn){btn.disabled=false;btn.textContent="建立跨網路房間"}
 
+  resetPeerTransport();
+  isHost=true;
   roomCode=randCode();
   mySeat=0;
+  lastEventId=0;
   state=newState(name);
   showWaiting();
   $("connectionText").textContent="正在向好友房 signaling 服務註冊房號…";
   openHostPeer()
 }
-function recoverHostSignalingIfNeeded(reason=""){
-  if(!isHost||!peer||peer.destroyed||!peer.disconnected)return false;
-  try{
-    setLobbyConnectStatus("🔄 房主連線暫時中斷，正在恢復房號…");
-    $("connectionText").textContent="🔄 正在重新連回好友房 signaling 服務…";
-    peer.reconnect();
-    return true
-  }catch(err){
-    console.warn("host signaling reconnect failed",reason,err);
-    return false
-  }
-}
+
 function openHostPeer(){
-  try{peer?.destroy()}catch{}
   if(typeof Peer==="undefined"){
     $("connectionText").textContent="❌ PeerJS 尚未載入，請回上一頁重新建立房間。";
     return
   }
 
-  const hostPeer=peer=new Peer(peerRoomId(roomCode),peerOptions());
+  const hostPeer=new Peer(peerRoomId(roomCode),peerOptions());
+  peer=hostPeer;
 
   const hostTimeout=setTimeout(()=>{
-    if(!isHost||peer!==hostPeer)return;
+    if(peer!==hostPeer||!isHost)return;
     if(!hostPeer.open){
-      $("connectionText").textContent="❌ 房號註冊逾時。請確認行動網路 / Wi‑Fi 可連外，再重試。";
+      $("connectionText").textContent="❌ 房號註冊逾時。請重新建立房間再試。"
     }
   },12000);
 
-  hostPeer.on("open",id=>{
-    if(!isHost||peer!==hostPeer)return;
+  hostPeer.on("open",()=>{
+    if(peer!==hostPeer||!isHost)return;
     clearTimeout(hostTimeout);
-    $("connectionText").textContent="✅ 房間已上線！把房號傳給朋友即可加入。";
-    startHostHeartbeat();
+    $("connectionText").textContent="✅ 房間已上線！等待好友加入。";
+    setLobbyConnectStatus("✅ 房號已建立，可以讓好友加入。");
     render()
   });
+
   hostPeer.on("connection",conn=>{
-    if(!isHost||peer!==hostPeer){try{conn.close()}catch{};return}
+    if(peer!==hostPeer||!isHost){try{conn.close()}catch{};return}
     handleIncomingConnection(conn)
   });
-  hostPeer.on("disconnected",()=>{
-    if(!isHost||peer!==hostPeer)return;
-    // iPhone Safari 在分享面板、切換 App 或暫時背景化時可能中斷 signaling WebSocket。
-    // 只恢復 PeerServer signaling；不改 WebRTC / STUN / ICE / DataConnection。
-    setLobbyConnectStatus("🔄 房主連線暫時中斷，正在自動恢復房號…");
-    setTimeout(()=>{
-      if(isHost&&peer===hostPeer)recoverHostSignalingIfNeeded("peer-disconnected")
-    },350)
-  });
+
   hostPeer.on("error",err=>{
-    if(!isHost||peer!==hostPeer)return;
+    if(peer!==hostPeer||!isHost)return;
+    clearTimeout(hostTimeout);
     if(err.type==="unavailable-id"){
-      roomCode=randCode();$("roomCode").textContent=roomCode;$("topRoom").textContent=roomCode;openHostPeer();return;
+      roomCode=randCode();
+      $("roomCode").textContent=roomCode;
+      $("topRoom").textContent=roomCode;
+      try{hostPeer.destroy()}catch{}
+      if(peer===hostPeer)peer=null;
+      openHostPeer();
+      return
     }
     toast("P2P 錯誤："+err.type);
-    const map={
-      "network":"無法連到 signaling 服務",
-      "server-error":"signaling 服務錯誤",
-      "socket-error":"WebSocket signaling 連線失敗",
-      "socket-closed":"signaling 連線已中斷",
-      "browser-incompatible":"這個瀏覽器不支援目前的 WebRTC"
-    };
-    $("connectionText").textContent="❌ "+(map[err.type]||("連線失敗："+err.type));
+    $("connectionText").textContent="❌ 連線失敗："+err.type
   });
+
+  hostPeer.on("disconnected",()=>{
+    if(peer!==hostPeer||!isHost)return;
+    $("connectionText").textContent="❌ 房主與 signaling 服務已斷線，請重新建立房間。"
+  });
+
+  hostPeer.on("close",()=>{
+    clearTimeout(hostTimeout)
+  })
 }
-document.addEventListener("visibilitychange",()=>{
-  if(document.visibilityState==="visible"){
-    setTimeout(()=>recoverHostSignalingIfNeeded("visibility-resume"),250)
-  }
-});
-window.addEventListener("online",()=>{
-  setTimeout(()=>recoverHostSignalingIfNeeded("browser-online"),250)
-});
 
 function handleIncomingConnection(conn){
-  conn.on("open",()=>{conn.send({type:"hello_required"});});
+  conn.on("open",()=>{
+    if(!isHost)return;
+    conn.send({type:"hello_required"})
+  });
+
   conn.on("data",msg=>{
+    if(!isHost)return;
+
     if(msg?.type==="join"){
       if(conn.__seat!=null){
         conn.send({type:"welcome",seat:conn.__seat,state:snapshot()});
         return
       }
 
-      const requestedName=(msg.name||"玩家").slice(0,12);
-      const token=String(msg.token||"");
-      let resumeSeat=Number.isInteger(msg.resumeSeat)?msg.resumeSeat:null;
-
-      if(token){
-        for(const [seat,savedToken] of seatReconnectTokens.entries()){
-          if(savedToken===token){resumeSeat=seat;break}
-        }
-      }
-
-      if(resumeSeat!=null&&resumeSeat>0&&resumeSeat<state.players.length){
-        const p=state.players[resumeSeat];
-        const tokenMatches=token&&seatReconnectTokens.get(resumeSeat)===token;
-        const legacyMatch=!token&&p&&!p.ai&&p.name===requestedName;
-        if(p&&!p.ai&&(tokenMatches||legacyMatch)){
-          const oldConn=conns.get(resumeSeat);
-          conns.set(resumeSeat,conn);
-          conn.__seat=resumeSeat;
-          conn.__lastPong=Date.now();
-          p.connected=true;
-          try{if(oldConn&&oldConn!==conn)oldConn.close()}catch{}
-          addEvent("reconnect",`${p.name} 已回到原本座位。`,{seat:resumeSeat});
-          conn.send({type:"welcome",seat:resumeSeat,state:snapshot(),resumed:true});
-          setTimeout(()=>sendToSeat(resumeSeat,{type:"state",state:snapshot(),forced:true}),120);
-          broadcast();
-          return
-        }
-      }
-
       if(state.status!=="lobby"){
-        conn.send({type:"reject",reason:"遊戲已開始。請使用原本那支手機重新加入，系統會找回你的座位。"});
+        conn.send({type:"reject",reason:"遊戲已開始，無法加入新玩家。"});
         setTimeout(()=>conn.close(),200);
         return
       }
 
       const seat=state.players.findIndex((p,i)=>i>0&&!p);
-      if(seat<0){conn.send({type:"reject",reason:"房間已滿"});setTimeout(()=>conn.close(),200);return}
-      state.players[seat]=player(requestedName,seat,false);
+      if(seat<0){
+        conn.send({type:"reject",reason:"房間已滿"});
+        setTimeout(()=>conn.close(),200);
+        return
+      }
+
+      state.players[seat]=player((msg.name||"玩家").slice(0,12),seat,false);
       conns.set(seat,conn);
       conn.__seat=seat;
-      conn.__lastPong=Date.now();
-      if(token)seatReconnectTokens.set(seat,token);
       addEvent("join",`${state.players[seat].name} 加入房間。`);
       conn.send({type:"welcome",seat,state:snapshot()});
       broadcast();
@@ -6872,47 +6791,28 @@ function handleIncomingConnection(conn){
 
     const seat=conn.__seat;
     if(seat==null)return;
-
-    if(msg?.type==="pong"){
-      conn.__lastPong=Date.now();
-      if(state.players[seat])state.players[seat].connected=true;
-      return
-    }
-    if(msg?.type==="sync_request"){
-      conn.send({type:"state",state:snapshot(),forced:true});
-      return
-    }
-    handleClientMessage(seat,msg);
+    handleClientMessage(seat,msg)
   });
+
   conn.on("close",()=>{
     const seat=conn.__seat;
     if(seat==null||!state?.players?.[seat])return;
     if(conns.get(seat)!==conn)return;
+    conns.delete(seat);
     state.players[seat].connected=false;
-    addEvent("disconnect",`${state.players[seat].name} 已暫時離線，可用原本手機重新加入。`,{seat});
-    broadcast();
-  });
+    addEvent("disconnect",`${state.players[seat].name} 已斷線。`,{seat});
+    broadcast()
+  })
 }
-function normalizeRoomCode(rawValue){
-  return String(rawValue||"")
-    .trim()
-    .replace(/[^0-9]/g,"")
-    .slice(0,6)
-}
-function isValidRoomCode(code){
-  return /^[0-9]{6}$/.test(code)
-}
+
 async function joinInternetRoom(){
-  // Switch role before closing old connections so stale host/guest callbacks become harmless.
-  isHost=false;
-  clearInterval(heartbeatTimer);
-  heartbeatTimer=null;
-  cancelClientReconnectFlow();
   showIPhoneConnectionNotice();
   const input=$("joinRoom");
-  const code=normalizeRoomCode(input?.value),name=$("joinName").value.trim()||"玩家";
+  const code=normalizeRoomCode(input?.value);
+  const name=$("joinName").value.trim()||"玩家";
   if(input)input.value=code;
   try{localStorage.setItem("wealth_player_name",name)}catch{}
+
   if(!code){toast("請輸入房號");return}
   if(!isValidRoomCode(code)){
     setLobbyConnectStatus("❌ 房號格式錯誤。請輸入 6 位數字，例如 483271。",true);
@@ -6924,121 +6824,103 @@ async function joinInternetRoom(){
   if(btn){btn.disabled=true;btn.textContent="連線元件載入中…"}
   setLobbyConnectStatus("⏳ 正在載入好友房連線元件…");
 
-  try{await ensurePeerLibrary()}
-  catch(err){
+  try{
+    await ensurePeerLibrary()
+  }catch(err){
     if(btn){btn.disabled=false;btn.textContent="加入房間"}
     setLobbyConnectStatus("❌ 好友房連線元件載入失敗。請確認 iPhone 有網路。",true);
-    toast("好友連線元件載入失敗");return
+    toast("好友連線元件載入失敗");
+    return
   }
 
   if(btn){btn.disabled=false;btn.textContent="加入房間"}
+
+  resetPeerTransport();
+  isHost=false;
   roomCode=code;
-  clientJoinName=name;
-  clientReconnectToken=getOrCreateReconnectToken(code,name);
-  clientReconnectAttempts=0;
-  try{localStorage.setItem("wealth_last_room",roomCode)}catch{}
+  mySeat=null;
   showWaiting();
-  startClientPeer(name,false)
-}
-function startClientPeer(name,reconnecting=false){
-  // A delayed guest retry must never be allowed to destroy a host Peer.
-  if(isHost)return;
-  clearTimeout(clientReconnectTimer);
-  try{hostConn?.close()}catch{}
-  try{peer?.destroy()}catch{}
-  hostConn=null;
-  peer=null;
+  $("connectionText").textContent="正在連線到房間…";
 
-  $("connectionText").textContent=reconnecting?"🔄 正在重新連線到房間…":"正在連線到房間同步節點...";
-  const clientPeer=peer=new Peer(undefined,peerOptions());
+  const clientPeer=new Peer(undefined,peerOptions());
+  peer=clientPeer;
 
-  clearTimeout(joinTimeoutTimer);
   joinTimeoutTimer=setTimeout(()=>{
-    if(isHost||peer!==clientPeer)return;
-    if(!hostConn?.open){
-      $("connectionText").textContent="⚠️ 連線暫時中斷，正在自動重試…";
-      scheduleClientReconnect(name)
-    }
-  },10000);
+    if(peer!==clientPeer||isHost||mySeat!=null)return;
+    $("connectionText").textContent="❌ 連線逾時，請確認房號正確並重新加入。";
+    toast("好友房連線逾時")
+  },15000);
 
   clientPeer.on("open",()=>{
-    if(isHost||peer!==clientPeer)return;
+    if(peer!==clientPeer||isHost)return;
     const conn=clientPeer.connect(peerRoomId(roomCode),{reliable:true});
     hostConn=conn;
     wireHostConn(conn,name)
   });
-  clientPeer.on("disconnected",()=>{
-    if(isHost||peer!==clientPeer)return;
-    scheduleClientReconnect(name)
-  });
+
   clientPeer.on("error",err=>{
-    if(isHost||peer!==clientPeer)return;
-    const transient=["network","socket-error","socket-closed","server-error","peer-unavailable"];
-    if(transient.includes(err.type)){
-      $("connectionText").textContent=`⚠️ ${err.type}，正在自動重新連線…`;
-      scheduleClientReconnect(name);
-      return
-    }
+    if(peer!==clientPeer||isHost)return;
+    clearTimeout(joinTimeoutTimer);
     toast("連線失敗："+err.type);
     $("connectionText").textContent="❌ "+err.type
+  });
+
+  clientPeer.on("disconnected",()=>{
+    if(peer!==clientPeer||isHost)return;
+    $("connectionText").textContent="❌ 與 signaling 服務斷線，請重新加入房間。"
   })
 }
-function scheduleClientReconnect(name=clientJoinName){
-  if(isHost||!roomCode||!name)return;
-  clearTimeout(clientReconnectTimer);
-  clientReconnectAttempts++;
-  const wait=Math.min(5000,900+clientReconnectAttempts*500);
-  clientReconnectTimer=setTimeout(()=>{
-    // Re-check role at execution time. The user may have become host after this timer was scheduled.
-    if(isHost)return;
-    startClientPeer(name,true)
-  },wait)
-}
+
 function wireHostConn(conn,name){
   let joinSent=false;
-  const isCurrentGuestConn=()=>!isHost&&hostConn===conn;
+  const isCurrent=()=>!isHost&&hostConn===conn;
+
   const sendJoinOnce=()=>{
-    if(!isCurrentGuestConn()||joinSent||!conn.open)return;
+    if(!isCurrent()||joinSent||!conn.open)return;
     joinSent=true;
-    conn.send({type:"join",name,resumeSeat:mySeat,token:clientReconnectToken})
+    conn.send({type:"join",name})
   };
+
   conn.on("open",()=>{
-    if(!isCurrentGuestConn())return;
-    clientReconnectAttempts=0;
+    if(!isCurrent())return;
     sendJoinOnce();
-    $("connectionText").textContent=mySeat==null?"✅ 已連線到房間":"✅ 已重新連線，正在同步最新進度…"
+    $("connectionText").textContent="✅ 已連線到房間"
   });
+
   conn.on("data",msg=>{
-    if(!isCurrentGuestConn())return;
-    if(msg.type==="hello_required"){sendJoinOnce();}
-    else if(msg.type==="welcome"){
+    if(!isCurrent())return;
+
+    if(msg.type==="hello_required"){
+      sendJoinOnce()
+    }else if(msg.type==="welcome"){
       clearTimeout(joinTimeoutTimer);
       mySeat=msg.seat;
       state=msg.state;
-      saveReconnectSession(roomCode,name,mySeat,clientReconnectToken);
-      if(msg.resumed)lastEventId=state?.eventId||lastEventId;
-      $("connectionText").textContent=msg.resumed?"✅ 已回到原本座位並同步最新進度":"✅ 已成功加入房間";
-      render();handleIncomingEvents()
-    }
-    else if(msg.type==="state"){
+      $("connectionText").textContent="✅ 已成功加入房間";
+      setLobbyConnectStatus("✅ 已成功加入好友房。");
+      render();
+      handleIncomingEvents()
+    }else if(msg.type==="state"){
       state=msg.state;
-      render();handleIncomingEvents()
+      render();
+      handleIncomingEvents()
+    }else if(msg.type==="reject"){
+      clearTimeout(joinTimeoutTimer);
+      toast(msg.reason);
+      $("connectionText").textContent="❌ "+msg.reason
+    }else if(msg.type==="error"){
+      toast(msg.message)
     }
-    else if(msg.type==="ping"){
-      try{conn.send({type:"pong",ts:msg.ts})}catch{}
-      if(!state||state.eventId!==msg.eventId||state.status!==msg.status)requestFreshState()
-    }
-    else if(msg.type==="reject"){
-      clearTimeout(joinTimeoutTimer);toast(msg.reason);$("connectionText").textContent="❌ "+msg.reason
-    }
-    else if(msg.type==="error")toast(msg.message)
   });
+
   conn.on("close",()=>{
-    if(!isCurrentGuestConn())return;
-    $("connectionText").textContent="⚠️ 與房間暫時斷線，正在自動重新連線…";
-    scheduleClientReconnect(name)
+    if(!isCurrent())return;
+    clearTimeout(joinTimeoutTimer);
+    $("connectionText").textContent="❌ 與房間同步節點斷線。請重新加入房間。";
+    toast("與房間同步節點斷線")
   })
 }
+
 function hostMsg(msg){if(isHost)handleClientMessage(mySeat,msg);else if(hostConn?.open)hostConn.send(msg);else toast("尚未連線")}
 function sendReady(){hostMsg({type:"ready"})}
 function requestStart(){hostMsg({type:"start"})}
