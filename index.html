@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.7.2 WEB｜手機 HUD・玩家位置整理</title>
+<title>財富帝國 V19.7.3 WEB｜回合資訊卡修正</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.7.2 WEB - 56格多人網頁大富翁遊戲">
+<meta name="description" content="財富帝國 V19.7.3 WEB - 56格多人網頁大富翁遊戲">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6006,7 +6006,7 @@ button,.bonus-choice,.hilow-pick,.treasure-choice,.reaction-button{touch-action:
 }
 </style>
 <style>
-/* ===== V19.7.2 batch 6/7 icon integration ===== */
+/* ===== V19.7.3 batch 6/7 icon integration ===== */
 .minigame-icon-badge img{width:46px;height:46px;object-fit:contain;display:block}
 .pp-icon img{width:48px;height:48px;object-fit:contain;display:block}
 .finance-stat-label{display:flex!important;align-items:center;gap:4px}
@@ -6277,7 +6277,7 @@ body.force-mobile-preview .nav-city-icon{
 
 
 <style id="v1972-mobile-hard-fix">
-/* ===== V19.7.2 hard fixes based on real-device screenshots ===== */
+/* ===== V19.7.3 hard fixes based on real-device screenshots ===== */
 
 /* Structural guarantee: if the lobby itself is visible, gameplay chrome cannot appear.
    This does not depend on body classes, media-query JS, or state initialization timing. */
@@ -6433,12 +6433,101 @@ body.force-mobile-preview .mobile-nav{
 }
 </style>
 
+
+<style id="v1973-round-card-fix">
+/* ===== V19.7.3 progress card: keep round count and remaining rounds on one row ===== */
+@media(max-width:980px) and (orientation:landscape){
+  .mobile-turn-bar .mt-round{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) auto!important;
+    grid-template-rows:auto minmax(0,1fr)!important;
+    column-gap:5px!important;
+    row-gap:1px!important;
+    align-items:center!important;
+    overflow:hidden!important;
+  }
+  .mobile-turn-bar .mt-round .mt-label{
+    grid-column:1/3!important;
+    grid-row:1!important;
+    margin:0!important;
+    align-self:start!important;
+  }
+  #mobileRound{
+    grid-column:1!important;
+    grid-row:2!important;
+    margin:0!important;
+    align-self:center!important;
+    min-width:0!important;
+    line-height:1!important;
+  }
+  #mobileRoundsLeft{
+    grid-column:2!important;
+    grid-row:2!important;
+    display:inline-flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    align-self:center!important;
+    margin:0!important;
+    padding:3px 6px!important;
+    min-height:0!important;
+    max-width:100%!important;
+    border-radius:999px!important;
+    white-space:nowrap!important;
+    line-height:1!important;
+    font-size:8px!important;
+  }
+}
+
+@media(max-height:400px) and (orientation:landscape){
+  .mobile-turn-bar .mt-round{
+    grid-template-rows:9px minmax(0,1fr)!important;
+    padding-top:3px!important;
+    padding-bottom:3px!important;
+  }
+  .mobile-turn-bar .mt-round .mt-label{font-size:7.5px!important}
+  #mobileRound{font-size:14px!important}
+  #mobileRoundsLeft{
+    font-size:7.5px!important;
+    padding:2px 5px!important;
+  }
+}
+
+/* Desktop phone preview follows the same compact horizontal progress layout. */
+body.force-mobile-preview .mobile-turn-bar .mt-round{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  grid-template-rows:9px minmax(0,1fr)!important;
+  column-gap:4px!important;
+  row-gap:1px!important;
+  align-items:center!important;
+}
+body.force-mobile-preview .mobile-turn-bar .mt-round .mt-label{
+  grid-column:1/3!important;
+  grid-row:1!important;
+  margin:0!important;
+}
+body.force-mobile-preview #mobileRound{
+  grid-column:1!important;
+  grid-row:2!important;
+  margin:0!important;
+}
+body.force-mobile-preview #mobileRoundsLeft{
+  grid-column:2!important;
+  grid-row:2!important;
+  margin:0!important;
+  padding:2px 5px!important;
+  font-size:7.5px!important;
+  line-height:1!important;
+  white-space:nowrap!important;
+}
+</style>
+
 </head>
 <body class="lobby-mode">
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.7.2</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.7.3</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6476,7 +6565,7 @@ body.force-mobile-preview .mobile-nav{
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.7.2 WEB｜手機 HUD・玩家位置整理｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.7.3 WEB｜回合資訊卡修正｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -6972,7 +7061,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="1972";
+const APP_BUILD_ID="1973";
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
