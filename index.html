@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.7.3 WEB｜回合資訊卡修正</title>
+<title>財富帝國 V19.8.0 WEB｜最新 ICON 整合</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.7.3 WEB - 56格多人網頁大富翁遊戲">
+<meta name="description" content="財富帝國 V19.8.0 WEB - 56格多人網頁大富翁遊戲">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6006,7 +6006,7 @@ button,.bonus-choice,.hilow-pick,.treasure-choice,.reaction-button{touch-action:
 }
 </style>
 <style>
-/* ===== V19.7.3 batch 6/7 icon integration ===== */
+/* ===== V19.8.0 batch 6/7 icon integration ===== */
 .minigame-icon-badge img{width:46px;height:46px;object-fit:contain;display:block}
 .pp-icon img{width:48px;height:48px;object-fit:contain;display:block}
 .finance-stat-label{display:flex!important;align-items:center;gap:4px}
@@ -6277,7 +6277,7 @@ body.force-mobile-preview .nav-city-icon{
 
 
 <style id="v1972-mobile-hard-fix">
-/* ===== V19.7.3 hard fixes based on real-device screenshots ===== */
+/* ===== V19.8.0 hard fixes based on real-device screenshots ===== */
 
 /* Structural guarantee: if the lobby itself is visible, gameplay chrome cannot appear.
    This does not depend on body classes, media-query JS, or state initialization timing. */
@@ -6435,7 +6435,7 @@ body.force-mobile-preview .mobile-nav{
 
 
 <style id="v1973-round-card-fix">
-/* ===== V19.7.3 progress card: keep round count and remaining rounds on one row ===== */
+/* ===== V19.8.0 progress card: keep round count and remaining rounds on one row ===== */
 @media(max-width:980px) and (orientation:landscape){
   .mobile-turn-bar .mt-round{
     display:grid!important;
@@ -6522,12 +6522,124 @@ body.force-mobile-preview #mobileRoundsLeft{
 }
 </style>
 
+
+<style id="v198-icon-skin">
+/* ===== V19.8.0 batch 8/9 safe icon + skin integration ===== */
+.v198-modal-icon-title{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:0 0 10px;
+  padding:9px 11px;
+  border:1px solid #d7e3ef;
+  border-radius:12px;
+  background:linear-gradient(180deg,#f8fbff,#eef5fb);
+  color:#294b6e;
+}
+.v198-modal-icon-title img{
+  width:40px;
+  height:40px;
+  flex:0 0 40px;
+  object-fit:contain;
+  filter:drop-shadow(0 3px 5px rgba(20,48,83,.15));
+}
+.v198-modal-icon-title b{display:block;font-size:15px;font-weight:1000}
+.v198-modal-icon-title span{display:block;margin-top:2px;font-size:10px;font-weight:800;color:#6b7e93}
+.v198-option-title{display:flex!important;align-items:center!important;gap:6px!important}
+.v198-option-title img{width:30px;height:30px;object-fit:contain;flex:0 0 30px}
+
+/* Use the new artwork as skins only on gameplay controls.
+   Lobby buttons are intentionally excluded so room creation/join layout stays stable. */
+.controls button.primary:not(:disabled),
+.modal-card button.primary:not(:disabled),
+.hub-card button.primary:not(:disabled),
+.public-invest-buttons button.primary:not(:disabled){
+  background-color:transparent!important;
+  background-image:url("assets/v198/button_blue.webp")!important;
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:100% 100%!important;
+  border-color:transparent!important;
+  box-shadow:none!important;
+}
+.controls button.warn:not(:disabled),
+.modal-card button.warn:not(:disabled),
+.hub-card button.warn:not(:disabled),
+.upgrade-card button.warn:not(:disabled){
+  background-color:transparent!important;
+  background-image:url("assets/v198/button_gold.webp")!important;
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:100% 100%!important;
+  border-color:transparent!important;
+  box-shadow:none!important;
+}
+.controls button.success:not(:disabled),
+.modal-card button.success:not(:disabled),
+.hub-card button.success:not(:disabled){
+  background-color:transparent!important;
+  background-image:url("assets/v198/button_green.webp")!important;
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:100% 100%!important;
+  border-color:transparent!important;
+  box-shadow:none!important;
+}
+.controls button:disabled,
+.modal-card button:disabled,
+.hub-card button:disabled,
+.public-invest-buttons button:disabled,
+.upgrade-card button:disabled{
+  background-color:transparent!important;
+  background-image:url("assets/v198/button_disabled.webp")!important;
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:100% 100%!important;
+  border-color:transparent!important;
+  box-shadow:none!important;
+  opacity:.78!important;
+  filter:none!important;
+}
+.controls button .icon-label,
+.modal-card button,
+.hub-card button,
+.public-invest-buttons button,
+.upgrade-card button{
+  position:relative;
+  z-index:1;
+}
+
+/* Event toast frame from batch 9. Text stays live HTML for localization and responsiveness. */
+.toast{
+  background-color:transparent!important;
+  background-image:url("assets/v198/event_toast.webp")!important;
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:100% 100%!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  padding:13px 28px 13px 38px!important;
+  color:#fff!important;
+  text-shadow:0 1px 2px rgba(0,0,0,.65);
+}
+
+@media(max-width:980px) and (orientation:landscape){
+  .v198-modal-icon-title{padding:6px 8px;gap:7px;margin-bottom:7px}
+  .v198-modal-icon-title img{width:31px;height:31px;flex-basis:31px}
+  .v198-modal-icon-title b{font-size:12px}
+  .v198-modal-icon-title span{font-size:8px}
+  .v198-option-title img{width:25px;height:25px;flex-basis:25px}
+  .toast{padding:9px 23px 9px 31px!important}
+}
+</style>
+
 </head>
 <body class="lobby-mode">
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.7.3</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.8.0</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6565,7 +6677,7 @@ body.force-mobile-preview #mobileRoundsLeft{
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.7.3 WEB｜回合資訊卡修正｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.8.0 WEB｜最新 ICON 整合｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -6901,7 +7013,11 @@ const FINANCE_ICON_ASSETS={
   buy:"assets/seventh10/finance_buy.png",
   sell:"assets/seventh10/finance_sell.png",
   rent:"assets/seventh10/finance_rent.png",
-  income:"assets/seventh10/finance_income.png"
+  income:"assets/seventh10/finance_income.png",
+  subsidy:"assets/v198/finance_subsidy.webp",
+  dividend:"assets/v198/finance_dividend.webp",
+  forcedAcquire:"assets/v198/finance_forced_acquire.webp",
+  publicInvest:"assets/v198/finance_public_invest.webp"
 };
 const COIN_RUSH_MS=6000;
 const COIN_RUSH_MAX=20;
@@ -7061,7 +7177,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="1973";
+const APP_BUILD_ID="1980";
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -9650,7 +9766,7 @@ function handlePending(){
             <button class="primary" onclick="sendAction('pay_rent')">支付過路費</button>
           </div>
           <div class="foreign-choice force">
-            <div class="title">🏛 高價強制徵收</div>
+            <div class="title v198-option-title"><img src="${FINANCE_ICON_ASSETS.forcedAcquire}" alt="">高價強制徵收</div>
             <div class="money">$${p.forcePrice.toLocaleString()}</div>
             <div class="desc">約為市場價 2.5 倍。地主不能拒絕，原有 Lv.${t.level||0} 升級會完整保留。每位玩家每 ROUND 最多使用一次。</div>
             <button class="warn" ${p.canForce?"":"disabled"} onclick="sendAction('force_acquire')">${p.canForce?"強制徵收這塊地":p.forceReason}</button>
@@ -9845,8 +9961,8 @@ function openPublicInvestmentCenter(){
       <button class="primary" onclick="closeModal();openPublicInvestment('${key}')">查看 / 投資</button>
     </div>`
   }).join("");
-  showModal("🏙 公共建設投資",
-    `<div class="hub-rule">中央都會新增 4 個公共開發點。玩家可以搶先累積持分、推高城市等級並定期領分紅。</div><div class="hub-grid">${cards}</div>`,
+  showModal("公共建設投資",
+    `<div class="v198-modal-icon-title"><img src="${FINANCE_ICON_ASSETS.publicInvest}" alt=""><div><b>公共建設投資</b><span>累積持分、提升城市等級並定期領分紅</span></div></div><div class="hub-rule">中央都會新增 4 個公共開發點。玩家可以搶先累積持分、推高城市等級並定期領分紅。</div><div class="hub-grid">${cards}</div>`,
     [["關閉","ghost",closeModal]]
   )
 }
@@ -11155,10 +11271,15 @@ function handleIncomingEvents(){
     else if(e.kind==="stock"&&typeof e.data?.amount==="number"){
       const s=state.stocks[e.data.code];
       const extra=e.data.side==="sell"?`已實現 ${e.data.realized>=0?"+":""}$${Math.round(e.data.realized).toLocaleString()}`:`${e.data.qty} 股 × $${e.data.price}`;
-      moneyFx(`📈 ${e.data.side==="buy"?"股票買入":"股票賣出"}｜${s?.name||""}`,e.data.amount,extra)
+      moneyFx(
+        `${e.data.side==="buy"?"股票買入":"股票賣出"}｜${s?.name||""}`,
+        e.data.amount,
+        extra,
+        e.data.side==="buy"?FINANCE_ICON_ASSETS.buy:FINANCE_ICON_ASSETS.sell
+      )
     }
     else if(e.kind==="acquire_bonus"){
-      queueFx({html:`<div class="fx-title">💼 收購中心</div><div class="fx-money" style="font-size:28px">15% 收購補助</div><div class="fx-sub">${state.players[e.data.seat]?.name||"玩家"} 下一次土地收購，買方只付 85%，賣方仍收完整報價。</div>`,duration:2200})
+      queueFx({html:`<div class="fx-title fx-icon-title"><img class="fx-inline-icon" src="${FINANCE_ICON_ASSETS.subsidy}" alt=""><span>收購中心</span></div><div class="fx-money" style="font-size:28px">15% 收購補助</div><div class="fx-sub">${state.players[e.data.seat]?.name||"玩家"} 下一次土地收購，買方只付 85%，賣方仍收完整報價。</div>`,duration:2200})
     }
     else if(e.kind==="renewal_bonus"){
       queueFx({html:`<div class="fx-title">🏗 城市更新局</div><div class="fx-money" style="font-size:28px">免費建築許可 ×1</div><div class="fx-sub">${state.players[e.data.seat]?.name||"玩家"} 的下一次合法房產升級免建築費。</div>`,duration:2200})
@@ -11200,17 +11321,26 @@ function handleIncomingEvents(){
     else if(e.kind==="group_noodle_result")animateNoodle(e);
     else if(e.kind==="group_bonus_result")animateBonusGame(e);
     else if(e.kind==="forced_acquisition"){
-      if(e.data.buyer===mySeat)moneyFx("🏛 強制徵收",-e.data.price,`你取得「${state.tiles[e.data.tile]?.name||"地產"}」`);
-      else if(e.data.seller===mySeat)moneyFx("🏛 徵收補償",e.data.price,`你的地產被高價徵收`);
+      if(e.data.buyer===mySeat)moneyFx("強制徵收",-e.data.price,`你取得「${state.tiles[e.data.tile]?.name||"地產"}」`,FINANCE_ICON_ASSETS.forcedAcquire);
+      else if(e.data.seller===mySeat)moneyFx("徵收補償",e.data.price,`你的地產被高價徵收`,FINANCE_ICON_ASSETS.forcedAcquire);
     }
     else if(["hub_bank","hub_insurance","hub_project","hub_metro","hub_reward","hub_bank_mature","hub_project_mature"].includes(e.kind)&&e.data?.seat===mySeat&&typeof e.data.amount==="number"){
       moneyFx(`🏙 ${e.data.title||"都會核心"}`,e.data.amount,e.text);
     }
     else if(e.kind==="cash_flow"&&e.data.players?.includes(mySeat))moneyFx("💰 城市流通補助",e.data.amount,"每 ROUND 固定補助");
     else if(e.kind==="city_rebate"&&e.data.players?.includes(mySeat))moneyFx("🏙 城市公庫回饋",e.data.each,"城市費用重新流回玩家");
+    else if(e.kind==="public_invest"&&e.data?.seat===mySeat&&typeof e.data.amount==="number"){
+      moneyFx("公共建設投資",-Math.abs(e.data.amount),e.data.title||"公共建設",FINANCE_ICON_ASSETS.publicInvest)
+    }
+    else if(e.kind==="public_dividend"){
+      const mine=(e.data?.payouts||[])
+        .filter(x=>x.seat===mySeat)
+        .reduce((sum,x)=>sum+Number(x.amount||0),0);
+      if(mine>0)moneyFx("公共建設分紅",mine,"你的公共建設持分本回合配息",FINANCE_ICON_ASSETS.dividend)
+    }
     else if(e.kind==="dividend"){
       const d=e.data.payouts?.find(x=>x.seat===mySeat);
-      if(d)moneyFx("📈 股票股息",d.amount,"持股帶來額外現金流");
+      if(d)moneyFx("股票股息",d.amount,"持股帶來額外現金流",FINANCE_ICON_ASSETS.dividend);
     }
     else if(e.kind==="group_game_start")queueFx({html:
       `<div class="fx-title">🎉 全民競技觸發</div><div class="fx-money" style="font-size:28px">${({race:"財富賽馬場",wheel:"30格連消轉盤",dice:"全民骰王",treasure:"寶箱爭奪",hilow:"高低骰對決",noodle:"吃麵大賽",rps:"猜拳擂台",number:"幸運數字",cup:"魔術金杯",coinrush:"金幣雨",reaction:"綠燈反應王",bomb:"數字炸彈",card:"神秘翻牌",lane:"幸運車道"}[e.data.type]||"全民競技")}</div><div class="fx-sub">${state.players[e.data.triggerSeat]?.name||"玩家"} 踩到特殊格，${e.data.type==="treasure"?"全房一起選寶箱！":"全房一起玩，會直接跳出更有互動感的小遊戲！"}</div>`,duration:1800});
