@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.6.8 WEB｜第六・七批 ICON 整合</title>
+<title>財富帝國 V19.7.0 WEB｜介面整齊化・委託防洗錢</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.6.8 WEB - 56格多人網頁大富翁遊戲">
+<meta name="description" content="財富帝國 V19.7.0 WEB - 56格多人網頁大富翁遊戲">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6006,7 +6006,7 @@ button,.bonus-choice,.hilow-pick,.treasure-choice,.reaction-button{touch-action:
 }
 </style>
 <style>
-/* ===== V19.6.8 batch 6/7 icon integration ===== */
+/* ===== V19.7.0 batch 6/7 icon integration ===== */
 .minigame-icon-badge img{width:46px;height:46px;object-fit:contain;display:block}
 .pp-icon img{width:48px;height:48px;object-fit:contain;display:block}
 .finance-stat-label{display:flex!important;align-items:center;gap:4px}
@@ -6022,12 +6022,118 @@ button,.bonus-choice,.hilow-pick,.treasure-choice,.reaction-button{touch-action:
   .fx-inline-icon{width:26px;height:26px}
 }
 </style>
+
+<style id="v197-layout-polish">
+:root{
+  --v197-ink:#173451;
+  --v197-muted:#647b93;
+  --v197-line:#cfdae7;
+  --v197-shadow:0 8px 24px rgba(30,57,88,.11);
+}
+.panel{border-color:var(--v197-line)!important;box-shadow:var(--v197-shadow)!important}
+.top{background:linear-gradient(180deg,#ffffff,#f5f9fd)!important}
+.players{gap:7px!important}
+.player{border-color:#d5e0ec!important;box-shadow:0 4px 12px rgba(34,63,96,.07)!important}
+.player.current{background:linear-gradient(180deg,#f6faff,#edf5ff)!important;box-shadow:inset 0 0 0 2px #aecdf6,0 5px 14px rgba(35,75,122,.10)!important}
+.controls{background:linear-gradient(180deg,#f8fbfe,#edf4fb)!important;border-color:#d1deeb!important}
+.control-row>button{border:1px solid rgba(55,83,115,.10)!important;box-shadow:0 5px 12px rgba(35,63,96,.08)!important}
+#board{border-color:#c4d4e4!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.7)!important}
+.mission-round-lock{border-color:#edcf84!important;background:#fff7df!important;color:#77550e!important}
+.hub-card.mission-locked{opacity:.74;background:linear-gradient(180deg,#fbfcfd,#f1f4f7)!important}
+
+@media(max-width:980px) and (orientation:landscape){
+  body{background:#e8f0f8!important}
+  .mobile-turn-bar{
+    background:linear-gradient(180deg,#f3f7fb,#e9f1f8)!important;
+    border:1px solid #cad8e6!important;
+    border-radius:12px!important;
+    box-shadow:0 8px 22px rgba(31,58,88,.14)!important;
+    gap:5px!important;padding:5px!important
+  }
+  .mobile-turn-bar .mt-card{
+    background:linear-gradient(180deg,#ffffff,#f6f9fc)!important;
+    border:1px solid #d2dfeb!important;
+    border-radius:9px!important;
+    box-shadow:0 3px 9px rgba(37,68,102,.08)!important;
+    padding:6px 8px!important
+  }
+  .mobile-turn-bar .mt-turn{background:linear-gradient(180deg,#f8fbff,#eef5fd)!important}
+  .mobile-turn-bar .mt-round{background:linear-gradient(180deg,#edf6ff,#e2effd)!important;border-color:#bfd4ea!important}
+  .mobile-turn-bar .mt-leader{background:linear-gradient(180deg,#fffaf0,#fff2cc)!important;border-color:#ead38e!important}
+  .mobile-turn-bar .mt-cash{background:linear-gradient(180deg,#f2fcf7,#e7f7ef)!important;border-color:#bfe4d0!important}
+  .mobile-turn-bar .mt-tile{background:linear-gradient(180deg,#ffffff,#f3f6fa)!important}
+  .mobile-turn-bar .mt-label{color:#667d94!important;font-weight:900!important}
+  .mobile-turn-bar b{color:var(--v197-ink)!important;text-shadow:none!important}
+  .mobile-turn-bar .mt-round b{color:#18568f!important}
+  .mobile-turn-bar .mt-leader b{color:#946400!important}
+  .mobile-turn-bar .mt-cash b{color:#16764f!important}
+  .mobile-turn-bar small{color:#687f96!important}
+  #mobileRoundsLeft{background:#f5cf59!important;border:1px solid #d8ad32!important;color:#5b4500!important;box-shadow:none!important}
+
+  .controls{
+    background:linear-gradient(180deg,#f6f9fd,#ebf2f9)!important;
+    border:1px solid #cad8e6!important;
+    border-radius:12px!important;
+    box-shadow:0 8px 20px rgba(31,58,88,.11)!important
+  }
+  .dicebox{border:1px solid #d0ddea!important;background:#fff!important;box-shadow:0 3px 8px rgba(36,67,101,.07)!important}
+  #tradeBtn{grid-column:1/3!important;grid-row:3!important}
+  .control-row>button{display:flex!important;align-items:center!important;justify-content:center!important;min-width:0!important;margin:0!important}
+
+  .mobile-nav{
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    grid-template-rows:1fr!important;
+    gap:5px!important;
+    padding:5px!important;
+    background:linear-gradient(180deg,#f8fbfe,#edf4fa)!important;
+    border:1px solid #cad8e6!important;
+    border-radius:12px!important;
+    box-shadow:0 8px 20px rgba(31,58,88,.10)!important
+  }
+  .mobile-nav button{
+    width:100%!important;height:100%!important;min-width:0!important;margin:0!important;padding:4px 2px!important;
+    display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:3px!important;
+    border:1px solid #d7e2ed!important;border-radius:9px!important;
+    background:linear-gradient(180deg,#ffffff,#f3f7fb)!important;color:#25527f!important;box-shadow:none!important
+  }
+  .mobile-nav button.active{background:linear-gradient(180deg,#eaf4ff,#dfeeff)!important;color:#145caf!important;border-color:#bcd4ee!important;box-shadow:inset 0 0 0 1px rgba(64,126,194,.08)!important}
+  .mobile-nav .nav-art-icon,.mobile-nav button b,#mobileNav button:nth-child(3) b:before,#mobileNav button:nth-child(5) b:before{
+    width:28px!important;height:28px!important;margin:0 auto!important;flex:0 0 28px!important
+  }
+  .mobile-nav button span{line-height:1!important;white-space:nowrap!important}
+  .board-panel{background:#e8f0f7!important;border:1px solid #c8d6e4!important;box-shadow:0 8px 24px rgba(31,58,88,.10)!important}
+}
+
+body.force-mobile-preview .mobile-turn-bar{
+  background:linear-gradient(180deg,#f3f7fb,#e9f1f8)!important;border:1px solid #cad8e6!important;border-radius:12px!important;
+  box-shadow:0 8px 22px rgba(31,58,88,.14)!important;gap:5px!important;padding:5px!important
+}
+body.force-mobile-preview .mobile-turn-bar .mt-card{background:linear-gradient(180deg,#ffffff,#f6f9fc)!important;border:1px solid #d2dfeb!important;color:var(--v197-ink)!important}
+body.force-mobile-preview .mobile-turn-bar .mt-round{background:linear-gradient(180deg,#edf6ff,#e2effd)!important}
+body.force-mobile-preview .mobile-turn-bar .mt-leader{background:linear-gradient(180deg,#fffaf0,#fff2cc)!important}
+body.force-mobile-preview .mobile-turn-bar .mt-cash{background:linear-gradient(180deg,#f2fcf7,#e7f7ef)!important}
+body.force-mobile-preview .mobile-turn-bar b{color:var(--v197-ink)!important}
+body.force-mobile-preview .mobile-turn-bar .mt-leader b{color:#946400!important}
+body.force-mobile-preview .mobile-turn-bar .mt-cash b{color:#16764f!important}
+body.force-mobile-preview .mobile-turn-bar .mt-label,body.force-mobile-preview .mobile-turn-bar small{color:#667d94!important}
+body.force-mobile-preview #tradeBtn{grid-column:1/3!important;grid-row:3!important}
+body.force-mobile-preview .controls{background:linear-gradient(180deg,#f6f9fd,#ebf2f9)!important;border:1px solid #cad8e6!important;border-radius:12px!important}
+body.force-mobile-preview .mobile-nav{
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;grid-template-rows:1fr!important;gap:4px!important;padding:4px!important;
+  background:linear-gradient(180deg,#f8fbfe,#edf4fa)!important;border:1px solid #cad8e6!important;border-radius:12px!important
+}
+body.force-mobile-preview .mobile-nav button{
+  display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:2px!important;margin:0!important;
+  border:1px solid #d7e2ed!important;background:linear-gradient(180deg,#fff,#f3f7fb)!important
+}
+</style>
+
 </head>
 <body>
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.6.8</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.7.0</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6065,7 +6171,7 @@ button,.bonus-choice,.hilow-pick,.treasure-choice,.reaction-button{touch-action:
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.6.8 WEB｜第六・七批 ICON 整合｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.7.0 WEB｜介面整齊化・委託防洗錢｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -6495,7 +6601,7 @@ function player(name,seat,ai=false){
   return {
     seat,name,ai,ready:ai,connected:true,cash:45000,pos:0,properties:[],
     stocks:Object.fromEntries(Object.keys(STOCK_DEFS).map(c=>[c,{qty:0,avg:0}])),
-    realizedPnl:0,lastRaceRound:0,lastWheelRound:0,acquireSubsidy:0,lastAcquireRound:0,lastForcedAcquireRound:0,lastTradeRound:0,freeBuild:0,bankDeposit:null,rentShield:0,cityProject:null,cityMission:null,lastTransitRound:-99,lastPublicInvestRound:-99,bankrupt:false,
+    realizedPnl:0,lastRaceRound:0,lastWheelRound:0,acquireSubsidy:0,lastAcquireRound:0,lastForcedAcquireRound:0,lastTradeRound:0,freeBuild:0,bankDeposit:null,rentShield:0,cityProject:null,cityMission:null,lastMissionPickRound:-99,lastTransitRound:-99,lastPublicInvestRound:-99,bankrupt:false,
     stats:{rentPaid:0,rentReceived:0,landSpent:0,buildSpent:0,stockRealized:0,miniGameNet:0,raceWins:0,wheelWins:0,diceWins:0,treasureNet:0,noodleWins:0,hiLowWins:0,bonusWins:0,largestRent:0,acquisitions:0,acquisitionSpent:0,acquisitionEarned:0,forcedAcquisitions:0,forcedSpent:0,forcedEarned:0,trades:0,auctionWins:0,upgrades:0,stockTrades:0}
   }
 }
@@ -6561,7 +6667,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="1968";
+const APP_BUILD_ID="1970";
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -7615,9 +7721,11 @@ function missionChoices(){
 function assignCityMission(p,type){
   if(!hubActionAllowed(p))throw Error("只能在自己的回合、擲骰前接委託");
   if(p.cityMission)throw Error("你已經有進行中的城市委託");
+  if((p.lastMissionPickRound??-99)===state.round)throw Error("本 ROUND 已承接過一次城市委託，請等下一 ROUND 再接");
   const d=CITY_MISSIONS[type];
   if(!d)throw Error("委託不存在");
   p.cityMission={type,baseline:missionMetric(p,type),target:d.target,reward:d.reward};
+  p.lastMissionPickRound=state.round;
   addEvent("hub_mission",`🎯 ${p.name} 接下城市委託「${d.name}」。`,{seat:p.seat,type,title:"城市委託"})
 }
 function claimCityMission(p){
@@ -7703,12 +7811,13 @@ function processHubMaturities(){
 function maybeAIHubAction(p){
   let changed=false;
 
-  if(!p.cityMission){
+  if(!p.cityMission&&(p.lastMissionPickRound??-99)!==state.round){
     const type=missionChoices()[Math.floor(Math.random()*3)];
     const d=CITY_MISSIONS[type];
     p.cityMission={type,baseline:missionMetric(p,type),target:d.target,reward:d.reward};
+    p.lastMissionPickRound=state.round;
     changed=true
-  }else if(missionProgress(p).done){
+  }else if(p.cityMission&&missionProgress(p).done){
     const d=CITY_MISSIONS[p.cityMission.type],reward=p.cityMission.reward||d.reward;
     p.cash+=reward;
     addEvent("hub_reward",`🎯 ${p.name} 完成 AI 城市委託「${d.name}」，獲得 $${reward.toLocaleString()}。`,
@@ -9350,10 +9459,12 @@ function openPublicInvestmentCenter(){
 
 function openMissionHub(){
   const me=state.players[mySeat],can=hubCanAct();
+  const alreadyPicked=(me.lastMissionPickRound??-99)===state.round;
+
   if(me.cityMission){
     const d=CITY_MISSIONS[me.cityMission.type],prog=missionProgress(me),pct=Math.min(100,Math.round(prog.progress/prog.target*100));
     showModal("🎯 城市委託中心",
-      `<div class="hub-rule">同時間只能進行一項委託。完成後回到這裡領獎金，再接下一項。</div>
+      `<div class="hub-rule">每位玩家每 ROUND 最多承接 1 次委託。同時間只能進行一項；完成後可以領獎，但本 ROUND 不能再接第二張。</div>
        <div class="hub-card active">
         <div class="hicon">${d.icon}</div><div class="hname">${d.name}</div>
         <div class="hdesc">${d.desc}</div>
@@ -9365,18 +9476,23 @@ function openMissionHub(){
     return
   }
 
+  const canPick=can&&!alreadyPicked;
+  const lockNote=alreadyPicked
+    ? `<div class="hub-rule mission-round-lock">⏳ 你在 ROUND ${state.round} 已經承接過一次城市委託。為避免同回合重複領獎，本 ROUND 不可再接；下一 ROUND 會重新開放。</div>`
+    : `<div class="hub-rule">每位玩家每 ROUND 最多承接 1 次委託。任務組合每 ROUND 輪替，完成後領獎也不會在同一 ROUND 重新開放。</div>`;
+
   const cards=missionChoices().map(k=>{
     const d=CITY_MISSIONS[k];
-    return `<div class="hub-card">
+    return `<div class="hub-card ${alreadyPicked?"mission-locked":""}">
       <div class="hicon">${d.icon}</div><div class="hname">${d.name}</div>
       <div class="hdesc">${d.desc}</div>
       <div class="hvalue">+$${d.reward.toLocaleString()}</div>
-      <button class="primary" ${can?"":"disabled"} onclick="sendAction('hub_mission_pick',{mission:'${k}'})">接下委託</button>
+      <button class="primary" ${canPick?"":"disabled"} onclick="sendAction('hub_mission_pick',{mission:'${k}'})">${alreadyPicked?"本 ROUND 已承接":"接下委託"}</button>
     </div>`
   }).join("");
 
   showModal("🎯 城市委託中心",
-    `<div class="hub-rule">這不是棋盤事件，而是持續型目標。每 ROUND 的任務組合會輪替。</div><div class="hub-grid">${cards}</div>`,
+    `${lockNote}<div class="hub-grid">${cards}</div>`,
     [["關閉","ghost",closeModal]]
   )
 }
@@ -10119,7 +10235,7 @@ function moneyFx(title,amount,sub="",iconPath=""){
   const good=amount>0,bad=amount<0;
   const icon=iconPath?`<img class="fx-inline-icon" src="${iconPath}" alt="">`:"";
   queueFx({type:good?"good":bad?"bad":"normal",html:
-    `<div class="fx-title fx-icon-title">${icon}<span>${title}</span></div><div class="fx-money">${amount>=0?"+":"-"}${Math.abs(Math.round(amount)).toLocaleString()}</div><div class="fx-sub">${sub}</div>`})
+    `<div class="fx-title fx-icon-title">${icon}<span>${title}</span></div><div class="fx-money">${amount>=0?"+":"-"}$${Math.abs(Math.round(amount)).toLocaleString()}</div><div class="fx-sub">${sub}</div>`})
 }
 function rentFx(e){
   if((e.data.amount||0)>=3000)shakeScreen();burstParticles("coin",16);
@@ -10809,7 +10925,10 @@ function hubStatusText(key){
   const p=state?.players?.[mySeat];
   if(!p)return"等待玩家";
   if(key==="mission"){
-    if(!p.cityMission)return"挑選城市委託";
+    if(!p.cityMission){
+      if((p.lastMissionPickRound??-99)===state.round)return"本 ROUND 已承接 1 次";
+      return"挑選城市委託"
+    }
     const d=CITY_MISSIONS[p.cityMission.type],pr=missionProgress(p);
     return pr.done?`${d.name}｜可領獎`:`${d.name}｜${pr.progress}/${pr.target}`
   }
@@ -11173,93 +11292,102 @@ function drawToken(p,i){
     .map((player,seat)=>player&&!player.bankrupt&&player.pos===p.pos?seat:null)
     .filter(seat=>seat!==null);
   const slot=Math.max(0,coLocatedSeats.indexOf(i));
-  const spread=phone?25:20;
+  const spread=phone?38:30;
   const layouts={
     1:[[0,0]],
-    2:[[-spread,0],[spread,0]],
-    3:[[0,-spread*.78],[-spread,spread*.62],[spread,spread*.62]],
-    4:[[-spread,-spread*.62],[spread,-spread*.62],[-spread,spread*.62],[spread,spread*.62]]
+    2:[[-spread*.62,0],[spread*.62,0]],
+    3:[[0,-8],[-spread*.72,8],[spread*.72,8]],
+    4:[[-spread*.68,-6],[spread*.68,-6],[-spread*.68,12],[spread*.68,12]]
   };
   const layout=layouts[Math.min(4,Math.max(1,coLocatedSeats.length))]||[[0,0]];
   const [ox,oy]=layout[slot]||[0,0];
   const tx=x+ox,ty=y+oy;
   const isCurrent=i===state.current;
   const impact=window.__tokenPulseSeat===i&&Date.now()<(window.__tokenPulseUntil||0);
-  const scale=impact?1.17:1;
-  const headR=phone?9:7;
-  const bodyW=phone?15:12;
-  const bodyH=phone?18:15;
-  const haloR=(phone?31:25)+Math.sin(cityPulse*2)*2;
+  const pinR=phone?22:18;
+  const pinCenterY=ty-(phone?32:27);
+  const pulse=Math.sin(cityPulse*2.2);
 
   ctx.save();
 
-  if(isCurrent){
-    const halo=ctx.createRadialGradient(tx,ty,4,tx,ty,haloR);
-    halo.addColorStop(0,"rgba(255,225,114,.28)");
-    halo.addColorStop(.62,"rgba(255,200,45,.18)");
-    halo.addColorStop(1,"rgba(255,185,0,0)");
-    ctx.fillStyle=halo;
-    ctx.beginPath();ctx.arc(tx,ty,haloR,0,Math.PI*2);ctx.fill();
-    ctx.strokeStyle="rgba(255,190,24,.88)";
-    ctx.lineWidth=phone?4:3;
-    ctx.beginPath();ctx.arc(tx,ty,haloR-4,0,Math.PI*2);ctx.stroke();
-
-    const arrowY=ty-(phone?38:32);
-    ctx.fillStyle="#f2a800";
-    ctx.beginPath();
-    ctx.moveTo(tx,arrowY+9);
-    ctx.lineTo(tx-(phone?8:7),arrowY);
-    ctx.lineTo(tx+(phone?8:7),arrowY);
-    ctx.closePath();
-    ctx.fill();
-  }
-
-  ctx.translate(tx,ty);
-  ctx.scale(scale,scale);
-
-  // Floor shadow makes the marker read as a physical game piece instead of a number badge.
-  ctx.fillStyle="rgba(25,45,70,.20)";
-  ctx.beginPath();ctx.ellipse(0,bodyH*.82,bodyW*.82,phone?4.5:3.5,0,0,Math.PI*2);ctx.fill();
-
-  const pieceGradient=ctx.createLinearGradient(0,-headR*2,0,bodyH);
-  pieceGradient.addColorStop(0,COLORS[i]);
-  pieceGradient.addColorStop(.58,COLORS[i]);
-  pieceGradient.addColorStop(1,"#18334f");
-
-  ctx.shadowColor="rgba(25,48,78,.30)";
-  ctx.shadowBlur=phone?10:8;
-  ctx.shadowOffsetY=3;
-
-  // Pawn body.
   ctx.beginPath();
-  ctx.moveTo(-bodyW*.55,-1);
-  ctx.quadraticCurveTo(0,-6,bodyW*.55,-1);
-  ctx.lineTo(bodyW*.82,bodyH*.62);
-  ctx.quadraticCurveTo(0,bodyH,-bodyW*.82,bodyH*.62);
-  ctx.closePath();
-  ctx.fillStyle=pieceGradient;
+  ctx.arc(tx,ty,phone?9:7,0,Math.PI*2);
+  ctx.fillStyle="rgba(255,255,255,.96)";
   ctx.fill();
-  ctx.strokeStyle="#fff";
-  ctx.lineWidth=phone?3.5:2.7;
+  ctx.strokeStyle=COLORS[i];
+  ctx.lineWidth=phone?5:4;
   ctx.stroke();
 
-  // Pawn head.
-  ctx.beginPath();ctx.arc(0,-headR,headR,0,Math.PI*2);
-  ctx.fillStyle=pieceGradient;ctx.fill();
-  ctx.strokeStyle="#fff";ctx.lineWidth=phone?3.5:2.7;ctx.stroke();
+  if(isCurrent){
+    const haloR=(phone?44:36)+pulse*3;
+    const halo=ctx.createRadialGradient(tx,ty,5,tx,ty,haloR);
+    halo.addColorStop(0,"rgba(255,215,70,.30)");
+    halo.addColorStop(.58,"rgba(255,194,31,.15)");
+    halo.addColorStop(1,"rgba(255,174,0,0)");
+    ctx.fillStyle=halo;
+    ctx.beginPath();ctx.arc(tx,ty,haloR,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle="rgba(255,176,0,.95)";
+    ctx.lineWidth=phone?5:4;
+    ctx.beginPath();ctx.arc(tx,ty,haloR-5,0,Math.PI*2);ctx.stroke();
+  }
+
+  ctx.strokeStyle="rgba(26,50,79,.32)";
+  ctx.lineWidth=phone?4:3;
+  ctx.beginPath();
+  ctx.moveTo(tx,pinCenterY+pinR+5);
+  ctx.lineTo(tx,ty-5);
+  ctx.stroke();
+
+  ctx.save();
+  ctx.translate(tx,pinCenterY);
+  const markerScale=impact?1.14:1;
+  ctx.scale(markerScale,markerScale);
+  ctx.shadowColor="rgba(23,47,77,.38)";
+  ctx.shadowBlur=phone?13:10;
+  ctx.shadowOffsetY=phone?5:4;
+
+  ctx.fillStyle="#fff";
+  ctx.beginPath();
+  ctx.moveTo(-10,pinR-5);
+  ctx.lineTo(0,pinR+16);
+  ctx.lineTo(10,pinR-5);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle=COLORS[i];
+  ctx.beginPath();
+  ctx.moveTo(-7,pinR-6);
+  ctx.lineTo(0,pinR+12);
+  ctx.lineTo(7,pinR-6);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle="#fff";
+  ctx.beginPath();ctx.arc(0,0,pinR+3,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle=COLORS[i];
+  ctx.beginPath();ctx.arc(0,0,pinR,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle="rgba(14,39,65,.34)";
+  ctx.lineWidth=2;
+  ctx.stroke();
   ctx.shadowBlur=0;ctx.shadowOffsetY=0;
 
-  // Seat badge: P1–P4 remains explicit, but no longer carries the whole location signal.
-  const badgeW=phone?24:20,badgeH=phone?12:10;
-  ctx.fillStyle="rgba(18,38,61,.90)";
-  rr(-badgeW/2,bodyH*.30,badgeW,badgeH,badgeH/2,true,false);
   ctx.fillStyle="#fff";
-  ctx.font=`1000 ${phone?9:8}px "Segoe UI","Microsoft JhengHei",sans-serif`;
   ctx.textAlign="center";
   ctx.textBaseline="middle";
-  ctx.fillText(`P${i+1}`,0,bodyH*.30+badgeH/2+.3);
+  ctx.font=`1000 ${phone?15:13}px "Segoe UI","Microsoft JhengHei",sans-serif`;
+  ctx.fillText(`P${i+1}`,0,1);
+
+  if(isCurrent){
+    const labelW=phone?42:36,labelH=phone?16:14,labelY=-(pinR+labelH+7);
+    ctx.fillStyle="#f4b414";
+    rr(-labelW/2,labelY,labelW,labelH,labelH/2,true,false);
+    ctx.fillStyle="#493300";
+    ctx.font=`1000 ${phone?9:8}px "Microsoft JhengHei",sans-serif`;
+    ctx.fillText("目前",0,labelY+labelH/2+.5)
+  }
 
   ctx.restore();
+  ctx.restore()
 }
 function hubAtCanvasPoint(x,y){
   const bx=x/(BOARD_W/1480),by=y/(BOARD_H/940);
