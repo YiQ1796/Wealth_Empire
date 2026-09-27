@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.7.0 WEB｜介面整齊化・委託防洗錢</title>
+<title>財富帝國 V19.7.1 WEB｜手機版面修正・HUD 對齊</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.7.0 WEB - 56格多人網頁大富翁遊戲">
+<meta name="description" content="財富帝國 V19.7.1 WEB - 56格多人網頁大富翁遊戲">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6006,7 +6006,7 @@ button,.bonus-choice,.hilow-pick,.treasure-choice,.reaction-button{touch-action:
 }
 </style>
 <style>
-/* ===== V19.7.0 batch 6/7 icon integration ===== */
+/* ===== V19.7.1 batch 6/7 icon integration ===== */
 .minigame-icon-badge img{width:46px;height:46px;object-fit:contain;display:block}
 .pp-icon img{width:48px;height:48px;object-fit:contain;display:block}
 .finance-stat-label{display:flex!important;align-items:center;gap:4px}
@@ -6128,12 +6128,159 @@ body.force-mobile-preview .mobile-nav button{
 }
 </style>
 
+
+<style id="v1971-mobile-fixes">
+@media(max-width:980px) and (orientation:landscape){
+  :root{
+    --v1971-hud-h:clamp(132px,33dvh,150px);
+    --v1971-controls-h:clamp(148px,39dvh,170px);
+  }
+
+  /* Lobby owns the screen. No gameplay HUD before the game starts. */
+  body.lobby-mode .mobile-turn-bar,
+  body.lobby-mode .controls,
+  body.lobby-mode .mobile-nav{
+    display:none!important;
+  }
+  body.lobby-mode .app{
+    padding:max(3px,env(safe-area-inset-top))
+            max(3px,env(safe-area-inset-right))
+            max(3px,env(safe-area-inset-bottom))
+            max(3px,env(safe-area-inset-left))!important;
+  }
+
+  /* HUD: exact 2-column / 3-row geometry with no row overflow. */
+  .mobile-turn-bar{
+    height:var(--v1971-hud-h)!important;
+    grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr)!important;
+    grid-template-rows:repeat(3,minmax(0,1fr))!important;
+    gap:3px!important;
+    padding:4px!important;
+    overflow:hidden!important;
+  }
+  .mobile-turn-bar .mt-card{
+    min-width:0!important;
+    min-height:0!important;
+    padding:4px 7px!important;
+    overflow:hidden!important;
+  }
+  .mobile-turn-bar .mt-turn{grid-column:1!important;grid-row:1!important}
+  .mobile-turn-bar .mt-round{grid-column:2!important;grid-row:1/3!important}
+  .mobile-turn-bar .mt-leader{grid-column:1!important;grid-row:2!important}
+  .mobile-turn-bar .mt-cash{grid-column:1!important;grid-row:3!important}
+  .mobile-turn-bar .mt-tile{grid-column:2!important;grid-row:3!important}
+  .mobile-turn-bar .mt-label{
+    display:block!important;
+    font-size:clamp(8px,1.75dvh,10px)!important;
+    line-height:1!important;
+  }
+  .mobile-turn-bar b{
+    display:block!important;
+    margin-top:2px!important;
+    font-size:clamp(12px,2.8dvh,16px)!important;
+    line-height:1.05!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+  .mobile-turn-bar .mt-round b{font-size:clamp(15px,3.5dvh,20px)!important}
+  .mobile-turn-bar small{
+    margin-top:2px!important;
+    font-size:clamp(7.5px,1.55dvh,9px)!important;
+    line-height:1!important;
+  }
+  #mobileRoundsLeft{
+    margin-top:3px!important;
+    padding:3px 5px!important;
+    font-size:clamp(8px,1.8dvh,10px)!important;
+    line-height:1!important;
+  }
+
+  /* Controls and bottom rail are positioned from the same variables, so they cannot overlap the cash card. */
+  .controls{
+    top:calc(env(safe-area-inset-top) + var(--v1971-hud-h))!important;
+    height:var(--v1971-controls-h)!important;
+  }
+  .mobile-nav{
+    height:calc(
+      100dvh
+      - env(safe-area-inset-top)
+      - env(safe-area-inset-bottom)
+      - var(--v1971-hud-h)
+      - var(--v1971-controls-h)
+    )!important;
+    min-height:68px!important;
+  }
+
+  /* Explicit city art; neutralize the obsolete pseudo-icon rule. */
+  #mobileNav button:nth-child(5) b{display:none!important}
+  #mobileNav button:nth-child(5) b:before{content:none!important}
+  .mobile-nav .nav-city-icon{
+    display:block!important;
+    width:28px!important;
+    height:28px!important;
+    object-fit:contain!important;
+    flex:0 0 28px!important;
+    margin:0 auto!important;
+    filter:drop-shadow(0 3px 4px rgba(20,48,83,.18));
+  }
+}
+
+/* iPhone landscape around 350-400 CSS px tall needs an explicit compact profile. */
+@media(max-height:400px) and (orientation:landscape){
+  :root{
+    --v1971-hud-h:128px;
+    --v1971-controls-h:148px;
+  }
+  .mobile-turn-bar{
+    grid-template-rows:34px 34px 46px!important;
+  }
+  .mobile-turn-bar .mt-card{padding:3px 6px!important}
+  .mobile-turn-bar b{font-size:12px!important;margin-top:1px!important}
+  .mobile-turn-bar .mt-round b{font-size:16px!important}
+  .mobile-turn-bar .mt-label{font-size:8px!important}
+  .mobile-turn-bar small{font-size:7.5px!important}
+  #mobileRoundsLeft{font-size:8.5px!important;padding:3px 4px!important}
+  .control-row>button{font-size:9.5px!important}
+}
+
+/* Desktop mobile preview follows the same corrected geometry. */
+body.force-mobile-preview{
+  --v1971-hud-h:128px;
+  --v1971-controls-h:148px;
+}
+body.force-mobile-preview.lobby-mode .mobile-turn-bar,
+body.force-mobile-preview.lobby-mode .controls,
+body.force-mobile-preview.lobby-mode .mobile-nav{
+  display:none!important;
+}
+body.force-mobile-preview .mobile-turn-bar{
+  height:var(--v1971-hud-h)!important;
+  grid-template-rows:34px 34px 46px!important;
+  gap:3px!important;
+  padding:4px!important;
+  overflow:hidden!important;
+}
+body.force-mobile-preview .mobile-turn-bar .mt-card{min-height:0!important;padding:3px 6px!important;overflow:hidden!important}
+body.force-mobile-preview .controls{
+  top:var(--v1971-hud-h)!important;
+  height:var(--v1971-controls-h)!important;
+}
+body.force-mobile-preview .mobile-nav{
+  top:calc(var(--v1971-hud-h) + var(--v1971-controls-h))!important;
+  height:auto!important;
+}
+body.force-mobile-preview .nav-city-icon{
+  display:block!important;width:26px!important;height:26px!important;object-fit:contain!important;margin:0 auto!important
+}
+</style>
+
 </head>
-<body>
+<body class="lobby-mode">
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.7.0</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.7.1</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6171,7 +6318,7 @@ body.force-mobile-preview .mobile-nav button{
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.7.0 WEB｜介面整齊化・委託防洗錢｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.7.1 WEB｜手機版面修正・HUD 對齊｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -6239,7 +6386,7 @@ body.force-mobile-preview .mobile-nav button{
   <button data-mobile-view="market" onclick="mobileSetView('market')"><img class="nav-art-icon" src="assets/first10/nav_stock.png" alt=""><span>股票</span></button>
   <button onclick="openMobileActions()"><b>⚡</b><span>操作</span></button>
   <button data-mobile-view="events" onclick="mobileSetView('events')"><b>📜</b><span>事件</span></button>
-  <button onclick="openMobileHubMenu()"><b>🏙️</b><span>都會</span></button>
+  <button onclick="openMobileHubMenu()"><img class="nav-art-icon nav-city-icon" src="./assets/v194/hub_city_policy.webp?v=1971" alt=""><span>都會</span></button>
 </nav>
 
 
@@ -6667,7 +6814,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="1970";
+const APP_BUILD_ID="1971";
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -11305,11 +11452,15 @@ function drawToken(p,i){
   const isCurrent=i===state.current;
   const impact=window.__tokenPulseSeat===i&&Date.now()<(window.__tokenPulseUntil||0);
   const pinR=phone?22:18;
-  const pinCenterY=ty-(phone?32:27);
+  const edgeThreshold=phone?92:78;
+  const pinBelow=ty<edgeThreshold;
+  const pinOffset=phone?34:29;
+  const pinCenterY=ty+(pinBelow?pinOffset:-pinOffset);
   const pulse=Math.sin(cityPulse*2.2);
 
   ctx.save();
 
+  // Exact landing anchor.
   ctx.beginPath();
   ctx.arc(tx,ty,phone?9:7,0,Math.PI*2);
   ctx.fillStyle="rgba(255,255,255,.96)";
@@ -11331,11 +11482,14 @@ function drawToken(p,i){
     ctx.beginPath();ctx.arc(tx,ty,haloR-5,0,Math.PI*2);ctx.stroke();
   }
 
+  // Connector always points from the marker toward the actual cell.
+  const connectorStartY=pinCenterY+(pinBelow?-(pinR+5):(pinR+5));
+  const connectorEndY=ty+(pinBelow?5:-5);
   ctx.strokeStyle="rgba(26,50,79,.32)";
   ctx.lineWidth=phone?4:3;
   ctx.beginPath();
-  ctx.moveTo(tx,pinCenterY+pinR+5);
-  ctx.lineTo(tx,ty-5);
+  ctx.moveTo(tx,connectorStartY);
+  ctx.lineTo(tx,connectorEndY);
   ctx.stroke();
 
   ctx.save();
@@ -11346,19 +11500,32 @@ function drawToken(p,i){
   ctx.shadowBlur=phone?13:10;
   ctx.shadowOffsetY=phone?5:4;
 
+  // Pointer triangle flips on the top row so the whole marker remains inside the board.
   ctx.fillStyle="#fff";
   ctx.beginPath();
-  ctx.moveTo(-10,pinR-5);
-  ctx.lineTo(0,pinR+16);
-  ctx.lineTo(10,pinR-5);
+  if(pinBelow){
+    ctx.moveTo(-10,-pinR+5);
+    ctx.lineTo(0,-pinR-16);
+    ctx.lineTo(10,-pinR+5)
+  }else{
+    ctx.moveTo(-10,pinR-5);
+    ctx.lineTo(0,pinR+16);
+    ctx.lineTo(10,pinR-5)
+  }
   ctx.closePath();
   ctx.fill();
 
   ctx.fillStyle=COLORS[i];
   ctx.beginPath();
-  ctx.moveTo(-7,pinR-6);
-  ctx.lineTo(0,pinR+12);
-  ctx.lineTo(7,pinR-6);
+  if(pinBelow){
+    ctx.moveTo(-7,-pinR+6);
+    ctx.lineTo(0,-pinR-12);
+    ctx.lineTo(7,-pinR+6)
+  }else{
+    ctx.moveTo(-7,pinR-6);
+    ctx.lineTo(0,pinR+12);
+    ctx.lineTo(7,pinR-6)
+  }
   ctx.closePath();
   ctx.fill();
 
@@ -11378,7 +11545,8 @@ function drawToken(p,i){
   ctx.fillText(`P${i+1}`,0,1);
 
   if(isCurrent){
-    const labelW=phone?42:36,labelH=phone?16:14,labelY=-(pinR+labelH+7);
+    const labelW=phone?42:36,labelH=phone?16:14;
+    const labelY=pinBelow?(pinR+7):-(pinR+labelH+7);
     ctx.fillStyle="#f4b414";
     rr(-labelW/2,labelY,labelW,labelH,labelH/2,true,false);
     ctx.fillStyle="#493300";
@@ -11753,7 +11921,10 @@ document.addEventListener("pointerdown",e=>{
   }
   var overlayIds=["modal","groupGameOverlay","raceOverlay","wheelOverlay","diceOverlay","treasureOverlay","noodleOverlay","hilowOverlay","bonusOverlay","victoryOverlay"];
   function syncModes(){
-    document.body.classList.toggle("lobby-mode",!!(state&&state.status==="lobby"&&phone()));
+    var lobbyEl=document.getElementById("lobby");
+    var lobbyVisible=!!(lobbyEl&&!lobbyEl.classList.contains("hidden"));
+    var shouldShowLobbyMode=phone()&&(!state||state.status==="lobby"||lobbyVisible);
+    document.body.classList.toggle("lobby-mode",shouldShowLobbyMode);
     var active=overlayIds.some(function(id){var e=document.getElementById(id);return e&&e.classList.contains("open")});
     document.body.classList.toggle("overlay-active",active&&phone());
     applyIcons();
