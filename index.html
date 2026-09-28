@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.8.0 WEB｜最新 ICON 整合</title>
+<title>財富帝國 V19.8.2 WEB｜最終特效 ICON 整合</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.8.0 WEB - 56格多人網頁大富翁遊戲">
+<meta name="description" content="財富帝國 V19.8.2 WEB - 56格多人網頁大富翁遊戲">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6634,12 +6634,108 @@ body.force-mobile-preview #mobileRoundsLeft{
 }
 </style>
 
+
+<style id="v1981-control-button-scale-fix">
+/* ===== V19.8.1 gameplay control buttons enlarged and aligned ===== */
+@media(max-width:980px) and (orientation:landscape){
+  :root{--v1981-controls-h:164px;}
+  .controls{height:var(--v1981-controls-h)!important;padding:6px!important;}
+  .mobile-nav{
+    height:calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - var(--v1972-hud-h) - var(--v1981-controls-h))!important;
+    min-height:62px!important;
+  }
+  .control-row{
+    height:100%!important;
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    grid-template-rows:50px 48px 52px!important;
+    gap:7px!important;
+    align-items:stretch!important;
+  }
+  .dicebox{padding:4px!important;}
+  #rollBtn{grid-column:2!important;grid-row:1!important;}
+  #tradeBtn{grid-column:1/3!important;grid-row:3!important;}
+  .control-row>button{
+    min-width:0!important;min-height:0!important;height:100%!important;width:100%!important;
+    padding:3px 4px!important;border-radius:10px!important;
+    display:flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important;
+  }
+  .controls button.primary:not(:disabled),
+  .controls button.warn:not(:disabled),
+  .controls button.success:not(:disabled),
+  .controls button:disabled{background-size:112% 112%!important;}
+  .controls button .icon-label{
+    display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;
+    width:100%!important;padding:0 10px!important;font-size:11.5px!important;font-weight:1000!important;
+    line-height:1!important;white-space:nowrap!important;
+  }
+  .controls button .icon-label img{
+    width:23px!important;height:23px!important;flex:0 0 23px!important;object-fit:contain!important;
+    filter:drop-shadow(0 2px 3px rgba(29,50,79,.22));
+  }
+  .dicebox .dlabel{font-size:10px!important;}
+  .dicebox .dtotal{font-size:18px!important;}
+}
+@media(max-height:400px) and (orientation:landscape){
+  :root{--v1981-controls-h:156px;}
+  .controls{height:var(--v1981-controls-h)!important;padding:5px!important;}
+  .mobile-nav{
+    height:calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - var(--v1972-hud-h) - var(--v1981-controls-h))!important;
+    min-height:58px!important;
+  }
+  .control-row{grid-template-rows:46px 45px 49px!important;gap:6px!important;}
+  .controls button .icon-label{font-size:10.5px!important;gap:7px!important;padding:0 8px!important;}
+  .controls button .icon-label img{width:21px!important;height:21px!important;flex:0 0 21px!important;}
+}
+body.force-mobile-preview .controls{height:156px!important;padding:5px!important;}
+body.force-mobile-preview .mobile-nav{top:calc(var(--v1972-hud-h) + 156px)!important;}
+body.force-mobile-preview .control-row{
+  height:100%!important;display:grid!important;grid-template-columns:1fr 1fr!important;
+  grid-template-rows:46px 45px 49px!important;gap:6px!important;
+}
+body.force-mobile-preview #tradeBtn{grid-column:1/3!important;grid-row:3!important;}
+body.force-mobile-preview .control-row>button{height:100%!important;width:100%!important;}
+body.force-mobile-preview .controls button.primary:not(:disabled),
+body.force-mobile-preview .controls button.warn:not(:disabled),
+body.force-mobile-preview .controls button.success:not(:disabled),
+body.force-mobile-preview .controls button:disabled{background-size:112% 112%!important;}
+body.force-mobile-preview .controls button .icon-label{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;
+  width:100%!important;padding:0 8px!important;font-size:10.5px!important;white-space:nowrap!important;line-height:1!important;
+}
+body.force-mobile-preview .controls button .icon-label img{
+  width:21px!important;height:21px!important;flex:0 0 21px!important;object-fit:contain!important;
+}
+</style>
+
+<style id="v1982-special-fx">
+/* ===== V19.8.2 final special-effect icon integration ===== */
+.fx-special{position:relative;min-height:190px;display:grid;place-items:center;overflow:visible;}
+.fx-special-art{
+  position:absolute;left:50%;top:50%;width:190px;height:190px;transform:translate(-50%,-50%);
+  object-fit:contain;pointer-events:none;filter:drop-shadow(0 8px 18px rgba(0,0,0,.28));
+}
+.fx-special-copy{position:relative;z-index:2;width:min(310px,78vw);padding:26px 54px;text-align:center;}
+.fx-special-copy .fx-title{font-size:17px!important;text-shadow:0 2px 5px rgba(0,0,0,.65)}
+.fx-special-copy .fx-money{font-size:28px!important;line-height:1.08!important;text-shadow:0 2px 6px rgba(0,0,0,.72)}
+.fx-special-copy .fx-sub{font-size:11px!important;text-shadow:0 1px 4px rgba(0,0,0,.72)}
+.fx-card.fx-special-card{min-width:360px;background:rgba(10,28,48,.90)!important;overflow:visible;}
+@media(max-width:980px) and (orientation:landscape){
+  .fx-card.fx-special-card{min-width:0!important;width:min(330px,58vw)!important;padding:8px 12px!important}
+  .fx-special{min-height:150px}
+  .fx-special-art{width:150px;height:150px}
+  .fx-special-copy{width:min(260px,52vw);padding:19px 42px}
+  .fx-special-copy .fx-title{font-size:13px!important}
+  .fx-special-copy .fx-money{font-size:22px!important}
+  .fx-special-copy .fx-sub{font-size:9px!important}
+}
+</style>
 </head>
 <body class="lobby-mode">
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.8.0</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.8.2</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6677,7 +6773,7 @@ body.force-mobile-preview #mobileRoundsLeft{
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.8.0 WEB｜最新 ICON 整合｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.8.2 WEB｜最終特效 ICON 整合｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -7019,6 +7115,11 @@ const FINANCE_ICON_ASSETS={
   forcedAcquire:"assets/v198/finance_forced_acquire.webp",
   publicInvest:"assets/v198/finance_public_invest.webp"
 };
+const SPECIAL_FX_ASSETS={
+  cityLevelup:"assets/v1982/fx_city_levelup.webp",
+  forcedAcquire:"assets/v1982/fx_forced_acquire.webp",
+  minigameTrigger:"assets/v1982/fx_minigame_trigger.webp"
+};
 const COIN_RUSH_MS=6000;
 const COIN_RUSH_MAX=20;
 const RPS_CHOICES=[{key:"rock",icon:"✊",name:"石頭"},{key:"paper",icon:"✋",name:"布"},{key:"scissors",icon:"✌️",name:"剪刀"}];
@@ -7177,7 +7278,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="1980";
+const APP_BUILD_ID="1982";
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -11321,14 +11422,25 @@ function handleIncomingEvents(){
     else if(e.kind==="group_noodle_result")animateNoodle(e);
     else if(e.kind==="group_bonus_result")animateBonusGame(e);
     else if(e.kind==="forced_acquisition"){
-      if(e.data.buyer===mySeat)moneyFx("強制徵收",-e.data.price,`你取得「${state.tiles[e.data.tile]?.name||"地產"}」`,FINANCE_ICON_ASSETS.forcedAcquire);
-      else if(e.data.seller===mySeat)moneyFx("徵收補償",e.data.price,`你的地產被高價徵收`,FINANCE_ICON_ASSETS.forcedAcquire);
+      const isBuyer=e.data.buyer===mySeat,isSeller=e.data.seller===mySeat;
+      if(isBuyer||isSeller){
+        burstParticles("coin",30);
+        const amount=(isBuyer?-1:1)*Number(e.data.price||0);
+        const title=isBuyer?"強制徵收完成":"徵收補償入帳";
+        const sub=isBuyer?`你取得「${state.tiles[e.data.tile]?.name||"地產"}」`:`你的地產被高價徵收`;
+        queueFx({type:"fx-special-card",html:`<div class="fx-special"><img class="fx-special-art" src="${SPECIAL_FX_ASSETS.forcedAcquire}" alt=""><div class="fx-special-copy"><div class="fx-title">${title}</div><div class="fx-money">${amount>=0?"+":"-"}$${Math.abs(Math.round(amount)).toLocaleString()}</div><div class="fx-sub">${sub}</div></div></div>`,duration:2500})
+      }
     }
     else if(["hub_bank","hub_insurance","hub_project","hub_metro","hub_reward","hub_bank_mature","hub_project_mature"].includes(e.kind)&&e.data?.seat===mySeat&&typeof e.data.amount==="number"){
       moneyFx(`🏙 ${e.data.title||"都會核心"}`,e.data.amount,e.text);
     }
     else if(e.kind==="cash_flow"&&e.data.players?.includes(mySeat))moneyFx("💰 城市流通補助",e.data.amount,"每 ROUND 固定補助");
     else if(e.kind==="city_rebate"&&e.data.players?.includes(mySeat))moneyFx("🏙 城市公庫回饋",e.data.each,"城市費用重新流回玩家");
+    else if(e.kind==="public_levelup"){
+      burstParticles("confetti",34);
+      const def=PUBLIC_PROJECTS[e.data?.key];
+      queueFx({type:"fx-special-card",html:`<div class="fx-special"><img class="fx-special-art" src="${SPECIAL_FX_ASSETS.cityLevelup}" alt=""><div class="fx-special-copy"><div class="fx-title">城市建設升級</div><div class="fx-money">${def?.name||"公共建設"} Lv.${e.data?.level||"?"}</div><div class="fx-sub">城市景觀與分紅效率同步提升</div></div></div>`,duration:2400})
+    }
     else if(e.kind==="public_invest"&&e.data?.seat===mySeat&&typeof e.data.amount==="number"){
       moneyFx("公共建設投資",-Math.abs(e.data.amount),e.data.title||"公共建設",FINANCE_ICON_ASSETS.publicInvest)
     }
@@ -11342,8 +11454,10 @@ function handleIncomingEvents(){
       const d=e.data.payouts?.find(x=>x.seat===mySeat);
       if(d)moneyFx("股票股息",d.amount,"持股帶來額外現金流",FINANCE_ICON_ASSETS.dividend);
     }
-    else if(e.kind==="group_game_start")queueFx({html:
-      `<div class="fx-title">🎉 全民競技觸發</div><div class="fx-money" style="font-size:28px">${({race:"財富賽馬場",wheel:"30格連消轉盤",dice:"全民骰王",treasure:"寶箱爭奪",hilow:"高低骰對決",noodle:"吃麵大賽",rps:"猜拳擂台",number:"幸運數字",cup:"魔術金杯",coinrush:"金幣雨",reaction:"綠燈反應王",bomb:"數字炸彈",card:"神秘翻牌",lane:"幸運車道"}[e.data.type]||"全民競技")}</div><div class="fx-sub">${state.players[e.data.triggerSeat]?.name||"玩家"} 踩到特殊格，${e.data.type==="treasure"?"全房一起選寶箱！":"全房一起玩，會直接跳出更有互動感的小遊戲！"}</div>`,duration:1800});
+    else if(e.kind==="group_game_start"){
+      const gameName=({race:"財富賽馬場",wheel:"30格連消轉盤",dice:"全民骰王",treasure:"寶箱爭奪",hilow:"高低骰對決",noodle:"吃麵大賽",rps:"猜拳擂台",number:"幸運數字",cup:"魔術金杯",coinrush:"金幣雨",reaction:"綠燈反應王",bomb:"數字炸彈",card:"神秘翻牌",lane:"幸運車道"}[e.data.type]||"全民競技");
+      queueFx({type:"fx-special-card",html:`<div class="fx-special"><img class="fx-special-art" src="${SPECIAL_FX_ASSETS.minigameTrigger}" alt=""><div class="fx-special-copy"><div class="fx-title">全民競技觸發</div><div class="fx-money">${gameName}</div><div class="fx-sub">${state.players[e.data.triggerSeat]?.name||"玩家"} 踩到特殊格，${e.data.type==="treasure"?"全房一起選寶箱！":"全房一起進入小遊戲！"}</div></div></div>`,duration:2000})
+    }
     else if(e.kind==="city_event")queueFx({html:`<div class="fx-title">📢 城市景氣事件</div><div class="fx-money" style="font-size:28px">${e.data.name}</div><div class="fx-sub">租金 ×${e.data.rentMult}｜建築成本 ×${e.data.buildMult}｜市場偏移 ${(e.data.stockBias*100).toFixed(1)}%</div>`,duration:2300});
     else if(e.kind==="bankrupt")queueFx({type:"bad",html:`<div class="fx-title">💥 玩家破產</div><div class="fx-money" style="font-size:30px">${state.players[e.data.seat]?.name||"玩家"} 出局</div>`,duration:2300});
     else if(e.kind==="finish"&&e.id>victoryShownEvent)showVictory(e)
