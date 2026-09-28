@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.2 WEB｜角色自選＋特殊格美術整合</title>
+<title>財富帝國 V19.9.3 WEB｜擲骰特效重做＋骰子資訊列重整</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.2 WEB - 角色自由選擇、特殊格美術整合與控制列穩定版">
+<meta name="description" content="財富帝國 V19.9.3 WEB - 擲骰特效視窗重做、骰子資訊列重整與控制列穩定版">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6151,7 +6151,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 
 <style id="v1990-ui-authority">
-/* ===== V19.9.2 UI authority ===== */
+/* ===== V19.9.3 UI authority ===== */
 #turnLabel{display:none!important}
 .dicebox::before,.dicebox::after{display:none!important;content:none!important}
 .dicebox{position:relative!important;overflow:hidden!important}
@@ -6192,7 +6192,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 
 <style id="v1991-layout-cleanup">
-/* ===== V19.9.2 layout cleanup ===== */
+/* ===== V19.9.3 layout cleanup ===== */
 #mobileTurnBar,.mobile-turn-bar{display:none!important}
 
 .players{align-items:stretch!important}
@@ -6272,7 +6272,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 
 <style id="v1992-three-bug-fix">
-/* ===== V19.9.2 targeted fix: dice FX / foreign property buttons / modal action buttons ===== */
+/* ===== V19.9.3 targeted fix: dice FX / foreign property buttons / modal action buttons ===== */
 
 /* 1) Special FX: artwork and copy MUST NOT overlap. */
 .fx-card.fx-special-card{
@@ -6490,7 +6490,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.2 WEB｜角色自選＋特殊格美術整合｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.3 WEB｜角色自選＋特殊格美術整合｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -6510,9 +6510,15 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
     <div id="players" class="players"></div>
   <div class="panel controls">
     <div class="control-row">
-      <div class="dicebox">
-        <div id="die1" class="die">⚀</div><div id="die2" class="die">⚀</div>
-        <div><div id="diceStatus" class="dlabel">等待遊戲開始</div><div id="diceTotal" class="dtotal">2</div></div>
+      <div class="dicebox" aria-label="骰子資訊">
+        <div class="dice-pair">
+          <div id="die1" class="die">⚀</div>
+          <div id="die2" class="die">⚀</div>
+        </div>
+        <div class="dice-readout">
+          <div id="diceStatus" class="dlabel">等待遊戲開始</div>
+          <div class="dice-total-row"><span class="dice-total-label">總點數</span><div id="diceTotal" class="dtotal">2</div></div>
+        </div>
       </div>
       <button id="rollBtn" class="primary" onclick="sendAction('roll')"><span class="icon-label"><img src="assets/first10/action_roll_dice.png" alt="">擲骰子</span></button>
       <button id="propertyBtn" class="warn" onclick="openProperties()"><span class="icon-label"><img src="assets/first10/action_property.png" alt="">我的房產</span></button>
@@ -7162,7 +7168,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="1992";
+const APP_BUILD_ID="1993";
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -12919,6 +12925,278 @@ document.addEventListener("pointerdown",e=>{
 
 <script id="v1990-avatar-init">
 window.addEventListener("load",()=>{try{renderEntryAvatarPickers();renderWaitingAvatarPicker()}catch{}});
+</script>
+
+
+<style id="v1993-dice-structural-rebuild">
+/* ===== V19.9.3 authority: dice info row + dice FX are isolated components ===== */
+#turnLabel{display:none!important}
+
+/* Never let historical decorative pseudo-elements return to the dice info block. */
+html body .controls .dicebox,
+body.force-mobile-preview .controls .dicebox{
+  background:transparent!important;
+  background-image:none!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+html body .controls .dicebox::before,
+html body .controls .dicebox::after,
+body.force-mobile-preview .controls .dicebox::before,
+body.force-mobile-preview .controls .dicebox::after{
+  display:none!important;
+  content:none!important;
+  background:none!important;
+}
+
+/* Desktop authority layout: dice info + four equal action buttons. */
+@media(min-width:981px){
+  html body .controls{padding:12px 16px!important}
+  html body .controls .control-row{
+    display:grid!important;
+    grid-template-columns:minmax(300px,1.16fr) repeat(4,minmax(190px,1fr))!important;
+    grid-template-rows:82px!important;
+    gap:14px!important;
+    align-items:stretch!important;
+  }
+  html body .controls .dicebox{
+    min-width:0!important;
+    width:100%!important;
+    height:82px!important;
+    min-height:82px!important;
+    padding:6px 10px!important;
+    display:grid!important;
+    grid-template-columns:auto minmax(0,1fr)!important;
+    align-items:center!important;
+    gap:13px!important;
+    overflow:visible!important;
+  }
+  html body .controls .dice-pair{
+    display:flex!important;
+    align-items:center!important;
+    gap:9px!important;
+    flex:none!important;
+  }
+  html body .controls .dicebox .die{
+    width:58px!important;
+    height:58px!important;
+    min-width:58px!important;
+    flex:0 0 58px!important;
+    margin:0!important;
+    padding:0!important;
+    border:0!important;
+    background-color:transparent!important;
+    box-shadow:none!important;
+    overflow:visible!important;
+  }
+  html body .controls .dicebox .dice-face-art{
+    display:block!important;
+    width:58px!important;
+    height:58px!important;
+    object-fit:contain!important;
+  }
+  html body .controls .dice-readout{
+    min-width:0!important;
+    display:flex!important;
+    flex-direction:column!important;
+    justify-content:center!important;
+    align-items:flex-start!important;
+    gap:4px!important;
+  }
+  html body .controls .dicebox .dlabel{
+    width:100%!important;
+    margin:0!important;
+    font-size:13px!important;
+    line-height:1.15!important;
+    font-weight:900!important;
+    color:#536c89!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+  html body .controls .dice-total-row{
+    display:flex!important;
+    align-items:baseline!important;
+    gap:8px!important;
+  }
+  html body .controls .dice-total-label{
+    font-size:11px!important;
+    line-height:1!important;
+    font-weight:900!important;
+    color:#8292a6!important;
+  }
+  html body .controls .dicebox .dtotal{
+    margin:0!important;
+    font-size:31px!important;
+    line-height:.95!important;
+    font-weight:1000!important;
+    color:#173657!important;
+  }
+  html body .controls .control-row>button{
+    width:100%!important;
+    height:82px!important;
+    min-height:82px!important;
+    margin:0!important;
+    align-self:stretch!important;
+  }
+}
+
+/* Phone authority layout: no desktop frame; same IDs, predictable 2-column grid. */
+@media(max-width:980px) and (orientation:landscape){
+  html body .controls .control-row{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    grid-template-rows:56px 54px 58px!important;
+    gap:7px!important;
+    align-items:stretch!important;
+  }
+  html body .controls .dicebox{
+    grid-column:1!important;
+    grid-row:1!important;
+    height:56px!important;
+    min-height:56px!important;
+    padding:3px 5px!important;
+    display:grid!important;
+    grid-template-columns:auto minmax(0,1fr)!important;
+    align-items:center!important;
+    gap:6px!important;
+  }
+  html body .controls .dice-pair{display:flex!important;align-items:center!important;gap:4px!important}
+  html body .controls .dicebox .die{
+    width:38px!important;height:38px!important;min-width:38px!important;flex:0 0 38px!important;
+    margin:0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important
+  }
+  html body .controls .dicebox .dice-face-art{width:38px!important;height:38px!important;display:block!important;object-fit:contain!important}
+  html body .controls .dice-readout{min-width:0!important;display:flex!important;flex-direction:column!important;justify-content:center!important;gap:2px!important}
+  html body .controls .dicebox .dlabel{
+    margin:0!important;font-size:9px!important;line-height:1.05!important;font-weight:900!important;
+    white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important
+  }
+  html body .controls .dice-total-row{display:flex!important;align-items:baseline!important;gap:4px!important}
+  html body .controls .dice-total-label{font-size:7px!important;font-weight:900!important;color:#8292a6!important}
+  html body .controls .dicebox .dtotal{font-size:20px!important;line-height:1!important;margin:0!important}
+  html body .controls #rollBtn{grid-column:2!important;grid-row:1!important}
+  html body .controls #propertyBtn{grid-column:1!important;grid-row:2!important}
+  html body .controls #upgradeBtn{grid-column:2!important;grid-row:2!important}
+  html body .controls #tradeBtn{grid-column:1/3!important;grid-row:3!important}
+  html body .controls .control-row>button{
+    width:100%!important;height:100%!important;min-height:0!important;margin:0!important
+  }
+}
+
+/* Dedicated dice-effect component. It does not inherit old .fx-special positioning. */
+.fx-card.dice-roll-card{
+  width:min(470px,90vw)!important;
+  min-width:0!important;
+  max-width:90vw!important;
+  padding:18px 20px 20px!important;
+  border-radius:24px!important;
+  background:rgba(12,31,52,.94)!important;
+  overflow:visible!important;
+}
+.v1993-dice-fx{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:14px!important;
+  width:100%!important;
+}
+.v1993-dice-fx-art{
+  display:block!important;
+  width:min(270px,68vw)!important;
+  height:min(270px,68vw)!important;
+  object-fit:contain!important;
+  flex:none!important;
+  margin:0 auto!important;
+  position:static!important;
+  transform:none!important;
+}
+.v1993-dice-fx-copy{
+  width:100%!important;
+  padding:14px 18px 15px!important;
+  border-radius:17px!important;
+  background:rgba(5,23,42,.82)!important;
+  border:1px solid rgba(255,255,255,.08)!important;
+  box-shadow:0 10px 24px rgba(0,0,0,.16)!important;
+  text-align:center!important;
+  position:static!important;
+}
+.v1993-dice-fx-title{
+  margin:0 0 5px!important;
+  font-size:20px!important;
+  line-height:1.15!important;
+  font-weight:1000!important;
+  color:#fff!important;
+}
+.v1993-dice-fx-value{
+  margin:0 0 6px!important;
+  font-size:36px!important;
+  line-height:1.05!important;
+  font-weight:1000!important;
+  color:#fff!important;
+}
+.v1993-dice-fx-sub{
+  margin:0!important;
+  font-size:13px!important;
+  line-height:1.4!important;
+  font-weight:800!important;
+  color:rgba(255,255,255,.92)!important;
+}
+
+@media(max-width:980px) and (orientation:landscape){
+  .fx-card.dice-roll-card{
+    width:min(380px,68vw)!important;
+    padding:11px 13px 13px!important;
+    border-radius:18px!important;
+  }
+  .v1993-dice-fx{gap:8px!important}
+  .v1993-dice-fx-art{
+    width:min(180px,40vw)!important;
+    height:min(180px,40vw)!important;
+  }
+  .v1993-dice-fx-copy{padding:9px 12px 10px!important;border-radius:13px!important}
+  .v1993-dice-fx-title{font-size:15px!important;margin-bottom:3px!important}
+  .v1993-dice-fx-value{font-size:26px!important;margin-bottom:4px!important}
+  .v1993-dice-fx-sub{font-size:9.5px!important}
+}
+</style>
+
+<script id="v1993-dice-fx-structure">
+(function(){
+  const escapeHtml=v=>String(v??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[ch]));
+  const previousQueueFx=queueFx;
+
+  function rebuildDiceFx(payload){
+    if(!payload || payload.type!=="fx-special-card" || typeof payload.html!=="string") return payload;
+    if(!/(擲骰中|雙骰爆發|高點數爆發)/.test(payload.html)) return payload;
+
+    const holder=document.createElement("div");
+    holder.innerHTML=payload.html;
+    const img=holder.querySelector("img")?.getAttribute("src")||"";
+    const title=holder.querySelector(".fx-title")?.textContent?.trim()||"擲骰";
+    const value=holder.querySelector(".fx-money")?.textContent?.trim()||"";
+    const sub=holder.querySelector(".fx-sub")?.textContent?.trim()||"";
+
+    return {
+      ...payload,
+      type:"dice-roll-card",
+      html:
+        '<div class="v1993-dice-fx">'+
+          (img?'<img class="v1993-dice-fx-art" src="'+escapeHtml(img)+'" alt="">':"")+
+          '<div class="v1993-dice-fx-copy">'+
+            '<div class="v1993-dice-fx-title">'+escapeHtml(title)+'</div>'+
+            '<div class="v1993-dice-fx-value">'+escapeHtml(value)+'</div>'+
+            '<div class="v1993-dice-fx-sub">'+escapeHtml(sub)+'</div>'+
+          '</div>'+
+        '</div>'
+    };
+  }
+
+  queueFx=function(payload){
+    return previousQueueFx(rebuildDiceFx(payload));
+  };
+})();
 </script>
 
 </body>
