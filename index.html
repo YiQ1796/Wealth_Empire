@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.21 WEB｜好友重整自動續連</title>
+<title>財富帝國 V19.9.22 WEB｜都會彈窗排版恢復</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.21 WEB - 好友誤按重新整理後自動恢復房號、座位與進度，並避免歷史事件重播">
+<meta name="description" content="財富帝國 V19.9.22 WEB - 保留好友重整自動續連，恢復城市委託與捷運樞紐的既定三欄緊湊排版">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6447,7 +6447,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.21</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.22</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6490,7 +6490,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.21 WEB｜好友重整自動續連｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.22 WEB｜都會彈窗排版恢復｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -7272,7 +7272,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19921";
+const APP_BUILD_ID="19922";
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -10162,6 +10162,7 @@ function openMissionHub(){
        </div>`,
       [...(prog.done?[["領取委託獎金","success",()=>sendAction("hub_mission_claim")]]:[]),["關閉","ghost",closeModal]]
     );
+    $("modal")?.classList.add("hub-choice-modal","mission-choice-modal");
     return
   }
 
@@ -10183,7 +10184,8 @@ function openMissionHub(){
   showModal("🎯 城市委託中心",
     `${lockNote}<div class="hub-grid">${cards}</div>`,
     [["關閉","ghost",closeModal]]
-  )
+  );
+  $("modal")?.classList.add("hub-choice-modal","mission-choice-modal")
 }
 function openBankHub(){
   const me=state.players[mySeat],can=hubCanAct();
@@ -10236,7 +10238,8 @@ function openMetroHub(){
   showModal("🚇 捷運樞紐",
     `<div class="hub-rule">這是中央區的「分支路線」玩法：不用增加外圈格子，也能主動改變落點。使用後進入 3 ROUND 冷卻。${cooldown>0?`目前還需等待 ${cooldown} ROUND。`:"目前可以搭乘。"}</div><div class="metro-grid">${cards}</div>`,
     [["關閉","ghost",closeModal]]
-  )
+  );
+  $("modal")?.classList.add("hub-choice-modal","metro-choice-modal")
 }
 function openProjectHub(){
   const me=state.players[mySeat],can=hubCanAct();
@@ -10486,7 +10489,7 @@ function openProperties(){
 }
 function showModal(t,b,acts){
   const modalEl=$("modal");
-  modalEl?.classList.remove("phone-compact-modal","phone-quick-modal","phone-hub-modal","phone-feature-modal","phone-bank-modal","phone-upgrade-modal");
+  modalEl?.classList.remove("phone-compact-modal","phone-quick-modal","phone-hub-modal","phone-feature-modal","phone-bank-modal","phone-upgrade-modal","hub-choice-modal","mission-choice-modal","metro-choice-modal");
   $("modalTitle").textContent=t;
   $("modalBody").innerHTML=b;
   $("modalActions").innerHTML="";
@@ -10500,7 +10503,7 @@ function showModal(t,b,acts){
 }
 function closeModal(){
   const modalEl=$("modal");
-  modalEl?.classList.remove("open","phone-compact-modal","phone-quick-modal","phone-hub-modal","phone-feature-modal","phone-bank-modal","phone-upgrade-modal");
+  modalEl?.classList.remove("open","phone-compact-modal","phone-quick-modal","phone-hub-modal","phone-feature-modal","phone-bank-modal","phone-upgrade-modal","hub-choice-modal","mission-choice-modal","metro-choice-modal");
 }
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
 $("modal")?.addEventListener("pointerdown",e=>{if(e.target===$("modal"))closeModal()});
@@ -14172,7 +14175,7 @@ body.phone-landscape .minigame-overlay .minigame-card.wheel-big-card{
 
 
 <style id="v19920-stock-position-pnl">
-/* V19.9.21 — show personal position P/L only when the player actually owns the stock. */
+/* V19.9.22 — show personal position P/L only when the player actually owns the stock. */
 .stock-position-pnl{
   display:flex;
   align-items:center;
@@ -14205,7 +14208,7 @@ body.phone-landscape .minigame-overlay .minigame-card.wheel-big-card{
 </style>
 
 <style id="v19919-q-button-authority">
-/* V19.9.21 — Q button visual authority.
+/* V19.9.22 — Q button visual authority.
    Important: the uploaded pack is the complete square Q-function artwork.
    Legacy V19.8 horizontal metallic button skins are explicitly disabled here. */
 :root{--v19919-q-sprite:url("./assets/q_buttons/q_rounded_buttons10_v1.webp?v=19919")}
@@ -14491,6 +14494,117 @@ body.force-mobile-preview .controls .control-row>button::before{content:none!imp
   setTimeout(syncPhoneClasses,450);
 })();
 </script>
+
+<style id="v19922-hub-choice-layout">
+/* V19.9.22 — restore established 3-column mission / metro layout on landscape phones.
+   This authority is intentionally last so older max-width:900px one-column rules cannot win. */
+body.phone-landscape .modal.hub-choice-modal{
+  align-items:center!important;
+  justify-content:center!important;
+}
+body.phone-landscape .modal.hub-choice-modal .modal-card{
+  width:min(100%,860px)!important;
+  max-width:860px!important;
+  height:auto!important;
+  max-height:calc(100dvh - 12px)!important;
+  padding:10px 12px!important;
+  border-radius:16px!important;
+  overflow:hidden!important;
+}
+body.phone-landscape .modal.hub-choice-modal #modalTitle{
+  margin:0 0 6px!important;
+  padding:0 44px 6px 0!important;
+  font-size:clamp(21px,5.2dvh,29px)!important;
+  line-height:1.05!important;
+}
+body.phone-landscape .modal.hub-choice-modal #modalBody{
+  min-height:0!important;
+  max-height:calc(100dvh - 104px)!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  padding:0!important;
+}
+body.phone-landscape .modal.hub-choice-modal .hub-rule{
+  margin:0 0 7px!important;
+  padding:7px 9px!important;
+  border-radius:10px!important;
+  font-size:clamp(9px,2.15dvh,12px)!important;
+  line-height:1.28!important;
+}
+body.phone-landscape .modal.mission-choice-modal .hub-grid,
+body.phone-landscape .modal.metro-choice-modal .metro-grid{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:7px!important;
+  align-items:stretch!important;
+}
+body.phone-landscape .modal.mission-choice-modal .hub-card,
+body.phone-landscape .modal.metro-choice-modal .metro-option{
+  min-width:0!important;
+  min-height:0!important;
+  padding:8px!important;
+  border-radius:12px!important;
+  margin:0!important;
+}
+body.phone-landscape .modal.mission-choice-modal .hub-card .hicon,
+body.phone-landscape .modal.metro-choice-modal .metro-option .big{
+  margin:0 0 3px!important;
+  font-size:clamp(24px,6dvh,34px)!important;
+  line-height:1!important;
+}
+body.phone-landscape .modal.mission-choice-modal .hub-card .hname,
+body.phone-landscape .modal.metro-choice-modal .metro-option .name{
+  margin-top:2px!important;
+  font-size:clamp(12px,2.9dvh,15px)!important;
+  line-height:1.1!important;
+}
+body.phone-landscape .modal.mission-choice-modal .hub-card .hdesc,
+body.phone-landscape .modal.metro-choice-modal .metro-option .desc{
+  margin-top:3px!important;
+  font-size:clamp(8px,1.85dvh,10.5px)!important;
+  line-height:1.28!important;
+}
+body.phone-landscape .modal.mission-choice-modal .hub-card .hvalue,
+body.phone-landscape .modal.metro-choice-modal .metro-option .hvalue{
+  margin-top:5px!important;
+  font-size:clamp(14px,3.4dvh,18px)!important;
+  line-height:1.05!important;
+}
+body.phone-landscape .modal.hub-choice-modal .q-object-button{
+  min-height:36px!important;
+  margin-top:6px!important;
+  padding:5px 8px!important;
+  border-radius:10px!important;
+  gap:5px!important;
+  font-size:clamp(10px,2.3dvh,13px)!important;
+}
+body.phone-landscape .modal.hub-choice-modal .q-object-button .q-icon{
+  width:22px!important;
+  height:22px!important;
+  flex-basis:22px!important;
+}
+body.phone-landscape .modal.hub-choice-modal #modalActions{
+  margin-top:7px!important;
+  padding-top:6px!important;
+}
+body.phone-landscape .modal.hub-choice-modal #modalActions button{
+  min-height:36px!important;
+  padding:5px 18px!important;
+  font-size:12px!important;
+}
+body.phone-landscape .modal.mission-choice-modal #modalBody > .hub-card.active{
+  max-width:430px!important;
+  margin:0 auto!important;
+}
+
+/* Desktop stays on the same established 3-column composition. */
+@media(min-width:981px){
+  .modal.mission-choice-modal .hub-grid,
+  .modal.metro-choice-modal .metro-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+}
+</style>
 
 </body>
 </html>
