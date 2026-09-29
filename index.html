@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.4 WEB｜手機版型辨識＋Responsive Authority 重建</title>
+<title>財富帝國 V19.9.5 WEB｜手機全寬＋Minigame Fullscreen 修正</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.4 WEB - 手機版型辨識、橫向控制區與 Responsive Authority 重建版">
+<meta name="description" content="財富帝國 V19.9.5 WEB - iPhone 橫向全寬、安全區修正與小遊戲全螢幕版">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6490,7 +6490,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.4 WEB｜手機版型辨識＋Responsive Authority 重建｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.5 WEB｜手機全寬＋Minigame Fullscreen 修正｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -7168,7 +7168,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="1994";
+const APP_BUILD_ID="1995";
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -12408,13 +12408,16 @@ document.addEventListener("pointerdown",e=>{
     return (typeof isLandscapePhone==="function" && isLandscapePhone()) || document.body.classList.contains("phone-landscape");
   }
   var overlayIds=["modal","groupGameOverlay","raceOverlay","wheelOverlay","diceOverlay","treasureOverlay","noodleOverlay","hilowOverlay","bonusOverlay","victoryOverlay"];
+  var fullscreenGameOverlayIds=["groupGameOverlay","raceOverlay","wheelOverlay","diceOverlay","treasureOverlay","noodleOverlay","hilowOverlay"];
   function syncModes(){
     var lobbyEl=document.getElementById("lobby");
     var lobbyVisible=!!(lobbyEl&&!lobbyEl.classList.contains("hidden"));
     var shouldShowLobbyMode=phone()&&(!state||state.status==="lobby"||lobbyVisible);
     document.body.classList.toggle("lobby-mode",shouldShowLobbyMode);
     var active=overlayIds.some(function(id){var e=document.getElementById(id);return e&&e.classList.contains("open")});
+    var fullscreenGameActive=fullscreenGameOverlayIds.some(function(id){var e=document.getElementById(id);return e&&e.classList.contains("open")});
     document.body.classList.toggle("overlay-active",active&&phone());
+    document.body.classList.toggle("phone-minigame-active",fullscreenGameActive&&phone());
     applyIcons();
   }
   overlayIds.forEach(function(id){
@@ -13206,8 +13209,8 @@ body.force-mobile-preview .controls .dicebox::after{
 </script>
 
 
-<style id="v1994-phone-responsive-authority">
-/* ===== V19.9.4 final phone responsive authority ===== */
+<style id="v1995-phone-responsive-authority">
+/* ===== V19.9.5 phone responsive authority: full-width deck + fullscreen minigames ===== */
 
 /* Rotate hint is a real overlay again; never participates in normal document flow. */
 .rotate-overlay{
@@ -13263,11 +13266,7 @@ body.phone-landscape .app{
   height:100dvh!important;
   min-height:0!important;
   margin:0!important;
-  padding:
-    env(safe-area-inset-top)
-    calc(var(--phone-side-w) + env(safe-area-inset-right))
-    env(safe-area-inset-bottom)
-    env(safe-area-inset-left)!important;
+  padding:0!important;
   overflow:hidden!important;
   background:#dfe8f3!important;
 }
@@ -13363,11 +13362,12 @@ body.phone-landscape .mobile-turn-bar{
   position:fixed!important;
   z-index:820!important;
   top:env(safe-area-inset-top)!important;
-  right:env(safe-area-inset-right)!important;
-  width:var(--phone-side-w)!important;
+  right:0!important;
+  width:calc(var(--phone-side-w) + env(safe-area-inset-right))!important;
   height:var(--phone-hud-h)!important;
   margin:0!important;
-  padding:5px!important;
+  padding:5px max(5px,env(safe-area-inset-right)) 5px 5px!important;
+  box-sizing:border-box!important;
   display:grid!important;
   grid-template-columns:1fr 1fr!important;
   grid-template-rows:repeat(3,minmax(0,1fr))!important;
@@ -13435,12 +13435,13 @@ body.phone-landscape .controls{
   position:fixed!important;
   z-index:830!important;
   top:calc(env(safe-area-inset-top) + var(--phone-hud-h))!important;
-  right:env(safe-area-inset-right)!important;
-  width:var(--phone-side-w)!important;
+  right:0!important;
+  width:calc(var(--phone-side-w) + env(safe-area-inset-right))!important;
   height:calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - var(--phone-hud-h) - var(--phone-nav-h))!important;
   min-height:0!important;
   margin:0!important;
-  padding:6px!important;
+  padding:6px max(6px,env(safe-area-inset-right)) 6px 6px!important;
+  box-sizing:border-box!important;
   border:0!important;
   border-radius:0!important;
   background:linear-gradient(180deg,#f4f8fc,#eaf1f8)!important;
@@ -13554,15 +13555,16 @@ body.phone-landscape .mobile-nav{
   display:grid!important;
   position:fixed!important;
   z-index:840!important;
-  right:env(safe-area-inset-right)!important;
+  right:0!important;
   bottom:env(safe-area-inset-bottom)!important;
   left:auto!important;
   top:auto!important;
-  width:var(--phone-side-w)!important;
+  width:calc(var(--phone-side-w) + env(safe-area-inset-right))!important;
   height:var(--phone-nav-h)!important;
   min-height:0!important;
   margin:0!important;
-  padding:5px!important;
+  padding:5px max(5px,env(safe-area-inset-right)) 5px 5px!important;
+  box-sizing:border-box!important;
   grid-template-columns:repeat(5,minmax(0,1fr))!important;
   grid-template-rows:1fr!important;
   gap:4px!important;
@@ -13620,16 +13622,32 @@ body.phone-landscape #eventsPanel .event-list{
   overflow:auto!important;
 }
 
-/* Phone overlays/minigames respect the permanent right control deck. */
+/* Group/minigame screens own the full landscape viewport.
+   Safe-area remains inner padding only; the permanent right deck is not reserved. */
 body.phone-landscape .group-game-overlay,
 body.phone-landscape .minigame-overlay{
+  position:fixed!important;
+  inset:0!important;
+  width:100vw!important;
+  height:100dvh!important;
+  max-width:none!important;
+  max-height:none!important;
+  margin:0!important;
   padding:
     max(5px,env(safe-area-inset-top))
-    calc(var(--phone-side-w) + env(safe-area-inset-right) + 5px)
+    max(5px,env(safe-area-inset-right))
     max(5px,env(safe-area-inset-bottom))
     max(5px,env(safe-area-inset-left))!important;
+  box-sizing:border-box!important;
   align-items:stretch!important;
   justify-content:stretch!important;
+}
+/* Hide the permanent phone deck only while a real minigame is open.
+   Ordinary modals keep the normal phone layout. */
+body.phone-landscape.phone-minigame-active .mobile-turn-bar,
+body.phone-landscape.phone-minigame-active .controls,
+body.phone-landscape.phone-minigame-active .mobile-nav{
+  display:none!important;
 }
 body.phone-landscape .group-game-card,
 body.phone-landscape .minigame-overlay .minigame-card,
@@ -13658,7 +13676,7 @@ body.phone-landscape .minigame-overlay .minigame-card.wheel-big-card{
 </style>
 
 
-<script id="v1994-phone-responsive-runtime">
+<script id="v1995-phone-responsive-runtime">
 (function(){
   function phoneCandidate(){
     const coarse=window.matchMedia("(pointer:coarse)").matches || (navigator.maxTouchPoints||0)>0;
