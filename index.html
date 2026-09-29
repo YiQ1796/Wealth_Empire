@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.18 WEB｜股票持股精簡＋Q版功能圖示</title>
+<title>財富帝國 V19.9.19 WEB｜Q版操作按鈕整體重做</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.18 WEB - 移除股票未持有提示，只在持股後顯示股數，並以同功能方式替換 Q 版操作圖示">
+<meta name="description" content="財富帝國 V19.9.19 WEB - 保留股票持股精簡，移除舊金屬長條按鈕皮膚，改為 Q 版素材一致的完整操作樣式">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6447,7 +6447,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.18</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.19</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6490,7 +6490,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.18 WEB｜股票持股精簡＋Q版功能圖示｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.19 WEB｜Q版操作按鈕整體重做｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -7198,7 +7198,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19918";
+const APP_BUILD_ID="19919";
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -10090,7 +10090,7 @@ function openMissionHub(){
       <div class="hicon">${d.icon}</div><div class="hname">${d.name}</div>
       <div class="hdesc">${d.desc}</div>
       <div class="hvalue">+$${d.reward.toLocaleString()}</div>
-      <button class="primary q-object-button" ${canPick?"":"disabled"} onclick="sendAction('hub_mission_pick',{mission:'${k}'})"><span class="q-icon ${canPick?"q-commission":"q-disabled"}" aria-hidden="true"></span>${alreadyPicked?"本 ROUND 已承接":"接下委託"}</button>
+      <button class="primary q-object-button q-commission-action" ${canPick?"":"disabled"} onclick="sendAction('hub_mission_pick',{mission:'${k}'})"><span class="q-icon ${canPick?"q-commission":"q-disabled"}" aria-hidden="true"></span>${alreadyPicked?"本 ROUND 已承接":"接下委託"}</button>
     </div>`
   }).join("");
 
@@ -10117,7 +10117,7 @@ function openBankHub(){
     <div class="hicon"><img src="assets/first10/hub_city_bank.png" alt=""></div><div class="hname">$${v.toLocaleString()} 定存</div>
     <div class="hdesc">鎖定 2 ROUND，固定 12% 報酬。</div>
     <div class="hvalue">到期 $${Math.round(v*1.12).toLocaleString()}</div>
-    <button class="success q-object-button" ${(!can||me.cash<v)?"disabled":""} onclick="sendAction('hub_deposit',{amount:${v}})"><span class="q-icon ${(!can||me.cash<v)?"q-disabled":"q-bank"}" aria-hidden="true"></span>辦理定存</button>
+    <button class="success q-object-button q-bank-action" ${(!can||me.cash<v)?"disabled":""} onclick="sendAction('hub_deposit',{amount:${v}})"><span class="q-icon ${(!can||me.cash<v)?"q-disabled":"q-bank"}" aria-hidden="true"></span>辦理定存</button>
   </div>`).join("");
   showModal("🏦 都會銀行",
     `<div class="hub-rule">把閒置現金轉成未來現金流；每位玩家同時最多一筆定存。</div><div class="phone-feature-grid bank-feature-grid">${cards}</div>`,
@@ -10145,7 +10145,7 @@ function openMetroHub(){
     <div class="big">${d.icon}</div><div class="name">${d.name}</div>
     <div class="desc">直接前進 ${d.steps} 格，不擲骰；落地後照常觸發格子。</div>
     <div class="hvalue">$${d.cost.toLocaleString()}</div>
-    <button class="primary q-object-button" ${(!can||cooldown>0||me.cash<d.cost)?"disabled":""} onclick="sendAction('hub_metro',{route:'${k}'})"><span class="q-icon ${(!can||cooldown>0||me.cash<d.cost)?"q-disabled":"q-metro"}" aria-hidden="true"></span>搭乘快線</button>
+    <button class="primary q-object-button q-metro-action" ${(!can||cooldown>0||me.cash<d.cost)?"disabled":""} onclick="sendAction('hub_metro',{route:'${k}'})"><span class="q-icon ${(!can||cooldown>0||me.cash<d.cost)?"q-disabled":"q-metro"}" aria-hidden="true"></span>搭乘快線</button>
   </div>`).join("");
   showModal("🚇 捷運樞紐",
     `<div class="hub-rule">這是中央區的「分支路線」玩法：不用增加外圈格子，也能主動改變落點。使用後進入 3 ROUND 冷卻。${cooldown>0?`目前還需等待 ${cooldown} ROUND。`:"目前可以搭乘。"}</div><div class="metro-grid">${cards}</div>`,
@@ -14083,17 +14083,19 @@ body.phone-landscape .minigame-overlay .minigame-card.wheel-big-card{
 
 
 
-<style id="v19918-q-button-authority">
-/* V19.9.18 — Q rounded button pack. Same-function replacement only. */
-:root{--v19918-q-sprite:url("./assets/q_buttons/q_rounded_buttons10_v1.webp?v=19918")}
+<style id="v19919-q-button-authority">
+/* V19.9.19 — Q button visual authority.
+   Important: the uploaded pack is the complete square Q-function artwork.
+   Legacy V19.8 horizontal metallic button skins are explicitly disabled here. */
+:root{--v19919-q-sprite:url("./assets/q_buttons/q_rounded_buttons10_v1.webp?v=19919")}
 .q-icon{
   display:inline-block;
   width:24px;height:24px;
   flex:0 0 24px;
-  background-image:var(--v19918-q-sprite);
+  background-image:var(--v19919-q-sprite);
   background-repeat:no-repeat;
   background-size:500% 200%;
-  filter:drop-shadow(0 2px 3px rgba(29,50,79,.18));
+  filter:drop-shadow(0 3px 5px rgba(41,68,101,.16));
 }
 .q-bank{background-position:0% 0%}
 .q-close{background-position:25% 0%}
@@ -14106,42 +14108,201 @@ body.phone-landscape .minigame-overlay .minigame-card.wheel-big-card{
 .q-trade{background-position:75% 100%}
 .q-upgrade{background-position:100% 100%}
 
-.icon-label .q-icon{width:28px;height:28px;flex-basis:28px}
-.hub-card .hicon .q-icon{width:40px;height:40px;flex-basis:40px}
-.nav-art-icon.q-icon{width:27px;height:27px;flex-basis:27px;display:block;margin:0 auto 2px}
-.q-object-button{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:6px!important}
-.q-object-button .q-icon{width:22px;height:22px;flex-basis:22px}
+/* Main desktop / phone controls: remove old metal bar artwork completely. */
+.controls #rollBtn,
+.controls #propertyBtn,
+.controls #upgradeBtn,
+.controls #tradeBtn,
+body.force-mobile-preview .controls #rollBtn,
+body.force-mobile-preview .controls #propertyBtn,
+body.force-mobile-preview .controls #upgradeBtn,
+body.force-mobile-preview .controls #tradeBtn,
+body.phone-landscape .controls #rollBtn,
+body.phone-landscape .controls #propertyBtn,
+body.phone-landscape .controls #upgradeBtn,
+body.phone-landscape .controls #tradeBtn{
+  background-image:none!important;
+  background-repeat:no-repeat!important;
+  border-style:solid!important;
+  border-width:1px!important;
+  border-radius:16px!important;
+  color:#294663!important;
+  text-shadow:none!important;
+  box-shadow:0 7px 18px rgba(43,70,105,.10),inset 0 1px 0 rgba(255,255,255,.94)!important;
+  overflow:hidden!important;
+}
+.controls #rollBtn{background:linear-gradient(180deg,#fbfdff,#e8f4ff)!important;border-color:#b9d8ff!important}
+.controls #propertyBtn{background:linear-gradient(180deg,#fffefa,#fff5ce)!important;border-color:#f2dda2!important}
+.controls #upgradeBtn{background:linear-gradient(180deg,#fbfffc,#e4f8eb)!important;border-color:#bee8cc!important}
+.controls #tradeBtn{background:linear-gradient(180deg,#fbfffe,#ddf6f1)!important;border-color:#afe2d8!important}
 
+.controls .control-row>button::before,
+body.force-mobile-preview .control-row>button::before,
+body.phone-landscape .control-row>button::before{
+  content:none!important;
+  display:none!important;
+  background:none!important;
+  background-image:none!important;
+  opacity:0!important;
+}
+
+/* The icon is now the visual focus, not a tiny sticker inside the old bar. */
+.controls .control-row button .icon-label,
+body.force-mobile-preview .controls .control-row button .icon-label,
+body.phone-landscape .controls .control-row button .icon-label{
+  position:relative!important;
+  z-index:1!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  height:100%!important;
+  gap:10px!important;
+  padding:0 10px!important;
+  color:#294663!important;
+  font-size:15px!important;
+  font-weight:1000!important;
+  line-height:1!important;
+  white-space:nowrap!important;
+  text-shadow:none!important;
+}
+.controls .icon-label .q-icon{width:42px;height:42px;flex-basis:42px}
+.controls #tradeBtn .icon-label{font-size:15px!important}
+
+/* Disabled main control = dedicated lock artwork + neutral surface. */
+.controls #rollBtn:disabled,
+.controls #propertyBtn:disabled,
+.controls #upgradeBtn:disabled,
+.controls #tradeBtn:disabled,
+body.force-mobile-preview .controls .control-row>button:disabled,
+body.phone-landscape .controls .control-row>button:disabled{
+  background:#eef2f6!important;
+  background-image:none!important;
+  border-color:#d2dae4!important;
+  color:#758396!important;
+  opacity:1!important;
+  filter:none!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9)!important;
+}
+.controls .control-row>button:disabled .q-icon,
+body.force-mobile-preview .controls .control-row>button:disabled .q-icon,
+body.phone-landscape .controls .control-row>button:disabled .q-icon{
+  background-position:75% 0%!important;
+  filter:none!important;
+}
+.controls .control-row>button:disabled .icon-label,
+body.force-mobile-preview .controls .control-row>button:disabled .icon-label,
+body.phone-landscape .controls .control-row>button:disabled .icon-label{
+  color:#758396!important;
+  opacity:1!important;
+}
+
+/* Modal mapped actions: block legacy blue/gold/green image skins. */
+.modal-card button.q-object-button,
+.hub-card button.q-object-button,
+.metro-option button.q-object-button{
+  background-image:none!important;
+  background-repeat:no-repeat!important;
+  min-height:44px!important;
+  border:1px solid #d6e0eb!important;
+  border-radius:14px!important;
+  color:#294663!important;
+  font-weight:1000!important;
+  text-shadow:none!important;
+  box-shadow:0 5px 13px rgba(43,70,105,.08),inset 0 1px 0 rgba(255,255,255,.9)!important;
+}
+.modal-card button.q-bank-action:not(:disabled),
+.hub-card button.q-bank-action:not(:disabled){
+  background:linear-gradient(180deg,#f5fffd,#ddf8f2)!important;
+  border-color:#afe6da!important;
+}
+.modal-card button.q-commission-action:not(:disabled),
+.hub-card button.q-commission-action:not(:disabled){
+  background:linear-gradient(180deg,#fafbff,#e8ebff)!important;
+  border-color:#c8cef6!important;
+}
+.modal-card button.q-metro-action:not(:disabled),
+.metro-option button.q-metro-action:not(:disabled){
+  background:linear-gradient(180deg,#f8fdff,#e1f5ff)!important;
+  border-color:#b9ddf1!important;
+}
+.modal-card button.q-object-button:disabled,
+.hub-card button.q-object-button:disabled,
+.metro-option button.q-object-button:disabled{
+  background:#eef2f6!important;
+  background-image:none!important;
+  border-color:#d2dae4!important;
+  color:#758396!important;
+  opacity:1!important;
+  filter:none!important;
+}
+.q-object-button{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:8px!important}
+.q-object-button .q-icon{width:28px;height:28px;flex-basis:28px}
+.q-object-button:disabled .q-icon{background-position:75% 0%!important}
+
+/* Quick-action modal also stops using the old metal skins. */
+.modal.phone-quick-modal .compact-phone-card button{
+  background-image:none!important;
+  background:linear-gradient(180deg,#fbfdff,#eef4fb)!important;
+  border:1px solid #d2deeb!important;
+  color:#294663!important;
+  border-radius:12px!important;
+  text-shadow:none!important;
+  box-shadow:none!important;
+}
+.hub-card .hicon .q-icon{width:54px;height:54px;flex-basis:54px}
+
+/* Mobile bottom quick-action icon keeps the same Q source. */
+.nav-art-icon.q-icon{
+  width:30px;height:30px;flex-basis:30px;
+  display:block;margin:0 auto 2px;
+}
+
+/* Close is the full Q red-X tile, not the old circular glyph/button. */
 .modal-close-top{
+  width:40px!important;
+  height:40px!important;
+  min-width:40px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:12px!important;
   font-size:0!important;
   color:transparent!important;
   text-shadow:none!important;
-  background:transparent var(--v19918-q-sprite) 25% 0% / 500% 200% no-repeat!important;
-  box-shadow:none!important;
+  background-color:transparent!important;
+  background-image:var(--v19919-q-sprite)!important;
+  background-repeat:no-repeat!important;
+  background-size:500% 200%!important;
+  background-position:25% 0%!important;
+  box-shadow:0 4px 10px rgba(130,52,60,.12)!important;
 }
+.modal-close-top:hover{background-color:transparent!important;filter:brightness(1.03) saturate(1.03)}
 
 @media(max-width:980px) and (orientation:landscape){
-  .icon-label .q-icon{width:23px;height:23px;flex-basis:23px}
-  .nav-art-icon.q-icon{width:25px;height:25px;flex-basis:25px}
-  .hub-card .hicon .q-icon{width:40px;height:40px;flex-basis:40px}
-  .q-object-button .q-icon{width:19px;height:19px;flex-basis:19px}
+  .controls .control-row button .icon-label,
+  body.phone-landscape .controls .control-row button .icon-label{
+    gap:7px!important;
+    padding:0 6px!important;
+    font-size:clamp(10px,2.45dvh,13px)!important;
+  }
+  .controls .icon-label .q-icon,
+  body.phone-landscape .controls .icon-label .q-icon{
+    width:clamp(30px,7.5dvh,38px)!important;
+    height:clamp(30px,7.5dvh,38px)!important;
+    flex:0 0 auto!important;
+  }
+  .q-object-button .q-icon{width:24px;height:24px;flex-basis:24px}
+  .hub-card .hicon .q-icon{width:44px;height:44px;flex-basis:44px}
+  .nav-art-icon.q-icon{width:27px;height:27px;flex-basis:27px}
+  .modal-close-top{width:36px!important;height:36px!important;min-width:36px!important}
 }
-body.phone-landscape .control-row button .icon-label .q-icon{
-  width:clamp(21px,5.5dvh,28px)!important;
-  height:clamp(21px,5.5dvh,28px)!important;
-  flex:0 0 auto!important;
+body.force-mobile-preview .controls .icon-label .q-icon{
+  width:36px!important;height:36px!important;flex-basis:36px!important;
 }
-body.phone-landscape .mobile-nav .q-icon.nav-art-icon{
-  width:clamp(21px,5.5dvh,27px)!important;
-  height:clamp(21px,5.5dvh,27px)!important;
-  flex:0 0 auto!important;
+body.force-mobile-preview .controls .control-row button .icon-label{
+  padding:0 7px!important;gap:7px!important;color:#294663!important;text-shadow:none!important;
 }
-body.phone-landscape .modal.phone-compact-modal .compact-phone-card .hicon .q-icon{
-  width:40px!important;height:40px!important;flex-basis:40px!important;
-}
-body.force-mobile-preview .controls button .icon-label .q-icon{
-  width:28px!important;height:28px!important;flex-basis:28px!important;
-}
+body.force-mobile-preview .controls .control-row>button::before{content:none!important;display:none!important}
 </style>
 
 
