@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.10 WEB｜手機快捷視窗可視放大</title>
+<title>財富帝國 V19.9.11 WEB｜快捷視窗放大＋Bonus 結果層修正</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.10 WEB - iPhone 都會核心與手機快速操作明顯放大，維持 2×2 / 2×3 緊湊版">
+<meta name="description" content="財富帝國 V19.9.11 WEB - iPhone 快捷視窗明顯放大，修正幸運數字等 Bonus 結果被右下功能列覆蓋">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6490,7 +6490,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.10 WEB｜手機快捷視窗可視放大｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.11 WEB｜快捷視窗放大＋Bonus 結果層修正｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -7168,7 +7168,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19910";
+const APP_BUILD_ID="19911";
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -12414,7 +12414,7 @@ document.addEventListener("pointerdown",e=>{
     return (typeof isLandscapePhone==="function" && isLandscapePhone()) || document.body.classList.contains("phone-landscape");
   }
   var overlayIds=["modal","groupGameOverlay","raceOverlay","wheelOverlay","diceOverlay","treasureOverlay","noodleOverlay","hilowOverlay","bonusOverlay","victoryOverlay"];
-  var fullscreenGameOverlayIds=["groupGameOverlay","raceOverlay","wheelOverlay","diceOverlay","treasureOverlay","noodleOverlay","hilowOverlay"];
+  var fullscreenGameOverlayIds=["groupGameOverlay","raceOverlay","wheelOverlay","diceOverlay","treasureOverlay","noodleOverlay","hilowOverlay","bonusOverlay"];
   function syncModes(){
     var lobbyEl=document.getElementById("lobby");
     var lobbyVisible=!!(lobbyEl&&!lobbyEl.classList.contains("hidden"));
@@ -13225,8 +13225,8 @@ body.force-mobile-preview .controls .dicebox::after{
 </script>
 
 
-<style id="v19910-phone-responsive-authority">
-/* ===== V19.9.10 phone responsive authority: visibly larger compact action/hub cards ===== */
+<style id="v19911-phone-responsive-authority">
+/* ===== V19.9.11 phone responsive authority: larger compact menus + bonus overlay layer fix ===== */
 
 /* Rotate hint is a real overlay again; never participates in normal document flow. */
 .rotate-overlay{
@@ -13260,6 +13260,10 @@ body.phone-landscape .fx-layer{
 }
 body.phone-landscape .particle-layer{
   z-index:4550!important;
+}
+/* Chance/Fate result overlay (幸運數字、猜拳、金杯等) must never sit below the phone nav. */
+body.phone-landscape #bonusOverlay.open{
+  z-index:4450!important;
 }
 
 /* The old V19.9.1 global hide rule must never suppress the actual phone HUD. */
@@ -13848,7 +13852,7 @@ body.phone-landscape .minigame-overlay .minigame-card.wheel-big-card{
 </style>
 
 
-<script id="v19910-phone-responsive-runtime">
+<script id="v19911-phone-responsive-runtime">
 (function(){
   function phoneCandidate(){
     const coarse=window.matchMedia("(pointer:coarse)").matches || (navigator.maxTouchPoints||0)>0;
