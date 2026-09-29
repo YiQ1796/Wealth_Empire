@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.14 WEB｜Batch06 UI＋好友房連線修正</title>
+<title>財富帝國 V19.9.15 WEB｜撤回 Batch06 錯誤套用＋保留好友房修正</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.14 WEB - Batch06 UI10 正式整合，修正好友房分享時機與 peer-unavailable 初次加入重試">
+<meta name="description" content="財富帝國 V19.9.15 WEB - 撤回 Batch06 錯誤視覺套用，恢復 V19.9.13 乾淨 UI，保留好友房連線修正">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6447,7 +6447,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.14</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.15</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6490,7 +6490,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.14 WEB｜Batch06 UI＋好友房連線修正｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.15 WEB｜恢復乾淨 UI＋好友房連線修正｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -7198,7 +7198,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19914";
+const APP_BUILD_ID="19915";
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -10408,9 +10408,8 @@ function openProperties(){
 }
 function showModal(t,b,acts){
   const modalEl=$("modal");
-  modalEl?.classList.remove("phone-compact-modal","phone-quick-modal","phone-hub-modal","phone-feature-modal","phone-bank-modal","phone-upgrade-modal","batch06-trade-modal");
+  modalEl?.classList.remove("phone-compact-modal","phone-quick-modal","phone-hub-modal","phone-feature-modal","phone-bank-modal","phone-upgrade-modal");
   $("modalTitle").textContent=t;
-  if(/交易|交換/.test(String(t||"")))modalEl?.classList.add("batch06-trade-modal");
   $("modalBody").innerHTML=b;
   $("modalActions").innerHTML="";
   (acts||[]).forEach(([l,c,f])=>{
@@ -10423,7 +10422,7 @@ function showModal(t,b,acts){
 }
 function closeModal(){
   const modalEl=$("modal");
-  modalEl?.classList.remove("open","phone-compact-modal","phone-quick-modal","phone-hub-modal","phone-feature-modal","phone-bank-modal","phone-upgrade-modal","batch06-trade-modal");
+  modalEl?.classList.remove("open","phone-compact-modal","phone-quick-modal","phone-hub-modal","phone-feature-modal","phone-bank-modal","phone-upgrade-modal");
 }
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
 $("modal")?.addEventListener("pointerdown",e=>{if(e.target===$("modal"))closeModal()});
@@ -13301,8 +13300,8 @@ body.force-mobile-preview .controls .dicebox::after{
 </script>
 
 
-<style id="v19914-responsive-authority">
-/* ===== V19.9.14 responsive authority: Batch06 UI10 + connection-safe lobby ===== */
+<style id="v19915-responsive-authority">
+/* ===== V19.9.15 responsive authority: clean UI rollback + connection-safe lobby ===== */
 
 /* Rotate hint is a real overlay again; never participates in normal document flow. */
 .rotate-overlay{
@@ -13718,73 +13717,6 @@ body.phone-landscape .mobile-nav button span{
   white-space:nowrap!important;
 }
 
-/* ===== NEW BATCH06 UI10 =====
-   Source sprite: assets/batch06/ui10_sprite.webp
-   2 columns × 5 rows. Transparent centers keep the real UI interactive. */
-:root{
-  --batch06-ui10:url("./assets/batch06/ui10_sprite.webp?v=19914");
-}
-.auction-card,
-.fx-card.good,
-.fx-card.bad,
-.countdown,
-#eventsPanel,
-#marketPanel,
-.group-game-card,
-.minigame-overlay .minigame-card,
-.victory-card,
-.modal.batch06-trade-modal .modal-card,
-.modal.phone-upgrade-modal .modal-card{
-  position:relative!important;
-  isolation:isolate;
-}
-.auction-card::after,
-.fx-card.good::after,
-.fx-card.bad::after,
-.countdown::after,
-#eventsPanel::after,
-#marketPanel::after,
-.group-game-card::after,
-.minigame-overlay .minigame-card::after,
-.victory-card::after,
-.modal.batch06-trade-modal .modal-card::after,
-.modal.phone-upgrade-modal .modal-card::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  z-index:20;
-  pointer-events:none;
-  border-radius:inherit;
-  background-image:var(--batch06-ui10);
-  background-size:200% 500%;
-  background-repeat:no-repeat;
-  opacity:.92;
-}
-.auction-card::after{background-position:0% 0%}
-.fx-card.bad::after{background-position:100% 0%}
-.fx-card.good::after{background-position:0% 25%}
-.countdown::after{
-  inset:-5px;
-  background-position:100% 25%;
-  opacity:1;
-}
-#eventsPanel::after{background-position:0% 50%;opacity:.70}
-.group-game-card::after,
-.minigame-overlay .minigame-card::after{background-position:100% 50%;opacity:.82}
-.victory-card::after{background-position:0% 75%;opacity:.96}
-#marketPanel::after{background-position:100% 75%;opacity:.70}
-.modal.batch06-trade-modal .modal-card::after{background-position:0% 100%;opacity:.94}
-.modal.phone-upgrade-modal .modal-card::after{background-position:100% 100%;opacity:.94}
-/* Keep close buttons and primary controls visually above the ornamental frame. */
-.modal-close-top,
-.minigame-close-top,
-.auction-card button,
-.modal.batch06-trade-modal button,
-.modal.phone-upgrade-modal button{
-  position:relative;
-  z-index:24!important;
-}
-
 /* Desktop bank: use the available horizontal space instead of a long vertical stack. */
 body:not(.phone-landscape) .modal.phone-bank-modal .modal-card{
   width:min(980px,92vw)!important;
@@ -14158,7 +14090,7 @@ body.phone-landscape .minigame-overlay .minigame-card.wheel-big-card{
 </style>
 
 
-<script id="v19914-phone-responsive-runtime">
+<script id="v19915-phone-responsive-runtime">
 (function(){
   function phoneCandidate(){
     const coarse=window.matchMedia("(pointer:coarse)").matches || (navigator.maxTouchPoints||0)>0;

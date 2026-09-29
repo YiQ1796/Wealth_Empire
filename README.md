@@ -1,19 +1,19 @@
-# 財富帝國 V19.9.14 WEB
+# 財富帝國 V19.9.15 WEB
 
 這是《財富帝國》desktop / iPhone 網頁發布版。
 
 ## 本版
-- NEW BATCH06 UI10 正式進 main，使用單一 WebP sprite 降低下載量。
-- Batch06 10 張素材已對應：拍賣、大額損失、大額獲利、倒數、事件、多人小遊戲、勝利/豪華 Popup、股票、交易、地產升級。
-- 好友房建立後，「分享房號」會等到 Peer signaling 真正 open 才啟用，避免房號尚未註冊就先分享。
-- 初次加入遇到 peer-unavailable / network / socket / server / webrtc 類暫時錯誤會自動重試，不再第一次就直接失敗。
-- 大廳 BUILD 顯示同步更新為 19.9.14。
-- STUN 候選擴充至 Google stun / stun1 / stun2 / stun3。
-- V19.9.13 桌機銀行橫向版、V19.9.12 手機功能面板、V19.9.11 Bonus 結果層、V19.9.8 骰子資訊全部保留。
+- 緊急撤回 V19.9.14 的 Batch06 錯誤視覺套用。
+- 股票市場、即時事件、大額損益 FX、多人小遊戲、拍賣、交易、升級等介面恢復 V19.9.13 的乾淨視覺。
+- Batch06 素材檔暫留 repository，但目前 0/10 啟用；禁止再用整張 frame/sprite 硬蓋現有 UI。
+- 保留 V19.9.14 好友房修正：等待 signaling open 後才允許分享、初次 peer-unavailable 自動重試、STUN 候選擴充。
+- 保留 V19.9.13 桌機都會銀行橫向版。
+- 保留既有手機骰子、快捷視窗、Bonus 結果層、銀行/升級中心修正。
 - NEW BATCH04 / NEW BATCH05 仍未正式整合。
 
-## 尚待實機驗證
-- 兩支 iPhone Safari 不同網路建立 / 加入好友房。
-- 若 signaling 已成功、但後續 WebRTC 仍因行動網路 NAT 失敗，需要再加入 TURN relay；本版沒有硬塞公開 TURN 帳密。
+## Batch06 後續規則
+- 必須先逐張確認透明區、內容安全區與用途。
+- 不得把 1200×760 / 1600×900 素材直接縮放成既有小卡片外框。
+- 每張素材先做單一介面 UAT，通過後才可擴大整合。
 
-正式頁面使用 APP_BUILD_ID 19914。
+正式頁面使用 APP_BUILD_ID 19915。
