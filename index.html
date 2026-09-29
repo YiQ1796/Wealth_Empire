@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.6 WEB｜手機右欄貼齊＋FX 最上層修正</title>
+<title>財富帝國 V19.9.7 WEB｜骰子資訊重排＋手機選單緊湊化</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.6 WEB - iPhone 右欄貼齊、地圖加寬與擲骰 FX 最上層修正版">
+<meta name="description" content="財富帝國 V19.9.7 WEB - iPhone 骰子資訊重排、手機快速操作與都會核心緊湊版">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6490,7 +6490,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.6 WEB｜手機右欄貼齊＋FX 最上層修正｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.7 WEB｜骰子資訊重排＋手機選單緊湊化｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -7168,7 +7168,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="1996";
+const APP_BUILD_ID="1997";
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -10332,18 +10332,23 @@ function openProperties(){
   showModal("🏘 我的房產",rows,[["🏗 開啟升級中心","warn",openUpgradeCenter],["關閉","ghost",closeModal]])
 }
 function showModal(t,b,acts){
+  const modalEl=$("modal");
+  modalEl?.classList.remove("phone-compact-modal","phone-quick-modal","phone-hub-modal");
   $("modalTitle").textContent=t;
   $("modalBody").innerHTML=b;
   $("modalActions").innerHTML="";
-  acts.forEach(([l,c,f])=>{
+  (acts||[]).forEach(([l,c,f])=>{
     const x=document.createElement("button");
     x.textContent=l;x.className=c;x.onclick=f;
     $("modalActions").appendChild(x)
   });
-  $("modal").classList.add("open");
+  modalEl.classList.add("open");
   const body=$("modalBody");if(body)body.scrollTop=0
 }
-function closeModal(){$("modal").classList.remove("open")}
+function closeModal(){
+  const modalEl=$("modal");
+  modalEl?.classList.remove("open","phone-compact-modal","phone-quick-modal","phone-hub-modal");
+}
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
 $("modal")?.addEventListener("pointerdown",e=>{if(e.target===$("modal"))closeModal()});
 let selectedGroupHorse=0;
@@ -12143,15 +12148,16 @@ function openMobileActions(){
   const me=state.players?.[mySeat];
   const myTurn=!!(me&&state.status==="playing"&&state.current===mySeat&&!me.bankrupt);
   showModal("⚡ 手機快速操作",
-    `<div class="hub-rule">常用功能集中在這裡，避免手機上一直拉回頂部。</div>
-     <div class="hub-grid">
-       <div class="hub-card"><div class="hicon"><img src="assets/first10/action_roll_dice.png" alt=""></div><div class="hname">擲骰子</div><div class="hdesc">目前回合直接擲骰。</div><button class="primary" ${(!myTurn||state.rolled||state.pending||state.groupGame)?"disabled":""} onclick="closeModal();sendAction('roll')">擲骰</button></div>
-       <div class="hub-card"><div class="hicon"><img src="assets/first10/action_property.png" alt=""></div><div class="hname">我的房產</div><div class="hdesc">查看地產、等級與過路費。</div><button class="warn" onclick="closeModal();openProperties()">查看</button></div>
-       <div class="hub-card"><div class="hicon"><img src="assets/first10/action_upgrade.png" alt=""></div><div class="hname">升級地產</div><div class="hdesc">最高升到 Lv.2，提高過路費。</div><button class="warn" onclick="closeModal();openUpgradeCenter()">升級</button></div>
-       <div class="hub-card"><div class="hicon"><img src="assets/first10/action_trade.png" alt=""></div><div class="hname">玩家交易</div><div class="hdesc">交換地產並可附加現金。</div><button class="success" onclick="closeModal();openTradeCenter()">交易</button></div>
+    `<div class="hub-rule">常用功能集中在同一頁；橫向手機以 2 × 2 顯示，不需要上下拖很久。</div>
+     <div class="hub-grid compact-phone-grid quick-grid">
+       <div class="hub-card compact-phone-card"><div class="hicon"><img src="assets/first10/action_roll_dice.png" alt=""></div><div class="hname">擲骰子</div><div class="hdesc">目前回合直接擲骰。</div><button class="primary" ${(!myTurn||state.rolled||state.pending||state.groupGame)?"disabled":""} onclick="closeModal();sendAction('roll')">擲骰</button></div>
+       <div class="hub-card compact-phone-card"><div class="hicon"><img src="assets/first10/action_property.png" alt=""></div><div class="hname">我的房產</div><div class="hdesc">查看地產、等級與過路費。</div><button class="warn" onclick="closeModal();openProperties()">查看</button></div>
+       <div class="hub-card compact-phone-card"><div class="hicon"><img src="assets/first10/action_upgrade.png" alt=""></div><div class="hname">升級地產</div><div class="hdesc">最高升到 Lv.2，提高過路費。</div><button class="warn" onclick="closeModal();openUpgradeCenter()">升級</button></div>
+       <div class="hub-card compact-phone-card"><div class="hicon"><img src="assets/first10/action_trade.png" alt=""></div><div class="hname">玩家交易</div><div class="hdesc">交換地產並可附加現金。</div><button class="success" onclick="closeModal();openTradeCenter()">交易</button></div>
      </div>`,
-    [["關閉","ghost",closeModal]]
-  )
+    []
+  );
+  $("modal")?.classList.add("phone-compact-modal","phone-quick-modal");
 }
 function updateMobileTurnBar(){
   if(!state)return;
@@ -12474,7 +12480,7 @@ document.addEventListener("pointerdown",e=>{
   openMobileHubMenu=function(){
     if(!state)return;
     showModal("都會核心",
-      '<div class="hub-rule">手機快捷入口。第四、第五批正式素材已套進中央設施與特殊格。</div>'+
+      '<div class="hub-rule">手機快捷入口。六個都會設施集中於此。</div>'+
       '<div class="hub-grid">'+
       '<div class="hub-card"><div class="hicon">'+spriteHtml("mission","lg")+'</div><div class="hname">城市委託</div><div class="hdesc">接任務、完成目標後領獎金。</div><button class="primary" onclick="closeModal();openHubFacility(&quot;mission&quot;)">開啟</button></div>'+
       '<div class="hub-card"><div class="hicon"><img src="assets/first10/hub_city_bank.png" alt=""></div><div class="hname">都會銀行</div><div class="hdesc">2 ROUND 定存，管理閒置現金。</div><button class="success" onclick="closeModal();openHubFacility(&quot;bank&quot;)">開啟</button></div>'+
@@ -12650,7 +12656,7 @@ document.addEventListener("pointerdown",e=>{
   openMobileHubMenu=function(){
     if(!state)return;
     showModal("🏙 都會核心",
-      '<div class="hub-rule"><span class="v194-material-badge">V19.4 第四／第五批素材已實裝</span> 手機快捷入口。</div>'+
+      '<div class="hub-rule">手機快捷入口。</div>'+
       '<div class="hub-grid">'+
       '<div class="hub-card"><div class="hicon">'+hubImg("mission")+'</div><div class="hname">城市委託</div><div class="hdesc">接任務、完成目標後領獎金。</div><button class="primary" onclick="closeModal();openHubFacility(&quot;mission&quot;)">開啟</button></div>'+
       '<div class="hub-card"><div class="hicon"><img src="assets/first10/hub_city_bank.png?v=194" alt=""></div><div class="hname">都會銀行</div><div class="hdesc">2 ROUND 定存，管理閒置現金。</div><button class="success" onclick="closeModal();openHubFacility(&quot;bank&quot;)">開啟</button></div>'+
@@ -12920,13 +12926,23 @@ document.addEventListener("pointerdown",e=>{
     oldCity();
     [["mission",420,356,60],["bank",1060,356,60],["insurance",420,631,60]].forEach(([key,x,y,ss])=>{const im=V1990_TILE_IMAGES[key];if(!ready(im))return;ctx.save();ctx.shadowColor="rgba(35,70,110,.20)";ctx.shadowBlur=9;ctx.fillStyle="rgba(255,255,255,.97)";ctx.beginPath();ctx.arc(x,y,ss*.48,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.drawImage(im,x-ss/2,y-ss/2,ss,ss);ctx.restore()})
   };
-  const oldMobileHub=openMobileHubMenu;
   openMobileHubMenu=function(){
-    oldMobileHub();setTimeout(()=>{
-      const map={"城市委託":"mission","都會銀行":"bank","租金保險":"insurance"};
-      document.querySelectorAll('.hub-card').forEach(card=>{const name=card.querySelector('.hname')?.textContent?.trim();const key=map[name];if(!key)return;const icon=card.querySelector('.hicon');if(icon)icon.innerHTML=`<img class="v1990-hub-icon" src="${V1990_TILE_SOURCES[key]}" alt="">`})
-    },0)
+    if(!state)return;
+    showModal("🏙 都會核心",
+      '<div class="hub-rule">手機快捷入口；六個都會設施直接在同一頁開啟。</div>'+
+      '<div class="hub-grid compact-phone-grid hub-facility-grid">'+
+      '<div class="hub-card compact-phone-card"><div class="hicon"><img class="v1990-hub-icon" src="'+V1990_TILE_SOURCES.mission+'" alt=""></div><div class="hname">城市委託</div><div class="hdesc">接任務、完成目標後領獎金。</div><button class="primary" onclick="closeModal();openHubFacility(&quot;mission&quot;)">開啟</button></div>'+
+      '<div class="hub-card compact-phone-card"><div class="hicon"><img src="assets/first10/hub_city_bank.png?v=1997" alt=""></div><div class="hname">都會銀行</div><div class="hdesc">2 ROUND 定存，管理閒置現金。</div><button class="success" onclick="closeModal();openHubFacility(&quot;bank&quot;)">開啟</button></div>'+
+      '<div class="hub-card compact-phone-card"><div class="hicon"><img class="v1990-hub-icon" src="'+V1990_TILE_SOURCES.insurance+'" alt=""></div><div class="hname">租金保險</div><div class="hdesc">降低下一次踩地產的現金壓力。</div><button class="primary" onclick="closeModal();openHubFacility(&quot;insurance&quot;)">開啟</button></div>'+
+      '<div class="hub-card compact-phone-card"><div class="hicon"><img src="./assets/v194/hub_metro.webp?v=1997" alt=""></div><div class="hname">捷運樞紐</div><div class="hdesc">不用擲骰，改走短／中／長快線。</div><button class="warn" onclick="closeModal();openHubFacility(&quot;metro&quot;)">開啟</button></div>'+
+      '<div class="hub-card compact-phone-card"><div class="hicon"><img src="./assets/v194/hub_city_policy.webp?v=1997" alt=""></div><div class="hname">市政標案</div><div class="hdesc">承接有風險的城市投資案。</div><button class="warn" onclick="closeModal();openHubFacility(&quot;project&quot;)">開啟</button></div>'+
+      '<div class="hub-card compact-phone-card"><div class="hicon"><img src="./assets/v194/hub_city_policy.webp?v=1997" alt=""></div><div class="hname">公共建設</div><div class="hdesc">投資城市設施、累積持分與分紅。</div><button class="primary" onclick="closeModal();openPublicInvestmentCenter()">查看</button></div>'+
+      '</div>',
+      []
+    );
+    document.getElementById("modal")?.classList.add("phone-compact-modal","phone-hub-modal");
   };
+
   setTimeout(()=>{try{drawBoard()}catch{}},220)
 })();
 </script>
@@ -13209,8 +13225,8 @@ body.force-mobile-preview .controls .dicebox::after{
 </script>
 
 
-<style id="v1996-phone-responsive-authority">
-/* ===== V19.9.6 phone responsive authority: flush right deck + wider board + topmost FX ===== */
+<style id="v1997-phone-responsive-authority">
+/* ===== V19.9.7 phone responsive authority: readable dice status + compact action/hub modal ===== */
 
 /* Rotate hint is a real overlay again; never participates in normal document flow. */
 .rotate-overlay{
@@ -13478,11 +13494,12 @@ body.phone-landscape .dicebox{
   min-width:0!important;
   min-height:0!important;
   margin:0!important;
-  padding:4px 5px!important;
+  padding:3px 5px 4px!important;
   display:grid!important;
-  grid-template-columns:auto minmax(0,1fr)!important;
+  grid-template-columns:1fr!important;
+  grid-template-rows:minmax(0,1fr) auto!important;
   align-items:center!important;
-  gap:5px!important;
+  gap:2px!important;
   border:0!important;
   border-radius:10px!important;
   background:rgba(255,255,255,.72)!important;
@@ -13491,7 +13508,7 @@ body.phone-landscape .dicebox{
 }
 body.phone-landscape .dicebox::before,
 body.phone-landscape .dicebox::after{display:none!important;content:none!important}
-body.phone-landscape .dice-pair{display:flex!important;align-items:center!important;gap:3px!important}
+body.phone-landscape .dice-pair{display:flex!important;align-items:center!important;justify-content:center!important;gap:5px!important;min-height:0!important}
 body.phone-landscape .dicebox .die{
   width:clamp(32px,8dvh,40px)!important;
   height:clamp(32px,8dvh,40px)!important;
@@ -13510,24 +13527,31 @@ body.phone-landscape .dicebox .dice-face-art{
   object-fit:contain!important;
 }
 body.phone-landscape .dice-readout{
+  width:100%!important;
   min-width:0!important;
-  display:flex!important;
-  flex-direction:column!important;
-  justify-content:center!important;
-  gap:2px!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:4px!important;
+  padding:1px 2px 0!important;
 }
 body.phone-landscape .dicebox .dlabel{
+  min-width:0!important;
   margin:0!important;
-  font-size:clamp(7px,1.5dvh,9px)!important;
-  line-height:1.05!important;
+  font-size:clamp(7.5px,1.7dvh,9.5px)!important;
+  line-height:1.08!important;
   font-weight:900!important;
-  white-space:nowrap!important;
-  overflow:hidden!important;
-  text-overflow:ellipsis!important;
+  white-space:normal!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  word-break:break-word!important;
+  text-align:left!important;
+  max-height:2.16em!important;
 }
-body.phone-landscape .dice-total-row{display:flex!important;align-items:baseline!important;gap:4px!important}
+body.phone-landscape .dice-total-row{display:flex!important;align-items:baseline!important;justify-content:flex-end!important;gap:3px!important;white-space:nowrap!important}
 body.phone-landscape .dice-total-label{font-size:7px!important;font-weight:900!important;color:#8292a6!important}
-body.phone-landscape .dicebox .dtotal{font-size:clamp(18px,4.2dvh,23px)!important;line-height:1!important;margin:0!important}
+body.phone-landscape .dicebox .dtotal{font-size:clamp(17px,3.9dvh,21px)!important;line-height:1!important;margin:0!important}
+body.phone-landscape .dice-status-icon{width:12px!important;height:12px!important;object-fit:contain!important;vertical-align:-2px!important;margin-right:2px!important}
 
 body.phone-landscape .control-row>button{
   width:100%!important;
@@ -13613,6 +13637,139 @@ body.phone-landscape .mobile-nav button span{
   white-space:nowrap!important;
 }
 
+/* Compact phone menus: 2-column horizontal cards, designed to fit landscape without long scrolling. */
+body.phone-landscape .modal.phone-compact-modal{
+  z-index:4500!important;
+  padding:
+    max(7px,env(safe-area-inset-top))
+    max(7px,env(safe-area-inset-right))
+    max(7px,env(safe-area-inset-bottom))
+    max(7px,env(safe-area-inset-left))!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+body.phone-landscape .modal.phone-compact-modal .modal-card{
+  width:100%!important;
+  max-width:none!important;
+  height:auto!important;
+  max-height:calc(100dvh - 14px)!important;
+  padding:9px 11px!important;
+  border-radius:16px!important;
+  overflow:hidden!important;
+}
+body.phone-landscape .modal.phone-compact-modal #modalTitle{
+  position:static!important;
+  flex:none!important;
+  margin:0 0 5px!important;
+  padding:0 42px 0 0!important;
+  font-size:clamp(20px,5dvh,29px)!important;
+  line-height:1.05!important;
+  background:transparent!important;
+}
+body.phone-landscape .modal.phone-compact-modal #modalBody{
+  min-height:0!important;
+  overflow:hidden!important;
+  padding:0!important;
+}
+body.phone-landscape .modal.phone-compact-modal .hub-rule{
+  margin:0 0 6px!important;
+  padding:6px 9px!important;
+  border-radius:10px!important;
+  font-size:clamp(9px,2.1dvh,12px)!important;
+  line-height:1.2!important;
+}
+body.phone-landscape .modal.phone-compact-modal .compact-phone-grid{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:6px!important;
+  margin:0!important;
+}
+body.phone-landscape .modal.phone-compact-modal .compact-phone-card{
+  min-width:0!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:6px!important;
+  display:grid!important;
+  grid-template-columns:clamp(34px,8dvh,44px) minmax(0,1fr) clamp(64px,8vw,88px)!important;
+  grid-template-rows:auto auto!important;
+  column-gap:7px!important;
+  row-gap:2px!important;
+  align-items:center!important;
+  border-radius:12px!important;
+  overflow:hidden!important;
+}
+body.phone-landscape .modal.phone-compact-modal .compact-phone-card .hicon{
+  grid-column:1!important;
+  grid-row:1/3!important;
+  width:100%!important;
+  margin:0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-size:clamp(25px,7dvh,38px)!important;
+}
+body.phone-landscape .modal.phone-compact-modal .compact-phone-card .hicon img{
+  display:block!important;
+  width:clamp(30px,7.2dvh,40px)!important;
+  height:clamp(30px,7.2dvh,40px)!important;
+  max-width:100%!important;
+  object-fit:contain!important;
+}
+body.phone-landscape .modal.phone-compact-modal .compact-phone-card .hname{
+  grid-column:2!important;
+  grid-row:1!important;
+  min-width:0!important;
+  margin:0!important;
+  font-size:clamp(11px,2.7dvh,15px)!important;
+  line-height:1.05!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+body.phone-landscape .modal.phone-compact-modal .compact-phone-card .hdesc{
+  grid-column:2!important;
+  grid-row:2!important;
+  min-width:0!important;
+  margin:0!important;
+  font-size:clamp(8px,1.85dvh,10.5px)!important;
+  line-height:1.12!important;
+  display:-webkit-box!important;
+  -webkit-line-clamp:2!important;
+  -webkit-box-orient:vertical!important;
+  overflow:hidden!important;
+}
+body.phone-landscape .modal.phone-compact-modal .compact-phone-card button{
+  grid-column:3!important;
+  grid-row:1/3!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:38px!important;
+  margin:0!important;
+  padding:4px 6px!important;
+  border-radius:10px!important;
+  font-size:clamp(10px,2.3dvh,13px)!important;
+}
+body.phone-landscape .modal.phone-compact-modal #modalActions:empty{
+  display:none!important;
+  margin:0!important;
+  padding:0!important;
+}
+body.phone-landscape .modal.phone-quick-modal .compact-phone-grid{
+  grid-template-rows:repeat(2,minmax(66px,1fr))!important;
+}
+body.phone-landscape .modal.phone-hub-modal .compact-phone-grid{
+  grid-template-rows:repeat(3,minmax(54px,1fr))!important;
+}
+body.phone-landscape .modal.phone-compact-modal .modal-close-top{
+  top:7px!important;
+  right:8px!important;
+  width:34px!important;
+  height:34px!important;
+  min-width:34px!important;
+  line-height:32px!important;
+  font-size:22px!important;
+}
+
 /* Stock/events pages are constrained to the left viewport instead of becoming a 3000px document. */
 body.phone-landscape #marketPanel h2,
 body.phone-landscape #eventsPanel h2{
@@ -13684,7 +13841,7 @@ body.phone-landscape .minigame-overlay .minigame-card.wheel-big-card{
 </style>
 
 
-<script id="v1996-phone-responsive-runtime">
+<script id="v1997-phone-responsive-runtime">
 (function(){
   function phoneCandidate(){
     const coarse=window.matchMedia("(pointer:coarse)").matches || (navigator.maxTouchPoints||0)>0;
