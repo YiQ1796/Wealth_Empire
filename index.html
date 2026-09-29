@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.7 WEB｜骰子資訊重排＋手機選單緊湊化</title>
+<title>財富帝國 V19.9.8 WEB｜手機骰子資訊權重修正</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.7 WEB - iPhone 骰子資訊重排、手機快速操作與都會核心緊湊版">
+<meta name="description" content="財富帝國 V19.9.8 WEB - iPhone 骰子資訊 CSS 權重修正，強制骰子在上、資訊在下">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6490,7 +6490,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.7 WEB｜骰子資訊重排＋手機選單緊湊化｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.8 WEB｜手機骰子資訊權重修正｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -7168,7 +7168,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="1997";
+const APP_BUILD_ID="1998";
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -13225,8 +13225,8 @@ body.force-mobile-preview .controls .dicebox::after{
 </script>
 
 
-<style id="v1997-phone-responsive-authority">
-/* ===== V19.9.7 phone responsive authority: readable dice status + compact action/hub modal ===== */
+<style id="v1998-phone-responsive-authority">
+/* ===== V19.9.8 phone responsive authority: high-specificity dice layout fix ===== */
 
 /* Rotate hint is a real overlay again; never participates in normal document flow. */
 .rotate-overlay{
@@ -13481,14 +13481,14 @@ body.phone-landscape .control-row{
   gap:6px!important;
   align-items:stretch!important;
 }
-body.phone-landscape .dicebox{grid-column:1!important;grid-row:1!important}
+html body.phone-landscape .controls .dicebox{grid-column:1!important;grid-row:1!important}
 body.phone-landscape #rollBtn{grid-column:2!important;grid-row:1!important}
 body.phone-landscape #propertyBtn{grid-column:1!important;grid-row:2!important}
 body.phone-landscape #upgradeBtn{grid-column:2!important;grid-row:2!important}
 body.phone-landscape #tradeBtn{grid-column:1/3!important;grid-row:3!important}
 body.phone-landscape #turnLabel{display:none!important}
 
-body.phone-landscape .dicebox{
+html body.phone-landscape .controls .dicebox{
   width:100%!important;
   height:100%!important;
   min-width:0!important;
@@ -13506,10 +13506,10 @@ body.phone-landscape .dicebox{
   box-shadow:inset 0 0 0 1px #d6e1ec!important;
   overflow:hidden!important;
 }
-body.phone-landscape .dicebox::before,
-body.phone-landscape .dicebox::after{display:none!important;content:none!important}
-body.phone-landscape .dice-pair{display:flex!important;align-items:center!important;justify-content:center!important;gap:5px!important;min-height:0!important}
-body.phone-landscape .dicebox .die{
+html body.phone-landscape .controls .dicebox::before,
+html body.phone-landscape .controls .dicebox::after{display:none!important;content:none!important}
+html body.phone-landscape .controls .dice-pair{display:flex!important;align-items:center!important;justify-content:center!important;gap:5px!important;min-height:0!important}
+html body.phone-landscape .controls .dicebox .die{
   width:clamp(32px,8dvh,40px)!important;
   height:clamp(32px,8dvh,40px)!important;
   min-width:clamp(32px,8dvh,40px)!important;
@@ -13520,22 +13520,23 @@ body.phone-landscape .dicebox .die{
   background:transparent!important;
   box-shadow:none!important;
 }
-body.phone-landscape .dicebox .dice-face-art{
+html body.phone-landscape .controls .dicebox .dice-face-art{
   width:100%!important;
   height:100%!important;
   display:block!important;
   object-fit:contain!important;
 }
-body.phone-landscape .dice-readout{
+html body.phone-landscape .controls .dice-readout{
   width:100%!important;
   min-width:0!important;
   display:grid!important;
   grid-template-columns:minmax(0,1fr) auto!important;
   align-items:center!important;
-  gap:4px!important;
-  padding:1px 2px 0!important;
+  gap:6px!important;
+  padding:2px 3px 0!important;
+  border-top:1px solid rgba(111,132,157,.22)!important;
 }
-body.phone-landscape .dicebox .dlabel{
+html body.phone-landscape .controls .dicebox .dlabel{
   min-width:0!important;
   margin:0!important;
   font-size:clamp(7.5px,1.7dvh,9.5px)!important;
@@ -13548,10 +13549,10 @@ body.phone-landscape .dicebox .dlabel{
   text-align:left!important;
   max-height:2.16em!important;
 }
-body.phone-landscape .dice-total-row{display:flex!important;align-items:baseline!important;justify-content:flex-end!important;gap:3px!important;white-space:nowrap!important}
-body.phone-landscape .dice-total-label{font-size:7px!important;font-weight:900!important;color:#8292a6!important}
-body.phone-landscape .dicebox .dtotal{font-size:clamp(17px,3.9dvh,21px)!important;line-height:1!important;margin:0!important}
-body.phone-landscape .dice-status-icon{width:12px!important;height:12px!important;object-fit:contain!important;vertical-align:-2px!important;margin-right:2px!important}
+html body.phone-landscape .controls .dice-total-row{display:flex!important;align-items:baseline!important;justify-content:flex-end!important;gap:3px!important;white-space:nowrap!important}
+html body.phone-landscape .controls .dice-total-label{font-size:7px!important;font-weight:900!important;color:#8292a6!important}
+html body.phone-landscape .controls .dicebox .dtotal{font-size:clamp(17px,3.9dvh,21px)!important;line-height:1!important;margin:0!important}
+html body.phone-landscape .controls .dice-status-icon{width:12px!important;height:12px!important;object-fit:contain!important;vertical-align:-2px!important;margin-right:2px!important}
 
 body.phone-landscape .control-row>button{
   width:100%!important;
@@ -13841,7 +13842,7 @@ body.phone-landscape .minigame-overlay .minigame-card.wheel-big-card{
 </style>
 
 
-<script id="v1997-phone-responsive-runtime">
+<script id="v1998-phone-responsive-runtime">
 (function(){
   function phoneCandidate(){
     const coarse=window.matchMedia("(pointer:coarse)").matches || (navigator.maxTouchPoints||0)>0;
