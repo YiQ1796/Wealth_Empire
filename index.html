@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.16 WEB｜股票資訊去重修正</title>
+<title>財富帝國 V19.9.17 WEB｜股票損益金額符號修正</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.16 WEB - 個股漲跌幅去重、未持有提示精簡，保留 V19.9.15 安全基準功能">
+<meta name="description" content="財富帝國 V19.9.17 WEB - 修正未實現損益金額的 $ 符號，保留 V19.9.16 股票資訊精簡與 V19.9.15 安全基準功能">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6447,7 +6447,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.16</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.17</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6490,7 +6490,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.16 WEB｜股票資訊去重修正｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.17 WEB｜股票損益金額符號修正｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -7198,7 +7198,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19916";
+const APP_BUILD_ID="19917";
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -9788,7 +9788,7 @@ function renderMarket(){
     totalValue+=value;totalCost+=cost;
     const pc=pnl>0?"profit":pnl<0?"loss":"flat";
     const holdingText=qty
-      ? `<b>未實現 ${pnl>=0?"+":"-"}${Math.abs(Math.round(pnl)).toLocaleString()}</b>`
+      ? `<b>未實現 ${pnl>=0?"+":"-"}$${Math.abs(Math.round(pnl)).toLocaleString()}</b>`
       : `<b>尚未持有</b>`;
     return `<div class="stock" data-code="${c}">
       <div class="stop">
