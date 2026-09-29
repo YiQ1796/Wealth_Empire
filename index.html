@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.12 WEB｜銀行升級同版型＋關閉圖示修正</title>
+<title>財富帝國 V19.9.13 WEB｜桌機都會銀行橫向版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.12 WEB - iPhone 都會銀行與地產升級中心統一手機版型，移除關閉圖示上的文字 X">
+<meta name="description" content="財富帝國 V19.9.13 WEB - 桌機都會銀行改為橫向卡片排列，手機版型維持不變">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6490,7 +6490,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.12 WEB｜銀行升級同版型＋關閉圖示修正｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.13 WEB｜桌機都會銀行橫向版｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -7168,7 +7168,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19912";
+const APP_BUILD_ID="19913";
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -13228,8 +13228,8 @@ body.force-mobile-preview .controls .dicebox::after{
 </script>
 
 
-<style id="v19912-phone-responsive-authority">
-/* ===== V19.9.12 phone responsive authority: unified bank/upgrade feature panels ===== */
+<style id="v19913-responsive-authority">
+/* ===== V19.9.13 responsive authority: desktop bank horizontal layout + phone rules ===== */
 
 /* Rotate hint is a real overlay again; never participates in normal document flow. */
 .rotate-overlay{
@@ -13645,6 +13645,38 @@ body.phone-landscape .mobile-nav button span{
   white-space:nowrap!important;
 }
 
+/* Desktop bank: use the available horizontal space instead of a long vertical stack. */
+body:not(.phone-landscape) .modal.phone-bank-modal .modal-card{
+  width:min(980px,92vw)!important;
+  max-width:980px!important;
+}
+body:not(.phone-landscape) .modal.phone-bank-modal .bank-feature-grid{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:14px!important;
+  align-items:stretch!important;
+  width:100%!important;
+}
+body:not(.phone-landscape) .modal.phone-bank-modal .bank-feature-grid .hub-card.phone-feature-card{
+  width:100%!important;
+  min-width:0!important;
+  margin:0!important;
+}
+body:not(.phone-landscape) .modal.phone-bank-modal #modalBody>.hub-card.phone-feature-card{
+  max-width:420px!important;
+  margin:0 auto!important;
+}
+@media(max-width:900px){
+  body:not(.phone-landscape) .modal.phone-bank-modal .bank-feature-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+}
+@media(max-width:680px){
+  body:not(.phone-landscape) .modal.phone-bank-modal .bank-feature-grid{
+    grid-template-columns:1fr!important;
+  }
+}
+
 /* Bank + property upgrade share one phone feature-panel authority. */
 body.phone-landscape .modal.phone-feature-modal{
   z-index:4500!important;
@@ -13986,7 +14018,7 @@ body.phone-landscape .minigame-overlay .minigame-card.wheel-big-card{
 </style>
 
 
-<script id="v19912-phone-responsive-runtime">
+<script id="v19913-phone-responsive-runtime">
 (function(){
   function phoneCandidate(){
     const coarse=window.matchMedia("(pointer:coarse)").matches || (navigator.maxTouchPoints||0)>0;
