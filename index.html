@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.5 WEB｜手機全寬＋Minigame Fullscreen 修正</title>
+<title>財富帝國 V19.9.6 WEB｜手機右欄貼齊＋FX 最上層修正</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.5 WEB - iPhone 橫向全寬、安全區修正與小遊戲全螢幕版">
+<meta name="description" content="財富帝國 V19.9.6 WEB - iPhone 右欄貼齊、地圖加寬與擲骰 FX 最上層修正版">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6490,7 +6490,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.5 WEB｜手機全寬＋Minigame Fullscreen 修正｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.6 WEB｜手機右欄貼齊＋FX 最上層修正｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -7168,7 +7168,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="1995";
+const APP_BUILD_ID="1996";
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -13209,8 +13209,8 @@ body.force-mobile-preview .controls .dicebox::after{
 </script>
 
 
-<style id="v1995-phone-responsive-authority">
-/* ===== V19.9.5 phone responsive authority: full-width deck + fullscreen minigames ===== */
+<style id="v1996-phone-responsive-authority">
+/* ===== V19.9.6 phone responsive authority: flush right deck + wider board + topmost FX ===== */
 
 /* Rotate hint is a real overlay again; never participates in normal document flow. */
 .rotate-overlay{
@@ -13238,15 +13238,23 @@ body.force-mobile-preview .controls .dicebox::after{
 .rotate-card button{min-height:46px!important;margin:4px!important}
 body.phone-portrait:not(.rotate-dismissed) .rotate-overlay{display:flex!important}
 
+/* Gameplay FX must sit above every phone deck layer. */
+body.phone-landscape .fx-layer{
+  z-index:4600!important;
+}
+body.phone-landscape .particle-layer{
+  z-index:4550!important;
+}
+
 /* The old V19.9.1 global hide rule must never suppress the actual phone HUD. */
 body.phone-landscape #mobileTurnBar,
 body.phone-landscape .mobile-turn-bar{display:grid!important}
 
 /* iPhone landscape gets one single authoritative layout, independent of CSS viewport width. */
 body.phone-landscape{
-  --phone-side-w:clamp(252px,31vw,300px);
-  --phone-hud-h:clamp(118px,31dvh,136px);
-  --phone-nav-h:clamp(62px,17dvh,76px);
+  --phone-side-w:clamp(228px,28vw,264px);
+  --phone-hud-h:clamp(116px,30dvh,132px);
+  --phone-nav-h:clamp(60px,16dvh,72px);
   width:100%!important;
   height:100dvh!important;
   min-height:0!important;
@@ -13281,7 +13289,7 @@ body.phone-landscape .main{
   position:absolute!important;
   inset:
     env(safe-area-inset-top)
-    calc(var(--phone-side-w) + env(safe-area-inset-right))
+    var(--phone-side-w)
     env(safe-area-inset-bottom)
     env(safe-area-inset-left)!important;
   display:block!important;
@@ -13363,10 +13371,10 @@ body.phone-landscape .mobile-turn-bar{
   z-index:820!important;
   top:env(safe-area-inset-top)!important;
   right:0!important;
-  width:calc(var(--phone-side-w) + env(safe-area-inset-right))!important;
+  width:var(--phone-side-w)!important;
   height:var(--phone-hud-h)!important;
   margin:0!important;
-  padding:5px max(5px,env(safe-area-inset-right)) 5px 5px!important;
+  padding:5px!important;
   box-sizing:border-box!important;
   display:grid!important;
   grid-template-columns:1fr 1fr!important;
@@ -13436,11 +13444,11 @@ body.phone-landscape .controls{
   z-index:830!important;
   top:calc(env(safe-area-inset-top) + var(--phone-hud-h))!important;
   right:0!important;
-  width:calc(var(--phone-side-w) + env(safe-area-inset-right))!important;
+  width:var(--phone-side-w)!important;
   height:calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - var(--phone-hud-h) - var(--phone-nav-h))!important;
   min-height:0!important;
   margin:0!important;
-  padding:6px max(6px,env(safe-area-inset-right)) 6px 6px!important;
+  padding:6px!important;
   box-sizing:border-box!important;
   border:0!important;
   border-radius:0!important;
@@ -13559,11 +13567,11 @@ body.phone-landscape .mobile-nav{
   bottom:env(safe-area-inset-bottom)!important;
   left:auto!important;
   top:auto!important;
-  width:calc(var(--phone-side-w) + env(safe-area-inset-right))!important;
+  width:var(--phone-side-w)!important;
   height:var(--phone-nav-h)!important;
   min-height:0!important;
   margin:0!important;
-  padding:5px max(5px,env(safe-area-inset-right)) 5px 5px!important;
+  padding:5px!important;
   box-sizing:border-box!important;
   grid-template-columns:repeat(5,minmax(0,1fr))!important;
   grid-template-rows:1fr!important;
@@ -13665,9 +13673,9 @@ body.phone-landscape .minigame-overlay .minigame-card.wheel-big-card{
 /* Very short iPhone landscape: keep geometry stable, only reduce the deck slightly. */
 @media(max-height:390px){
   body.phone-landscape{
-    --phone-side-w:clamp(236px,30vw,270px);
-    --phone-hud-h:112px;
-    --phone-nav-h:60px;
+    --phone-side-w:clamp(220px,27vw,244px);
+    --phone-hud-h:108px;
+    --phone-nav-h:58px;
   }
   body.phone-landscape .mobile-turn-bar{gap:4px!important;padding:4px!important}
   body.phone-landscape .controls{padding:4px!important}
@@ -13676,7 +13684,7 @@ body.phone-landscape .minigame-overlay .minigame-card.wheel-big-card{
 </style>
 
 
-<script id="v1995-phone-responsive-runtime">
+<script id="v1996-phone-responsive-runtime">
 (function(){
   function phoneCandidate(){
     const coarse=window.matchMedia("(pointer:coarse)").matches || (navigator.maxTouchPoints||0)>0;
