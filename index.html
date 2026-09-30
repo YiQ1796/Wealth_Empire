@@ -7249,7 +7249,8 @@ async function autoResumeGuestAfterReload(){
 }
 function clearGuestNetTimers(){
   clearTimeout(guestReconnectTimer);guestReconnectTimer=null;
-  clearInterval(guestHeartbeatTimer);guestHeartbeatTimer=null
+  clearInterval(guestHeartbeatTimer);guestHeartbeatTimer=null;
+  clearTimeout(guestResumeHealthTimer);guestResumeHealthTimer=null
 }
 function showNetRecovery(textValue,tone="warn",autoHideMs=0){
   let el=$("netRecoveryNotice");
@@ -7259,18 +7260,26 @@ function showNetRecovery(textValue,tone="warn",autoHideMs=0){
   if(autoHideMs)el._hideTimer=setTimeout(()=>{el.style.display="none"},autoHideMs)
 }
 function hideNetRecovery(){const el=$("netRecoveryNotice");if(el)el.style.display="none"}
-function noteHostActivity(){lastHostActivity=Date.now();guestReconnectAttempts=0}
+function noteHostActivity(){
+  const now=Date.now();
+  lastHostActivity=now;
+  guestReconnectPendingReason="";
+  if(guestConnectedSince&&now-guestConnectedSince>=12000)guestReconnectAttempts=0;
+  if(guestReconnectTimer&&!guestReconnectInFlight&&hostConn?.open){
+    clearTimeout(guestReconnectTimer);guestReconnectTimer=null
+  }
+}
 function startGuestHeartbeat(){
   clearInterval(guestHeartbeatTimer);
   if(isHost||mySeat==null)return;
-  noteHostActivity();
+  lastHostActivity=Date.now();
   guestHeartbeatTimer=setInterval(()=>{
     if(isHost||mySeat==null)return;
-    if(document.visibilityState==="hidden")return;
+    if(document.visibilityState==="hidden"||navigator.onLine===false)return;
     const age=Date.now()-lastHostActivity;
     if(hostConn?.open){
       safeConnSend(hostConn,{type:"ping",ts:Date.now()});
-      if(age>NET_STALE_MS){try{hostConn.close()}catch{};scheduleGuestReconnect("同步逾時")}
+      if(age>NET_STALE_MS)scheduleGuestReconnect("同步逾時")
     }else scheduleGuestReconnect("連線已中斷")
   },NET_HEARTBEAT_MS)
 }
@@ -7293,12 +7302,18 @@ function scheduleHostSignalReconnect(hostPeer,reason="signaling 中斷"){
 }
 function scheduleGuestReconnect(reason="連線中斷"){
   if(isHost||!roomCode||mySeat==null||!clientResumeToken)return;
-  if(guestReconnectTimer)return;
+  guestReconnectPendingReason=reason;
+  if(document.visibilityState==="hidden"||navigator.onLine===false)return;
+  if(guestReconnectTimer||guestReconnectInFlight)return;
   const delay=NET_RECONNECT_DELAYS[Math.min(guestReconnectAttempts,NET_RECONNECT_DELAYS.length-1)];
   guestReconnectAttempts++;
   showNetRecovery(`連線暫時中斷，${Math.ceil(delay/1000)} 秒內自動接回原座位…`,"warn");
   guestReconnectTimer=setTimeout(()=>{
     guestReconnectTimer=null;
+    if(document.visibilityState==="hidden"||navigator.onLine===false){
+      guestReconnectPendingReason=reason;
+      return
+    }
     reconnectGuestTransport(reason)
   },delay)
 }
@@ -7334,27 +7349,37 @@ function scheduleInitialJoinRetry(name,reason="房主尚未完成註冊"){
 
 function reconnectGuestTransport(reason="連線中斷"){
   if(isHost||!roomCode||mySeat==null||!clientResumeToken||typeof Peer==="undefined")return;
+  if(guestReconnectInFlight)return;
+  guestReconnectInFlight=true;
+  guestReconnectPendingReason="";
+  clearTimeout(guestReconnectTimer);guestReconnectTimer=null;
+  clearTimeout(joinTimeoutTimer);joinTimeoutTimer=null;
   const oldPeer=peer,oldConn=hostConn;
+  hostConn=null;peer=null;
   try{oldConn?.close()}catch{}
   try{oldPeer?.destroy()}catch{}
-  hostConn=null;peer=null;
   showNetRecovery(`正在重新連線並恢復座位 P${mySeat+1}…`,"warn");
   openGuestPeer(guestDisplayName||"玩家",{seat:mySeat,token:clientResumeToken,reconnect:true})
 }
 function checkConnectionAfterResume(){
+  if(document.visibilityState==="hidden"||navigator.onLine===false)return;
   if(isHost){
     if(peer?.disconnected&&!peer?.destroyed)try{peer.reconnect()}catch{}
-    if(state)sendCriticalState();
+    scheduleHostRecoverySave();
+    setTimeout(()=>{if(isHost&&state)sendCriticalState()},900);
     return
   }
   if(mySeat==null||!clientResumeToken)return;
-  // Timers can be suspended by iOS Safari. Give the old channel a short chance to answer first.
-  noteHostActivity();
-  if(hostConn?.open)safeConnSend(hostConn,{type:"ping",ts:Date.now(),resumeCheck:true});
-  else scheduleGuestReconnect("回到遊戲後恢復連線");
-  setTimeout(()=>{
-    if(!isHost&&mySeat!=null&&Date.now()-lastHostActivity>4200)scheduleGuestReconnect("回到遊戲後無同步回應")
-  },4500)
+  clearTimeout(guestResumeHealthTimer);guestResumeHealthTimer=null;
+  const checkStartedAt=Date.now();
+  if(hostConn?.open){
+    safeConnSend(hostConn,{type:"ping",ts:checkStartedAt,resumeCheck:true});
+    guestResumeHealthTimer=setTimeout(()=>{
+      guestResumeHealthTimer=null;
+      if(isHost||mySeat==null||document.visibilityState==="hidden")return;
+      if(lastHostActivity<checkStartedAt)scheduleGuestReconnect(guestReconnectPendingReason||"回到遊戲後無同步回應")
+    },9000)
+  }else scheduleGuestReconnect(guestReconnectPendingReason||"回到遊戲後恢復連線")
 }
 async function copyTextSafe(textValue){
   try{
@@ -7542,13 +7567,19 @@ function resetPeerTransport(){
   clearTimeout(initialJoinRetryTimer);initialJoinRetryTimer=null;initialJoinRetryAttempts=0;
   clearGuestNetTimers();
   clearTimeout(hostSignalReconnectTimer);hostSignalReconnectTimer=null;
-  try{hostConn?.close()}catch{}
-  try{peer?.destroy()}catch{}
-  hostConn=null;peer=null;conns.clear();resumeTokens.clear();
+  clearTimeout(hostRecoverySaveTimer);hostRecoverySaveTimer=null;
+  for(const t of hostDisconnectGraceTimers.values())clearTimeout(t);
+  hostDisconnectGraceTimers.clear();
+  const oldHostConn=hostConn,oldPeer=peer,oldConns=Array.from(conns.values());
+  hostConn=null;peer=null;conns.clear();
+  guestReconnectInFlight=false;guestReconnectPendingReason="";guestConnectedSince=0;
+  try{oldHostConn?.close()}catch{}
+  oldConns.forEach(c=>{try{c?.close()}catch{}});
+  try{oldPeer?.destroy()}catch{}
+  resumeTokens.clear();
   clientResumeToken="";guestDisplayName="";guestReconnectAttempts=0;lastHostActivity=0;
   hideNetRecovery()
 }
-
 async function createInternetRoom(){
   showIPhoneConnectionNotice();
   const name=$("hostName").value.trim()||"玩家1";
@@ -7763,10 +7794,11 @@ function openGuestPeer(name,resumeInfo=null){
   joinTimeoutTimer=setTimeout(()=>{
     if(peer!==clientPeer||isHost)return;
     if(resumeInfo||mySeat!=null){
+      guestReconnectInFlight=false;
       $("connectionText").textContent="⚠️ 連線暫時沒有回應，正在恢復原座位…";
       scheduleGuestReconnect("連線逾時");
     }else scheduleInitialJoinRetry(name,"連線逾時");
-  },12000);
+  },15000);
 
   clientPeer.on("open",()=>{
     if(peer!==clientPeer||isHost)return;
@@ -7780,6 +7812,7 @@ function openGuestPeer(name,resumeInfo=null){
     clearTimeout(joinTimeoutTimer);
     const transient=["network","peer-unavailable","server-error","socket-error","socket-closed","webrtc"];
     if(mySeat!=null&&clientResumeToken&&transient.includes(err.type)){
+      guestReconnectInFlight=false;
       scheduleGuestReconnect(err.type);return
     }
     if(mySeat==null&&transient.includes(err.type)){
@@ -7828,6 +7861,8 @@ function wireHostConn(conn,name,resumeInfo=null){
       mySeat=msg.seat;state=msg.state;
       if(msg.resumeToken)clientResumeToken=msg.resumeToken;
       guestDisplayName=name;
+      guestReconnectInFlight=false;guestReconnectPendingReason="";guestConnectedSince=Date.now();
+      clearTimeout(guestReconnectTimer);guestReconnectTimer=null;
       if(msg.resumed&&resumeInfo?.fromReload&&resumeInfo.lastEventId==null){
         lastEventId=Math.max(0,...(state?.events||[]).map(e=>Number(e?.id||0)))
       }
@@ -7839,6 +7874,7 @@ function wireHostConn(conn,name,resumeInfo=null){
     }else if(msg.type==="state"){
       state=msg.state;render();handleIncomingEvents();saveGuestResume()
     }else if(msg.type==="reject"){
+      guestReconnectInFlight=false;
       clearTimeout(joinTimeoutTimer);toast(msg.reason);$("connectionText").textContent="❌ "+msg.reason;
       if(resumeInfo){
         clearGuestResume(roomCode);mySeat=null;clientResumeToken="";
@@ -7849,11 +7885,13 @@ function wireHostConn(conn,name,resumeInfo=null){
 
   conn.on("error",()=>{
     if(!isCurrent())return;
+    hostConn=null;guestReconnectInFlight=false;
     if(mySeat!=null&&clientResumeToken)scheduleGuestReconnect("DataConnection error");
     else scheduleInitialJoinRetry(name,"DataConnection error")
   });
   conn.on("close",()=>{
     if(!isCurrent())return;
+    hostConn=null;guestReconnectInFlight=false;
     clearTimeout(joinTimeoutTimer);
     if(mySeat!=null&&clientResumeToken){
       $("connectionText").textContent="⚠️ 與房間同步暫時中斷，正在自動續連…";
@@ -13219,9 +13257,11 @@ document.addEventListener("pointerdown",e=>{
 
 <script id="v1985-network-lifecycle">
 (function(){
-  document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")setTimeout(checkConnectionAfterResume,250)});
-  window.addEventListener("pageshow",()=>setTimeout(checkConnectionAfterResume,350));
-  window.addEventListener("online",()=>setTimeout(checkConnectionAfterResume,250));
+  document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")setTimeout(checkConnectionAfterResume,700)});
+  window.addEventListener("pageshow",()=>setTimeout(checkConnectionAfterResume,850));
+  window.addEventListener("focus",()=>setTimeout(checkConnectionAfterResume,900));
+  document.addEventListener("fullscreenchange",()=>setTimeout(checkConnectionAfterResume,900));
+  window.addEventListener("online",()=>setTimeout(checkConnectionAfterResume,700));
   window.addEventListener("offline",()=>{if(!isHost&&mySeat!=null)showNetRecovery("裝置目前離線，網路恢復後會自動續連","warn")});
   window.addEventListener("beforeunload",()=>{if(isHost)saveHostRecoveryNow();else if(mySeat!=null&&clientResumeToken)saveGuestResume()});
 })();
