@@ -4794,7 +4794,7 @@ button:not(:disabled):active{transform:scale(.96)}
 .mt-leader{position:relative!important;padding-right:42px!important}
 .mt-leader::after{
   content:"";position:absolute;right:6px;top:50%;transform:translateY(-50%);
-  width:34px;height:34px;background:url("assets/first10/status_leader_crown.png") center/contain no-repeat;
+  width:34px;height:34px;background-image:var(--v19927-q06);background-size:500% 200%;background-position:0 0;background-repeat:no-repeat;
   filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));
 }
 @media(max-width:980px) and (orientation:landscape){
@@ -6483,6 +6483,20 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 }
 </style>
 
+<style id="v19927-q06-direct-replacement">
+:root{--v19927-q06:url("./assets/v19927/q06_rank_turn10_v1.webp?v=19927")}
+.v19927-q06-art{display:inline-block;flex:0 0 auto;background-image:var(--v19927-q06);background-size:500% 200%;background-repeat:no-repeat;background-color:transparent;border:0;box-shadow:none;vertical-align:middle}
+.q06-crown{background-position:0 0}.q06-rank-1{background-position:25% 0}.q06-rank-2{background-position:50% 0}.q06-rank-3{background-position:75% 0}.q06-leaderboard{background-position:100% 0}
+.q06-turn-current{background-position:0 100%}.q06-turn-remaining{background-position:25% 100%}.q06-turn-handoff{background-position:50% 100%}.q06-turn-final{background-position:75% 100%}.q06-victory{background-position:100% 100%}
+.name-leader-crown.v19927-q06-art{width:22px;height:22px;margin-left:5px;vertical-align:-6px}
+.rank-chip.q06-rank-chip{width:34px!important;height:34px!important;min-width:34px!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+.rank-chip.q06-rank-chip .v19927-q06-art{width:34px;height:34px}
+#victoryName{display:flex;align-items:center;justify-content:center;gap:9px}
+#victoryName .q06-victory{width:48px;height:48px}
+.victory-rank-icon{width:26px;height:26px}
+.v198-modal-icon-title .v19923-q02-art{width:48px;height:48px}
+.stock-action-btn .v19923-q02-art{width:25px;height:25px}
+</style>
 </head>
 <body class="lobby-mode">
 
@@ -6544,7 +6558,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
   <div id="mobileTurnBar" class="mobile-turn-bar">
       <div class="mt-card mt-turn"><span class="mt-label">目前玩家</span><b id="mobileTurnName">—</b></div>
       <div class="mt-card mt-round"><span class="mt-label">遊戲進度</span><b id="mobileRound">1 / 30</b><strong id="mobileRoundsLeft">剩 30 回合</strong></div>
-      <div class="mt-card mt-leader"><span class="mt-label">目前第一</span><b id="mobileLeader">👑 —</b></div>
+      <div class="mt-card mt-leader"><span class="mt-label">目前第一</span><b id="mobileLeader">—</b></div>
       <div class="mt-card mt-cash"><span class="mt-label">我的現金</span><b id="mobileCash">$0</b></div>
       <div class="mt-card mt-tile"><span class="mt-label">目前位置</span><b id="mobileTileName">—</b><small id="mobileTileDetail">—</small></div>
     </div>
@@ -10033,13 +10047,13 @@ function renderPlayers(){
     const isLeader=state.status==="playing"&&!p.bankrupt&&i===leaderSeat;
 
     return `<div class="player ${i===state.current?"current":""} ${isLeader?"leader":""}" style="border-left-color:${COLORS[i]}">
-      ${rank? `<div class="rank-chip rank-${rank}">#${rank}</div>`:""}
+      ${rank? (rank<=3?`<div class="rank-chip rank-${rank} q06-rank-chip" title="第 ${rank} 名"><span class="v19927-q06-art q06-rank-${rank}" aria-hidden="true"></span></div>`:`<div class="rank-chip rank-${rank}">#${rank}</div>`):""}
       <div class="player-shell">
         <div class="player-avatar player-avatar-art" style="background:${seatGradient(i)}"><span class="v19927-q05-art q05-avatar-${avatarIndexOfPlayer(p,i)}" role="img" aria-label="${p.name}"></span></div>
         <div class="player-meta">
           <div class="player-topline">
             <div>
-              <div class="pname">${i===state.current?"▶ ":""}${p.name}${p.ai?" 🤖":i===mySeat?"（你）":""}${isLeader?'<img class="name-leader-crown" src="assets/first10/status_leader_crown.png" alt="第一名">':""}</div>
+              <div class="pname">${i===state.current?"▶ ":""}${p.name}${p.ai?" 🤖":i===mySeat?"（你）":""}${isLeader?'<span class="name-leader-crown v19927-q06-art q06-crown" role="img" aria-label="第一名"></span>':""}</div>
               <div class="player-wealth">總資產約 $${Math.round(wealth).toLocaleString()}</div>
             </div>
             <div class="player-badge">${p.bankrupt?"已破產":PLAYER_TITLES[i]}</div>
@@ -10082,8 +10096,8 @@ function renderMarket(){
       ${qty?`<div class="stock-position-pnl ${pnl>0?"profit":pnl<0?"loss":"flat"}"><span>持倉損益</span><b>${pnl>=0?"+":"-"}${Math.abs(Math.round(pnl)).toLocaleString()} <em>(${pnlPct>=0?"+":""}${pnlPct.toFixed(1)}%)</em></b></div>`:""}
       <div class="sbottom">
         <input id="q_${c}" type="number" min="1" value="1">
-        <button class="success stock-action-btn" onclick="stockAction('buy_stock','${c}')"><img src="${FINANCE_ICON_ASSETS.buy}" alt="">買</button>
-        <button class="danger stock-action-btn" onclick="stockAction('sell_stock','${c}')"><img src="${FINANCE_ICON_ASSETS.sell}" alt="">賣</button>
+        <button class="success stock-action-btn" onclick="stockAction('buy_stock','${c}')"><span class="v19923-q02-art q02-buy" aria-hidden="true"></span>買</button>
+        <button class="danger stock-action-btn" onclick="stockAction('sell_stock','${c}')"><span class="v19923-q02-art q02-sell" aria-hidden="true"></span>賣</button>
       </div>
     </div>`
   }).join("");
@@ -10424,7 +10438,7 @@ function openPublicInvestmentCenter(){
     </div>`
   }).join("");
   showModal("公共建設投資",
-    `<div class="v198-modal-icon-title"><img src="${FINANCE_ICON_ASSETS.publicInvest}" alt=""><div><b>公共建設投資</b><span>累積持分、提升城市等級並定期領分紅</span></div></div><div class="hub-rule">中央都會新增 4 個公共開發點。玩家可以搶先累積持分、推高城市等級並定期領分紅。</div><div class="hub-grid">${cards}</div>`,
+    `<div class="v198-modal-icon-title"><span class="v19923-q02-art q02-public-invest" aria-hidden="true"></span><div><b>公共建設投資</b><span>累積持分、提升城市等級並定期領分紅</span></div></div><div class="hub-rule">中央都會新增 4 個公共開發點。玩家可以搶先累積持分、推高城市等級並定期領分紅。</div><div class="hub-grid">${cards}</div>`,
     [["關閉","ghost",closeModal]]
   )
 }
@@ -11692,12 +11706,12 @@ function showVictory(e){
   if(!e?.data?.ranking)return;burstParticles("confetti",70);
   victoryShownEvent=e.id;
   const ranking=e.data.ranking;
-  $("victoryName").textContent=`👑 ${ranking[0]?.name||"冠軍"}`;
+  $("victoryName").innerHTML=`<span class="v19927-q06-art q06-victory" aria-hidden="true"></span><span>${ranking[0]?.name||"冠軍"}</span>`;
   $("victoryReason").textContent=`勝利方式：${e.data.reason||"總資產結算"}｜總資產 $${Math.round(ranking[0]?.wealth||0).toLocaleString()}`;
   $("victoryRanking").innerHTML=
     `<div class="rank-row head"><div>名次</div><div>玩家</div><div>總資產</div><div>地產</div><div>收租收入</div><div>股票已實現</div></div>`+
     ranking.map((r,i)=>`<div class="rank-row">
-      <div class="strong">${["🥇","🥈","🥉","4"][i]||i+1}</div>
+      <div class="strong">${i<3?`<span class="v19927-q06-art q06-rank-${i+1} victory-rank-icon" aria-label="第 ${i+1} 名"></span>`:(i+1)}</div>
       <div class="strong">${r.name}${r.bankrupt?"（破產）":""}</div>
       <div>$${Math.round(r.wealth).toLocaleString()}</div>
       <div>${r.properties}</div>
@@ -14934,7 +14948,7 @@ body.phone-landscape .modal.mission-choice-modal #modalBody > .hub-card.active{
 
 <style id="v19923-direct-asset-replacement">
 :root{
-  --v19923-q02:url("./assets/v19923/q02_buttons_partial_v1.webp?v=19923");
+  --v19923-q02:url("./assets/v19927/q02_buttons10_v2.webp?v=19927");
   --v19923-q03:url("./assets/v19923/q03_modals10_v1.webp?v=19923");
   --v19923-q04:url("./assets/v19923/q04_dice10_v1.webp?v=19923");
 }
@@ -14947,9 +14961,12 @@ body.phone-landscape .modal.mission-choice-modal #modalBody > .hub-card.active{
   box-shadow:none!important;
   vertical-align:middle;
 }
-.v19923-q02-art{background-image:var(--v19923-q02)!important;background-size:500% 100%!important}
+.v19923-q02-art{background-image:var(--v19923-q02)!important;background-size:500% 200%!important}
 .q02-map{background-position:0 0!important}.q02-stock{background-position:25% 0!important}
 .q02-events{background-position:50% 0!important}.q02-city-core{background-position:75% 0!important}
+.q02-buy{background-position:100% 0!important}.q02-sell{background-position:0 100%!important}
+.q02-auction{background-position:25% 100%!important}.q02-public-invest{background-position:50% 100%!important}
+.q02-rent-insurance{background-position:75% 100%!important}.q02-claim{background-position:100% 100%!important}
 .v19923-q03-art{background-image:var(--v19923-q03)!important;background-size:500% 200%!important}
 .q03-bank{background-position:0 0!important}.q03-upgrade{background-position:25% 0!important}
 .q03-rent{background-position:50% 0!important}.q03-trade{background-position:75% 0!important}
