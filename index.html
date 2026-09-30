@@ -7822,7 +7822,7 @@ function hostAction(seat,msg){
     const q=state.pending;
     if(!q||q.type!=="foreign_property"||q.seat!==seat)throw Error("目前沒有可支付的過路費");
     const t=state.tiles[q.tile];
-    payRent(p,t);
+    payRent(p,t,!!msg.useItem);
     state.pending=null;
     if(!finishIfNeeded("破產決勝"))nextTurn();
     return;
@@ -7849,7 +7849,7 @@ function hostAction(seat,msg){
     buyRentInsurance(p);broadcast();return;
   }
   if(msg.action==="hub_project"){
-    startCityProject(p,String(msg.project||""));broadcast();return;
+    startCityProject(p,String(msg.project||""),!!msg.useItem);broadcast();return;
   }
   if(msg.action==="public_invest"){
     investPublicProject(p,String(msg.project||""),Number(msg.amount));broadcast();return;
@@ -7870,11 +7870,14 @@ function hostAction(seat,msg){
   if(msg.action==="upgrade"){
     const fromLanding=state.pending?.type==="own"&&state.pending.seat===seat;
     if(!fromLanding&&(cur.seat!==seat||state.rolled||state.pending||state.groupGame))throw Error("只能在自己的回合、擲骰前升級地產");
-    const id=Number(msg.tile);upgradeProperty(p,id);
+    const id=Number(msg.tile);upgradeProperty(p,id,!!msg.useItem);
     if(fromLanding){state.pending=null;nextTurn()}else broadcast();return;
   }
   if(msg.action==="skip_upgrade"){
     if(state.pending?.type==="own"&&state.pending.seat===seat){state.pending=null;nextTurn()}return;
+  }
+  if(msg.action==="market_op"){
+    applyMarketOperation(p,String(msg.operation||""),!!msg.useItem);broadcast();return;
   }
   if(msg.action==="buy_stock"||msg.action==="sell_stock"){
     if(cur.seat!==seat||state.rolled||state.pending||state.groupGame)throw Error("只能在自己擲骰前、且沒有其他事件時交易股票");
@@ -7991,7 +7994,7 @@ function resolveLanding(p){
       const [ok,reason]=canUpgrade(p,t);
       state.pending={type:"own",seat:p.seat,tile:t.id,can_upgrade:ok,reason};
       if(p.ai){
-        if(ok&&p.cash-buildCost(t)>6000&&Math.random()<.48)upgradeProperty(p,t.id);
+        if(ok&&p.cash-buildCost(t)>6000&&Math.random()<.48)upgradeProperty(p,t.id,(p.freeBuild||0)>0);
         state.pending=null;
         nextTurn()
       }
@@ -8076,18 +8079,18 @@ function buyProperty(p,id){
   p.stats.landSpent+=t.price;
   addEvent("buy",`${p.name} 買下「${t.name}」，花費 $${t.price.toLocaleString()}。`,{seat:p.seat,amount:-t.price,tile:id,title:"地產購入"})
 }
-function upgradeProperty(p,id){
+function upgradeProperty(p,id,useItem=false){
   const t=state.tiles[id],[ok,reason]=canUpgrade(p,t);
   if(!ok)throw Error(reason);
   const normalCost=buildCost(t);
-  const useFree=(p.freeBuild||0)>0;
-  const c=useFree?0:normalCost;
-  if(useFree)p.freeBuild--;
+  if(useItem&&strategyItemCount(p,"freeBuild")<=0)throw Error("你沒有免費建築許可");
+  if(!useItem&&p.cash<normalCost)throw Error(`現金不足，需要 $${normalCost.toLocaleString()}`);
+  const c=useItem?0:normalCost;
+  if(useItem)p.freeBuild=Math.max(0,strategyItemCount(p,"freeBuild")-1);
   p.cash-=c;t.level++;p.stats.buildSpent+=c;p.stats.upgrades=(p.stats.upgrades||0)+1;
-  addEvent("upgrade",`${p.name} 將「${t.name}」升級至 Lv.${t.level}，新過路費 $${rentFor(t).toLocaleString()}${useFree?"（使用免費建築許可）":`，花費 $${c.toLocaleString()}`}。`,
-    {seat:p.seat,amount:-c,tile:id,level:t.level,title:useFree?"免費建築升級":"房產升級",free:useFree})
+  addEvent("upgrade",`${p.name} 將「${t.name}」升級至 Lv.${t.level}，新過路費 $${rentFor(t).toLocaleString()}${useItem?"（主動使用免費建築許可）":`，花費 $${c.toLocaleString()}`}。`,
+    {seat:p.seat,amount:-c,tile:id,level:t.level,title:useItem?"免費建築升級":"房產升級",free:useItem})
 }
-
 function propertyMarketValue(t){
   if(!t)return 0;
   return Math.round((t.price||0)+((Math.min(PROPERTY_MAX_LEVEL,t.level||0))*(t.price||0)*0.50));
@@ -8463,16 +8466,14 @@ function buyRentInsurance(p){
   addEvent("hub_insurance",`🛡 ${p.name} 購買租金保險：下一次過路費自己只需負擔一半。`,
     {seat:p.seat,amount:-cost,title:"租金保險"})
 }
-function startCityProject(p,key){
+function startCityProject(p,key,useItem=false){
   if(!hubActionAllowed(p))throw Error("只能在自己的回合、擲骰前參與標案");
   if(p.cityProject)throw Error("你已有進行中的城市標案");
-  const d=CITY_PROJECTS[key];
-  if(!d)throw Error("標案不存在");
-  if(p.cash<d.cost)throw Error("現金不足");
-  p.cash-=d.cost;
-  p.cityProject={key,dueRound:state.round+d.rounds};
-  addEvent("hub_project",`🏛 ${p.name} 投入「${d.name}」標案 $${d.cost.toLocaleString()}。`,
-    {seat:p.seat,amount:-d.cost,title:"市政標案"})
+  const d=CITY_PROJECTS[key];if(!d)throw Error("標案不存在");if(p.cash<d.cost)throw Error("現金不足");
+  let successBonus=0;
+  if(useItem){if(strategyItemCount(p,"projectBoost")<=0)throw Error("你沒有標案加成券");p.projectBoost=Math.max(0,strategyItemCount(p,"projectBoost")-1);successBonus=.15}
+  p.cash-=d.cost;p.cityProject={key,dueRound:state.round+d.rounds,successBonus};
+  addEvent("hub_project",`🏛 ${p.name} 投入「${d.name}」標案 $${d.cost.toLocaleString()}。`,{seat:p.seat,amount:-d.cost,title:"市政標案",usedItem:useItem,successBonus})
 }
 function useMetro(p,key){
   if(!hubActionAllowed(p))throw Error("只能在自己的回合、擲骰前搭乘捷運");
@@ -8503,7 +8504,8 @@ function processHubMaturities(){
     }
     if(p.cityProject&&state.round>=p.cityProject.dueRound){
       const proj=CITY_PROJECTS[p.cityProject.key];
-      const success=Math.random()<proj.success;
+      const successRate=Math.min(.95,proj.success+Number(p.cityProject.successBonus||0));
+      const success=Math.random()<successRate;
       const payout=success?proj.win:proj.fail;
       p.cash+=payout;
       addEvent("hub_project_mature",
@@ -8616,30 +8618,24 @@ function aiForeignPropertyDecision(p,t){
     return
   }
 
-  payRent(p,t);
+  payRent(p,t,strategyItemCount(p,"rentShield")>0&&rent>=1200);
   state.pending=null;
   if(!finishIfNeeded("破產決勝"))nextTurn()
 }
 
-function payRent(p,t){
+function payRent(p,t,useItem=false){
   const o=state.players[t.owner],r=rentFor(t);
   let playerPay=r,insurancePay=0;
-  if((p.rentShield||0)>0){
-    playerPay=Math.ceil(r*.5);
-    insurancePay=r-playerPay;
-    p.rentShield=Math.max(0,(p.rentShield||0)-1)
+  if(useItem){
+    if(strategyItemCount(p,"rentShield")<=0)throw Error("你沒有租金護盾");
+    playerPay=Math.ceil(r*.5);insurancePay=r-playerPay;
+    p.rentShield=Math.max(0,strategyItemCount(p,"rentShield")-1)
   }
-  p.cash-=playerPay;
-  o.cash+=r;
-  p.stats.rentPaid+=playerPay;
-  o.stats.rentReceived+=r;
-  p.stats.largestRent=Math.max(p.stats.largestRent,r);
-  o.stats.largestRent=Math.max(o.stats.largestRent,r);
-  addEvent("rent",
-    insurancePay>0
-      ? `${p.name} 的租金保險生效：自己支付 $${playerPay.toLocaleString()}，保險補貼 $${insurancePay.toLocaleString()} 給 ${o.name}。`
-      : `${p.name} 支付 ${o.name} 過路費 $${r.toLocaleString()}。`,
-    {payer:p.seat,owner:o.seat,amount:r,playerPay,insurancePay,tile:t.id});
+  p.cash-=playerPay;o.cash+=r;
+  p.stats.rentPaid+=playerPay;o.stats.rentReceived+=r;
+  p.stats.largestRent=Math.max(p.stats.largestRent,r);o.stats.largestRent=Math.max(o.stats.largestRent,r);
+  addEvent("rent",insurancePay>0?`${p.name} 主動使用租金護盾：自己支付 $${playerPay.toLocaleString()}，保險補貼 $${insurancePay.toLocaleString()} 給 ${o.name}。`:`${p.name} 支付 ${o.name} 過路費 $${r.toLocaleString()}。`,
+    {payer:p.seat,owner:o.seat,amount:r,playerPay,insurancePay,tile:t.id,usedItem:insurancePay>0});
   liquidate(p)
 }
 function liquidate(p){
@@ -8672,6 +8668,8 @@ function chance(p,kind,tileId=p.pos){
     return true
   }
 
+  if(maybeGrantStrategyItem(p,kind))return false;
+
   const chanceEvents=[
     ["獎金入帳",3000],["投資獲利",5000],["政府補助",2500],
     ["意外支出",-2200],["豪華旅遊",-2400],["稅務補繳",-1800]
@@ -8690,26 +8688,26 @@ function chance(p,kind,tileId=p.pos){
 }
 function stockTrade(p,c,q,buy){
   if(!state.stocks[c])throw Error("股票不存在");
-  q=Math.max(1,q|0);
-  const s=state.stocks[c],h=p.stocks[c];
+  q=Math.max(1,q|0);const st=state.stocks[c],h=p.stocks[c];
   if(buy){
-    const cost=s.price*q;
+    const gross=st.price*q,rebate=(p.marketBuyRebate||0)>0?Math.min(2000,Math.round(gross*.10)):0,cost=Math.max(0,gross-rebate);
     if(p.cash<cost)throw Error("現金不足");
-    const nq=h.qty+q;
-    h.avg=((h.avg*h.qty)+cost)/nq;
-    h.qty=nq;p.cash-=cost;
+    const nq=h.qty+q;h.avg=((h.avg*h.qty)+cost)/nq;h.qty=nq;p.cash-=cost;
+    if((p.marketBuyRebate||0)>0)p.marketBuyRebate=0;
+    if(rebate>0)p.stats.marketOpBenefit=(p.stats.marketOpBenefit||0)+rebate;
     p.stats.stockTrades=(p.stats.stockTrades||0)+1;
-    addEvent("stock",`${p.name} 買入 ${s.name} ${q} 股。`,
-      {seat:p.seat,side:"buy",code:c,qty:q,price:s.price,amount:-cost,realized:0,title:"股票買入"})
+    addEvent("stock",`${p.name} 買入 ${st.name} ${q} 股${rebate?`，低接回饋返還 $${rebate.toLocaleString()}`:""}。`,
+      {seat:p.seat,side:"buy",code:c,qty:q,price:st.price,amount:-cost,gross,rebate,realized:0,title:"股票買入"})
   }else{
     if(h.qty<q)throw Error("持股不足");
-    const proceeds=s.price*q;
-    const realized=(s.price-h.avg)*q;
-    p.cash+=proceeds;h.qty-=q;p.realizedPnl+=realized;p.stats.stockRealized+=realized;
-    if(!h.qty)h.avg=0;
-    p.stats.stockTrades=(p.stats.stockTrades||0)+1;
-    addEvent("stock",`${p.name} 賣出 ${s.name} ${q} 股，已實現損益 ${realized>=0?"+":""}$${Math.round(realized).toLocaleString()}。`,
-      {seat:p.seat,side:"sell",code:c,qty:q,price:s.price,amount:proceeds,realized,title:"股票賣出"})
+    const proceeds=st.price*q,baseRealized=(st.price-h.avg)*q;
+    const boost=(p.marketProfitBoost||0)>0&&baseRealized>0?Math.min(2000,Math.round(baseRealized*.50)):0;
+    const realized=baseRealized+boost;
+    p.cash+=proceeds+boost;h.qty-=q;p.realizedPnl+=realized;p.stats.stockRealized+=realized;
+    if(boost>0){p.marketProfitBoost=0;p.stats.marketOpBenefit=(p.stats.marketOpBenefit||0)+boost}
+    if(!h.qty)h.avg=0;p.stats.stockTrades=(p.stats.stockTrades||0)+1;
+    addEvent("stock",`${p.name} 賣出 ${st.name} ${q} 股，已實現損益 ${realized>=0?"+":""}$${Math.round(realized).toLocaleString()}${boost?`（含市場操作加成 $${boost.toLocaleString()}）`:""}。`,
+      {seat:p.seat,side:"sell",code:c,qty:q,price:st.price,amount:proceeds+boost,baseRealized,boost,realized,title:"股票賣出"})
   }
 }
 function weightedIndex(items){
@@ -9534,36 +9532,22 @@ function cityEventTick(){
   addEvent("city_event",`📢 城市景氣切換：「${state.cityEvent.name}」。`,{...state.cityEvent})
 }
 function marketTick(){
-  const bias=state.cityEvent?.stockBias||0;
-  const shocks=[];
-  for(const [code,s] of Object.entries(state.stocks)){
-    const def=STOCK_DEFS[code]||{vol:.07,drift:0};
-    s.prev=s.price;
-
+  const bias=state.cityEvent?.stockBias||0,shocks=[],hedgeBefore={};
+  state.players.filter(Boolean).forEach(p=>{if((p.marketHedge||0)>0)hedgeBefore[p.seat]=stockValue(p)});
+  for(const [code,st] of Object.entries(state.stocks)){
+    const def=STOCK_DEFS[code]||{vol:.07,drift:0};st.prev=st.price;
     let move=bias+(def.drift||0)+((Math.random()*2-1)*(def.vol||.07));
-
-    // 22% chance of an individual stock news shock.
-    if(Math.random()<.22){
-      const shock=(Math.random()<.5?-1:1)*(.05+Math.random()*.10);
-      move+=shock;
-      shocks.push({code,shock})
-    }
-
-    // Keep one-round movement exciting but bounded.
-    move=Math.max(-.22,Math.min(.22,move));
-    s.price=Math.max(20,Math.round(s.price*(1+move)));
-    s.history.push(s.price);
-    s.history=s.history.slice(-24)
+    if(Math.random()<.22){const shock=(Math.random()<.5?-1:1)*(.05+Math.random()*.10);move+=shock;shocks.push({code,shock})}
+    move=Math.max(-.22,Math.min(.22,move));st.price=Math.max(20,Math.round(st.price*(1+move)));st.history.push(st.price);st.history=st.history.slice(-24)
   }
-
-  if(shocks.length){
-    const top=shocks.sort((a,b)=>Math.abs(b.shock)-Math.abs(a.shock))[0];
-    const s=state.stocks[top.code];
-    addEvent("market",`📊 個股消息：${s.name} 本輪出現較大波動。`,
-      {code:top.code,shock:top.shock})
-  }else{
-    addEvent("market","新一輪股票市場完成更新。")
-  }
+  state.players.filter(Boolean).forEach(p=>{
+    if((p.marketHedge||0)<=0)return;
+    const before=Number(hedgeBefore[p.seat]||0),after=stockValue(p),loss=Math.max(0,before-after),refund=Math.min(3000,Math.round(loss*.5));p.marketHedge=0;
+    if(refund>0){p.cash+=refund;p.stats.marketOpBenefit=(p.stats.marketOpBenefit||0)+refund;addEvent("market_operation_benefit",`${p.name} 的避險合約生效，補貼 $${refund.toLocaleString()}。`,{seat:p.seat,amount:refund,title:"避險合約",before,after})}
+    else addEvent("market_operation_benefit",`${p.name} 的避險合約到期，本輪沒有可補貼損失。`,{seat:p.seat,amount:0,title:"避險合約",before,after})
+  });
+  if(shocks.length){const top=shocks.sort((a,b)=>Math.abs(b.shock)-Math.abs(a.shock))[0],st=state.stocks[top.code];addEvent("market",`📊 個股消息：${st.name} 本輪出現較大波動。`,{code:top.code,shock:top.shock})}
+  else addEvent("market","新一輪股票市場完成更新。")
 }
 function aiBuyDecision(p,t){
   if(p.cash>t.price*1.65&&Math.random()<.68){
@@ -10337,7 +10321,7 @@ function openProjectHub(){
     showModal("市政標案",
       `<div class="hub-rule">你的標案施工中，會在指定 ROUND 自動結算。</div>
        <div class="hub-card active"><div class="hicon"><span class="v19923-q03-art q03-project" aria-hidden="true"></span></div><div class="hname">${d.name}</div>
-       <div class="hdesc">成功率 ${(d.success*100).toFixed(0)}%｜到期 ROUND ${me.cityProject.dueRound}</div>
+       <div class="hdesc">成功率 ${(Math.min(.95,d.success+Number(me.cityProject.successBonus||0))*100).toFixed(0)}%｜到期 ROUND ${me.cityProject.dueRound}</div>
        <div class="hvalue">成功 $${d.win.toLocaleString()}｜失敗回收 $${d.fail.toLocaleString()}</div></div>`,
       [["關閉","ghost",closeModal]]
     );
@@ -10348,10 +10332,10 @@ function openProjectHub(){
     <div class="big"><span class="v19923-q03-art q03-project" aria-hidden="true"></span></div><div class="name">${d.name}</div>
     <div class="desc">投入 $${d.cost.toLocaleString()}｜${d.rounds} ROUND 後結算｜成功率 ${(d.success*100).toFixed(0)}%</div>
     <div class="hvalue">成功 $${d.win.toLocaleString()}<br><span style="font-size:11px">失敗仍回收 $${d.fail.toLocaleString()}</span></div>
-    <button class="warn" ${(!can||me.cash<d.cost)?"disabled":""} onclick="sendAction('hub_project',{project:'${k}'})">承接標案</button>
+    <button class="warn" ${(!can||me.cash<d.cost)?"disabled":""} onclick="requestCityProject('${k}')">承接標案</button>
   </div>`).join("");
   showModal("市政標案",
-    `<div class="hub-rule">高風險的城市投資玩法。同時間只能承接一個標案，成功與否在到期時由房間同步節點統一判定。</div><div class="project-grid">${cards}</div>`,
+    `<div class="hub-rule">高風險的城市投資玩法。同時間只能承接一個標案，成功與否在到期時由房間同步節點統一判定。${strategyItemCount(me,"projectBoost")?`<br><b>📑 你有標案加成券 ×${strategyItemCount(me,"projectBoost")}，承接時會主動詢問是否使用。</b>`:""}</div><div class="project-grid">${cards}</div>`,
     [["關閉","ghost",closeModal]]
   );
   $("modal")?.classList.add("hub-choice-modal","project-choice-modal")
