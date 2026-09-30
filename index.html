@@ -10003,6 +10003,7 @@ function handlePending(){
     if(p.seat!==mySeat){closeModal();return}
     const t=state.tiles[p.tile],owner=state.players[t.owner],me=state.players[mySeat];
     const level=t.type==="property"?propertyLevelName(t.level):"交通設施";
+    const shieldCount=strategyItemCount(me,"rentShield"),shieldPay=Math.ceil(p.rent*.5);
     showModal("🏛 路過對手地產",
       `<div class="foreign-property-card">
         <div class="foreign-property-head">
@@ -10015,7 +10016,7 @@ function handlePending(){
             <div class="title">💸 支付過路費</div>
             <div class="money">$${p.rent.toLocaleString()}</div>
             <div class="desc">正常支付給地主，土地所有權不變。</div>
-            <button class="primary" onclick="sendAction('pay_rent')">支付過路費</button>
+            <span class="rent-strategy-slot">${shieldCount?`<div class="strategy-context-inline"><b>🛡️ 可使用租金護盾 ×${shieldCount}</b><span>本次過路費可從 ${p.rent.toLocaleString()} 降為 <b>${shieldPay.toLocaleString()}</b>。要現在使用嗎？</span></div><button class="success" onclick="sendAction('pay_rent',{useItem:true})">使用護盾｜付 ${shieldPay.toLocaleString()}</button><button class="ghost" onclick="sendAction('pay_rent',{useItem:false})">保留道具｜照付全額</button>`:`<button class="primary" onclick="sendAction('pay_rent',{useItem:false})">支付過路費</button>`}</span>
           </div>
           <div class="foreign-choice force">
             <div class="title v198-option-title"><img src="${FINANCE_ICON_ASSETS.forcedAcquire}" alt="">高價強制徵收</div>
@@ -10062,8 +10063,8 @@ function handlePending(){
     showModal("🏘 自己的房產",
       `「${t.name}」<br>${propertyLevelName(t.level)}｜目前過路費 <b>$${rentFor(t).toLocaleString()}</b><br>`+
       `${t.level<PROPERTY_MAX_LEVEL?`升級後過路費 <b>$${rentAtLevel(t,t.level+1).toLocaleString()}</b><br><br>`:"<br>"}`+
-      `${p.can_upgrade?(free?"可升級：將使用 1 張免費建築許可":"可升級，費用 $"+buildCost(t).toLocaleString()):"不能升級："+p.reason}`,
-      [...(p.can_upgrade?[["立即升級","warn",()=>sendAction("upgrade",{tile:t.id})]]:[]),["暫不處理","ghost",()=>sendAction("skip_upgrade")]]
+      `${p.can_upgrade?(free?"你有免費建築許可；按「升級地產」後會先詢問要不要使用。":"可升級，費用 $"+buildCost(t).toLocaleString()):"不能升級："+p.reason}`,
+      [...(p.can_upgrade?[["升級地產","warn",()=>requestPropertyUpgrade(t.id)]]:[]),["暫不處理","ghost",()=>sendAction("skip_upgrade")]]
     );
     return
   }
@@ -10571,7 +10572,7 @@ function openProperties(){
 }
 function showModal(t,b,acts){
   const modalEl=$("modal");
-  modalEl?.classList.remove("phone-compact-modal","phone-quick-modal","phone-hub-modal","phone-feature-modal","phone-bank-modal","phone-upgrade-modal","hub-choice-modal","mission-choice-modal","metro-choice-modal","project-choice-modal","strategy-items-modal","market-ops-modal","property-manage-modal");
+  modalEl?.classList.remove("phone-compact-modal","phone-quick-modal","phone-hub-modal","phone-feature-modal","phone-bank-modal","phone-upgrade-modal","hub-choice-modal","mission-choice-modal","metro-choice-modal","project-choice-modal","strategy-items-modal","market-ops-modal","property-manage-modal","strategy-items-modal","market-ops-modal","property-manage-modal");
   $("modalTitle").textContent=t;
   $("modalBody").innerHTML=b;
   $("modalActions").innerHTML="";
@@ -10585,7 +10586,7 @@ function showModal(t,b,acts){
 }
 function closeModal(){
   const modalEl=$("modal");
-  modalEl?.classList.remove("open","phone-compact-modal","phone-quick-modal","phone-hub-modal","phone-feature-modal","phone-bank-modal","phone-upgrade-modal","hub-choice-modal","mission-choice-modal","metro-choice-modal","project-choice-modal","strategy-items-modal","market-ops-modal","property-manage-modal");
+  modalEl?.classList.remove("open","phone-compact-modal","phone-quick-modal","phone-hub-modal","phone-feature-modal","phone-bank-modal","phone-upgrade-modal","hub-choice-modal","mission-choice-modal","metro-choice-modal","project-choice-modal","strategy-items-modal","market-ops-modal","property-manage-modal","strategy-items-modal","market-ops-modal","property-manage-modal");
 }
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
 $("modal")?.addEventListener("pointerdown",e=>{if(e.target===$("modal"))closeModal()});
@@ -11549,6 +11550,15 @@ function handleIncomingEvents(){
         extra,
         e.data.side==="buy"?FINANCE_ICON_ASSETS.buy:FINANCE_ICON_ASSETS.sell
       )
+    }
+    else if(e.kind==="strategy_item"&&e.data?.seat===mySeat){
+      queueFx({html:`<div class="fx-title">🎒 獲得策略道具</div><div class="fx-money" style="font-size:27px">${e.data.itemName||"策略道具"}</div><div class="fx-sub">已放入策略道具；符合使用時機時系統會主動詢問。</div>`,duration:1900})
+    }
+    else if(e.kind==="market_operation"&&e.data?.seat===mySeat){
+      moneyFx(`📈 ${e.data.title||"市場操作"}`,e.data.amount,e.data.usedItem?"已使用市場操作折抵券":"市場策略已啟用");
+    }
+    else if(e.kind==="market_operation_benefit"&&e.data?.seat===mySeat&&Number(e.data.amount||0)>0){
+      moneyFx(`📈 ${e.data.title||"市場操作"}`,e.data.amount,"市場策略效果已生效");
     }
     else if(e.kind==="acquire_bonus"){
       queueFx({html:`<div class="fx-title fx-icon-title"><img class="fx-inline-icon" src="${FINANCE_ICON_ASSETS.subsidy}" alt=""><span>收購中心</span></div><div class="fx-money" style="font-size:28px">15% 收購補助</div><div class="fx-sub">${state.players[e.data.seat]?.name||"玩家"} 下一次土地收購，買方只付 85%，賣方仍收完整報價。</div>`,duration:2200})
@@ -14783,5 +14793,28 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
 }
 </style>
 
+<style id="v19924-strategy-market-authority">
+.controls .control-feature-art{width:42px!important;height:42px!important;flex:0 0 42px!important}
+.strategy-auto-rule{margin-bottom:10px;padding:10px 12px;border:1px solid #c9d9ea;border-radius:12px;background:#f5f9fe;color:#38516b;font-size:12px;font-weight:900;line-height:1.45}
+.strategy-item-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.strategy-item-card{display:grid;grid-template-columns:54px minmax(0,1fr) auto;gap:9px;align-items:center;padding:10px;border:1px solid #dbe5ef;border-radius:14px;background:#fff}
+.strategy-item-card.empty{opacity:.58}.strategy-item-icon{font-size:32px;text-align:center}.strategy-item-name{font-size:14px;font-weight:1000;color:#244564}.strategy-item-desc{margin-top:3px;font-size:11px;line-height:1.35;color:#687b90;font-weight:800}.strategy-item-count{font-size:20px;font-weight:1000;color:#285d91}
+.strategy-context-prompt,.strategy-context-inline{display:flex;flex-direction:column;gap:5px;margin:8px 0;padding:9px 10px;border:1px solid #b8d9f3;border-radius:11px;background:#eef8ff;color:#31516d}
+.strategy-context-prompt b,.strategy-context-inline b{font-size:14px}.strategy-context-prompt span,.strategy-context-inline span{font-size:11px;line-height:1.35;font-weight:800}
+.rent-strategy-slot{display:block}.rent-strategy-slot button{width:100%;margin-top:6px}
+.market-op-status{margin:0 0 9px;font-size:12px;font-weight:900;color:#526b84}.market-op-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.market-op-card{padding:10px;border:1px solid #d6e2ee;border-radius:14px;background:#fff;text-align:center}.market-op-card.active{background:#edf9f4;border-color:#bce3d2}
+.market-op-icon{font-size:32px}.market-op-name{margin-top:3px;font-size:15px;font-weight:1000;color:#244564}.market-op-desc{min-height:52px;margin-top:5px;font-size:11px;line-height:1.35;color:#65798f;font-weight:800}.market-op-cost{margin-top:6px;font-size:12px;font-weight:1000;color:#2d608d}.market-op-card button{width:100%;margin-top:7px}
+.property-manage-list{display:flex;flex-direction:column;gap:7px}.property-manage-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 10px;border:1px solid #dce6f0;border-radius:12px;background:#fff}
+.property-manage-main{display:flex;flex-wrap:wrap;align-items:center;gap:5px 9px;min-width:0}.property-manage-main>b{font-size:14px;color:#213f5d}.property-manage-main>span{font-size:11px;font-weight:1000;color:#6a7c8e}.property-manage-main>small{width:100%;font-size:11px;color:#697d91;font-weight:800}.property-inline-upgrade{min-width:86px}.property-max-chip{padding:5px 8px;border-radius:999px;background:#eef2f6;color:#7c8998;font-size:10px;font-weight:1000}
+@media(max-width:980px) and (orientation:landscape){
+  .controls .control-feature-art{width:34px!important;height:34px!important;flex-basis:34px!important}
+  body.phone-landscape .strategy-item-grid{gap:6px}
+  body.phone-landscape .strategy-item-card{grid-template-columns:38px minmax(0,1fr) auto;padding:6px;gap:6px}
+  body.phone-landscape .strategy-item-icon{font-size:24px}body.phone-landscape .strategy-item-name{font-size:11px}body.phone-landscape .strategy-item-desc{font-size:8.5px}body.phone-landscape .strategy-item-count{font-size:15px}
+  body.phone-landscape .market-op-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}body.phone-landscape .market-op-card{padding:7px}body.phone-landscape .market-op-icon{font-size:24px}body.phone-landscape .market-op-name{font-size:11px}body.phone-landscape .market-op-desc{min-height:42px;font-size:8.5px}body.phone-landscape .market-op-cost{font-size:9px}
+  body.phone-landscape .property-manage-row{padding:6px 7px}body.phone-landscape .property-manage-main>b{font-size:11px}body.phone-landscape .property-manage-main>small{font-size:8.5px}
+}
+</style>
 </body>
 </html>
