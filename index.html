@@ -7678,6 +7678,25 @@ function openHostPeer(recovering=false){
   hostPeer.on("close",()=>{clearTimeout(hostTimeout);clearTimeout(hostSignalReconnectTimer)})
 }
 
+function clearHostDisconnectGrace(seat){
+  const timer=hostDisconnectGraceTimers.get(Number(seat));
+  if(timer)clearTimeout(timer);
+  hostDisconnectGraceTimers.delete(Number(seat))
+}
+function scheduleHostDisconnectGrace(seat,conn){
+  seat=Number(seat);
+  clearHostDisconnectGrace(seat);
+  const timer=setTimeout(()=>{
+    hostDisconnectGraceTimers.delete(seat);
+    if(!isHost||conns.get(seat))return;
+    const p=state?.players?.[seat];
+    if(!p||p.ai||p.connected===false)return;
+    p.connected=false;
+    addEvent("disconnect",`${p.name} 連線中斷超過 ${(HOST_DISCONNECT_GRACE_MS/1000).toFixed(1)} 秒，保留原座位等待續連。`,{seat});
+    broadcast()
+  },HOST_DISCONNECT_GRACE_MS);
+  hostDisconnectGraceTimers.set(seat,timer)
+}
 function handleIncomingConnection(conn){
   conn.on("open",()=>{
     if(!isHost)return;
@@ -7700,10 +7719,14 @@ function handleIncomingConnection(conn){
         safeConnSend(conn,{type:"reject",reason:"續連憑證失效，請回到房間重新加入。"});
         setTimeout(()=>{try{conn.close()}catch{}},250);return
       }
+
       const old=conns.get(seat);
-      if(old&&old!==conn)try{old.close()}catch{}
+      const wasDisconnected=p.connected===false;
+      clearHostDisconnectGrace(seat);
       conns.set(seat,conn);conn.__seat=seat;p.connected=true;
-      addEvent("reconnect",`${p.name} 已重新連線並回到原座位。`,{seat});
+      if(old&&old!==conn)try{old.close()}catch{}
+
+      if(wasDisconnected)addEvent("reconnect",`${p.name} 已重新連線並回到原座位。`,{seat});
       safeConnSend(conn,{type:"welcome",seat,resumeToken:expected,resumed:true,state:snapshot()});
       broadcast();
       return
@@ -7725,6 +7748,7 @@ function handleIncomingConnection(conn){
 
       state.players[seat]=player((msg.name||"玩家").slice(0,12),seat,false,claimAvailableAvatar(seat,msg.avatar));
       const token=randomResumeToken();resumeTokens.set(seat,token);
+      clearHostDisconnectGrace(seat);
       conns.set(seat,conn);conn.__seat=seat;
       addEvent("join",`${state.players[seat].name} 加入房間。`);
       safeConnSend(conn,{type:"welcome",seat,resumeToken:token,state:snapshot()});
@@ -7737,19 +7761,17 @@ function handleIncomingConnection(conn){
   });
 
   conn.on("error",()=>{
-    // close normally follows; keep seat reserved for resume.
+    // close normally follows. Seat remains reserved; short flaps are absorbed by grace period.
   });
 
   conn.on("close",()=>{
     const seat=conn.__seat;
     if(seat==null||!state?.players?.[seat])return;
     if(conns.get(seat)!==conn)return;
-    conns.delete(seat);state.players[seat].connected=false;
-    addEvent("disconnect",`${state.players[seat].name} 連線暫時中斷，保留原座位等待續連。`,{seat});
-    broadcast()
+    conns.delete(seat);
+    scheduleHostDisconnectGrace(seat,conn)
   })
 }
-
 async function joinInternetRoom(){
   showIPhoneConnectionNotice();
   const input=$("joinRoom");
