@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.25 WEB｜好友房穩定續連</title>
+<title>財富帝國 V19.9.26 WEB｜好友房穩定續連</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.25 WEB - 修正反覆斷線重連、背景切換誤判，並加入房主重新整理恢復">
+<meta name="description" content="財富帝國 V19.9.26 WEB - 保留 V19.9.25 好友房續連修正，並以新版 Q02/Q05/Q06 素材直接替換舊 render source">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6490,12 +6490,12 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.25 WEB｜好友房穩定續連｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.26 WEB｜好友房穩定續連｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
       <div class="round-hud">
-        <div class="round-hud-top"><span>ROUND <b id="roundText">1</b> / 30</span><strong>剩 <span id="roundsLeft">30</span> 回合</strong></div>
+        <div class="round-hud-top"><span>ROUND <b id="roundText">1</b> / 30</span><strong><span class="q06-turn-art q06-turn-remaining round-remaining-art" aria-hidden="true"></span>剩 <span id="roundsLeft">30</span> 回合</strong></div>
         <div class="round-progress"><i id="roundProgressFill"></i></div>
       </div>
     </div>
@@ -9850,7 +9850,7 @@ function avatarArtHtml(index,extraClass=""){
 }
 function rankingBadgeHtml(rank){
   const cls={1:"q06-rank-gold",2:"q06-rank-silver",3:"q06-rank-bronze"}[Number(rank)];
-  return cls?`<span class="q06-rank-art ${cls} q06-rank-badge" aria-label="第 ${rank} 名"></span>`:String(rank)
+  return cls?`<span class="q06-rank-art ${cls} q06-rank-badge" aria-label="第 ${rank} 名"></span>`:`#${rank}`
 }
 const TILE_ICONS={
   start:"start",property:"property",station:"station",chance:"chance",fate:"fate",stock:"stock",tax:"tax",
@@ -10003,7 +10003,7 @@ function renderPlayers(){
     const isLeader=state.status==="playing"&&!p.bankrupt&&i===leaderSeat;
 
     return `<div class="player ${i===state.current?"current":""} ${isLeader?"leader":""}" style="border-left-color:${COLORS[i]}">
-      ${rank? `<div class="rank-chip rank-${rank}">#${rank}</div>`:""}
+      ${rank? `<div class="rank-chip rank-${rank}">${rankingBadgeHtml(rank)}</div>`:""}
       <div class="player-shell">
         <div class="player-avatar player-avatar-art" style="background:${seatGradient(i)}">${avatarArtHtml(avatarIndexOfPlayer(p,i))}</div>
         <div class="player-meta">
@@ -14953,6 +14953,7 @@ body.phone-landscape .modal.mission-choice-modal #modalBody > .hub-card.active{
 .seat-avatar .q05-avatar-art,.player-avatar.player-avatar-art .q05-avatar-art{width:100%;height:100%;border-radius:inherit}
 .name-leader-crown.q06-rank-art{width:18px!important;height:18px!important;margin-left:5px!important;vertical-align:-4px!important}
 .current-turn-art{width:17px;height:17px;margin-right:4px;vertical-align:-4px}
+.round-remaining-art{width:18px;height:18px;margin-right:4px;vertical-align:-4px}
 .q06-rank-badge{width:24px;height:24px}
 .victory-crown .q06-turn-art{width:58px;height:58px}
 .fx-title .q06-turn-art{width:24px;height:24px;margin-right:6px;vertical-align:-6px}
