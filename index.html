@@ -10355,7 +10355,7 @@ function openTileDetails(t){
   const owner=t.owner==null?null:state.players[t.owner];
   const value=propertyMarketValue(t);
   const buttons=[];
-  if(t.owner===mySeat&&t.type==="property"&&t.level<PROPERTY_MAX_LEVEL)buttons.push(["🏗 升級地產","warn",()=>openUpgradeCenter()]);
+  if(t.owner===mySeat&&t.type==="property"&&t.level<PROPERTY_MAX_LEVEL)buttons.push(["🏗 升級這塊地","warn",()=>requestPropertyUpgrade(t.id)]);
   if(canStartAcquisition(t))buttons.push(["💼 發起收購","primary",()=>openAcquisitionDialog(t.id)]);
   buttons.push(["關閉","ghost",closeModal]);
 
