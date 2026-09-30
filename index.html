@@ -7823,8 +7823,8 @@ function openGuestPeer(name,resumeInfo=null){
     if(resumeInfo||mySeat!=null){
       guestReconnectInFlight=false;
       $("connectionText").textContent="⚠️ 連線暫時沒有回應，正在恢復原座位…";
-      scheduleGuestReconnect("連線逾時");
-    }else scheduleInitialJoinRetry(name,"連線逾時");
+      scheduleGuestReconnect("連線逾時")
+    }else scheduleInitialJoinRetry(name,"連線逾時")
   },15000);
 
   clientPeer.on("open",()=>{
@@ -7845,6 +7845,7 @@ function openGuestPeer(name,resumeInfo=null){
     if(mySeat==null&&transient.includes(err.type)){
       scheduleInitialJoinRetry(name,err.type);return
     }
+    guestReconnectInFlight=false;
     toast("連線失敗："+err.type);
     $("connectionText").textContent="❌ 連線異常："+err.type
   });
@@ -7853,12 +7854,19 @@ function openGuestPeer(name,resumeInfo=null){
     if(peer!==clientPeer||isHost)return;
     if(hostConn?.open){
       try{clientPeer.reconnect()}catch{}
-      showNetRecovery("連線服務短暫中斷，遊戲資料通道仍在；正在恢復…","warn");
-    }else if(mySeat!=null&&clientResumeToken)scheduleGuestReconnect("signaling disconnected");
-    else scheduleInitialJoinRetry(name,"signaling disconnected")
+      showNetRecovery("連線服務短暫中斷，遊戲資料通道仍在；正在恢復…","warn")
+    }else if(mySeat!=null&&clientResumeToken){
+      guestReconnectInFlight=false;
+      scheduleGuestReconnect("signaling disconnected")
+    }else scheduleInitialJoinRetry(name,"signaling disconnected")
+  });
+
+  clientPeer.on("close",()=>{
+    if(peer!==clientPeer||isHost)return;
+    peer=null;guestReconnectInFlight=false;
+    if(mySeat!=null&&clientResumeToken)scheduleGuestReconnect("Peer close")
   })
 }
-
 function wireHostConn(conn,name,resumeInfo=null){
   let handshakeSent=false;
   const isCurrent=()=>!isHost&&hostConn===conn;
