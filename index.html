@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.23 WEB｜市政標案與新素材替換</title>
+<title>財富帝國 V19.9.24 WEB｜策略道具與市場操作</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.23 WEB - 補齊市政標案三欄排版，Q02/Q03/Q04 新素材直接替換舊視覺來源">
+<meta name="description" content="財富帝國 V19.9.24 WEB - 主操作改為擲骰子、我的房產、策略道具、市場操作；道具採情境主動提示">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -5084,7 +5084,7 @@ button,.bonus-choice,.hilow-pick,.treasure-choice,.reaction-button{touch-action:
     box-shadow:0 8px 20px rgba(31,58,88,.11)!important
   }
   .dicebox{border:1px solid #d0ddea!important;background:#fff!important;box-shadow:0 3px 8px rgba(36,67,101,.07)!important}
-  #tradeBtn{grid-column:1/3!important;grid-row:3!important}
+  #marketOpsBtn{grid-column:1/3!important;grid-row:3!important}
   .control-row>button{display:flex!important;align-items:center!important;justify-content:center!important;min-width:0!important;margin:0!important}
 
   .mobile-nav{
@@ -5123,7 +5123,7 @@ body.force-mobile-preview .mobile-turn-bar b{color:var(--v197-ink)!important}
 body.force-mobile-preview .mobile-turn-bar .mt-leader b{color:#946400!important}
 body.force-mobile-preview .mobile-turn-bar .mt-cash b{color:#16764f!important}
 body.force-mobile-preview .mobile-turn-bar .mt-label,body.force-mobile-preview .mobile-turn-bar small{color:#667d94!important}
-body.force-mobile-preview #tradeBtn{grid-column:1/3!important;grid-row:3!important}
+body.force-mobile-preview #marketOpsBtn{grid-column:1/3!important;grid-row:3!important}
 body.force-mobile-preview .controls{background:linear-gradient(180deg,#f6f9fd,#ebf2f9)!important;border:1px solid #cad8e6!important;border-radius:12px!important}
 body.force-mobile-preview .mobile-nav{
   grid-template-columns:repeat(5,minmax(0,1fr))!important;grid-template-rows:1fr!important;gap:4px!important;padding:4px!important;
@@ -5666,7 +5666,7 @@ body.force-mobile-preview #mobileRoundsLeft{
   }
   .dicebox{padding:4px!important;}
   #rollBtn{grid-column:2!important;grid-row:1!important;}
-  #tradeBtn{grid-column:1/3!important;grid-row:3!important;}
+  #marketOpsBtn{grid-column:1/3!important;grid-row:3!important;}
   .control-row>button{
     min-width:0!important;
     min-height:0!important;
@@ -5729,7 +5729,7 @@ body.force-mobile-preview .control-row{
   grid-template-rows:46px 45px 49px!important;
   gap:6px!important;
 }
-body.force-mobile-preview #tradeBtn{grid-column:1/3!important;grid-row:3!important;}
+body.force-mobile-preview #marketOpsBtn{grid-column:1/3!important;grid-row:3!important;}
 body.force-mobile-preview .control-row>button{height:100%!important;width:100%!important;}
 body.force-mobile-preview .controls button.primary:not(:disabled),
 body.force-mobile-preview .controls button.warn:not(:disabled),
@@ -5802,8 +5802,8 @@ body.force-mobile-preview .controls button .icon-label img{width:21px!important;
   .dicebox{height:100%!important;padding:6px 8px!important;border-radius:14px!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;}
   .control-row>button{height:100%!important;min-height:0!important;padding:0!important;border-radius:14px!important;display:flex!important;align-items:center!important;justify-content:center!important;}
   #rollBtn{grid-column:2!important;grid-row:1!important;}
-  #upgradeBtn{grid-column:2!important;grid-row:2!important;}
-  #tradeBtn{grid-column:1/3!important;grid-row:3!important;}
+  #strategyBtn{grid-column:2!important;grid-row:2!important;}
+  #marketOpsBtn{grid-column:1/3!important;grid-row:3!important;}
   .control-row button .icon-label{gap:10px!important;padding:0 12px!important;font-size:13px!important;line-height:1!important;}
   .control-row button .icon-label img{width:27px!important;height:27px!important;flex:0 0 27px!important;}
   .dicebox .die{width:42px!important;height:42px!important;font-size:27px!important;border-radius:11px!important;}
@@ -5836,12 +5836,12 @@ body.force-mobile-preview .controls button .icon-label img{width:21px!important;
   .control-row>button::before{content:"";position:absolute;inset:0;z-index:0;background-position:center;background-size:100% 100%;background-repeat:no-repeat;opacity:.95;pointer-events:none}
   #rollBtn::before{background-image:var(--v1984-roll-btn),var(--v1984-glow-blue)}
   #propertyBtn::before{background-image:var(--v1984-property-btn),var(--v1984-glow-gold)}
-  #upgradeBtn::before{background-image:var(--v1984-upgrade-btn),var(--v1984-glow-gold)}
-  #tradeBtn::before{background-image:var(--v1984-trade-btn),var(--v1984-glow-blue)}
+  #strategyBtn::before{background-image:var(--v1984-upgrade-btn),var(--v1984-glow-gold)}
+  #marketOpsBtn::before{background-image:var(--v1984-trade-btn),var(--v1984-glow-blue)}
   .control-row>button:disabled::before{background-image:var(--v1984-disabled-btn)!important;opacity:.92}
   .control-row button .icon-label{position:relative;z-index:1;display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:10px!important;width:100%!important;padding:0 12px!important;font-size:14px!important;font-weight:1000!important;line-height:1!important;text-shadow:0 1px 1px rgba(255,255,255,.18);}
   .control-row button .icon-label img{width:28px!important;height:28px!important;flex:0 0 28px!important;object-fit:contain!important;filter:drop-shadow(0 2px 3px rgba(29,50,79,.18));}
-  #tradeBtn .icon-label{font-size:15px!important;}
+  #marketOpsBtn .icon-label{font-size:15px!important;}
 }
 body.force-mobile-preview .controls{height:198px!important;padding:8px!important;}
 body.force-mobile-preview .mobile-nav{top:calc(var(--v1972-hud-h) + 198px)!important;}
@@ -5852,8 +5852,8 @@ body.force-mobile-preview .control-row>button{position:relative!important;overfl
 body.force-mobile-preview .control-row>button::before{content:"";position:absolute;inset:0;z-index:0;background-position:center;background-size:100% 100%;background-repeat:no-repeat;opacity:.95;pointer-events:none}
 body.force-mobile-preview #rollBtn::before{background-image:var(--v1984-roll-btn),var(--v1984-glow-blue)}
 body.force-mobile-preview #propertyBtn::before{background-image:var(--v1984-property-btn),var(--v1984-glow-gold)}
-body.force-mobile-preview #upgradeBtn::before{background-image:var(--v1984-upgrade-btn),var(--v1984-glow-gold)}
-body.force-mobile-preview #tradeBtn::before{background-image:var(--v1984-trade-btn),var(--v1984-glow-blue)}
+body.force-mobile-preview #strategyBtn::before{background-image:var(--v1984-upgrade-btn),var(--v1984-glow-gold)}
+body.force-mobile-preview #marketOpsBtn::before{background-image:var(--v1984-trade-btn),var(--v1984-glow-blue)}
 body.force-mobile-preview .control-row>button:disabled::before{background-image:var(--v1984-disabled-btn)!important;opacity:.92}
 body.force-mobile-preview .control-row button .icon-label{position:relative;z-index:1;display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:10px!important;width:100%!important;padding:0 12px!important;font-size:14px!important;font-weight:1000!important;line-height:1!important;}
 body.force-mobile-preview .control-row button .icon-label img{width:28px!important;height:28px!important;flex:0 0 28px!important;object-fit:contain!important;}
@@ -5972,8 +5972,8 @@ body.force-mobile-preview .dicebox .dice-face-art{width:46px!important;height:46
   .dicebox{grid-column:1!important;grid-row:1!important}
   #rollBtn{grid-column:2!important;grid-row:1!important}
   #propertyBtn{grid-column:1!important;grid-row:2!important}
-  #upgradeBtn{grid-column:2!important;grid-row:2!important}
-  #tradeBtn{grid-column:1/3!important;grid-row:3!important}
+  #strategyBtn{grid-column:2!important;grid-row:2!important}
+  #marketOpsBtn{grid-column:1/3!important;grid-row:3!important}
   #turnLabel{display:none!important}
 
   /* Phone dice card deliberately does NOT use the square ornamental frame. */
@@ -6071,8 +6071,8 @@ body.force-mobile-preview .dicebox .dice-face-art{width:46px!important;height:46
   }
   #rollBtn::before{background-image:var(--v1984-roll-btn)!important}
   #propertyBtn::before{background-image:var(--v1984-property-btn)!important}
-  #upgradeBtn::before{background-image:var(--v1984-upgrade-btn)!important}
-  #tradeBtn::before{background-image:var(--v1984-trade-btn)!important}
+  #strategyBtn::before{background-image:var(--v1984-upgrade-btn)!important}
+  #marketOpsBtn::before{background-image:var(--v1984-trade-btn)!important}
   .control-row>button:disabled::before{
     background-image:var(--v1984-disabled-btn)!important;
     filter:none!important;
@@ -6096,9 +6096,9 @@ body.force-mobile-preview .dicebox .dice-face-art{width:46px!important;height:46
     text-shadow:0 1px 2px rgba(0,0,0,.28)!important;
   }
   .control-row button .icon-label img{display:none!important}
-  #upgradeBtn .icon-label{color:#fff!important}
+  #strategyBtn .icon-label{color:#fff!important}
   .control-row>button:disabled .icon-label{color:#f7fbff!important;opacity:.78!important}
-  #tradeBtn .icon-label{font-size:clamp(11px,2.8dvh,14px)!important}
+  #marketOpsBtn .icon-label{font-size:clamp(11px,2.8dvh,14px)!important}
 
   /* Bottom navigation is a separate zone and may never cover the trade button. */
   .mobile-nav button{
@@ -6178,7 +6178,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
   .control-row>button{min-height:78px!important;height:78px!important;border-radius:18px!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:0!important;margin:0!important}
   .control-row button .icon-label{width:100%!important;height:100%!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:10px!important;padding:0 16px!important;font-size:16px!important;font-weight:1000!important;line-height:1!important}
   .control-row button .icon-label img{width:30px!important;height:30px!important;flex:0 0 30px!important}
-  #tradeBtn .icon-label{font-size:17px!important}
+  #marketOpsBtn .icon-label{font-size:17px!important}
 }
 @media(max-width:980px) and (orientation:landscape){
   body.lobby-mode .avatar-choice{min-height:54px!important;padding:4px!important}
@@ -6447,7 +6447,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.23</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.24</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6490,7 +6490,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.23 WEB｜市政標案＋新素材替換｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.24 WEB｜策略道具＋市場操作｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -6522,8 +6522,8 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
       </div>
       <button id="rollBtn" class="primary" onclick="sendAction('roll')"><span class="icon-label"><span class="q-icon q-roll" aria-hidden="true"></span>擲骰子</span></button>
       <button id="propertyBtn" class="warn" onclick="openProperties()"><span class="icon-label"><span class="q-icon q-property" aria-hidden="true"></span>我的房產</span></button>
-      <button id="upgradeBtn" class="warn" onclick="openUpgradeCenter()"><span class="icon-label"><span class="q-icon q-upgrade" aria-hidden="true"></span>升級地產</span></button>
-      <button id="tradeBtn" class="success" onclick="openTradeCenter()"><span class="icon-label"><span class="q-icon q-trade" aria-hidden="true"></span>玩家交易</span></button>
+      <button id="strategyBtn" class="warn" onclick="openStrategyItems()"><span class="icon-label"><span class="q-icon q-quick" aria-hidden="true"></span><span class="btn-label">策略道具</span></span></button>
+      <button id="marketOpsBtn" class="success" onclick="openMarketOperations()"><span class="icon-label"><span class="v19923-q03-art q03-stock control-feature-art" aria-hidden="true"></span><span class="btn-label">市場操作</span></span></button>
       <button id="turnLabel" class="ghost" disabled>等待目前玩家</button>
     </div>
   </div>
@@ -6742,6 +6742,17 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 const $=id=>document.getElementById(id);
 const COLORS=["#2563eb","#e44747","#18a26e","#8b5cf6"];
 const FACES=["⚀","⚁","⚂","⚃","⚄","⚅"];
+const STRATEGY_ITEM_DEFS={
+  rentShield:{name:"租金護盾",icon:"🛡️",desc:"踩到對手地產時主動詢問；使用後本次自己只付 50% 過路費。"},
+  freeBuild:{name:"免費建築許可",icon:"🏗️",desc:"升級自己的地產時主動詢問；使用後本次升級費為 $0。"},
+  marketCoupon:{name:"市場操作折抵券",icon:"🎟️",desc:"啟用市場操作時主動詢問；使用後該次費用減半。"},
+  projectBoost:{name:"標案加成券",icon:"📑",desc:"承接市政標案時主動詢問；使用後成功率增加 15 個百分點。"}
+};
+const MARKET_OPERATION_DEFS={
+  hedge:{name:"避險合約",icon:"🛡️",cost:1500,flag:"marketHedge",desc:"下一次 ROUND 市場更新若持股總值下跌，補貼 50% 損失，最高 $3,000。"},
+  buy_rebate:{name:"低接回饋",icon:"📥",cost:1200,flag:"marketBuyRebate",desc:"下一次股票買入返還成交金額 10%，最高 $2,000。"},
+  profit_boost:{name:"獲利放大",icon:"📈",cost:1200,flag:"marketProfitBoost",desc:"下一次有獲利的股票賣出，額外增加該筆獲利 50%，最高 $2,000。"}
+};
 const TILE_NAMES=[
 "起點","星港住宅","機會","翡翠商圈","收購中心","海灣公寓","海景大樓","稅務局",
 "中央車站","命運","科技園區","高低骰對決","創新園區","北城豪宅","國際機場","機會",
@@ -6995,8 +7006,8 @@ function player(name,seat,ai=false,avatar=seat%4){
   return {
     seat,name,ai,avatar:normalizeAvatarIndex(avatar,seat%4),ready:ai,connected:true,cash:45000,pos:0,properties:[],
     stocks:Object.fromEntries(Object.keys(STOCK_DEFS).map(c=>[c,{qty:0,avg:0}])),
-    realizedPnl:0,lastRaceRound:0,lastWheelRound:0,acquireSubsidy:0,lastAcquireRound:0,lastForcedAcquireRound:0,lastTradeRound:0,freeBuild:0,bankDeposit:null,rentShield:0,cityProject:null,cityMission:null,lastMissionPickRound:-99,lastTransitRound:-99,lastPublicInvestRound:-99,bankrupt:false,
-    stats:{rentPaid:0,rentReceived:0,landSpent:0,buildSpent:0,stockRealized:0,miniGameNet:0,raceWins:0,wheelWins:0,diceWins:0,treasureNet:0,noodleWins:0,hiLowWins:0,bonusWins:0,largestRent:0,acquisitions:0,acquisitionSpent:0,acquisitionEarned:0,forcedAcquisitions:0,forcedSpent:0,forcedEarned:0,trades:0,auctionWins:0,upgrades:0,stockTrades:0}
+    realizedPnl:0,lastRaceRound:0,lastWheelRound:0,acquireSubsidy:0,lastAcquireRound:0,lastForcedAcquireRound:0,lastTradeRound:0,freeBuild:0,bankDeposit:null,rentShield:0,cityProject:null,cityMission:null,lastMissionPickRound:-99,lastTransitRound:-99,lastPublicInvestRound:-99,marketCoupon:0,projectBoost:0,lastMarketOpRound:-99,marketHedge:0,marketBuyRebate:0,marketProfitBoost:0,bankrupt:false,
+    stats:{rentPaid:0,rentReceived:0,landSpent:0,buildSpent:0,stockRealized:0,miniGameNet:0,raceWins:0,wheelWins:0,diceWins:0,treasureNet:0,noodleWins:0,hiLowWins:0,bonusWins:0,largestRent:0,acquisitions:0,acquisitionSpent:0,acquisitionEarned:0,forcedAcquisitions:0,forcedSpent:0,forcedEarned:0,trades:0,auctionWins:0,upgrades:0,stockTrades:0,marketOps:0,marketOpBenefit:0}
   }
 }
 function buildTiles(){
@@ -7272,7 +7283,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19923";
+const APP_BUILD_ID="19924";
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -9857,9 +9868,9 @@ function renderControls(){
   const me=state.players[mySeat];
   const myTurn=state.status==="playing"&&state.current===mySeat&&!me?.bankrupt;
   $("rollBtn").disabled=!myTurn||state.rolled||!!state.pending||!!state.groupGame||rolling;
-  const tradeBtn=$("tradeBtn");
+  const tradeBtn=$("marketOpsBtn");
   if(tradeBtn)tradeBtn.disabled=!myTurn||state.rolled||!!state.pending||!!state.groupGame||me?.lastTradeRound===state.round;
-  const upgradeBtn=$("upgradeBtn");
+  const upgradeBtn=$("strategyBtn");
   if(upgradeBtn)upgradeBtn.disabled=!myTurn||state.rolled||!!state.pending||!!state.groupGame||!me?.properties?.some(id=>state.tiles[id]?.type==="property"&&state.tiles[id]?.level<PROPERTY_MAX_LEVEL);
   $("turnLabel").textContent=state.status==="finished"?"遊戲結束":myTurn?"你的回合":"等待其他玩家"
 }
@@ -13262,8 +13273,8 @@ body.force-mobile-preview .controls .dicebox::after{
   html body .controls .dicebox .dtotal{font-size:20px!important;line-height:1!important;margin:0!important}
   html body .controls #rollBtn{grid-column:2!important;grid-row:1!important}
   html body .controls #propertyBtn{grid-column:1!important;grid-row:2!important}
-  html body .controls #upgradeBtn{grid-column:2!important;grid-row:2!important}
-  html body .controls #tradeBtn{grid-column:1/3!important;grid-row:3!important}
+  html body .controls #strategyBtn{grid-column:2!important;grid-row:2!important}
+  html body .controls #marketOpsBtn{grid-column:1/3!important;grid-row:3!important}
   html body .controls .control-row>button{
     width:100%!important;height:100%!important;min-height:0!important;margin:0!important
   }
@@ -13648,8 +13659,8 @@ body.phone-landscape .control-row{
 html body.phone-landscape .controls .dicebox{grid-column:1!important;grid-row:1!important}
 body.phone-landscape #rollBtn{grid-column:2!important;grid-row:1!important}
 body.phone-landscape #propertyBtn{grid-column:1!important;grid-row:2!important}
-body.phone-landscape #upgradeBtn{grid-column:2!important;grid-row:2!important}
-body.phone-landscape #tradeBtn{grid-column:1/3!important;grid-row:3!important}
+body.phone-landscape #strategyBtn{grid-column:2!important;grid-row:2!important}
+body.phone-landscape #marketOpsBtn{grid-column:1/3!important;grid-row:3!important}
 body.phone-landscape #turnLabel{display:none!important}
 
 html body.phone-landscape .controls .dicebox{
@@ -14237,16 +14248,16 @@ body.phone-landscape .minigame-overlay .minigame-card.wheel-big-card{
 /* Main desktop / phone controls: remove old metal bar artwork completely. */
 .controls #rollBtn,
 .controls #propertyBtn,
-.controls #upgradeBtn,
-.controls #tradeBtn,
+.controls #strategyBtn,
+.controls #marketOpsBtn,
 body.force-mobile-preview .controls #rollBtn,
 body.force-mobile-preview .controls #propertyBtn,
-body.force-mobile-preview .controls #upgradeBtn,
-body.force-mobile-preview .controls #tradeBtn,
+body.force-mobile-preview .controls #strategyBtn,
+body.force-mobile-preview .controls #marketOpsBtn,
 body.phone-landscape .controls #rollBtn,
 body.phone-landscape .controls #propertyBtn,
-body.phone-landscape .controls #upgradeBtn,
-body.phone-landscape .controls #tradeBtn{
+body.phone-landscape .controls #strategyBtn,
+body.phone-landscape .controls #marketOpsBtn{
   background-image:none!important;
   background-repeat:no-repeat!important;
   border-style:solid!important;
@@ -14259,8 +14270,8 @@ body.phone-landscape .controls #tradeBtn{
 }
 .controls #rollBtn{background:linear-gradient(180deg,#fbfdff,#e8f4ff)!important;border-color:#b9d8ff!important}
 .controls #propertyBtn{background:linear-gradient(180deg,#fffefa,#fff5ce)!important;border-color:#f2dda2!important}
-.controls #upgradeBtn{background:linear-gradient(180deg,#fbfffc,#e4f8eb)!important;border-color:#bee8cc!important}
-.controls #tradeBtn{background:linear-gradient(180deg,#fbfffe,#ddf6f1)!important;border-color:#afe2d8!important}
+.controls #strategyBtn{background:linear-gradient(180deg,#fbfffc,#e4f8eb)!important;border-color:#bee8cc!important}
+.controls #marketOpsBtn{background:linear-gradient(180deg,#fbfffe,#ddf6f1)!important;border-color:#afe2d8!important}
 
 .controls .control-row>button::before,
 body.force-mobile-preview .control-row>button::before,
@@ -14293,13 +14304,13 @@ body.phone-landscape .controls .control-row button .icon-label{
   text-shadow:none!important;
 }
 .controls .icon-label .q-icon{width:42px;height:42px;flex-basis:42px}
-.controls #tradeBtn .icon-label{font-size:15px!important}
+.controls #marketOpsBtn .icon-label{font-size:15px!important}
 
 /* Disabled main control = dedicated lock artwork + neutral surface. */
 .controls #rollBtn:disabled,
 .controls #propertyBtn:disabled,
-.controls #upgradeBtn:disabled,
-.controls #tradeBtn:disabled,
+.controls #strategyBtn:disabled,
+.controls #marketOpsBtn:disabled,
 body.force-mobile-preview .controls .control-row>button:disabled,
 body.phone-landscape .controls .control-row>button:disabled{
   background:#eef2f6!important;
