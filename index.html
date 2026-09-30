@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.24 WEB｜策略道具與市場操作</title>
+<title>財富帝國 V19.9.25 WEB｜好友房穩定續連</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.24 WEB - 主操作改為擲骰子、我的房產、策略道具、市場操作；道具採情境主動提示">
+<meta name="description" content="財富帝國 V19.9.25 WEB - 修正反覆斷線重連、背景切換誤判，並加入房主重新整理恢復">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6447,7 +6447,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.24</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.25</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6490,7 +6490,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.24 WEB｜策略道具＋市場操作｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.25 WEB｜好友房穩定續連｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -6921,8 +6921,11 @@ RETL:{name:"都會零售",price:72,vol:.075,drift:.002}
 let peer=null,isHost=false,roomCode="",mySeat=null,state=null,hostConn=null,joinTimeoutTimer=null;
 let hoverCenterSpot=null, cityPulse=0, visualLoopStarted=false;
 let conns=new Map(),pendingJoinNames=new Map(),resumeTokens=new Map(),lastEventId=0,seq=0,rolling=false;
-let clientResumeToken="",guestDisplayName="",guestReconnectTimer=null,guestReconnectAttempts=0,guestHeartbeatTimer=null,lastHostActivity=0,hostSignalReconnectTimer=null,initialJoinRetryTimer=null,initialJoinRetryAttempts=0,autoGuestResumeAttempted=false;
-const NET_HEARTBEAT_MS=5000,NET_STALE_MS=17000,NET_RECONNECT_DELAYS=[600,1200,2200,3500,5000,7000],INITIAL_JOIN_RETRY_DELAYS=[650,1100,1800,2800,4200,6000];
+let clientResumeToken="",guestDisplayName="",guestReconnectTimer=null,guestReconnectAttempts=0,guestHeartbeatTimer=null,lastHostActivity=0,hostSignalReconnectTimer=null,initialJoinRetryTimer=null,initialJoinRetryAttempts=0,autoGuestResumeAttempted=false,autoHostResumeAttempted=false;
+let guestReconnectInFlight=false,guestReconnectPendingReason="",guestConnectedSince=0,guestResumeHealthTimer=null,hostRecoverySaveTimer=null;
+let hostDisconnectGraceTimers=new Map();
+const NET_HEARTBEAT_MS=7000,NET_STALE_MS=35000,NET_RECONNECT_DELAYS=[900,1800,3200,5000,7000,10000],INITIAL_JOIN_RETRY_DELAYS=[650,1100,1800,2800,4200,6000];
+const HOST_DISCONNECT_GRACE_MS=6500,HOST_RECOVERY_MAX_AGE_MS=12*60*60*1000;
 let fxQueue=[],fxRunning=false,victoryShownEvent=0,groupGameTimer=null,groupUiTimer=null,auctionTimer=null,auctionUiTimer=null,noodleAiTimer=null,coinRushAiTimer=null,reactionAiTimer=null;
 
 function toast(msg){const e=$("toast");e.textContent=msg;e.style.display="block";clearTimeout(e._t);e._t=setTimeout(()=>e.style.display="none",2800)}
@@ -7053,8 +7056,9 @@ function safeConnSend(conn,msg){
 function broadcast(){
   const msg={type:"state",state:snapshot()};
   for(const c of conns.values())safeConnSend(c,msg);
+  scheduleHostRecoverySave();
   applyButtonFeedback();
-  render();
+  render()
 }
 function sendToSeat(seat,msg){const c=conns.get(seat);safeConnSend(c,msg)}
 function sendCriticalState(){
@@ -7099,6 +7103,93 @@ function loadGuestResume(code,name=""){
 }
 function clearGuestResume(code){
   try{localStorage.removeItem(resumeStorageKey(code))}catch{}
+}
+
+function hostRecoveryStorageKey(code){return `wealth_host_recovery_${String(code||"")}`}
+function saveHostRecoveryNow(){
+  if(!isHost||!roomCode||!state)return false;
+  const payload={
+    roomCode,
+    state:snapshot(),
+    resumeTokens:Array.from(resumeTokens.entries()),
+    ts:Date.now(),
+    build:typeof APP_BUILD_ID!=="undefined"?APP_BUILD_ID:""
+  };
+  try{
+    localStorage.setItem(hostRecoveryStorageKey(roomCode),JSON.stringify(payload));
+    localStorage.setItem("wealth_host_active_room",roomCode);
+    syncGuestRoomToUrl(roomCode);
+    return true
+  }catch{return false}
+}
+function scheduleHostRecoverySave(){
+  if(!isHost||!roomCode||!state)return;
+  clearTimeout(hostRecoverySaveTimer);
+  hostRecoverySaveTimer=setTimeout(()=>{hostRecoverySaveTimer=null;saveHostRecoveryNow()},450)
+}
+function loadHostRecovery(code){
+  try{
+    const raw=localStorage.getItem(hostRecoveryStorageKey(code));if(!raw)return null;
+    const v=JSON.parse(raw);
+    if(!v||v.roomCode!==code||!v.state?.players?.[0])return null;
+    if(v.ts&&Date.now()-Number(v.ts)>HOST_RECOVERY_MAX_AGE_MS){
+      localStorage.removeItem(hostRecoveryStorageKey(code));
+      if(localStorage.getItem("wealth_host_active_room")===code)localStorage.removeItem("wealth_host_active_room");
+      return null
+    }
+    return v
+  }catch{return null}
+}
+function normalizeRecoveredHostState(savedState){
+  const recovered=JSON.parse(JSON.stringify(savedState));
+  recovered.players=(recovered.players||[]).map((p,seat)=>{
+    if(!p)return p;
+    if(seat===0){p.connected=true;p.ai=false}
+    else if(!p.ai)p.connected=false;
+    return p
+  });
+  const timedPending=["auction","group_game","group_game_result"];
+  if(recovered.groupGame||timedPending.includes(recovered.pending?.type)){
+    recovered.groupGame=null;
+    recovered.pending=null;
+    recovered.rolled=false;
+    recovered.eventId=Number(recovered.eventId||0)+1;
+    recovered.events=Array.isArray(recovered.events)?recovered.events:[];
+    recovered.events.push({
+      id:recovered.eventId,kind:"recovery",
+      text:"房主重新整理後已恢復遊戲；中斷中的即時活動已安全取消，本回合可重新操作。",
+      data:{title:"房主恢復"},ts:Date.now()
+    });
+    recovered.events=recovered.events.slice(-80)
+  }
+  return recovered
+}
+async function autoResumeHostAfterReload(){
+  if(autoHostResumeAttempted||!isReloadNavigation()||isHost||peer||hostConn)return false;
+  let code="";
+  try{code=normalizeRoomCode(new URL(location.href).searchParams.get("room")||"")}catch{}
+  if(!isValidRoomCode(code)){
+    try{code=normalizeRoomCode(localStorage.getItem("wealth_host_active_room")||"")}catch{}
+  }
+  if(!isValidRoomCode(code))return false;
+  const saved=loadHostRecovery(code);if(!saved)return false;
+  autoHostResumeAttempted=true;
+  setLobbyConnectStatus("🔄 偵測到房主重新整理，正在恢復原房號與遊戲進度。");
+  try{await ensurePeerLibrary()}catch{
+    autoHostResumeAttempted=false;
+    setLobbyConnectStatus("❌ 房主恢復失敗：好友房連線元件載入失敗。請確認網路後重新整理。",true);
+    return false
+  }
+  resetPeerTransport();
+  isHost=true;roomCode=code;mySeat=0;lastEventId=0;
+  state=normalizeRecoveredHostState(saved.state);
+  resumeTokens=new Map((saved.resumeTokens||[]).map(([seat,token])=>[Number(seat),String(token||"")]));
+  showWaiting();
+  $("connectionText").textContent="🔄 房主頁面已重新載入，正在恢復原房號並等待玩家自動續連…";
+  syncGuestRoomToUrl(roomCode);
+  saveHostRecoveryNow();
+  openHostPeer(true);
+  return true
 }
 function isReloadNavigation(){
   try{
@@ -7283,7 +7374,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19924";
+const APP_BUILD_ID="19925";
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -7484,6 +7575,8 @@ async function createInternetRoom(){
   mySeat=0;
   lastEventId=0;
   state=newState(name,getSelectedEntryAvatar("host"));
+  syncGuestRoomToUrl(roomCode);
+  saveHostRecoveryNow();
   showWaiting();
   $("connectionText").textContent="正在向好友房 signaling 服務註冊房號…";
   openHostPeer()
@@ -12554,7 +12647,10 @@ function initIPhoneOnlineRoom(){
   showIPhoneConnectionNotice();
   webReleaseEnvironmentCheck();
   loadInviteRoomFromUrl();
-  setTimeout(()=>autoResumeGuestAfterReload(),120)
+  setTimeout(async()=>{
+    const restoredHost=await autoResumeHostAfterReload();
+    if(!restoredHost)autoResumeGuestAfterReload()
+  },120)
 }
 function initMobileLayout(){
   if(!isMobileLayout())return;
@@ -13127,7 +13223,7 @@ document.addEventListener("pointerdown",e=>{
   window.addEventListener("pageshow",()=>setTimeout(checkConnectionAfterResume,350));
   window.addEventListener("online",()=>setTimeout(checkConnectionAfterResume,250));
   window.addEventListener("offline",()=>{if(!isHost&&mySeat!=null)showNetRecovery("裝置目前離線，網路恢復後會自動續連","warn")});
-  window.addEventListener("beforeunload",()=>{if(!isHost&&mySeat!=null&&clientResumeToken)saveGuestResume()});
+  window.addEventListener("beforeunload",()=>{if(isHost)saveHostRecoveryNow();else if(mySeat!=null&&clientResumeToken)saveGuestResume()});
 })();
 </script>
 
