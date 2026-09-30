@@ -9955,8 +9955,10 @@ function requestMarketOperation(key,useItem=null){
   const me=state?.players?.[mySeat],def=MARKET_OPERATION_DEFS[key];if(!me||!def)return;
   if(useItem===null&&strategyItemCount(me,"marketCoupon")>0){
     const discounted=marketOperationCost(def,true);
-    showModal("要使用策略道具嗎？",`<div class="strategy-context-prompt"><b>🎟️ 市場操作折抵券 ×${strategyItemCount(me,"marketCoupon")}</b><span>「${def.name}」原費用 $${def.cost.toLocaleString()}，使用後只要 <b>$${discounted.toLocaleString()}</b>。</span></div>`,
-      [["使用折抵券","success",()=>requestMarketOperation(key,true)],["不用道具","ghost",()=>requestMarketOperation(key,false)],["返回","ghost",openMarketOperations]]);
+    const acts=[["使用折抵券","success",()=>requestMarketOperation(key,true)]];
+    if(me.cash>=def.cost)acts.push(["不用道具","ghost",()=>requestMarketOperation(key,false)]);
+    acts.push(["返回","ghost",openMarketOperations]);
+    showModal("要使用策略道具嗎？",`<div class="strategy-context-prompt"><b>🎟️ 市場操作折抵券 ×${strategyItemCount(me,"marketCoupon")}</b><span>「${def.name}」原費用 $${def.cost.toLocaleString()}，使用後只要 <b>$${discounted.toLocaleString()}</b>。</span></div>`,acts);
     return
   }
   closeModal();sendAction("market_op",{operation:key,useItem:!!useItem})
