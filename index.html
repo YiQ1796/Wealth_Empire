@@ -9868,10 +9868,10 @@ function renderControls(){
   const me=state.players[mySeat];
   const myTurn=state.status==="playing"&&state.current===mySeat&&!me?.bankrupt;
   $("rollBtn").disabled=!myTurn||state.rolled||!!state.pending||!!state.groupGame||rolling;
-  const tradeBtn=$("marketOpsBtn");
-  if(tradeBtn)tradeBtn.disabled=!myTurn||state.rolled||!!state.pending||!!state.groupGame||me?.lastTradeRound===state.round;
-  const upgradeBtn=$("strategyBtn");
-  if(upgradeBtn)upgradeBtn.disabled=!myTurn||state.rolled||!!state.pending||!!state.groupGame||!me?.properties?.some(id=>state.tiles[id]?.type==="property"&&state.tiles[id]?.level<PROPERTY_MAX_LEVEL);
+  const strategyBtn=$("strategyBtn");
+  if(strategyBtn){strategyBtn.disabled=!me||state.status==="finished";const label=strategyBtn.querySelector(".btn-label");if(label){const total=strategyItemTotal(me);label.textContent=total?`策略道具 ${total}`:"策略道具"}}
+  const marketOpsBtn=$("marketOpsBtn");
+  if(marketOpsBtn){marketOpsBtn.disabled=!myTurn||state.rolled||!!state.pending||!!state.groupGame||(me?.lastMarketOpRound??-99)===state.round;marketOpsBtn.title=(me?.lastMarketOpRound??-99)===state.round?"本 ROUND 已使用市場操作":"每 ROUND 可使用一次市場操作"}
   $("turnLabel").textContent=state.status==="finished"?"遊戲結束":myTurn?"你的回合":"等待其他玩家"
 }
 function renderMarket(){
@@ -9922,6 +9922,84 @@ function renderMarket(){
 }
 function renderEvents(){$("events").innerHTML=[...state.events].reverse().map(e=>`<div class="event">#${e.id} ${e.text}</div>`).join("")}
 function stockAction(action,c){const q=Math.max(1,parseInt($(`q_${c}`).value||"1",10));sendAction(action,{code:c,qty:q})}
+function strategyItemCount(p,key){return Math.max(0,Number(p?.[key]||0))}
+function strategyItemTotal(p){return Object.keys(STRATEGY_ITEM_DEFS).reduce((sum,key)=>sum+strategyItemCount(p,key),0)}
+function grantStrategyItem(p,key,amount=1){
+  if(!p||!STRATEGY_ITEM_DEFS[key])return false;
+  const before=strategyItemCount(p,key),after=Math.min(3,before+Math.max(1,Number(amount)||1));
+  if(after<=before)return false;
+  p[key]=after;return true
+}
+function maybeGrantStrategyItem(p,source){
+  if(!p||Math.random()>=.28)return false;
+  const keys=Object.keys(STRATEGY_ITEM_DEFS).filter(key=>strategyItemCount(p,key)<3);
+  if(!keys.length)return false;
+  const key=keys[Math.floor(Math.random()*keys.length)],def=STRATEGY_ITEM_DEFS[key];
+  grantStrategyItem(p,key,1);
+  addEvent("strategy_item",`${p.name} 從「${source==="fate"?"命運":"機會"}」獲得策略道具「${def.name}」。`,
+    {seat:p.seat,item:key,itemName:def.name,title:"獲得策略道具"});
+  return true
+}
+function marketOperationCanAct(p){return !!(p&&hubActionAllowed(p)&&(p.lastMarketOpRound??-99)!==state.round)}
+function marketOperationCost(def,useCoupon){return useCoupon?Math.max(100,Math.round(def.cost*.5/100)*100):def.cost}
+function applyMarketOperation(p,key,useCoupon=false){
+  if(!marketOperationCanAct(p))throw Error("市場操作只能在自己的回合、擲骰前使用，而且每 ROUND 最多一次");
+  const def=MARKET_OPERATION_DEFS[key];
+  if(!def)throw Error("市場操作不存在");
+  if((p[def.flag]||0)>0)throw Error("這個市場操作仍在等待觸發");
+  if(key==="hedge"&&stockValue(p)<=0)throw Error("目前沒有持股，無法建立避險合約");
+  if(useCoupon&&strategyItemCount(p,"marketCoupon")<=0)throw Error("你沒有市場操作折抵券");
+  const cost=marketOperationCost(def,useCoupon);
+  if(p.cash<cost)throw Error(`現金不足，需要 $${cost.toLocaleString()}`);
+  p.cash-=cost;
+  if(useCoupon)p.marketCoupon=Math.max(0,strategyItemCount(p,"marketCoupon")-1);
+  p[def.flag]=1;p.lastMarketOpRound=state.round;p.stats.marketOps=(p.stats.marketOps||0)+1;
+  addEvent("market_operation",`${p.name} 啟用「${def.name}」${useCoupon?"並使用市場操作折抵券":""}。`,
+    {seat:p.seat,operation:key,amount:-cost,usedItem:useCoupon,title:def.name})
+}
+function openStrategyItems(){
+  if(!state)return;
+  const me=state.players?.[mySeat];if(!me)return;
+  const cards=Object.entries(STRATEGY_ITEM_DEFS).map(([key,d])=>{
+    const count=strategyItemCount(me,key);
+    return `<div class="strategy-item-card ${count?"owned":"empty"}"><div class="strategy-item-icon">${d.icon}</div><div><div class="strategy-item-name">${d.name}</div><div class="strategy-item-desc">${d.desc}</div></div><div class="strategy-item-count">×${count}</div></div>`
+  }).join("");
+  showModal("策略道具",`<div class="strategy-auto-rule">💡 符合使用時機時，系統會主動跳出「要不要使用？」；不會自動消耗，也不用自己猜時機。</div><div class="strategy-item-grid">${cards}</div>`,[["關閉","ghost",closeModal]]);
+  $("modal")?.classList.add("strategy-items-modal")
+}
+function requestMarketOperation(key,useItem=null){
+  const me=state?.players?.[mySeat],def=MARKET_OPERATION_DEFS[key];if(!me||!def)return;
+  if(useItem===null&&strategyItemCount(me,"marketCoupon")>0){
+    const discounted=marketOperationCost(def,true);
+    showModal("要使用策略道具嗎？",`<div class="strategy-context-prompt"><b>🎟️ 市場操作折抵券 ×${strategyItemCount(me,"marketCoupon")}</b><span>「${def.name}」原費用 $${def.cost.toLocaleString()}，使用後只要 <b>$${discounted.toLocaleString()}</b>。</span></div>`,
+      [["使用折抵券","success",()=>requestMarketOperation(key,true)],["不用道具","ghost",()=>requestMarketOperation(key,false)],["返回","ghost",openMarketOperations]]);
+    return
+  }
+  closeModal();sendAction("market_op",{operation:key,useItem:!!useItem})
+}
+function openMarketOperations(){
+  if(!state)return;
+  const me=state.players?.[mySeat];if(!me)return;
+  const can=marketOperationCanAct(me),coupon=strategyItemCount(me,"marketCoupon");
+  const cards=Object.entries(MARKET_OPERATION_DEFS).map(([key,d])=>{
+    const active=(me[d.flag]||0)>0,cashNeed=coupon?marketOperationCost(d,true):d.cost;
+    const blocked=active||!can||me.cash<cashNeed||(key==="hedge"&&stockValue(me)<=0);
+    return `<div class="market-op-card ${active?"active":""}"><div class="market-op-icon">${d.icon}</div><div class="market-op-name">${d.name}</div><div class="market-op-desc">${d.desc}</div><div class="market-op-cost">${active?"等待觸發":coupon?`原價 $${d.cost.toLocaleString()}｜有折抵券`:`費用 $${d.cost.toLocaleString()}`}</div><button class="primary" ${blocked?"disabled":""} onclick="requestMarketOperation('${key}')">${active?"已啟用":!can?"本 ROUND 已使用":"啟用操作"}</button></div>`
+  }).join("");
+  showModal("市場操作",`<div class="hub-rule">每 ROUND 最多啟用 1 次。這不是另一個股票買賣入口，而是替下一次市場更新或交易增加策略效果。</div><div class="market-op-status">本 ROUND：<b>${(me.lastMarketOpRound??-99)===state.round?"已使用":"尚未使用"}</b>${coupon?`｜🎟️ 折抵券 ×${coupon}`:""}</div><div class="market-op-grid">${cards}</div>`,[["關閉","ghost",closeModal]]);
+  $("modal")?.classList.add("market-ops-modal")
+}
+function requestCityProject(key,useItem=null){
+  const me=state?.players?.[mySeat],d=CITY_PROJECTS[key];if(!me||!d)return;
+  if(useItem===null&&strategyItemCount(me,"projectBoost")>0){
+    const boosted=Math.min(.95,d.success+.15);
+    showModal("要使用策略道具嗎？",`<div class="strategy-context-prompt"><b>📑 標案加成券 ×${strategyItemCount(me,"projectBoost")}</b><span>「${d.name}」成功率 ${(d.success*100).toFixed(0)}% → <b>${(boosted*100).toFixed(0)}%</b>。</span></div>`,
+      [["使用加成券","success",()=>requestCityProject(key,true)],["不用道具","ghost",()=>requestCityProject(key,false)],["返回","ghost",openProjectHub]]);
+    return
+  }
+  closeModal();sendAction("hub_project",{project:key,useItem:!!useItem})
+}
+
 function handlePending(){
   const p=state.pending;
   if(!p){closeModal();return}
@@ -10263,7 +10341,7 @@ function openProjectHub(){
        <div class="hvalue">成功 $${d.win.toLocaleString()}｜失敗回收 $${d.fail.toLocaleString()}</div></div>`,
       [["關閉","ghost",closeModal]]
     );
-    $("modal")?.classList.add("hub-choice-modal","project-choice-modal");
+    $("modal")?.classList.add("hub-choice-modal","project-choice-modal","strategy-items-modal","market-ops-modal","property-manage-modal");
     return
   }
   const cards=Object.entries(CITY_PROJECTS).map(([k,d])=>`<div class="project-option">
@@ -10445,10 +10523,18 @@ function canOpenUpgradeCenter(){
   const me=state?.players?.[mySeat];
   return !!(state&&me&&state.status==="playing"&&state.current===mySeat&&!state.rolled&&!state.pending&&!state.groupGame&&!me.bankrupt)
 }
-function requestPropertyUpgrade(id){
+function requestPropertyUpgrade(id,useItem=null){
   if(!canOpenUpgradeCenter()){toast("只能在自己的回合、擲骰前升級地產");return}
-  sendAction("upgrade",{tile:Number(id)});
-  setTimeout(()=>{if(canOpenUpgradeCenter())openUpgradeCenter()},250)
+  const me=state.players[mySeat],t=state.tiles[Number(id)];if(!me||!t)return;
+  const cost=buildCost(t);
+  if(useItem===null&&strategyItemCount(me,"freeBuild")>0){
+    const acts=[["使用免費建築許可","success",()=>requestPropertyUpgrade(id,true)]];
+    if(me.cash>=cost)acts.push(["不用道具，支付升級費","warn",()=>requestPropertyUpgrade(id,false)]);
+    acts.push(["返回我的房產","ghost",openProperties]);
+    showModal("要使用策略道具嗎？",`<div class="strategy-context-prompt"><b>🏗️ 免費建築許可 ×${strategyItemCount(me,"freeBuild")}</b><span>「${t.name}」本次升級原價 <b>$${cost.toLocaleString()}</b>，使用後為 <b>$0</b>。</span></div>`,acts);
+    return
+  }
+  closeModal();sendAction("upgrade",{tile:Number(id),useItem:!!useItem})
 }
 function openUpgradeCenter(){
   if(!state)return;
@@ -10488,21 +10574,20 @@ function openUpgradeCenter(){
 }
 function openProperties(){
   if(!state)return;
-  const me=state.players[mySeat];
+  const me=state.players[mySeat],canAct=canOpenUpgradeCenter();
   const rows=me?.properties?.map(id=>{
-    const t=state.tiles[id];
-    const isProp=t.type==="property";
+    const t=state.tiles[id],isProp=t.type==="property";
     const next=isProp&&t.level<PROPERTY_MAX_LEVEL?rentAtLevel(t,t.level+1):rentFor(t);
-    return `<div style="padding:10px;border-bottom:1px solid #e2e8f0">
-      <b>${t.name}</b>｜${isProp?propertyLevelName(t.level):"交通設施"}｜目前過路費 <b>$${rentFor(t).toLocaleString()}</b>
-      ${isProp&&t.level<PROPERTY_MAX_LEVEL?`<br><span style="font-size:12px;color:#64748b">下一級過路費 $${next.toLocaleString()}｜升級費 $${buildCost(t).toLocaleString()}</span>`:""}
-    </div>`
-  }).join("")||"尚未持有地產";
-  showModal("我的房產",`<div class="v19923-modal-hero"><span class="v19923-q03-art q03-rent" aria-hidden="true"></span></div>`+rows,[["🏗 開啟升級中心","warn",openUpgradeCenter],["關閉","ghost",closeModal]])
+    const [ok]=isProp?canUpgrade(me,t):[false,"交通設施不能升級"];
+    const cost=isProp&&t.level<PROPERTY_MAX_LEVEL?buildCost(t):0;
+    return `<div class="property-manage-row"><div class="property-manage-main"><b>${t.name}</b><span>${isProp?propertyLevelName(t.level):"交通設施"}</span><small>目前過路費 <b>$${rentFor(t).toLocaleString()}</b>${isProp&&t.level<PROPERTY_MAX_LEVEL?`｜下一級 $${next.toLocaleString()}｜升級費 $${cost.toLocaleString()}`:""}</small></div>${isProp&&t.level<PROPERTY_MAX_LEVEL?`<button class="warn property-inline-upgrade" ${(!canAct||!ok)?"disabled":""} onclick="requestPropertyUpgrade(${t.id})">${ok?"升級":"無法升級"}</button>`:`<span class="property-max-chip">${isProp?"已達 Lv.2":"不可升級"}</span>`}</div>`
+  }).join("")||'<div class="hub-rule">目前尚未持有地產。</div>';
+  showModal("我的房產",`<div class="v19923-modal-hero"><span class="v19923-q03-art q03-rent" aria-hidden="true"></span></div><div class="hub-rule">查看與升級集中在同一頁。${strategyItemCount(me,"freeBuild")?`<br><b>🏗️ 免費建築許可 ×${strategyItemCount(me,"freeBuild")}：按升級時會主動詢問。</b>`:""}</div><div class="property-manage-list">${rows}</div>`,[["關閉","ghost",closeModal]]);
+  $("modal")?.classList.add("property-manage-modal")
 }
 function showModal(t,b,acts){
   const modalEl=$("modal");
-  modalEl?.classList.remove("phone-compact-modal","phone-quick-modal","phone-hub-modal","phone-feature-modal","phone-bank-modal","phone-upgrade-modal","hub-choice-modal","mission-choice-modal","metro-choice-modal","project-choice-modal");
+  modalEl?.classList.remove("phone-compact-modal","phone-quick-modal","phone-hub-modal","phone-feature-modal","phone-bank-modal","phone-upgrade-modal","hub-choice-modal","mission-choice-modal","metro-choice-modal","project-choice-modal","strategy-items-modal","market-ops-modal","property-manage-modal");
   $("modalTitle").textContent=t;
   $("modalBody").innerHTML=b;
   $("modalActions").innerHTML="";
@@ -10516,7 +10601,7 @@ function showModal(t,b,acts){
 }
 function closeModal(){
   const modalEl=$("modal");
-  modalEl?.classList.remove("open","phone-compact-modal","phone-quick-modal","phone-hub-modal","phone-feature-modal","phone-bank-modal","phone-upgrade-modal","hub-choice-modal","mission-choice-modal","metro-choice-modal","project-choice-modal");
+  modalEl?.classList.remove("open","phone-compact-modal","phone-quick-modal","phone-hub-modal","phone-feature-modal","phone-bank-modal","phone-upgrade-modal","hub-choice-modal","mission-choice-modal","metro-choice-modal","project-choice-modal","strategy-items-modal","market-ops-modal","property-manage-modal");
 }
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
 $("modal")?.addEventListener("pointerdown",e=>{if(e.target===$("modal"))closeModal()});
@@ -12316,17 +12401,14 @@ function openMobileActions(){
   if(!state)return;
   const me=state.players?.[mySeat];
   const myTurn=!!(me&&state.status==="playing"&&state.current===mySeat&&!me.bankrupt);
-  showModal("⚡ 手機快速操作",
-    `<div class="hub-rule">常用功能集中在同一頁；橫向手機以 2 × 2 顯示，不需要上下拖很久。</div>
-     <div class="hub-grid compact-phone-grid quick-grid">
-       <div class="hub-card compact-phone-card"><div class="hicon"><span class="v19923-q04-art q04-roll" aria-hidden="true"></span></div><div class="hname">擲骰子</div><div class="hdesc">目前回合直接擲骰。</div><button class="primary" ${(!myTurn||state.rolled||state.pending||state.groupGame)?"disabled":""} onclick="closeModal();sendAction('roll')">擲骰</button></div>
-       <div class="hub-card compact-phone-card"><div class="hicon"><span class="v19923-q03-art q03-rent" aria-hidden="true"></span></div><div class="hname">我的房產</div><div class="hdesc">查看地產、等級與過路費。</div><button class="warn" onclick="closeModal();openProperties()">查看</button></div>
-       <div class="hub-card compact-phone-card"><div class="hicon"><span class="v19923-q03-art q03-upgrade" aria-hidden="true"></span></div><div class="hname">升級地產</div><div class="hdesc">最高升到 Lv.2，提高過路費。</div><button class="warn" onclick="closeModal();openUpgradeCenter()">升級</button></div>
-       <div class="hub-card compact-phone-card"><div class="hicon"><span class="v19923-q03-art q03-trade" aria-hidden="true"></span></div><div class="hname">玩家交易</div><div class="hdesc">交換地產並可附加現金。</div><button class="success" onclick="closeModal();openTradeCenter()">交易</button></div>
-     </div>`,
-    []
-  );
-  $("modal")?.classList.add("phone-compact-modal","phone-quick-modal");
+  const marketCan=myTurn&&!state.rolled&&!state.pending&&!state.groupGame&&(me?.lastMarketOpRound??-99)!==state.round;
+  showModal("⚡ 手機快速操作",`<div class="hub-rule">四個主操作與桌面版一致；房產升級已整合進「我的房產」。</div><div class="hub-grid compact-phone-grid quick-grid">
+    <div class="hub-card compact-phone-card"><div class="hicon"><span class="v19923-q04-art q04-roll" aria-hidden="true"></span></div><div class="hname">擲骰子</div><div class="hdesc">目前回合直接擲骰。</div><button class="primary" ${(!myTurn||state.rolled||state.pending||state.groupGame)?"disabled":""} onclick="closeModal();sendAction('roll')">擲骰</button></div>
+    <div class="hub-card compact-phone-card"><div class="hicon"><span class="v19923-q03-art q03-rent" aria-hidden="true"></span></div><div class="hname">我的房產</div><div class="hdesc">查看房產並直接升級。</div><button class="warn" onclick="closeModal();openProperties()">查看</button></div>
+    <div class="hub-card compact-phone-card"><div class="hicon"><span class="q-icon q-quick" aria-hidden="true"></span></div><div class="hname">策略道具</div><div class="hdesc">持有 ${strategyItemTotal(me)} 件；符合情境會主動提示。</div><button class="warn" onclick="closeModal();openStrategyItems()">查看</button></div>
+    <div class="hub-card compact-phone-card"><div class="hicon"><span class="v19923-q03-art q03-stock" aria-hidden="true"></span></div><div class="hname">市場操作</div><div class="hdesc">每 ROUND 一次，強化避險或股票交易。</div><button class="success" ${marketCan?"":"disabled"} onclick="closeModal();openMarketOperations()">操作</button></div>
+  </div>`,[]);
+  $("modal")?.classList.add("phone-compact-modal","phone-quick-modal")
 }
 function updateMobileTurnBar(){
   if(!state)return;
