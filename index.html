@@ -7278,7 +7278,8 @@ function startGuestHeartbeat(){
     if(document.visibilityState==="hidden"||navigator.onLine===false)return;
     const age=Date.now()-lastHostActivity;
     if(hostConn?.open){
-      safeConnSend(hostConn,{type:"ping",ts:Date.now()});
+      const sent=safeConnSend(hostConn,{type:"ping",ts:Date.now()});
+      if(!sent){scheduleGuestReconnect("心跳送出失敗");return}
       if(age>NET_STALE_MS)scheduleGuestReconnect("同步逾時")
     }else scheduleGuestReconnect("連線已中斷")
   },NET_HEARTBEAT_MS)
@@ -7366,14 +7367,18 @@ function checkConnectionAfterResume(){
   if(isHost){
     if(peer?.disconnected&&!peer?.destroyed)try{peer.reconnect()}catch{}
     scheduleHostRecoverySave();
-    setTimeout(()=>{if(isHost&&state)sendCriticalState()},900);
+    setTimeout(()=>{if(isHost&&state)broadcast()},1000);
     return
   }
   if(mySeat==null||!clientResumeToken)return;
   clearTimeout(guestResumeHealthTimer);guestResumeHealthTimer=null;
   const checkStartedAt=Date.now();
   if(hostConn?.open){
-    safeConnSend(hostConn,{type:"ping",ts:checkStartedAt,resumeCheck:true});
+    const sent=safeConnSend(hostConn,{type:"ping",ts:checkStartedAt,resumeCheck:true});
+    if(!sent){
+      scheduleGuestReconnect(guestReconnectPendingReason||"回到遊戲後 ping 失敗");
+      return
+    }
     guestResumeHealthTimer=setTimeout(()=>{
       guestResumeHealthTimer=null;
       if(isHost||mySeat==null||document.visibilityState==="hidden")return;
