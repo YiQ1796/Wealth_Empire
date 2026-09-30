@@ -6442,6 +6442,47 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 }
 </style>
 
+
+<style id="v19927-q05-direct-replacement">
+:root{
+  --v19927-q05:url("./assets/v19927/q05_players10_v2.webp?v=19927");
+}
+.v19927-q05-art{
+  display:block;
+  flex:0 0 auto;
+  background-image:var(--v19927-q05);
+  background-size:500% 200%;
+  background-repeat:no-repeat;
+  background-color:transparent;
+  border:0;
+  box-shadow:none;
+}
+.q05-avatar-0{background-position:0 0}
+.q05-avatar-1{background-position:25% 0}
+.q05-avatar-2{background-position:50% 0}
+.q05-avatar-3{background-position:75% 0}
+.avatar-choice .v19927-q05-art{
+  width:42px;
+  height:42px;
+  border-radius:10px;
+}
+.seat-avatar .v19927-q05-art{
+  width:100%;
+  height:100%;
+}
+.player-avatar .v19927-q05-art{
+  width:100%;
+  height:100%;
+  border-radius:inherit;
+}
+@media(max-width:980px) and (orientation:landscape){
+  body.lobby-mode .avatar-choice .v19927-q05-art{
+    width:31px!important;
+    height:31px!important;
+  }
+}
+</style>
+
 </head>
 <body class="lobby-mode">
 
@@ -6979,7 +7020,7 @@ function getSelectedEntryAvatar(role){return normalizeAvatarIndex(entryAvatarCho
 function avatarChoiceButton(index,selected,{taken=false,disabled=false,onclick=""}={}){
   const cls=["avatar-choice",selected?"selected":"",taken?"taken":""].filter(Boolean).join(" ");
   const label=`角色 ${index+1}`;
-  return `<button type="button" class="${cls}" ${disabled?"disabled":""} ${onclick?`onclick="${onclick}"`:""} aria-label="${label}"><img src="${PLAYER_AVATAR_PATHS[index]}" alt="${label}"><span>${taken&&!selected?"使用中":selected?"目前選擇":label}</span></button>`
+  return `<button type="button" class="${cls}" ${disabled?"disabled":""} ${onclick?`onclick="${onclick}"`:""} aria-label="${label}"><span class="v19927-q05-art q05-avatar-${index}" role="img" aria-label="${label}"></span><span>${taken&&!selected?"使用中":selected?"目前選擇":label}</span></button>`
 }
 function renderEntryAvatarPickers(){
   if(typeof PLAYER_AVATAR_PATHS==="undefined")return;
@@ -9955,7 +9996,7 @@ function playerTotalWealth(p){
 }
 function renderLobby(){
   if(state.status!=="lobby"){$("lobby").classList.add("hidden");return}
-  $("seatList").innerHTML=state.players.map((p,i)=>{const avatar=p?avatarIndexOfPlayer(p,i):i;return `<div class="seat" style="border-left:6px solid ${COLORS[i]}"><div class="seat-avatar-row"><div class="seat-avatar"><img src="${PLAYER_AVATAR_PATHS[avatar]}" alt=""></div><div><b>${p?p.name:`空位 ${i+1}`}</b><span>${p?(p.connected===false?"🔄 重新連線中":p.ready?"✅ 已準備":"⏳ 未準備"):"開始後補 AI"}</span></div></div></div>`}).join("");
+  $("seatList").innerHTML=state.players.map((p,i)=>{const avatar=p?avatarIndexOfPlayer(p,i):i;return `<div class="seat" style="border-left:6px solid ${COLORS[i]}"><div class="seat-avatar-row"><div class="seat-avatar"><span class="v19927-q05-art q05-avatar-${avatar}" role="img" aria-label="角色 ${avatar+1}"></span></div><div><b>${p?p.name:`空位 ${i+1}`}</b><span>${p?(p.connected===false?"🔄 重新連線中":p.ready?"✅ 已準備":"⏳ 未準備"):"開始後補 AI"}</span></div></div></div>`}).join("");
   renderWaitingAvatarPicker();
   const me=state.players[mySeat];
   const humans=state.players.filter(p=>p&&!p.ai);
@@ -9994,7 +10035,7 @@ function renderPlayers(){
     return `<div class="player ${i===state.current?"current":""} ${isLeader?"leader":""}" style="border-left-color:${COLORS[i]}">
       ${rank? `<div class="rank-chip rank-${rank}">#${rank}</div>`:""}
       <div class="player-shell">
-        <div class="player-avatar player-avatar-art" style="background:${seatGradient(i)}"><img src="${PLAYER_AVATAR_PATHS[avatarIndexOfPlayer(p,i)]}" alt="${p.name}"></div>
+        <div class="player-avatar player-avatar-art" style="background:${seatGradient(i)}"><span class="v19927-q05-art q05-avatar-${avatarIndexOfPlayer(p,i)}" role="img" aria-label="${p.name}"></span></div>
         <div class="player-meta">
           <div class="player-topline">
             <div>
@@ -13107,7 +13148,29 @@ document.addEventListener("pointerdown",e=>{
   });
   const PLAYER_AVATAR_IMAGES=PLAYER_AVATAR_PATHS.map(src=>{const im=new Image(); im.decoding="async"; im.src=src+"?v=1983"; return im});
   window.PLAYER_AVATAR_IMAGES=PLAYER_AVATAR_IMAGES;
+
+  const Q05_PLAYER_SPRITE_IMAGE=new Image();
+  Q05_PLAYER_SPRITE_IMAGE.decoding="async";
+  Q05_PLAYER_SPRITE_IMAGE.src="./assets/v19927/q05_players10_v2.webp?v=19927";
+  const Q05_PAWN_CELLS=[[4,0],[0,1],[1,1],[2,1]];
+  const Q05_CELL_SIZE=96;
+
   function ready(im){return !!(im&&im.complete&&im.naturalWidth>0)}
+
+  function drawQ05Pawn(index,x,y,w,h){
+    if(!ready(Q05_PLAYER_SPRITE_IMAGE))return false;
+    const cell=Q05_PAWN_CELLS[normalizeAvatarIndex(index,0)];
+    if(!cell)return false;
+    ctx.drawImage(
+      Q05_PLAYER_SPRITE_IMAGE,
+      cell[0]*Q05_CELL_SIZE,
+      cell[1]*Q05_CELL_SIZE,
+      Q05_CELL_SIZE,
+      Q05_CELL_SIZE,
+      x,y,w,h
+    );
+    return true;
+  }
 
   const before1983Glyph=drawGlyph;
   drawGlyph=function(type,x,y,size,color,accent){
@@ -13177,8 +13240,8 @@ document.addEventListener("pointerdown",e=>{
         if(current){ctx.beginPath(); ctx.arc(cx,cy,chipR+5,0,Math.PI*2); ctx.fillStyle="rgba(255,196,35,.28)"; ctx.fill(); ctx.strokeStyle="#f0ad00"; ctx.lineWidth=3; ctx.stroke();}
         ctx.beginPath(); ctx.arc(cx,cy,chipR+2,0,Math.PI*2); ctx.fillStyle="#fff"; ctx.fill();
         ctx.save(); ctx.beginPath(); ctx.arc(cx,cy,chipR,0,Math.PI*2); ctx.closePath(); ctx.clip();
-        const im=PLAYER_AVATAR_IMAGES[avatarIndexOfPlayer(state.players[seat],seat)];
-        if(ready(im)){ctx.drawImage(im,cx-chipR,cy-chipR,chipR*2,chipR*2)}
+        const avatarIndex=avatarIndexOfPlayer(state.players[seat],seat);
+        if(drawQ05Pawn(avatarIndex,cx-chipR,cy-chipR,chipR*2,chipR*2)){}
         else{ctx.fillStyle=COLORS[seat]; ctx.fillRect(cx-chipR,cy-chipR,chipR*2,chipR*2); ctx.fillStyle="#fff"; ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.font=`1000 ${phone?10:9}px "Segoe UI","Microsoft JhengHei",sans-serif`; ctx.fillText(`P${seat+1}`,cx,cy+.5)}
         ctx.restore();
         ctx.beginPath(); ctx.arc(cx,cy,chipR,0,Math.PI*2); ctx.strokeStyle=COLORS[seat]; ctx.lineWidth=2.2; ctx.stroke();
@@ -13199,8 +13262,8 @@ document.addEventListener("pointerdown",e=>{
     ctx.save(); ctx.translate(cx,cy); ctx.scale(impact?1.13:1,impact?1.13:1); ctx.shadowColor="rgba(22,47,77,.32)"; ctx.shadowBlur=phone?11:9; ctx.shadowOffsetY=3;
     ctx.beginPath(); ctx.arc(0,0,chipR+3,0,Math.PI*2); ctx.fillStyle="#fff"; ctx.fill();
     ctx.beginPath(); ctx.arc(0,0,chipR,0,Math.PI*2); ctx.closePath(); ctx.clip();
-    const im=PLAYER_AVATAR_IMAGES[avatarIndexOfPlayer(state.players[seat],seat)];
-    if(ready(im)){ctx.drawImage(im,-chipR,-chipR,chipR*2,chipR*2)}
+    const avatarIndex=avatarIndexOfPlayer(state.players[seat],seat);
+    if(drawQ05Pawn(avatarIndex,-chipR,-chipR,chipR*2,chipR*2)){}
     else{ctx.fillStyle=COLORS[seat]; ctx.fillRect(-chipR,-chipR,chipR*2,chipR*2); ctx.fillStyle="#fff"; ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.font=`1000 ${phone?13:11}px "Segoe UI","Microsoft JhengHei",sans-serif`; ctx.fillText(`P${seat+1}`,0,1)}
     ctx.restore();
     ctx.beginPath(); ctx.arc(cx,cy,chipR,0,Math.PI*2); ctx.strokeStyle=COLORS[seat]; ctx.lineWidth=2.6; ctx.stroke();
