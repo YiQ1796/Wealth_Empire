@@ -4794,7 +4794,7 @@ button:not(:disabled):active{transform:scale(.96)}
 .mt-leader{position:relative!important;padding-right:42px!important}
 .mt-leader::after{
   content:"";position:absolute;right:6px;top:50%;transform:translateY(-50%);
-  width:34px;height:34px;background:url("assets/first10/status_leader_crown.png") center/contain no-repeat;
+  width:34px;height:34px;background-image:var(--v19926-q06);background-size:500% 200%;background-position:0 0;background-repeat:no-repeat;
   filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));
 }
 @media(max-width:980px) and (orientation:landscape){
@@ -6478,11 +6478,10 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
   background-image:var(--v19926-q06);background-size:500% 200%;background-repeat:no-repeat
 }
 .mt-turn:before{background-position:0 100%}.mt-round:before{background-position:25% 100%}
-#victoryName{display:flex;align-items:center;justify-content:center;gap:9px}
-#victoryName:before{
-  content:"";width:48px;height:48px;display:inline-block;background-image:var(--v19926-q06);
-  background-size:500% 200%;background-position:100% 100%;background-repeat:no-repeat
-}
+.victory-trophy-art{width:58px!important;height:58px!important}
+.current-turn-art{width:18px!important;height:18px!important;margin-right:4px!important;vertical-align:-4px!important}
+.turn-handoff-art{width:24px!important;height:24px!important;margin-right:6px!important;vertical-align:-6px!important}
+#modalActions .v19923-q02-art{width:24px!important;height:24px!important;margin-right:5px!important}
 .stock-action-btn .v19923-q02-art{width:25px!important;height:25px!important}
 .auction-actions .v19923-q02-art,.public-invest-buttons .v19923-q02-art{width:24px!important;height:24px!important;margin-right:4px}
 </style>
@@ -6769,7 +6768,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div id="victoryOverlay" class="victory-overlay">
   <div class="victory-card">
-    <div class="victory-crown">🏆</div>
+    <div class="victory-crown"><span class="v19926-q06-art q06-victory victory-trophy-art" role="img" aria-label="勝利"></span></div>
     <div class="victory-title">遊戲結束</div>
     <div id="victoryName" class="victory-name"></div>
     <div id="victoryReason" class="victory-reason"></div>
@@ -10043,7 +10042,7 @@ function renderPlayers(){
         <div class="player-meta">
           <div class="player-topline">
             <div>
-              <div class="pname">${i===state.current?"▶ ":""}${p.name}${p.ai?" 🤖":i===mySeat?"（你）":""}${isLeader?'<span class="name-leader-crown v19926-q06-art q06-crown" role="img" aria-label="第一名"></span>':""}</div>
+              <div class="pname">${i===state.current?'<span class="v19926-q06-art q06-turn-current current-turn-art" role="img" aria-label="目前玩家"></span>':""}${p.name}${p.ai?" 🤖":i===mySeat?"（你）":""}${isLeader?'<span class="name-leader-crown v19926-q06-art q06-crown" role="img" aria-label="第一名"></span>':""}</div>
               <div class="player-wealth">總資產約 $${Math.round(wealth).toLocaleString()}</div>
             </div>
             <div class="player-badge">${p.bankrupt?"已破產":PLAYER_TITLES[i]}</div>
@@ -10447,7 +10446,7 @@ function openMissionHub(){
         <div class="mission-progress"><div style="width:${pct}%"></div></div>
         <div class="hvalue">${prog.progress} / ${prog.target}｜獎金 $${me.cityMission.reward.toLocaleString()}</div>
        </div>`,
-      [...(prog.done?[["領取委託獎金","success",()=>sendAction("hub_mission_claim")]]:[]),["關閉","ghost",closeModal]]
+      [...(prog.done?[["領取委託獎金","success",()=>sendAction("hub_mission_claim"),"q02-claim"]]:[]),["關閉","ghost",closeModal]]
     );
     $("modal")?.classList.add("hub-choice-modal","mission-choice-modal");
     return
@@ -10510,7 +10509,7 @@ function openInsuranceHub(){
        <div class="hdesc">${has?"下一次支付租金時會自動消耗。":"每位玩家同時最多持有 1 次。"}</div>
        <div class="hvalue">${has?"待觸發":"$1,500"}</div>
      </div>`,
-    [...(!has?[["購買保險","success",()=>sendAction("hub_insurance")]]:[]),["關閉","ghost",closeModal]]
+    [...(!has?[["購買保險","success",()=>sendAction("hub_insurance"),"q02-rent-insurance"]]:[]),["關閉","ghost",closeModal]]
   )
 }
 function openMetroHub(){
@@ -10789,9 +10788,17 @@ function showModal(t,b,acts){
   $("modalTitle").textContent=t;
   $("modalBody").innerHTML=b;
   $("modalActions").innerHTML="";
-  (acts||[]).forEach(([l,c,f])=>{
+  (acts||[]).forEach(([l,c,f,iconClass])=>{
     const x=document.createElement("button");
-    x.textContent=l;x.className=c;x.onclick=f;
+    x.className=c;x.onclick=f;
+    if(iconClass){
+      const icon=document.createElement("span");
+      icon.className=`v19923-q02-art ${iconClass}`;
+      icon.setAttribute("aria-hidden","true");
+      x.append(icon,document.createTextNode(l));
+    }else{
+      x.textContent=l;
+    }
     $("modalActions").appendChild(x)
   });
   modalEl.classList.add("open");
@@ -11726,7 +11733,7 @@ function pulseTile(tile,seat=null){
 function turnBannerFx(seat){
   const p=state.players?.[seat];
   if(!p)return;
-  queueFx({html:`<div class="fx-title">🎯 回合切換</div><div class="fx-money" style="font-size:30px">${p.name}</div><div class="fx-sub">輪到 ${p.name} 行動</div>`,duration:950})
+  queueFx({html:`<div class="fx-title"><span class="v19926-q06-art q06-turn-handoff turn-handoff-art" aria-hidden="true"></span>回合切換</div><div class="fx-money" style="font-size:30px">${p.name}</div><div class="fx-sub">輪到 ${p.name} 行動</div>`,duration:950})
 }
 function eventImpactFx(e){
   if(e.kind==="land"){pulseTile(e.data?.tile,e.data?.seat);return}
@@ -12936,7 +12943,7 @@ document.addEventListener("pointerdown",e=>{
 
   turnBannerFx=function(seat){
     var p=state.players&&state.players[seat]; if(!p)return;
-    queueFx({type:"v193-turn",html:'<div class="fx-title">🎯 回合切換</div><div class="fx-money">'+p.name+'</div><div class="fx-sub">輪到 '+p.name+' 行動</div>',duration:650});
+    queueFx({type:"v193-turn",html:'<div class="fx-title"><span class="v19926-q06-art q06-turn-handoff turn-handoff-art" aria-hidden="true"></span>回合切換</div><div class="fx-money">'+p.name+'</div><div class="fx-sub">輪到 '+p.name+' 行動</div>',duration:650});
   };
 
   openMobileHubMenu=function(){
