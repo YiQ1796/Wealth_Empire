@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.40 WEB｜Plan B Phase 2 安全清理版</title>
+<title>財富帝國 V19.9.41 WEB｜Plan B Phase 2 安全清理版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.40 WEB - Plan B Phase 2：角色技能 legacy state 清理、主操作舊 render source 收尾，保留多人重連主幹">
+<meta name="description" content="財富帝國 V19.9.41 WEB - Plan B Phase 2：角色技能 legacy state 清理、主操作舊 render source 收尾，保留多人重連主幹">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6499,22 +6499,27 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 </style>
 
 <style id="v19928-q07-property-authority">
-:root{--v19928-q07:url("./assets/v19928/q07_property10_v1.webp?v=19940")}
+:root{--v19928-q07:url("./assets/v19941/rev_c01_d01_all20_v1.webp?v=19941")}
 .q07-property-wrap{position:relative;display:inline-block;width:46px;height:46px;flex:0 0 46px}
-.q07-property-art{display:block;width:100%;height:100%;background-image:var(--v19928-q07);background-size:500% 200%;background-repeat:no-repeat;background-color:transparent}
-.q07-vacant{background-position:0 0}.q07-house{background-position:25% 0}.q07-lv1{background-position:50% 0}.q07-lv2{background-position:75% 0}
-.q07-owner-blue{background-position:100% 0}.q07-owner-coral{background-position:0 100%}.q07-owner-mint{background-position:25% 100%}.q07-owner-lavender{background-position:50% 100%}
-.q07-purchasable{background-position:75% 100%}.q07-mortgaged{background-position:100% 100%}
-.q07-property-badge{position:absolute!important;width:20px!important;height:20px!important;right:-4px;bottom:-2px;filter:drop-shadow(0 2px 3px rgba(27,48,73,.18))}
+.q07-property-art{position:absolute;inset:0;display:block;width:100%;height:100%;background-image:var(--v19928-q07);background-size:500% 400%;background-repeat:no-repeat;background-color:transparent}
+.q07-vacant{background-position:0 0}
+.q07-purchasable{background-position:25% 0}
+.q07-owned{background-position:50% 0}
+.q07-mortgaged{background-position:75% 0}
+.q07-upgrading{background-position:100% 0}
+.q07-house0{background-position:0 33.333333%}
+.q07-house1{background-position:25% 33.333333%}
+.q07-house2{background-position:50% 33.333333%}
 .q07-modal-hero-wrap{width:86px;height:86px;flex-basis:86px}
 .q07-quick-property-wrap{width:48px;height:48px;flex-basis:48px}
+.q07-upgrade-prompt-art{width:72px;height:72px;display:block;margin:0 auto 8px}
 .property-manage-row>.q07-property-wrap{margin-right:8px}
 .upgrade-name{display:flex;align-items:center;gap:7px}
 .upgrade-name>.q07-property-wrap{width:42px;height:42px;flex-basis:42px}
 @media(max-width:980px) and (orientation:landscape){
   .property-manage-row>.q07-property-wrap{width:36px;height:36px;flex-basis:36px;margin-right:6px}
   .upgrade-name>.q07-property-wrap{width:34px;height:34px;flex-basis:34px}
-  .q07-property-badge{width:16px!important;height:16px!important}
+  .q07-upgrade-prompt-art{width:54px;height:54px}
 }
 </style>
 </head>
@@ -6522,7 +6527,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.40</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.41</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6565,7 +6570,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.40 WEB｜Plan B Phase 2｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.41 WEB｜Plan B Phase 2｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -7516,8 +7521,8 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19940";
-window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:2,mode:"natural-dimensions"},q07:{cols:5,rows:2,path:"./assets/v19928/q07_property10_v1.webp?v=19940"}};
+const APP_BUILD_ID="19941";
+window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:4,mode:"REV-C01-D01-board-pawns"},q07:{cols:5,rows:4,path:"./assets/v19941/rev_c01_d01_all20_v1.webp?v=19941"},revC01D01:{cols:5,rows:4,count:20}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -10824,7 +10829,7 @@ function requestPropertyUpgrade(id,useItem=null){
     const acts=[["使用免費建築許可","success",()=>requestPropertyUpgrade(id,true)]];
     if(me.cash>=cost)acts.push(["不用道具，支付升級費","warn",()=>requestPropertyUpgrade(id,false)]);
     acts.push(["返回","ghost",returnFromUpgradePrompt]);
-    showModal("要使用策略道具嗎？",`<div class="strategy-context-prompt"><b>🏗️ 免費建築許可 ×${strategyItemCount(me,"freeBuild")}</b><span>「${t.name}」本次升級原價 <b>$${cost.toLocaleString()}</b>，使用後為 <b>$0</b>。</span></div>`,acts);
+    showModal("要使用策略道具嗎？",`${q07StaticHtml("upgrading",t,"q07-upgrade-prompt-art")}<div class="strategy-context-prompt"><b>🏗️ 免費建築許可 ×${strategyItemCount(me,"freeBuild")}</b><span>「${t.name}」本次升級原價 <b>${cost.toLocaleString()}</b>，使用後為 <b>$0</b>。</span></div>`,acts);
     return
   }
   closeModal();sendAction("upgrade",{tile:Number(id),useItem:!!useItem})
@@ -12329,12 +12334,12 @@ function compactTileName(name){
 
 const Q07_PROPERTY_SPRITE_IMAGE=new Image();
 Q07_PROPERTY_SPRITE_IMAGE.decoding="async";
-Q07_PROPERTY_SPRITE_IMAGE.src="./assets/v19928/q07_property10_v1.webp?v=19940";
+Q07_PROPERTY_SPRITE_IMAGE.src="./assets/v19941/rev_c01_d01_all20_v1.webp?v=19941";
 Q07_PROPERTY_SPRITE_IMAGE.onload=()=>{try{drawBoard()}catch{}};
-const Q07_GRID_COLS=5,Q07_GRID_ROWS=2;
+const Q07_GRID_COLS=5,Q07_GRID_ROWS=4;
 const Q07_CELLS={
-  vacant:[0,0],house:[1,0],lv1:[2,0],lv2:[3,0],ownerBlue:[4,0],
-  ownerCoral:[0,1],ownerMint:[1,1],ownerLavender:[2,1],purchasable:[3,1],mortgaged:[4,1]
+  vacant:[0,0],purchasable:[1,0],owned:[2,0],mortgaged:[3,0],upgrading:[4,0],
+  house0:[0,1],house1:[1,1],house2:[2,1]
 };
 function q07Metrics(){
   if(!Q07_PROPERTY_SPRITE_IMAGE.complete||!Q07_PROPERTY_SPRITE_IMAGE.naturalWidth)return null;
@@ -12353,36 +12358,38 @@ function drawQ07Cell(key,x,y,w,h){
   ctx.restore();
   return true;
 }
-function q07BaseKey(t){
+function q07StatusKey(t){
   if(t?.mortgaged)return "mortgaged";
-  if(t?.owner==null)return "vacant";
-  const lv=Math.max(0,Math.min(PROPERTY_MAX_LEVEL,Number(t.level)||0));
-  return lv>=2?"lv2":lv===1?"lv1":"house";
+  return t?.owner==null?"purchasable":"owned";
 }
-function q07OwnerKey(owner){
-  return ["ownerBlue","ownerCoral","ownerMint","ownerLavender"][Number(owner)]||null;
+function q07HouseKey(t){
+  if(!t||t.owner==null)return null;
+  const lv=Math.max(0,Math.min(PROPERTY_MAX_LEVEL,Number(t.level)||0));
+  return lv>=2?"house2":lv===1?"house1":"house0";
 }
 function drawQ07PropertyArt(t,cx,cy,size){
   if(!t||t.type!=="property")return false;
-  const ok=drawQ07Cell(q07BaseKey(t),cx-size/2,cy-size/2,size,size);
-  if(!ok)return false;
-  const badgeSize=Math.max(12,Math.round(size*.52));
-  const badgeKey=t.owner==null?"purchasable":q07OwnerKey(t.owner);
-  if(badgeKey)drawQ07Cell(badgeKey,cx+size*.18,cy+size*.16,badgeSize,badgeSize);
+  if(!drawQ07Cell("vacant",cx-size/2,cy-size/2,size,size))return false;
+  drawQ07Cell(q07StatusKey(t),cx-size/2,cy-size/2,size,size);
+  const house=q07HouseKey(t);
+  if(house)drawQ07Cell(house,cx-size/2,cy-size/2,size,size);
   return true;
 }
-function q07MainClass(t){
-  const key=q07BaseKey(t);
-  return {vacant:"q07-vacant",house:"q07-house",lv1:"q07-lv1",lv2:"q07-lv2",mortgaged:"q07-mortgaged"}[key]||"q07-vacant";
+function q07StatusClass(t){
+  return {purchasable:"q07-purchasable",owned:"q07-owned",mortgaged:"q07-mortgaged"}[q07StatusKey(t)]||"q07-vacant";
 }
-function q07BadgeClass(t){
-  if(t?.owner==null)return "q07-purchasable";
-  return ["q07-owner-blue","q07-owner-coral","q07-owner-mint","q07-owner-lavender"][Number(t.owner)]||"";
+function q07HouseClass(t){
+  const key=q07HouseKey(t);
+  return key?{house0:"q07-house0",house1:"q07-house1",house2:"q07-house2"}[key]:"";
+}
+function q07StaticHtml(status,t=null,extraClass=""){
+  const house=t?q07HouseClass(t):"";
+  return '<span class="q07-property-wrap '+extraClass+'" aria-hidden="true"><span class="q07-property-art q07-vacant"></span><span class="q07-property-art q07-'+status+'"></span>'+(house?'<span class="q07-property-art '+house+'"></span>':'')+'</span>';
 }
 function q07PropertyHtml(t,extraClass=""){
   if(!t||t.type!=="property")return "";
-  const badge=q07BadgeClass(t);
-  return '<span class="q07-property-wrap '+extraClass+'" aria-hidden="true"><span class="q07-property-art '+q07MainClass(t)+'"></span>'+(badge?'<span class="q07-property-art q07-property-badge '+badge+'"></span>':'')+'</span>';
+  const house=q07HouseClass(t);
+  return '<span class="q07-property-wrap '+extraClass+'" aria-hidden="true"><span class="q07-property-art q07-vacant"></span><span class="q07-property-art '+q07StatusClass(t)+'"></span>'+(house?'<span class="q07-property-art '+house+'"></span>':'')+'</span>';
 }
 
 function drawTile(t,x,y,index){
@@ -13031,7 +13038,7 @@ document.addEventListener("pointerdown",e=>{
   drawCity=function(){
     oldCity();
     if(!img.complete||!img.naturalWidth)return;
-    canvasSprite("mission",420,361,46);
+    /* REV D01 authority: legacy mission canvas sprite disabled. */
     canvasSprite("insurance",420,636,46);
     canvasSprite("metro",1060,636,46);
     canvasSprite("policy",740,470,48);
@@ -13237,8 +13244,7 @@ document.addEventListener("pointerdown",e=>{
   drawCity=function(){
     beforeV194City();
     const points=[
-      ["mission",420,356,58,V194_HUB_IMAGES.mission],
-      ["bank",1060,356,58,V194_BANK_IMAGE],
+            ["bank",1060,356,58,V194_BANK_IMAGE],
       ["insurance",420,631,58,V194_HUB_IMAGES.insurance],
       ["metro",1060,631,58,V194_HUB_IMAGES.metro],
       ["policy",740,470,74,V194_HUB_IMAGES.policy]
@@ -13336,9 +13342,10 @@ document.addEventListener("pointerdown",e=>{
 
   const Q05_PLAYER_SPRITE_IMAGE=new Image();
   Q05_PLAYER_SPRITE_IMAGE.decoding="async";
-  Q05_PLAYER_SPRITE_IMAGE.src="./assets/v19927/q05_players10_v2.webp?v=19927";
-  const Q05_PAWN_CELLS=[[4,0],[0,1],[1,1],[2,1]];
-  const Q05_GRID_COLS=5,Q05_GRID_ROWS=2;
+  Q05_PLAYER_SPRITE_IMAGE.src="./assets/v19941/rev_c01_d01_all20_v1.webp?v=19941";
+  const Q05_PAWN_CELLS=[[3,1],[4,1],[0,2],[1,2]];
+  const Q05_CURRENT_CELL=[2,2];
+  const Q05_GRID_COLS=5,Q05_GRID_ROWS=4;
 
   function ready(im){return !!(im&&im.complete&&im.naturalWidth>0)}
 
@@ -13350,11 +13357,9 @@ document.addEventListener("pointerdown",e=>{
     return {cw,ch};
   }
 
-  function drawQ05Pawn(index,x,y,w,h){
+  function drawQ05Cell(cell,x,y,w,h){
     const metrics=q05CellMetrics();
-    if(!metrics)return false;
-    const cell=Q05_PAWN_CELLS[normalizeAvatarIndex(index,0)];
-    if(!cell)return false;
+    if(!metrics||!cell)return false;
     ctx.drawImage(
       Q05_PLAYER_SPRITE_IMAGE,
       cell[0]*metrics.cw,
@@ -13364,6 +13369,9 @@ document.addEventListener("pointerdown",e=>{
       x,y,w,h
     );
     return true;
+  }
+  function drawQ05Pawn(index,x,y,w,h){
+    return drawQ05Cell(Q05_PAWN_CELLS[normalizeAvatarIndex(index,0)],x,y,w,h)
   }
 
   const before1983Glyph=drawGlyph;
@@ -13431,7 +13439,7 @@ document.addEventListener("pointerdown",e=>{
         const col=index%cols,row=Math.floor(index/cols);
         const cx=gx-boxW/2+gap+cellW/2+col*cellW, cy=gy-boxH/2+gap+cellH/2+row*cellH;
         const current=seat===state.current;
-        if(current){ctx.beginPath(); ctx.arc(cx,cy,chipR+5,0,Math.PI*2); ctx.fillStyle="rgba(255,196,35,.28)"; ctx.fill(); ctx.strokeStyle="#f0ad00"; ctx.lineWidth=3; ctx.stroke();}
+        if(current)drawQ05Cell(Q05_CURRENT_CELL,cx-(chipR+7),cy-(chipR+7),(chipR+7)*2,(chipR+7)*2);
         ctx.beginPath(); ctx.arc(cx,cy,chipR+2,0,Math.PI*2); ctx.fillStyle="#fff"; ctx.fill();
         ctx.save(); ctx.beginPath(); ctx.arc(cx,cy,chipR,0,Math.PI*2); ctx.closePath(); ctx.clip();
         const avatarIndex=avatarIndexOfPlayer(state.players[seat],seat);
@@ -13452,7 +13460,7 @@ document.addEventListener("pointerdown",e=>{
     ctx.save();
     ctx.beginPath(); ctx.arc(x,y,phone?8:6,0,Math.PI*2); ctx.fillStyle="rgba(255,255,255,.96)"; ctx.fill(); ctx.strokeStyle=COLORS[seat]; ctx.lineWidth=phone?4:3; ctx.stroke();
     ctx.strokeStyle="rgba(31,65,98,.34)"; ctx.lineWidth=phone?3:2.5; ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(cx,cy); ctx.stroke();
-    if(isCurrent){const haloR=chipR+(phone?13:11)+pulse*2; ctx.beginPath(); ctx.arc(cx,cy,haloR,0,Math.PI*2); ctx.fillStyle="rgba(255,195,28,.17)"; ctx.fill(); ctx.strokeStyle="rgba(241,171,0,.92)"; ctx.lineWidth=phone?4:3; ctx.stroke();}
+    if(isCurrent){const haloR=chipR+(phone?13:11)+pulse*1.2;drawQ05Cell(Q05_CURRENT_CELL,cx-haloR,cy-haloR,haloR*2,haloR*2);}
     ctx.save(); ctx.translate(cx,cy); ctx.scale(impact?1.13:1,impact?1.13:1); ctx.shadowColor="rgba(22,47,77,.32)"; ctx.shadowBlur=phone?11:9; ctx.shadowOffsetY=3;
     ctx.beginPath(); ctx.arc(0,0,chipR+3,0,Math.PI*2); ctx.fillStyle="#fff"; ctx.fill();
     ctx.beginPath(); ctx.arc(0,0,chipR,0,Math.PI*2); ctx.closePath(); ctx.clip();
@@ -13601,7 +13609,7 @@ document.addEventListener("pointerdown",e=>{
   const oldCity=drawCity;
   drawCity=function(){
     oldCity();
-    [["mission",420,356,60],["bank",1060,356,60],["insurance",420,631,60]].forEach(([key,x,y,ss])=>{const im=V1990_TILE_IMAGES[key];if(!ready(im))return;ctx.save();ctx.shadowColor="rgba(35,70,110,.20)";ctx.shadowBlur=9;ctx.fillStyle="rgba(255,255,255,.97)";ctx.beginPath();ctx.arc(x,y,ss*.48,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.drawImage(im,x-ss/2,y-ss/2,ss,ss);ctx.restore()})
+    [["bank",1060,356,60],["insurance",420,631,60]].forEach(([key,x,y,ss])=>{const im=V1990_TILE_IMAGES[key];if(!ready(im))return;ctx.save();ctx.shadowColor="rgba(35,70,110,.20)";ctx.shadowBlur=9;ctx.fillStyle="rgba(255,255,255,.97)";ctx.beginPath();ctx.arc(x,y,ss*.48,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.drawImage(im,x-ss/2,y-ss/2,ss,ss);ctx.restore()})
   };
   openMobileHubMenu=function(){
     if(!state)return;
@@ -15262,7 +15270,7 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
 }
 </style>
 <style id="v19936-rev-asset-authority">
-:root{--v19936-rev:url("./assets/v19936/rev_all30_v1.webp?v=19940")}
+:root{--v19936-rev:url("./assets/v19936/rev_all30_v1.webp?v=19941")}
 .rev36-art{display:inline-block;flex:0 0 auto;width:36px;height:36px;background-image:var(--v19936-rev);background-size:500% 600%;background-repeat:no-repeat;background-color:transparent!important;border:0!important;box-shadow:none!important;vertical-align:middle}
 .rev36-stock-buy{background-position:0 0}.rev36-stock-sell{background-position:25% 0}.rev36-tender-accept{background-position:50% 0}.rev36-tender-locked{background-position:75% 0}.rev36-insurance-buy{background-position:100% 0}
 .rev36-insurance-owned{background-position:0 20%}.rev36-holding{background-position:25% 20%}.rev36-cost-basis{background-position:50% 20%}.rev36-pnl-up{background-position:75% 20%}.rev36-pnl-down{background-position:100% 20%}
@@ -15401,7 +15409,7 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
 </style>
 <script id="v19936-rev-asset-runtime">
 (function(){
-  const REV36_SPRITE="./assets/v19936/rev_all30_v1.webp?v=19940";
+  const REV36_SPRITE="./assets/v19936/rev_all30_v1.webp?v=19941";
   const REV36_CELL=64,REV36_COLS=5;
   const REV36_INDEX={
     stockBuy:0,stockSell:1,tenderAccept:2,tenderLocked:3,insuranceBuy:4,insuranceOwned:5,holding:6,costBasis:7,pnlUp:8,pnlDown:9,
@@ -15519,7 +15527,7 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
   const revImg=new Image();revImg.decoding="async";revImg.src=REV36_SPRITE;
   const oldDraw=CanvasRenderingContext2D.prototype.drawImage;
   const sourceRules=[
-    ["hub_mission_center",REV36_INDEX.commission],["hub_city_bank",REV36_INDEX.bank],["hub_rent_insurance",REV36_INDEX.insurance],["hub_metro",REV36_INDEX.metro],["hub_city_policy",REV36_INDEX.civic],["public_night_market",REV36_INDEX.nightFacility]
+    ["hub_city_bank",REV36_INDEX.bank],["hub_rent_insurance",REV36_INDEX.insurance],["hub_metro",REV36_INDEX.metro],["hub_city_policy",REV36_INDEX.civic],["public_night_market",REV36_INDEX.nightFacility]
   ];
   if(!window.__rev36DrawImagePatched){
     window.__rev36DrawImagePatched=true;
@@ -15545,5 +15553,90 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
   try{renderMarket();drawBoard()}catch(e){}
 })();
 </script>
+
+<style id="v19941-rev-c01-d01-authority">
+:root{--v19941-rev-cd:url("./assets/v19941/rev_c01_d01_all20_v1.webp?v=19941")}
+.rev41-cd-art{display:inline-block;background-image:var(--v19941-rev-cd)!important;background-size:500% 400%!important;background-repeat:no-repeat!important;background-color:transparent!important;border:0!important;box-shadow:none!important}
+.rev41-commission,.q03-commission,.q-icon.q-commission,.rev36-fac-commission{background-image:var(--v19941-rev-cd)!important;background-size:500% 400%!important;background-position:75% 100%!important}
+.rev41-auction,.q03-auction{background-image:var(--v19941-rev-cd)!important;background-size:500% 400%!important;background-position:25% 100%!important}
+.q03-commission,.q03-auction,.q-icon.q-commission,.rev36-fac-commission{background-color:transparent!important}
+</style>
+<script id="v19941-rev-c01-d01-runtime">
+(function(){
+  const REV41_SRC="./assets/v19941/rev_c01_d01_all20_v1.webp?v=19941";
+  const REV41_COLS=5,REV41_ROWS=4;
+  const REV41_INDEX=Object.freeze({
+    propertyVacant:0,propertyPurchasable:1,propertyOwned:2,propertyMortgaged:3,propertyUpgrading:4,
+    propertyLv0:5,propertyLv1:6,propertyLv2:7,pawn1:8,pawn2:9,pawn3:10,pawn4:11,current:12,
+    chance:13,fate:14,tax:15,auction:16,stock:17,commission:18,start:19
+  });
+  const EVENT_INDEX=Object.freeze({chance:13,fate:14,tax:15,auction:16,stock:17,start:19});
+  const image=new Image();image.decoding="async";image.src=REV41_SRC;
+  const ready=()=>!!(image.complete&&image.naturalWidth>0);
+  function cellMetrics(){
+    if(!ready())return null;
+    const cw=image.naturalWidth/REV41_COLS,ch=image.naturalHeight/REV41_ROWS;
+    return Number.isInteger(cw)&&Number.isInteger(ch)?{cw,ch}:null
+  }
+  function drawCell(index,x,y,w,h){
+    const m=cellMetrics();if(!m||index==null)return false;
+    const sx=(index%REV41_COLS)*m.cw,sy=Math.floor(index/REV41_COLS)*m.ch;
+    ctx.save();ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality="high";
+    ctx.drawImage(image,sx,sy,m.cw,m.ch,x,y,w,h);ctx.restore();return true
+  }
+  function drawEventTile(t,x,y,index){
+    const {w,h}=tileSizeForIndex(index),phone=mobileReadableBoard();
+    const currentPos=state?.players?.[state.current]?.pos;
+    const active=currentPos===index;
+    const impact=window.__tileImpact&&window.__tileImpact.tile===index&&Date.now()<window.__tileImpact.until;
+    if(active||impact){
+      ctx.save();ctx.shadowColor=impact?"rgba(73,184,255,.95)":"rgba(255,193,7,.60)";
+      ctx.shadowBlur=impact?(phone?42:34):(phone?28:22);
+      ctx.fillStyle=impact?"rgba(85,194,255,.32)":"rgba(255,215,80,.28)";
+      rr(x-w/2-6,y-h/2-6,w+12,h+12,15,true,false);ctx.restore()
+    }
+    ctx.save();
+    ctx.shadowColor="rgba(51,72,106,.12)";ctx.shadowBlur=phone?7:12;ctx.shadowOffsetY=phone?2:4;
+    const base=ctx.createLinearGradient(x,y-h/2,x,y+h/2),c=tcolor(t);base.addColorStop(0,c);base.addColorStop(1,c);
+    ctx.fillStyle=base;ctx.strokeStyle="#7890a7";ctx.lineWidth=2;rr(x-w/2+1,y-h/2+1,w-2,h-2,phone?6:9,true,true);ctx.restore();
+    const artSize=phone?Math.min(42,Math.max(30,Math.min(w,h)*.50)):Math.min(34,Math.max(24,Math.min(w,h)*.42));
+    if(phone){
+      drawCell(EVENT_INDEX[t.type],x-artSize/2,y-h*.16-artSize/2,artSize,artSize);
+      ctx.fillStyle="#fff";ctx.textAlign="center";ctx.textBaseline="middle";
+      ctx.font='1000 22px "Microsoft JhengHei","Noto Sans TC",sans-serif';
+      ctx.fillText(compactTileName(t.name),x,y+h*.23,w-8)
+    }else{
+      drawCell(EVENT_INDEX[t.type],x-w/2+7,y-h/2+8,artSize,artSize);
+      ctx.fillStyle="#fff";ctx.textAlign="center";ctx.textBaseline="alphabetic";
+      ctx.font='1000 14px "Microsoft JhengHei"';ctx.fillText(t.name,x+8,y+5,w-38)
+    }
+  }
+  const previousDrawTile=drawTile;
+  drawTile=function(t,x,y,index){
+    if(Object.prototype.hasOwnProperty.call(EVENT_INDEX,t?.type)){drawEventTile(t,x,y,index);return}
+    return previousDrawTile(t,x,y,index)
+  };
+
+  const previousDrawCity=drawCity;
+  drawCity=function(){
+    previousDrawCity.apply(this,arguments);
+    if(!ready())return;
+    const size=62;
+    ctx.save();ctx.fillStyle="rgba(255,255,255,.97)";ctx.beginPath();ctx.arc(420,356,size*.48,0,Math.PI*2);ctx.fill();
+    ctx.shadowColor="rgba(38,78,120,.20)";ctx.shadowBlur=8;
+    drawCell(REV41_INDEX.commission,420-size/2,356-size/2,size,size);
+    ctx.restore()
+  };
+
+  window.__WEALTH_ASSET_REGISTRY=Object.freeze({
+    source:REV41_SRC,cols:REV41_COLS,rows:REV41_ROWS,
+    property:Object.freeze({vacant:0,purchasable:1,owned:2,mortgaged:3,upgrading:4,lv0:5,lv1:6,lv2:7}),
+    pawns:Object.freeze({p1:8,p2:9,p3:10,p4:11,current:12}),
+    board:Object.freeze({chance:13,fate:14,tax:15,auction:16,stock:17,commission:18,start:19})
+  });
+  image.addEventListener("load",()=>{try{drawBoard();render()}catch(e){}});
+})();
+</script>
+
 </body>
 </html>
