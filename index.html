@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.25 WEB｜好友房穩定續連</title>
+<title>財富帝國 V19.9.28 WEB｜Q05/Q06/Q02/Q07 素材替換版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.25 WEB - 修正反覆斷線重連、背景切換誤判，並加入房主重新整理恢復">
+<meta name="description" content="財富帝國 V19.9.28 WEB - 完成 Q05/Q06/Q02/Q07 新素材 render source 替換，保留好友房續連修正">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6497,6 +6497,24 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 .v198-modal-icon-title .v19923-q02-art{width:48px;height:48px}
 .stock-action-btn .v19923-q02-art{width:25px;height:25px}
 </style>
+
+<style id="v19928-q07-property-authority">
+:root{--v19928-q07:url("./assets/v19928/q07_property10_v1.webp?v=19928")}
+.q07-property-wrap{position:relative;display:inline-block;width:46px;height:46px;flex:0 0 46px}
+.q07-property-art{display:block;width:100%;height:100%;background-image:var(--v19928-q07);background-size:500% 200%;background-repeat:no-repeat;background-color:transparent}
+.q07-vacant{background-position:0 0}.q07-house{background-position:25% 0}.q07-lv1{background-position:50% 0}.q07-lv2{background-position:75% 0}
+.q07-owner-blue{background-position:100% 0}.q07-owner-coral{background-position:0 100%}.q07-owner-mint{background-position:25% 100%}.q07-owner-lavender{background-position:50% 100%}
+.q07-purchasable{background-position:75% 100%}.q07-mortgaged{background-position:100% 100%}
+.q07-property-badge{position:absolute!important;width:20px!important;height:20px!important;right:-4px;bottom:-2px;filter:drop-shadow(0 2px 3px rgba(27,48,73,.18))}
+.property-manage-row>.q07-property-wrap{margin-right:8px}
+.upgrade-name{display:flex;align-items:center;gap:7px}
+.upgrade-name>.q07-property-wrap{width:42px;height:42px;flex-basis:42px}
+@media(max-width:980px) and (orientation:landscape){
+  .property-manage-row>.q07-property-wrap{width:36px;height:36px;flex-basis:36px;margin-right:6px}
+  .upgrade-name>.q07-property-wrap{width:34px;height:34px;flex-basis:34px}
+  .q07-property-badge{width:16px!important;height:16px!important}
+}
+</style>
 </head>
 <body class="lobby-mode">
 
@@ -6545,7 +6563,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.25 WEB｜好友房穩定續連｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.28 WEB｜素材替換 Gate｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -7459,7 +7477,8 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19925";
+const APP_BUILD_ID="19928";
+window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:2,mode:"natural-dimensions"},q07:{cols:5,rows:2,path:"./assets/v19928/q07_property10_v1.webp?v=19928"}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -10761,7 +10780,7 @@ function openUpgradeCenter(){
     const cost=maxed?0:(free?0:buildCost(t));
     return `<div class="upgrade-card phone-feature-card ${maxed?"maxed":""}">
       <div class="upgrade-head">
-        <div class="upgrade-name">${t.name}</div>
+        <div class="upgrade-name">${q07PropertyHtml(t)}<span>${t.name}</span></div>
         <div class="upgrade-level">${propertyLevelName(t.level)}</div>
       </div>
       <div class="upgrade-road">
@@ -10788,7 +10807,7 @@ function openProperties(){
     const next=isProp&&t.level<PROPERTY_MAX_LEVEL?rentAtLevel(t,t.level+1):rentFor(t);
     const [ok]=isProp?canUpgrade(me,t):[false,"交通設施不能升級"];
     const cost=isProp&&t.level<PROPERTY_MAX_LEVEL?buildCost(t):0;
-    return `<div class="property-manage-row"><div class="property-manage-main"><b>${t.name}</b><span>${isProp?propertyLevelName(t.level):"交通設施"}</span><small>目前過路費 <b>$${rentFor(t).toLocaleString()}</b>${isProp&&t.level<PROPERTY_MAX_LEVEL?`｜下一級 $${next.toLocaleString()}｜升級費 $${cost.toLocaleString()}`:""}</small></div>${isProp&&t.level<PROPERTY_MAX_LEVEL?`<button class="warn property-inline-upgrade" ${(!canAct||!ok)?"disabled":""} onclick="requestPropertyUpgrade(${t.id})">${ok?"升級":"無法升級"}</button>`:`<span class="property-max-chip">${isProp?"已達 Lv.2":"不可升級"}</span>`}</div>`
+    return `<div class="property-manage-row">${isProp?q07PropertyHtml(t):""}<div class="property-manage-main"><b>${t.name}</b><span>${isProp?propertyLevelName(t.level):"交通設施"}</span><small>目前過路費 <b>$${rentFor(t).toLocaleString()}</b>${isProp&&t.level<PROPERTY_MAX_LEVEL?`｜下一級 $${next.toLocaleString()}｜升級費 $${cost.toLocaleString()}`:""}</small></div>${isProp&&t.level<PROPERTY_MAX_LEVEL?`<button class="warn property-inline-upgrade" ${(!canAct||!ok)?"disabled":""} onclick="requestPropertyUpgrade(${t.id})">${ok?"升級":"無法升級"}</button>`:`<span class="property-max-chip">${isProp?"已達 Lv.2":"不可升級"}</span>`}</div>`
   }).join("")||'<div class="hub-rule">目前尚未持有地產。</div>';
   showModal("我的房產",`<div class="v19923-modal-hero"><span class="v19923-q03-art q03-rent" aria-hidden="true"></span></div><div class="hub-rule">查看與升級集中在同一頁。${strategyItemCount(me,"freeBuild")?`<br><b>🏗️ 免費建築許可 ×${strategyItemCount(me,"freeBuild")}：按升級時會主動詢問。</b>`:""}</div><div class="property-manage-list">${rows}</div>`,[["關閉","ghost",closeModal]]);
   $("modal")?.classList.add("property-manage-modal")
@@ -12219,6 +12238,65 @@ function compactTileName(name){
   };
   return map[name]||String(name).slice(0,3)
 }
+
+const Q07_PROPERTY_SPRITE_IMAGE=new Image();
+Q07_PROPERTY_SPRITE_IMAGE.decoding="async";
+Q07_PROPERTY_SPRITE_IMAGE.src="./assets/v19928/q07_property10_v1.webp?v=19928";
+Q07_PROPERTY_SPRITE_IMAGE.onload=()=>{try{drawBoard()}catch{}};
+const Q07_GRID_COLS=5,Q07_GRID_ROWS=2;
+const Q07_CELLS={
+  vacant:[0,0],house:[1,0],lv1:[2,0],lv2:[3,0],ownerBlue:[4,0],
+  ownerCoral:[0,1],ownerMint:[1,1],ownerLavender:[2,1],purchasable:[3,1],mortgaged:[4,1]
+};
+function q07Metrics(){
+  if(!Q07_PROPERTY_SPRITE_IMAGE.complete||!Q07_PROPERTY_SPRITE_IMAGE.naturalWidth)return null;
+  const cw=Q07_PROPERTY_SPRITE_IMAGE.naturalWidth/Q07_GRID_COLS;
+  const ch=Q07_PROPERTY_SPRITE_IMAGE.naturalHeight/Q07_GRID_ROWS;
+  if(!Number.isInteger(cw)||!Number.isInteger(ch)||cw<=0||ch<=0)return null;
+  return {cw,ch};
+}
+function drawQ07Cell(key,x,y,w,h){
+  const m=q07Metrics(),cell=Q07_CELLS[key];
+  if(!m||!cell)return false;
+  ctx.save();
+  ctx.imageSmoothingEnabled=true;
+  ctx.imageSmoothingQuality="high";
+  ctx.drawImage(Q07_PROPERTY_SPRITE_IMAGE,cell[0]*m.cw,cell[1]*m.ch,m.cw,m.ch,x,y,w,h);
+  ctx.restore();
+  return true;
+}
+function q07BaseKey(t){
+  if(t?.mortgaged)return "mortgaged";
+  if(t?.owner==null)return "vacant";
+  const lv=Math.max(0,Math.min(PROPERTY_MAX_LEVEL,Number(t.level)||0));
+  return lv>=2?"lv2":lv===1?"lv1":"house";
+}
+function q07OwnerKey(owner){
+  return ["ownerBlue","ownerCoral","ownerMint","ownerLavender"][Number(owner)]||null;
+}
+function drawQ07PropertyArt(t,cx,cy,size){
+  if(!t||t.type!=="property")return false;
+  const ok=drawQ07Cell(q07BaseKey(t),cx-size/2,cy-size/2,size,size);
+  if(!ok)return false;
+  const badgeSize=Math.max(12,Math.round(size*.52));
+  const badgeKey=t.owner==null?"purchasable":q07OwnerKey(t.owner);
+  if(badgeKey)drawQ07Cell(badgeKey,cx+size*.18,cy+size*.16,badgeSize,badgeSize);
+  return true;
+}
+function q07MainClass(t){
+  const key=q07BaseKey(t);
+  return {vacant:"q07-vacant",house:"q07-house",lv1:"q07-lv1",lv2:"q07-lv2",mortgaged:"q07-mortgaged"}[key]||"q07-vacant";
+}
+function q07BadgeClass(t){
+  if(t?.owner==null)return "q07-purchasable";
+  return ["q07-owner-blue","q07-owner-coral","q07-owner-mint","q07-owner-lavender"][Number(t.owner)]||"";
+}
+function q07PropertyHtml(t,extraClass=""){
+  if(!t||t.type!=="property")return "";
+  const badge=q07BadgeClass(t);
+  return '<span class="q07-property-wrap '+extraClass+'" aria-hidden="true"><span class="q07-property-art '+q07MainClass(t)+'"></span>'+(badge?'<span class="q07-property-art q07-property-badge '+badge+'"></span>':'')+'</span>';
+}
+
 function drawTile(t,x,y,index){
   const {w,h}=tileSizeForIndex(index);
   const phone=mobileReadableBoard();
@@ -12250,7 +12328,7 @@ function drawTile(t,x,y,index){
   rr(x-w/2+1,y-h/2+1,w-2,h-2,phone?6:9,true,true);
   ctx.restore();
 
-  if(t.owner!=null){
+  if(t.owner!=null&&t.type!=="property"){
     ctx.fillStyle=COLORS[t.owner];
     rr(x-w/2+4,y-h/2+4,w-8,phone?11:12,5,true,false)
   }
@@ -12263,6 +12341,7 @@ function drawTile(t,x,y,index){
     const isProperty=["property","station"].includes(t.type);
     const fg=isProperty?"#17283c":"#fff";
     const label=compactTileName(t.name);
+    if(t.type==="property")drawQ07PropertyArt(t,x+w/2-20,y-h/2+20,30);
 
     ctx.fillStyle=fg;
     ctx.font='1000 30px "Microsoft JhengHei","Noto Sans TC",sans-serif';
@@ -12294,11 +12373,15 @@ function drawTile(t,x,y,index){
     rr(x-w/2+5,y-h/2+5,w-10,10,5,true,false)
   }
 
-  ctx.fillStyle="rgba(255,255,255,.94)";
-  ctx.strokeStyle="rgba(61,86,122,.12)";
-  ctx.lineWidth=1.5;
-  rr(x-w/2+6,y-h/2+18,21,21,7,true,true);
-  drawGlyph(icon,x-w/2+16.5,y-h/2+28.5,11.5,"#223a5a","#5ea3ff");
+  if(t.type==="property"){
+    drawQ07PropertyArt(t,x-w/2+18,y-h/2+30,28);
+  }else{
+    ctx.fillStyle="rgba(255,255,255,.94)";
+    ctx.strokeStyle="rgba(61,86,122,.12)";
+    ctx.lineWidth=1.5;
+    rr(x-w/2+6,y-h/2+18,21,21,7,true,true);
+    drawGlyph(icon,x-w/2+16.5,y-h/2+28.5,11.5,"#223a5a","#5ea3ff");
+  }
 
   ctx.textAlign="center";
   ctx.textBaseline="alphabetic";
@@ -13167,20 +13250,29 @@ document.addEventListener("pointerdown",e=>{
   Q05_PLAYER_SPRITE_IMAGE.decoding="async";
   Q05_PLAYER_SPRITE_IMAGE.src="./assets/v19927/q05_players10_v2.webp?v=19927";
   const Q05_PAWN_CELLS=[[4,0],[0,1],[1,1],[2,1]];
-  const Q05_CELL_SIZE=96;
+  const Q05_GRID_COLS=5,Q05_GRID_ROWS=2;
 
   function ready(im){return !!(im&&im.complete&&im.naturalWidth>0)}
 
+  function q05CellMetrics(){
+    if(!ready(Q05_PLAYER_SPRITE_IMAGE))return null;
+    const cw=Q05_PLAYER_SPRITE_IMAGE.naturalWidth/Q05_GRID_COLS;
+    const ch=Q05_PLAYER_SPRITE_IMAGE.naturalHeight/Q05_GRID_ROWS;
+    if(!Number.isInteger(cw)||!Number.isInteger(ch)||cw<=0||ch<=0)return null;
+    return {cw,ch};
+  }
+
   function drawQ05Pawn(index,x,y,w,h){
-    if(!ready(Q05_PLAYER_SPRITE_IMAGE))return false;
+    const metrics=q05CellMetrics();
+    if(!metrics)return false;
     const cell=Q05_PAWN_CELLS[normalizeAvatarIndex(index,0)];
     if(!cell)return false;
     ctx.drawImage(
       Q05_PLAYER_SPRITE_IMAGE,
-      cell[0]*Q05_CELL_SIZE,
-      cell[1]*Q05_CELL_SIZE,
-      Q05_CELL_SIZE,
-      Q05_CELL_SIZE,
+      cell[0]*metrics.cw,
+      cell[1]*metrics.ch,
+      metrics.cw,
+      metrics.ch,
       x,y,w,h
     );
     return true;
