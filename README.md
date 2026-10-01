@@ -1,15 +1,21 @@
-# 財富帝國 V19.9.25 WEB
+# 財富帝國 V19.9.39 WEB
 
 這是《財富帝國》desktop / iPhone 網頁發布版。
 
-## 本版
-- 修正 Guest 自動重連時「程式自己關閉舊 DataConnection」又被誤判為新斷線，造成重連循環的核心問題。
-- Guest 重連改成 single-flight：同時間只允許一個 reconnect 流程，舊 transport 先從全域引用脫鉤再 close/destroy。
-- Heartbeat 由 5 秒 / 17 秒 stale 放寬為 7 秒 / 35 秒 stale；背景頁不主動拆線。
-- 回到前景、視窗 focus、fullscreen 切換、pageshow、online 時改做有回應依據的健康檢查；不再先假裝收到活動。
-- Host 對 Guest close 加入 6.5 秒 grace period；短暫連線抖動在期限內接回不寫 disconnect/reconnect 事件。
-- 新增 Host Reload Recovery：房主重新整理時恢復原房號、完整遊戲 state、Guest resume tokens；原玩家可接回原座位。
-- Host state 以節流方式存入 localStorage，beforeunload 再立即保存；有效期 12 小時。
-- 若房主刷新時正處於需要計時器的小遊戲／拍賣，恢復後安全取消該即時活動並讓本回合重新操作，避免永久卡局。
-- 保留 V19.9.24 的策略道具／市場操作與 V19.9.23 的新素材、都會三欄排版。
-- safe-rollback-v19.9.24 已建立，可快速回退。
+## V19.9.39｜方案 B 核心重整 Phase 1
+- 四大主操作統一為「擲骰子／我的房產／策略道具／市場操作」，暫時採乾淨文字色塊；移除主操作舊 ICON render source。
+- 「我的房產」成為唯一房產管理入口：土地列表、購入價、建設投入、估值、升級、收租紀錄、區域完成度集中管理。
+- 永久移除獨立「升級地產」入口；升級邏輯只由「我的房產」與合法落地情境呼叫。
+- 加入區域壟斷 V1：完整持有同區全部一般地產時，該區租金 +25%；失去完整持有即取消。
+- 修正一般地產租金公式中市場倍率可能被重複套用的問題。
+- 棋盤的「吃麵大賽」改為「猜拳擂台」、「30格連消轉盤」改為「綠燈反應王」；機會／命運不再觸發金幣雨。
+- Host 端拒絕舊版「吃麵／金幣雨」操作訊息，避免舊客戶端殘留入口重新啟動。
+- 玩家自由交易維持取消，Host 端拒絕舊 trade action。
+- 保留 Host Reload Recovery、Guest reconnect 與既有 P2P 連線流程。
+
+## 後續 Plan B
+- 策略道具 V1 擴充與主動詢問流程。
+- 市場操作／股票 × 棋盤連動。
+- 市場事件狀態機。
+- 經濟壓力數據記錄與平衡回歸。
+- Desktop / iPhone landscape / Multiplayer 完整 UAT。

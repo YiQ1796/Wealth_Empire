@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.38 WEB｜Q05/Q06/Q02/Q07 素材替換版</title>
+<title>財富帝國 V19.9.39 WEB｜Q05/Q06/Q02/Q07 素材替換版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.38 WEB - 完成 Q05/Q06/Q02/Q07 新素材 render source 替換，並移除房產介面的舊 Q03 視覺來源">
+<meta name="description" content="財富帝國 V19.9.39 WEB - 完成 Q05/Q06/Q02/Q07 新素材 render source 替換，並移除房產介面的舊 Q03 視覺來源">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6499,7 +6499,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 </style>
 
 <style id="v19928-q07-property-authority">
-:root{--v19928-q07:url("./assets/v19928/q07_property10_v1.webp?v=19938")}
+:root{--v19928-q07:url("./assets/v19928/q07_property10_v1.webp?v=19939")}
 .q07-property-wrap{position:relative;display:inline-block;width:46px;height:46px;flex:0 0 46px}
 .q07-property-art{display:block;width:100%;height:100%;background-image:var(--v19928-q07);background-size:500% 200%;background-repeat:no-repeat;background-color:transparent}
 .q07-vacant{background-position:0 0}.q07-house{background-position:25% 0}.q07-lv1{background-position:50% 0}.q07-lv2{background-position:75% 0}
@@ -6522,7 +6522,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.38</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.39</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6565,7 +6565,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.38 WEB｜素材替換 Gate｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.39 WEB｜素材替換 Gate｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -6595,10 +6595,10 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
           <div class="dice-total-row"><span class="dice-total-label">總點數</span><div id="diceTotal" class="dtotal">2</div></div>
         </div>
       </div>
-      <button id="rollBtn" class="primary" onclick="sendAction('roll')"><span class="icon-label"><span class="q-icon q-roll" aria-hidden="true"></span>擲骰子</span></button>
-      <button id="propertyBtn" class="warn" onclick="openProperties()"><span class="icon-label"><span class="q-icon q-property" aria-hidden="true"></span>我的房產</span></button>
-      <button id="strategyBtn" class="warn" onclick="openStrategyItems()"><span class="icon-label"><span class="q-icon q-quick" aria-hidden="true"></span><span class="btn-label">策略道具</span></span></button>
-      <button id="marketOpsBtn" class="success" onclick="openMarketOperations()"><span class="icon-label"><span class="v19923-q03-art q03-stock control-feature-art" aria-hidden="true"></span><span class="btn-label">市場操作</span></span></button>
+      <button id="rollBtn" class="planb-main-action planb-dice" onclick="sendAction('roll')"><span class="btn-label">擲骰子</span></button>
+      <button id="propertyBtn" class="planb-main-action planb-property" onclick="openProperties()"><span class="btn-label">我的房產</span></button>
+      <button id="strategyBtn" class="planb-main-action planb-strategy" onclick="openStrategyItems()"><span class="btn-label">策略道具</span></button>
+      <button id="marketOpsBtn" class="planb-main-action planb-market" onclick="openMarketOperations()"><span class="btn-label">市場操作</span></button>
       <button id="turnLabel" class="ghost" disabled>等待目前玩家</button>
     </div>
   </div>
@@ -6620,7 +6620,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
         <span><i class="dot" style="background:#8b5cf6"></i>玩家4</span>
         <span>粗框＝所有權｜LV.1 / LV.2＝地產升級</span><span class="board-size-chip"><img class="chip-icon" src="assets/first10/nav_map.png" alt="">56 格大地圖</span>
       </div>
-      <div class="board-map-note">外圈維持 56 格；新增小遊戲仍只從「機會／命運」隨機觸發。中央改為可點擊的都會核心：委託、銀行、租金保險、捷運分支路線與市政標案。</div>
+      <div class="board-map-note">外圈維持 56 格；已移除轉盤、金幣雨與吃麵，棋盤改以猜拳擂台／綠燈反應王等短事件為主。中央維持可點擊都會核心。</div>
     </div>
     <div class="side">
       <div id="marketPanel" class="panel market"><h2><span class="section-icon-title"><span class="v19923-q03-art q03-stock section-stock-art" aria-hidden="true"></span>股票市場</span></h2><div id="market"></div></div>
@@ -6831,8 +6831,8 @@ const MARKET_OPERATION_DEFS={
 const TILE_NAMES=[
 "起點","星港住宅","機會","翡翠商圈","收購中心","海灣公寓","海景大樓","稅務局",
 "中央車站","命運","科技園區","高低骰對決","創新園區","北城豪宅","國際機場","機會",
-"吃麵大賽","金融大道","皇家大道","命運","水岸別墅","能源公司","商務中心","財富賽馬場",
-"黃金商圈","影城","股市事件","山景莊園","30格連消轉盤","機會","綠能園區","國際飯店",
+"猜拳擂台","金融大道","皇家大道","命運","水岸別墅","能源公司","商務中心","財富賽馬場",
+"黃金商圈","影城","股市事件","山景莊園","綠燈反應王","機會","綠能園區","國際飯店",
 "天空豪宅","命運","國際港口","物流中心","百貨商場","全民骰王","湖畔豪宅","法院",
 "機會","晶鑽商業區","跨海大橋","命運","皇后大道","地產拍賣行","寶箱爭奪","城市更新局",
 "醫療中心","頂級飯店","雲端科技城","命運","帝王商圈","奢華莊園","海天御苑","世界中心"];
@@ -6891,7 +6891,7 @@ const NOODLE_BITES_REQUIRED=18;
 const NOODLE_RACE_MS=12000;
 const PROPERTY_MAX_LEVEL=2;
 const CHANCE_MINIGAME_RATE=0.58;
-const CHANCE_MINIGAMES=["rps","number","cup","coinrush","reaction","bomb","card","lane"];
+const CHANCE_MINIGAMES=["rps","number","cup","reaction","bomb","card","lane"];
 const PUBLIC_PROJECT_ICON_ASSETS={
   night:"assets/sixth10/public_night_market.png",
   tower:"assets/first10/public_tech_tower.png",
@@ -7098,17 +7098,17 @@ function buildTiles(){
     else if(name==="股市事件")type="stock";else if(name==="收購中心")type="acquire_center";else if(name==="城市更新局")type="renewal";else if(name==="稅務局")type="tax";
     else if(["中央車站","國際機場","國際港口","跨海大橋"].includes(name))type="station";
     else if(name==="財富賽馬場")type="race";
-    else if(name==="30格連消轉盤")type="wheel";
+    else if(name==="綠燈反應王")type="reaction";
     else if(name==="全民骰王")type="dicegame";
     else if(name==="寶箱爭奪")type="treasure";
     else if(name==="高低骰對決")type="hilow";
-    else if(name==="吃麵大賽")type="noodle";
+    else if(name==="猜拳擂台")type="rps";
     else if(name==="城市公園")type="park";else if(name==="地產拍賣行")type="auction";
     else if(name==="醫療中心")type="hospital";else if(name==="法院")type="court";else if(name==="自由市場")type="market";
     let group=null,price=0,rent=0;
     if(type==="property"){group=groups[Math.min(7,Math.floor(pc/4))];price=2200+pc*260;rent=Math.round(price*.14);pc++}
     else if(type==="station"){group="交通設施";price=5200+i*35;rent=850}
-    return{id:i,name,type,group,price,rent,owner:null,level:0,mortgaged:false}
+    return{id:i,name,type,group,price,rent,owner:null,level:0,mortgaged:false,buildInvested:0}
   })
 }
 function newState(hostName,hostAvatar=0){
@@ -7118,10 +7118,30 @@ function newState(hostName,hostAvatar=0){
     tiles:buildTiles(),
     stocks:Object.fromEntries(Object.entries(STOCK_DEFS).map(([c,d])=>[c,{name:d.name,price:d.price,prev:d.price,history:[d.price]}])),
     cityEvent:{name:"正常景氣",rentMult:1,buildMult:1,stockBias:0,startBonus:0,until:3},
-    jackpot:5000,cityPool:0,publicInvestments:Object.fromEntries(Object.keys(PUBLIC_PROJECTS).map(k=>[k,{total:0,bySeat:{}}])),groupGame:null,pending:null,events:[],eventId:0,winner:null
+    jackpot:5000,cityPool:0,publicInvestments:Object.fromEntries(Object.keys(PUBLIC_PROJECTS).map(k=>[k,{total:0,bySeat:{}}])),monopolyOwners:{},groupGame:null,pending:null,events:[],eventId:0,winner:null
   }
 }
 function addEvent(kind,text,data={}){state.eventId++;state.events.push({id:state.eventId,kind,text,data,ts:Date.now()});state.events=state.events.slice(-80)}
+function refreshMonopolyState(){
+  if(!state?.tiles||!state?.players)return;
+  if(!state.monopolyOwners||typeof state.monopolyOwners!=="object")state.monopolyOwners={};
+  const groups=[...new Set(state.tiles.filter(t=>t.type==="property"&&t.group).map(t=>t.group))];
+  for(const group of groups){
+    const tiles=groupTiles(group);
+    const owner=tiles.length&&tiles.every(t=>t.owner!=null&&t.owner===tiles[0].owner)?tiles[0].owner:null;
+    const previous=state.monopolyOwners[group]??null;
+    if(owner===previous)continue;
+    if(previous!=null&&state.players[previous]){
+      addEvent("monopoly_lost",`${state.players[previous].name} 失去「${group}」區域壟斷。`,
+        {seat:previous,group,title:"區域壟斷解除"});
+    }
+    if(owner!=null&&state.players[owner]){
+      addEvent("monopoly_complete",`${state.players[owner].name} 完成「${group}」區域壟斷，該區地產租金 +25%。`,
+        {seat:owner,group,multiplier:MONOPOLY_RENT_BONUS,title:"區域壟斷完成"});
+    }
+    state.monopolyOwners[group]=owner;
+  }
+}
 function snapshot(){return JSON.parse(JSON.stringify(state))}
 function safeConnSend(conn,msg){
   if(!conn?.open)return false;
@@ -7132,6 +7152,7 @@ function safeConnSend(conn,msg){
   }catch{return false}
 }
 function broadcast(){
+  refreshMonopolyState();
   const msg={type:"state",state:snapshot()};
   for(const c of conns.values())safeConnSend(c,msg);
   scheduleHostRecoverySave();
@@ -7482,8 +7503,8 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19938";
-window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:2,mode:"natural-dimensions"},q07:{cols:5,rows:2,path:"./assets/v19928/q07_property10_v1.webp?v=19938"}};
+const APP_BUILD_ID="19939";
+window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:2,mode:"natural-dimensions"},q07:{cols:5,rows:2,path:"./assets/v19928/q07_property10_v1.webp?v=19939"}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -8128,11 +8149,8 @@ function hostAction(seat,msg){
     if(cur.seat!==seat||state.rolled||state.pending||state.groupGame)throw Error("只能在自己擲骰前、且沒有其他事件時交易股票");
     stockTrade(p,msg.code,Number(msg.qty)||1,msg.action==="buy_stock");broadcast();return;
   }
-  if(msg.action==="noodle_bite"){
-    handleNoodleBite(p);return;
-  }
-  if(msg.action==="bonus_click"){
-    handleCoinRushClick(p);return;
+  if(msg.action==="noodle_bite"||msg.action==="bonus_click"){
+    throw Error("此小遊戲已移除");
   }
   if(msg.action==="reaction_click"){
     handleReactionClick(p);return;
@@ -8162,15 +8180,8 @@ function hostAction(seat,msg){
   if(msg.action==="auction_bid"){
     placeAuctionBid(p,Number(msg.bid));return;
   }
-  if(msg.action==="trade_offer"){
-    if(cur.seat!==seat||state.rolled||state.pending||state.groupGame)throw Error("只能在自己擲骰前提出交易");
-    startTradeOffer(p,Number(msg.target),Number(msg.giveTile),Number(msg.wantTile),Number(msg.cash||0));return;
-  }
-  if(msg.action==="trade_accept"){
-    resolveTradeOffer(p,true);return;
-  }
-  if(msg.action==="trade_reject"){
-    resolveTradeOffer(p,false);return;
+  if(["trade_offer","trade_accept","trade_reject"].includes(msg.action)){
+    throw Error("玩家自由交易已取消");
   }
 }
 
@@ -8194,8 +8205,8 @@ function resolveLanding(p){
     startGroupGame("race",p.seat,t.id);
     return
   }
-  if(t.type==="wheel"){
-    startGroupGame("wheel",p.seat,t.id);
+  if(t.type==="reaction"){
+    startGroupGame("reaction",p.seat,t.id);
     return
   }
   if(t.type==="dicegame"){
@@ -8210,8 +8221,8 @@ function resolveLanding(p){
     startGroupGame("hilow",p.seat,t.id);
     return
   }
-  if(t.type==="noodle"){
-    startGroupGame("noodle",p.seat,t.id);
+  if(t.type==="rps"){
+    startGroupGame("rps",p.seat,t.id);
     return
   }
   if(t.type==="acquire_center"){
@@ -8280,7 +8291,11 @@ function resolveLanding(p){
   if(!finishIfNeeded("特殊事件"))nextTurn()
 }
 function groupTiles(g){return state.tiles.filter(t=>t.group===g&&t.type==="property")}
-function monopoly(seat,g){const a=groupTiles(g);return a.length&&a.every(t=>t.owner===seat)}
+function monopoly(seat,g){const a=groupTiles(g);return a.length>0&&a.every(t=>t.owner===seat)}
+const MONOPOLY_RENT_BONUS=1.25;
+function monopolyRentMultiplier(t){
+  return t?.type==="property"&&t.owner!=null&&monopoly(t.owner,t.group)?MONOPOLY_RENT_BONUS:1
+}
 function buildCost(t){
   const baseRate=t.level<=0 ? 0.35 : 0.50;
   return Math.max(100,Math.round(t.price*baseRate*(state.cityEvent?.buildMult||1)))
@@ -8291,7 +8306,9 @@ function propertyRentAmount(t,level,{requireOwner=true}={}){
   if(requireOwner&&t.owner==null)return 0;
   const lv=Math.max(0,Math.min(PROPERTY_MAX_LEVEL,Number(level)||0));
   const levelMult=[1,2,4][lv];
-  return Math.max(0,Math.round((t.rent||0)*levelMult*PROPERTY_RENT_BOOST*(state.cityEvent?.rentMult||1)))
+  const monopolyMult=monopolyRentMultiplier(t);
+  const marketMult=state.cityEvent?.rentMult||1;
+  return Math.max(0,Math.round((t.rent||0)*levelMult*PROPERTY_RENT_BOOST*monopolyMult*marketMult))
 }
 function rentAtLevel(t,level){
   if(t.mortgaged||t.owner==null)return 0;
@@ -8310,15 +8327,13 @@ function canUpgrade(p,t){
 }
 function rentFor(t){
   if(t.mortgaged||t.owner==null)return 0;
-  let r=0;
   if(t.type==="station"){
     const o=state.players[t.owner];
     const n=o.properties.map(id=>state.tiles[id]).filter(x=>x.type==="station"&&!x.mortgaged).length;
-    r=Math.round(t.rent*2**Math.max(0,n-1))
-  }else{
-    r=propertyRentAmount(t,t.level)
+    const base=Math.round(t.rent*2**Math.max(0,n-1));
+    return Math.max(0,Math.round(base*(state.cityEvent?.rentMult||1)))
   }
-  return Math.max(0,Math.round(r*(state.cityEvent?.rentMult||1)))
+  return propertyRentAmount(t,t.level)
 }
 function buyProperty(p,id){
   const t=state.tiles[id];
@@ -8336,7 +8351,7 @@ function upgradeProperty(p,id,useItem=false){
   if(!useItem&&p.cash<normalCost)throw Error(`現金不足，需要 $${normalCost.toLocaleString()}`);
   const c=useItem?0:normalCost;
   if(useItem)p.freeBuild=Math.max(0,strategyItemCount(p,"freeBuild")-1);
-  p.cash-=c;t.level++;p.stats.buildSpent+=c;p.stats.upgrades=(p.stats.upgrades||0)+1;
+  p.cash-=c;t.buildInvested=(t.buildInvested||0)+c;t.level++;p.stats.buildSpent+=c;p.stats.upgrades=(p.stats.upgrades||0)+1;
   addEvent("upgrade",`${p.name} 將「${t.name}」升級至 Lv.${t.level}，新過路費 $${rentFor(t).toLocaleString()}${useItem?"（主動使用免費建築許可）":`，花費 $${c.toLocaleString()}`}。`,
     {seat:p.seat,amount:-c,tile:id,level:t.level,title:useItem?"免費建築升級":"房產升級",free:useItem})
 }
@@ -10799,53 +10814,75 @@ function requestPropertyUpgrade(id,useItem=null){
   }
   closeModal();sendAction("upgrade",{tile:Number(id),useItem:!!useItem})
 }
-function openUpgradeCenter(){
-  if(!state)return;
-  const me=state.players[mySeat];
-  if(!me?.properties?.length){toast("你目前沒有地產");return}
-  const properties=me.properties.map(id=>state.tiles[id]).filter(t=>t?.type==="property");
-  if(!properties.length){toast("你目前沒有可升級的一般地產");return}
-
-  const canAct=canOpenUpgradeCenter();
-  const cards=properties.map(t=>{
-    const [ok,reason]=canUpgrade(me,t);
-    const maxed=t.level>=PROPERTY_MAX_LEVEL;
-    const currentRent=rentFor(t);
-    const nextRent=maxed?currentRent:rentAtLevel(t,t.level+1);
-    const free=(me.freeBuild||0)>0;
-    const cost=maxed?0:(free?0:buildCost(t));
-    return `<div class="upgrade-card phone-feature-card ${maxed?"maxed":""}">
-      <div class="upgrade-head">
-        <div class="upgrade-name">${q07PropertyHtml(t)}<span>${t.name}</span></div>
-        <div class="upgrade-level">${propertyLevelName(t.level)}</div>
-      </div>
-      <div class="upgrade-road">
-        <div class="upgrade-rent"><div class="k">目前過路費</div><div class="v">$${currentRent.toLocaleString()}</div></div>
-        <div class="upgrade-arrow">➜</div>
-        <div class="upgrade-rent"><div class="k">${maxed?"最高過路費":"升級後"}</div><div class="v">$${nextRent.toLocaleString()}</div></div>
-      </div>
-      <div class="upgrade-cost">${maxed?"✅ 已達最高 Lv.2":free?"🎫 本次會使用免費建築許可":"升級費用 $"+cost.toLocaleString()}</div>
-      <button class="${maxed?"ghost":"warn"} upgrade-btn" ${(!canAct||!ok)?"disabled":""} onclick="requestPropertyUpgrade(${t.id})">${maxed?"最高等級":ok?`升級至 Lv.${t.level+1}`:reason}</button>
-    </div>`
-  }).join("");
-
-  showModal("地產升級中心",
-    `<div class="v19923-modal-hero"><span class="q07-property-wrap q07-modal-hero-wrap" aria-hidden="true"><span class="q07-property-art q07-lv1"></span></span></div><div class="upgrade-rule">每塊一般地產最高升級 <b>2 次</b>。Lv.1 過路費約為基礎的 <b>2 倍</b>，Lv.2 約為基礎的 <b>4 倍</b>。只能在自己的回合、擲骰前升級。</div><div class="upgrade-center phone-feature-grid">${cards}</div>`,
-    [["關閉","ghost",closeModal]]
-  );
-  $("modal")?.classList.add("phone-feature-modal","phone-upgrade-modal");
+function legacyBuildInvestment(t){
+  const lv=Math.max(0,Math.min(PROPERTY_MAX_LEVEL,Number(t?.level)||0));
+  if(Number.isFinite(Number(t?.buildInvested))&&Number(t.buildInvested)>0)return Math.round(Number(t.buildInvested));
+  return Math.round((lv>=1?(t.price||0)*.35:0)+(lv>=2?(t.price||0)*.50:0))
+}
+function propertyRentHistoryForSeat(seat){
+  return (state.events||[]).filter(e=>e.kind==="rent"&&Number(e.data?.owner)===Number(seat))
 }
 function openProperties(){
   if(!state)return;
   const me=state.players[mySeat],canAct=canOpenUpgradeCenter();
-  const rows=me?.properties?.map(id=>{
-    const t=state.tiles[id],isProp=t.type==="property";
+  if(!me)return;
+  const owned=(me.properties||[]).map(id=>state.tiles[id]).filter(Boolean);
+  const rentEvents=propertyRentHistoryForSeat(mySeat);
+  const rentByTile={};
+  for(const e of rentEvents){const id=Number(e.data?.tile);rentByTile[id]=(rentByTile[id]||0)+Number(e.data?.amount||0)}
+  const propertyValue=owned.reduce((sum,t)=>sum+propertyMarketValue(t),0);
+  const purchaseValue=owned.reduce((sum,t)=>sum+Number(t.price||0),0);
+  const buildInvested=owned.filter(t=>t.type==="property").reduce((sum,t)=>sum+legacyBuildInvestment(t),0);
+  const rentTotal=rentEvents.reduce((sum,e)=>sum+Number(e.data?.amount||0),0);
+
+  const groupNames=[...new Set(state.tiles.filter(t=>t.type==="property"&&t.group).map(t=>t.group))];
+  const regionCards=groupNames.map(group=>{
+    const tiles=groupTiles(group),ownedTiles=tiles.filter(t=>t.owner===mySeat),missing=tiles.filter(t=>t.owner!==mySeat);
+    const complete=ownedTiles.length===tiles.length&&tiles.length>0;
+    return `<div class="planb-region-card ${complete?"complete":""}">
+      <div class="planb-region-head"><b>${group}</b><span>${ownedTiles.length} / ${tiles.length}</span></div>
+      <div class="planb-region-progress"><i style="width:${tiles.length?ownedTiles.length/tiles.length*100:0}%"></i></div>
+      <div class="planb-region-desc">${complete?"區域壟斷已啟動｜租金 +25%":missing.length?"缺少："+missing.map(t=>t.name).join("、"):"—"}</div>
+    </div>`
+  }).join("");
+
+  const rows=owned.map(t=>{
+    const isProp=t.type==="property";
     const next=isProp&&t.level<PROPERTY_MAX_LEVEL?rentAtLevel(t,t.level+1):rentFor(t);
-    const [ok]=isProp?canUpgrade(me,t):[false,"交通設施不能升級"];
+    const [ok,reason]=isProp?canUpgrade(me,t):[false,"交通設施不能升級"];
     const cost=isProp&&t.level<PROPERTY_MAX_LEVEL?buildCost(t):0;
-    return `<div class="property-manage-row ${isProp?"is-property":"is-station"}">${isProp?q07PropertyHtml(t):""}<div class="property-manage-main"><b>${t.name}</b><span>${isProp?propertyLevelName(t.level):"交通設施"}</span><small>目前過路費 <b>$${rentFor(t).toLocaleString()}</b>${isProp&&t.level<PROPERTY_MAX_LEVEL?`｜下一級 $${next.toLocaleString()}｜升級費 $${cost.toLocaleString()}`:""}</small></div>${isProp&&t.level<PROPERTY_MAX_LEVEL?`<button class="warn property-inline-upgrade" ${(!canAct||!ok)?"disabled":""} onclick="requestPropertyUpgrade(${t.id})">${ok?"升級":"無法升級"}</button>`:`<span class="property-max-chip">${isProp?"已達 Lv.2":"不可升級"}</span>`}</div>`
+    const invested=isProp?legacyBuildInvestment(t):0;
+    const earned=rentByTile[t.id]||0;
+    const groupText=t.group||"交通設施";
+    return `<div class="property-manage-row ${isProp?"is-property":"is-station"}">
+      ${isProp?q07PropertyHtml(t):""}
+      <div class="property-manage-main">
+        <b>${t.name}</b><span>${groupText}｜${isProp?propertyLevelName(t.level):"交通設施"}</span>
+        <small>購入價 <b>${Number(t.price||0).toLocaleString()}</b>｜建設投入 <b>${invested.toLocaleString()}</b>｜目前估值 <b>${propertyMarketValue(t).toLocaleString()}</b></small>
+        <small>目前過路費 <b>${rentFor(t).toLocaleString()}</b>${isProp&&t.level<PROPERTY_MAX_LEVEL?`｜下一級 ${next.toLocaleString()}｜升級費 ${cost.toLocaleString()}`:""}｜本局收租 <b>${earned.toLocaleString()}</b></small>
+      </div>
+      ${isProp&&t.level<PROPERTY_MAX_LEVEL?`<button class="warn property-inline-upgrade" ${(!canAct||!ok)?"disabled":""} onclick="requestPropertyUpgrade(${t.id})">${ok?"升級":"無法升級"}</button>`:`<span class="property-max-chip">${isProp?"已達 Lv.2":"不可升級"}</span>`}
+    </div>`
   }).join("")||'<div class="hub-rule">目前尚未持有地產。</div>';
-  showModal("我的房產",`<div class="v19923-modal-hero"><span class="q07-property-wrap q07-modal-hero-wrap" aria-hidden="true"><span class="q07-property-art q07-house"></span></span></div><div class="hub-rule">查看與升級集中在同一頁。${strategyItemCount(me,"freeBuild")?`<br><b>🏗️ 免費建築許可 ×${strategyItemCount(me,"freeBuild")}：按升級時會主動詢問。</b>`:""}</div><div class="property-manage-list">${rows}</div>`,[["關閉","ghost",closeModal]]);
+
+  const recent=rentEvents.slice(-6).reverse().map(e=>{
+    const tile=state.tiles[Number(e.data?.tile)],payer=state.players[Number(e.data?.payer)];
+    return `<div class="planb-rent-row"><b>${tile?.name||"地產"}</b><span>${payer?.name||"玩家"} 支付</span><strong>+${Number(e.data?.amount||0).toLocaleString()}</strong></div>`
+  }).join("")||'<div class="planb-empty">本局尚未收到租金。</div>';
+
+  showModal("我的房產",
+    `<div class="planb-property-summary">
+      <div><span>購入總額</span><b>${purchaseValue.toLocaleString()}</b></div>
+      <div><span>建設投入</span><b>${buildInvested.toLocaleString()}</b></div>
+      <div><span>目前估值</span><b>${propertyValue.toLocaleString()}</b></div>
+      <div><span>本局收租</span><b>+${rentTotal.toLocaleString()}</b></div>
+    </div>
+    <div class="hub-rule">土地、估值、升級、收租紀錄與區域完成度全部集中在這裡；不再提供獨立「升級地產」入口。${strategyItemCount(me,"freeBuild")?`<br><b>免費建築許可 ×${strategyItemCount(me,"freeBuild")}：按升級時會主動詢問是否使用。</b>`:""}</div>
+    <div class="planb-property-section"><h3>土地列表</h3><div class="property-manage-list">${rows}</div></div>
+    <div class="planb-property-section"><h3>區域完成度</h3><div class="planb-region-grid">${regionCards}</div></div>
+    <div class="planb-property-section"><h3>近期收租紀錄</h3><div class="planb-rent-list">${recent}</div></div>`,
+    [["關閉","ghost",closeModal]]
+  );
   $("modal")?.classList.add("property-manage-modal")
 }
 function showModal(t,b,acts){
@@ -12277,7 +12314,7 @@ function compactTileName(name){
 
 const Q07_PROPERTY_SPRITE_IMAGE=new Image();
 Q07_PROPERTY_SPRITE_IMAGE.decoding="async";
-Q07_PROPERTY_SPRITE_IMAGE.src="./assets/v19928/q07_property10_v1.webp?v=19938";
+Q07_PROPERTY_SPRITE_IMAGE.src="./assets/v19928/q07_property10_v1.webp?v=19939";
 Q07_PROPERTY_SPRITE_IMAGE.onload=()=>{try{drawBoard()}catch{}};
 const Q07_GRID_COLS=5,Q07_GRID_ROWS=2;
 const Q07_CELLS={
@@ -15218,7 +15255,7 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
 }
 </style>
 <style id="v19936-rev-asset-authority">
-:root{--v19936-rev:url("./assets/v19936/rev_all30_v1.webp?v=19938")}
+:root{--v19936-rev:url("./assets/v19936/rev_all30_v1.webp?v=19939")}
 .rev36-art{display:inline-block;flex:0 0 auto;width:36px;height:36px;background-image:var(--v19936-rev);background-size:500% 600%;background-repeat:no-repeat;background-color:transparent!important;border:0!important;box-shadow:none!important;vertical-align:middle}
 .rev36-stock-buy{background-position:0 0}.rev36-stock-sell{background-position:25% 0}.rev36-tender-accept{background-position:50% 0}.rev36-tender-locked{background-position:75% 0}.rev36-insurance-buy{background-position:100% 0}
 .rev36-insurance-owned{background-position:0 20%}.rev36-holding{background-position:25% 20%}.rev36-cost-basis{background-position:50% 20%}.rev36-pnl-up{background-position:75% 20%}.rev36-pnl-down{background-position:100% 20%}
@@ -15240,8 +15277,54 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
   .rev36-hub-art,.rev36-mobile-hub-art{width:42px;height:42px}.rev36-invest-button{min-height:42px!important}.rev36-invest-button .rev36-art{width:30px;height:30px}.stock-action-btn{min-height:34px!important}.rev36-stock-action-art{width:25px;height:25px}
 }
 </style>
+<style id="v19939-plan-b-core">
+/* Plan B authority: the four main actions are text/color blocks only. */
+#rollBtn.planb-main-action,#propertyBtn.planb-main-action,#strategyBtn.planb-main-action,#marketOpsBtn.planb-main-action{
+  background-image:none!important;
+  box-shadow:0 5px 14px rgba(35,61,91,.10)!important;
+  border:1px solid transparent!important;
+  color:#24415f!important;
+  text-shadow:none!important;
+  font-weight:1000!important;
+  letter-spacing:.02em;
+}
+#rollBtn.planb-main-action::before,#rollBtn.planb-main-action::after,
+#propertyBtn.planb-main-action::before,#propertyBtn.planb-main-action::after,
+#strategyBtn.planb-main-action::before,#strategyBtn.planb-main-action::after,
+#marketOpsBtn.planb-main-action::before,#marketOpsBtn.planb-main-action::after{content:none!important;display:none!important}
+.planb-dice{background:#eaf4ff!important;border-color:#b8d7f7!important}
+.planb-property{background:#fff7df!important;border-color:#efd999!important}
+.planb-strategy{background:#eaf9ef!important;border-color:#b7e0c5!important}
+.planb-market{background:#e9faf7!important;border-color:#aee1d8!important}
+.planb-main-action:disabled{opacity:.48!important;filter:none!important}
+.planb-property-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:0 0 10px}
+.planb-property-summary>div{padding:10px;border:1px solid #dce6f0;border-radius:12px;background:#f8fbff}
+.planb-property-summary span{display:block;font-size:10px;font-weight:900;color:#6b7c90}
+.planb-property-summary b{display:block;margin-top:3px;font-size:17px;color:#193b5d}
+.planb-property-section{margin-top:12px}
+.planb-property-section h3{margin:0 0 7px;font-size:14px;color:#24415f}
+.planb-region-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.planb-region-card{padding:9px 10px;border:1px solid #dce6f0;border-radius:12px;background:#fff}
+.planb-region-card.complete{border-color:#e0b84b;background:#fff9e7}
+.planb-region-head{display:flex;justify-content:space-between;gap:8px;font-size:11px}
+.planb-region-progress{height:6px;border-radius:999px;background:#edf2f7;overflow:hidden;margin:7px 0 5px}
+.planb-region-progress i{display:block;height:100%;background:#5a9bd5}
+.planb-region-card.complete .planb-region-progress i{background:#d6a51e}
+.planb-region-desc{font-size:9px;color:#6b7c90;font-weight:800;line-height:1.35}
+.planb-rent-list{display:grid;gap:6px}
+.planb-rent-row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center;padding:7px 9px;border:1px solid #e0e7ef;border-radius:10px;background:#fff;font-size:10px}
+.planb-rent-row strong{color:#148158}
+.planb-empty{padding:10px;border-radius:10px;background:#f5f7fa;color:#78879a;font-size:10px}
+@media(max-width:980px) and (orientation:landscape){
+  .planb-property-summary{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+  .planb-property-summary>div{padding:6px}.planb-property-summary b{font-size:12px}
+  .planb-region-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}
+  .planb-property-section{margin-top:7px}.planb-property-section h3{font-size:11px;margin-bottom:4px}
+  .planb-rent-row{padding:5px 6px;font-size:8.5px}
+}
+</style>
 <style id="v19938-direct-action-replacement">
-/* V19.9.38 authority: new action art REPLACES the old pill/button skin. Never layer new art on old warn/success skins. */
+/* V19.9.39 authority: new action art REPLACES the old pill/button skin. Never layer new art on old warn/success skins. */
 .rev38-asset-action{
   appearance:none!important;
   -webkit-appearance:none!important;
@@ -15311,7 +15394,7 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
 </style>
 <script id="v19936-rev-asset-runtime">
 (function(){
-  const REV36_SPRITE="./assets/v19936/rev_all30_v1.webp?v=19938";
+  const REV36_SPRITE="./assets/v19936/rev_all30_v1.webp?v=19939";
   const REV36_CELL=64,REV36_COLS=5;
   const REV36_INDEX={
     stockBuy:0,stockSell:1,tenderAccept:2,tenderLocked:3,insuranceBuy:4,insuranceOwned:5,holding:6,costBasis:7,pnlUp:8,pnlDown:9,
