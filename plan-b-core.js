@@ -57,6 +57,8 @@
     }
   ];
 
+  let localHedgePromptKey="";
+
   const base={
     renderControls:window.renderControls,
     handlePending:window.handlePending,
@@ -718,10 +720,10 @@
     if(!me||me.ai||state.status!=="playing"||state.current!==mySeat||state.rolled||state.pending||state.groupGame)return;
     const ev=state.cityEvent||{};
     const negative=Number(ev.stockBias||0)<0||Object.values(ev.sectorBias||{}).some(function(v){return Number(v)<-.025;});
-    if(!negative||stockValue(me)<=0||strategyItemCount(me,"stockHedge")<=0)return;
-    me.planB=me.planB||{};
-    if(me.planB.hedgePromptRound===state.round)return;
-    me.planB.hedgePromptRound=state.round;
+    if(!negative||stockValue(me)<=0||strategyItemCount(me,"stockHedge")<=0||(me.marketHedge||0)>0)return;
+    const promptKey=String(roomCode||"")+"|"+String(state.round)+"|"+String(mySeat)+"|"+String(ev.name||"");
+    if(localHedgePromptKey===promptKey)return;
+    localHedgePromptKey=promptKey;
     showModal("負面市場事件：要使用股票避險券嗎？",
       '<div class="planb-market-event"><strong>'+ev.name+'</strong><span>'+marketEventEffectsText(ev)+'</span></div>'+
       '<div class="hub-rule">股票避險券 ×'+strategyItemCount(me,"stockHedge")+'。使用後會保護下一次市場更新的持股損失；拒絕不消耗。</div>',
