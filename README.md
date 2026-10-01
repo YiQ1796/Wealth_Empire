@@ -1,21 +1,26 @@
-# 財富帝國 V19.9.39 WEB
+# 財富帝國 V19.9.40 WEB
 
 這是《財富帝國》desktop / iPhone 網頁發布版。
 
-## V19.9.39｜方案 B 核心重整 Phase 1
-- 四大主操作統一為「擲骰子／我的房產／策略道具／市場操作」，暫時採乾淨文字色塊；移除主操作舊 ICON render source。
-- 「我的房產」成為唯一房產管理入口：土地列表、購入價、建設投入、估值、升級、收租紀錄、區域完成度集中管理。
-- 永久移除獨立「升級地產」入口；升級邏輯只由「我的房產」與合法落地情境呼叫。
-- 加入區域壟斷 V1：完整持有同區全部一般地產時，該區租金 +25%；失去完整持有即取消。
-- 修正一般地產租金公式中市場倍率可能被重複套用的問題。
-- 棋盤的「吃麵大賽」改為「猜拳擂台」、「30格連消轉盤」改為「綠燈反應王」；機會／命運不再觸發金幣雨。
-- Host 端拒絕舊版「吃麵／金幣雨」操作訊息，避免舊客戶端殘留入口重新啟動。
-- 玩家自由交易維持取消，Host 端拒絕舊 trade action。
-- 保留 Host Reload Recovery、Guest reconnect 與既有 P2P 連線流程。
+## V19.9.40｜Plan B Phase 2 安全清理
+- 角色技能維持永久移除：正式玩家 state 不再建立任何技能欄位。
+- 新增 legacy role-skill state sanitizer：Host Reload Recovery、Host snapshot、Guest welcome/state 同步會丟棄舊 `skill / skills / characterSkill / roleSkill / avatarSkill` 類欄位，舊存檔可讀但不再繼續同步。
+- Host 對舊客戶端殘留的 skill / ability action 明確拒絕，避免舊流程被重新啟動。
+- 四大主操作仍只保留「擲骰子／我的房產／策略道具／市場操作」純文字色塊。
+- 清除已無 DOM 使用的舊擲骰／房產主操作 sprite mapping 與舊 q-roll Q04 override；不再以舊 render source 疊新 UI。
+- 「我的房產」仍是唯一房產管理入口；獨立「升級地產」不恢復。
+- 玩家自由交易、轉盤、金幣雨、吃麵維持不可觸發；Host 拒絕舊 action 的保護保留。
+- signaling、DataConnection、heartbeat、Guest reconnect、resume、Host Reload Recovery 核心函式未改動。
+
+## 驗證狀態
+- CODE / STATIC GATE：PASS（13 段 inline JavaScript syntax check、APP_BUILD_ID、主操作 render source、房產單一入口與 reconnect 核心存在性檢查）。
+- DEPLOY：待 main 發布後確認。
+- USER VISUAL PASS：尚未宣告。
+- MULTIPLAYER UAT PASS：尚未宣告，仍需兩裝置不同網路實測。
 
 ## 後續 Plan B
-- 策略道具 V1 擴充與主動詢問流程。
-- 市場操作／股票 × 棋盤連動。
-- 市場事件狀態機。
-- 經濟壓力數據記錄與平衡回歸。
-- Desktop / iPhone landscape / Multiplayer 完整 UAT。
+- 清理已移除小遊戲與玩家交易的 legacy dead code／統計殘留。
+- 策略道具 V1：主動詢問、拒絕不消耗、Host authoritative、事件紀錄與同步。
+- 市場操作深化：持股、成本、現價、市值、未實現／已實現損益與冷卻／付費操作集中。
+- 完成壟斷同步回歸後，再進股票 × 棋盤事件橋接、市場事件 state machine。
+- 最後才做數據化經濟平衡與完整 Desktop / iPhone landscape / Multiplayer UAT。
