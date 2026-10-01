@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.41 WEB｜REV C01 / D01 素材替換版</title>
+<title>財富帝國 V19.9.42 WEB｜舊 Render Source 清除版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.41 WEB - REV C01 / D01 20 張新素材正式替換地產、棋子、事件與委託 render source">
+<meta name="description" content="財富帝國 V19.9.42 WEB - 清除棋盤與都會 UI 舊 render source；未有新素材者改為文字色塊">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6527,7 +6527,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.41</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.42</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6570,7 +6570,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.41 WEB｜REV C01 / D01｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.42 WEB｜舊 Render 清除｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -6623,13 +6623,13 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
         <span><i class="dot" style="background:#e44747"></i>玩家2</span>
         <span><i class="dot" style="background:#18a26e"></i>玩家3</span>
         <span><i class="dot" style="background:#8b5cf6"></i>玩家4</span>
-        <span>粗框＝所有權｜LV.1 / LV.2＝地產升級</span><span class="board-size-chip"><img class="chip-icon" src="assets/first10/nav_map.png" alt="">56 格大地圖</span>
+        <span>粗框＝所有權｜LV.1 / LV.2＝地產升級</span><span class="board-size-chip">56 格大地圖</span>
       </div>
       <div class="board-map-note">外圈維持 56 格；已移除轉盤、金幣雨與吃麵，棋盤改以猜拳擂台／綠燈反應王等短事件為主。中央維持可點擊都會核心。</div>
     </div>
     <div class="side">
-      <div id="marketPanel" class="panel market"><h2><span class="section-icon-title"><span class="v19923-q03-art q03-stock section-stock-art" aria-hidden="true"></span>股票市場</span></h2><div id="market"></div></div>
-      <div id="eventsPanel" class="panel events"><h2><span class="section-icon-title"><img src="data:image/webp;base64,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" alt="">即時事件</span></h2><div id="events" class="event-list"></div></div>
+      <div id="marketPanel" class="panel market"><h2><span class="section-icon-title">股票市場</span></h2><div id="market"></div></div>
+      <div id="eventsPanel" class="panel events"><h2><span class="section-icon-title">即時事件</span></h2><div id="events" class="event-list"></div></div>
     </div>
   </div>
 </div>
@@ -6639,12 +6639,12 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
   📱 手機橫向版會自動把完整 56 格棋盤適應到螢幕，不需要拖曳或縮放；右側固定提供資訊與所有主要操作。
 </div>
 
-<nav id="mobileNav" class="mobile-nav">
-  <button data-mobile-view="board" class="active" onclick="mobileSetView('board')"><span class="nav-art-icon v19923-q02-art q02-map" aria-hidden="true"></span><span>地圖</span></button>
-  <button data-mobile-view="market" onclick="mobileSetView('market')"><span class="nav-art-icon v19923-q02-art q02-stock" aria-hidden="true"></span><span>股票</span></button>
-  <button onclick="openMobileActions()"><span class="q-icon q-quick nav-art-icon" aria-hidden="true"></span><span>操作</span></button>
-  <button data-mobile-view="events" onclick="mobileSetView('events')"><span class="nav-art-icon v19923-q02-art q02-events" aria-hidden="true"></span><span>事件</span></button>
-  <button onclick="openMobileHubMenu()"><span class="nav-art-icon nav-city-icon v19923-q02-art q02-city-core" aria-hidden="true"></span><span>都會</span></button>
+<nav id="mobileNav" class="mobile-nav planb-text-nav">
+  <button data-mobile-view="board" class="active" onclick="mobileSetView('board')"><span>地圖</span></button>
+  <button data-mobile-view="market" onclick="mobileSetView('market')"><span>股票</span></button>
+  <button onclick="openMobileActions()"><span>操作</span></button>
+  <button data-mobile-view="events" onclick="mobileSetView('events')"><span>事件</span></button>
+  <button onclick="openMobileHubMenu()"><span>都會</span></button>
 </nav>
 
 
@@ -7521,7 +7521,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19941";
+const APP_BUILD_ID="19942";
 window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:4,mode:"REV-C01-D01-board-pawns"},q07:{cols:5,rows:4,path:"./assets/v19941/rev_c01_d01_all20_v1.webp?v=19941"},revC01D01:{cols:5,rows:4,count:20}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
@@ -12279,13 +12279,7 @@ function drawCity(){
     ctx.fillStyle=i%2?"#f3c75e":"#66a4e8";ctx.fill()
   }
 
-  // Decorative city skyline
-  const blocks=[[320,705],[390,696],[460,710],[525,700],[890,704],[965,695],[1037,708],[1105,698]];
-  blocks.forEach(([x,y],i)=>{
-    ctx.fillStyle=["#8fb6d8","#87acd0","#7ca0c3","#6e92b6"][i%4];rr(x,y,42,46,8,true,false);
-    ctx.fillStyle="rgba(255,255,255,.72)";
-    for(let r=0;r<2;r++)for(let c=0;c<2;c++)ctx.fillRect(x+9+c*13,y+9+r*14,6,8);
-  });
+  // V19.9.42: decorative little-building row removed.
 
   // Fountain / plaza particles in otherwise empty lower center area.
   for(let i=0;i<7;i++){
@@ -12436,7 +12430,6 @@ function drawTile(t,x,y,index){
     const isProperty=["property","station"].includes(t.type);
     const fg=isProperty?"#17283c":"#fff";
     const label=compactTileName(t.name);
-    if(t.type==="property")drawQ07PropertyArt(t,x+w/2-20,y-h/2+20,30);
 
     ctx.fillStyle=fg;
     ctx.font='1000 30px "Microsoft JhengHei","Noto Sans TC",sans-serif';
@@ -12469,7 +12462,7 @@ function drawTile(t,x,y,index){
   }
 
   if(t.type==="property"){
-    drawQ07PropertyArt(t,x-w/2+18,y-h/2+30,28);
+    /* V19.9.42: board cells no longer draw property house/status art. */
   }else{
     ctx.fillStyle="rgba(255,255,255,.94)";
     ctx.strokeStyle="rgba(61,86,122,.12)";
@@ -12797,13 +12790,13 @@ function openMobileActions(){
   const me=state.players?.[mySeat];
   const myTurn=!!(me&&state.status==="playing"&&state.current===mySeat&&!me.bankrupt);
   const marketCan=myTurn&&!state.rolled&&!state.pending&&!state.groupGame&&(me?.lastMarketOpRound??-99)!==state.round;
-  showModal("⚡ 手機快速操作",`<div class="hub-rule">四個主操作與桌面版一致；房產升級已整合進「我的房產」。</div><div class="hub-grid compact-phone-grid quick-grid">
-    <div class="hub-card compact-phone-card"><div class="hicon"><span class="v19923-q04-art q04-roll" aria-hidden="true"></span></div><div class="hname">擲骰子</div><div class="hdesc">目前回合直接擲骰。</div><button class="primary" ${(!myTurn||state.rolled||state.pending||state.groupGame)?"disabled":""} onclick="closeModal();sendAction('roll')">擲骰</button></div>
-    <div class="hub-card compact-phone-card"><div class="hicon"><span class="q07-property-wrap q07-quick-property-wrap" aria-hidden="true"><span class="q07-property-art q07-house"></span></span></div><div class="hname">我的房產</div><div class="hdesc">查看房產並直接升級。</div><button class="warn" onclick="closeModal();openProperties()">查看</button></div>
-    <div class="hub-card compact-phone-card"><div class="hicon"><span class="q-icon q-quick" aria-hidden="true"></span></div><div class="hname">策略道具</div><div class="hdesc">持有 ${strategyItemTotal(me)} 件；符合情境會主動提示。</div><button class="warn" onclick="closeModal();openStrategyItems()">查看</button></div>
-    <div class="hub-card compact-phone-card"><div class="hicon"><span class="v19923-q03-art q03-stock" aria-hidden="true"></span></div><div class="hname">市場操作</div><div class="hdesc">每 ROUND 一次，強化避險或股票交易。</div><button class="success" ${marketCan?"":"disabled"} onclick="closeModal();openMarketOperations()">操作</button></div>
+  showModal("手機快速操作",`<div class="hub-rule">四個主操作與桌面版一致；舊 ICON 已停用。</div><div class="hub-grid compact-phone-grid quick-grid">
+    <div class="hub-card compact-phone-card"><div class="planb-temp-badge blue">骰</div><div class="hname">擲骰子</div><div class="hdesc">目前回合直接擲骰。</div><button class="primary" ${(!myTurn||state.rolled||state.pending||state.groupGame)?"disabled":""} onclick="closeModal();sendAction('roll')">擲骰</button></div>
+    <div class="hub-card compact-phone-card"><div class="planb-temp-badge amber">房</div><div class="hname">我的房產</div><div class="hdesc">查看房產並直接升級。</div><button class="warn" onclick="closeModal();openProperties()">查看</button></div>
+    <div class="hub-card compact-phone-card"><div class="planb-temp-badge violet">道</div><div class="hname">策略道具</div><div class="hdesc">持有 ${strategyItemTotal(me)} 件；符合情境會主動提示。</div><button class="warn" onclick="closeModal();openStrategyItems()">查看</button></div>
+    <div class="hub-card compact-phone-card"><div class="planb-temp-badge green">市</div><div class="hname">市場操作</div><div class="hdesc">每 ROUND 一次，強化避險或股票交易。</div><button class="success" ${marketCan?"":"disabled"} onclick="closeModal();openMarketOperations()">操作</button></div>
   </div>`,[]);
-  $("modal")?.classList.add("phone-compact-modal","phone-quick-modal")
+  $("modal")?.classList.add("phone-compact-modal","phone-quick-modal","planb-clean-modal")
 }
 function updateMobileTurnBar(){
   if(!state)return;
@@ -13039,9 +13032,6 @@ document.addEventListener("pointerdown",e=>{
     oldCity();
     if(!img.complete||!img.naturalWidth)return;
     /* REV D01 authority: legacy mission canvas sprite disabled. */
-    canvasSprite("insurance",420,636,46);
-    canvasSprite("metro",1060,636,46);
-    canvasSprite("policy",740,470,48);
   };
 
   function applyIcons(){
@@ -13243,12 +13233,7 @@ document.addEventListener("pointerdown",e=>{
   const beforeV194City=drawCity;
   drawCity=function(){
     beforeV194City();
-    const points=[
-            ["bank",1060,356,58,V194_BANK_IMAGE],
-      ["insurance",420,631,58,V194_HUB_IMAGES.insurance],
-      ["metro",1060,631,58,V194_HUB_IMAGES.metro],
-      ["policy",740,470,74,V194_HUB_IMAGES.policy]
-    ];
+    const points=[]; // V19.9.42 legacy central facility image layer disabled.
     points.forEach(([key,x,y,s,im])=>{
       if(!ready(im))return;
       ctx.save();
@@ -13609,7 +13594,7 @@ document.addEventListener("pointerdown",e=>{
   const oldCity=drawCity;
   drawCity=function(){
     oldCity();
-    [["bank",1060,356,60],["insurance",420,631,60]].forEach(([key,x,y,ss])=>{const im=V1990_TILE_IMAGES[key];if(!ready(im))return;ctx.save();ctx.shadowColor="rgba(35,70,110,.20)";ctx.shadowBlur=9;ctx.fillStyle="rgba(255,255,255,.97)";ctx.beginPath();ctx.arc(x,y,ss*.48,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.drawImage(im,x-ss/2,y-ss/2,ss,ss);ctx.restore()})
+    /* V19.9.42 legacy bank/insurance city art disabled. */
   };
   openMobileHubMenu=function(){
     if(!state)return;
@@ -15526,9 +15511,7 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
   /* Canvas source substitution: intercept only known obsolete facility artwork and draw the new sprite cell instead. */
   const revImg=new Image();revImg.decoding="async";revImg.src=REV36_SPRITE;
   const oldDraw=CanvasRenderingContext2D.prototype.drawImage;
-  const sourceRules=[
-    ["hub_city_bank",REV36_INDEX.bank],["hub_rent_insurance",REV36_INDEX.insurance],["hub_metro",REV36_INDEX.metro],["hub_city_policy",REV36_INDEX.civic],["public_night_market",REV36_INDEX.nightFacility]
-  ];
+  const sourceRules=[]; // V19.9.42 old facility-image substitution disabled.
   if(!window.__rev36DrawImagePatched){
     window.__rev36DrawImagePatched=true;
     CanvasRenderingContext2D.prototype.drawImage=function(image,...args){
@@ -15635,6 +15618,28 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
     board:Object.freeze({chance:13,fate:14,tax:15,auction:16,stock:17,commission:18,start:19})
   });
   image.addEventListener("load",()=>{try{drawBoard();render()}catch(e){}});
+})();
+</script>
+
+
+<style id="v19942-planb-render-cleanup">
+.planb-temp-badge{width:58px;height:58px;border-radius:14px;display:inline-flex;align-items:center;justify-content:center;font:1000 24px/1 "Microsoft JhengHei","Noto Sans TC",sans-serif;color:#fff;box-shadow:none!important;background-image:none!important;border:0!important;flex:0 0 58px}
+.planb-temp-badge.blue{background:#4d7fd2}.planb-temp-badge.green{background:#3c9b73}.planb-temp-badge.violet{background:#8867bb}.planb-temp-badge.amber{background:#c88c2f}.planb-temp-badge.rose{background:#d75d72}.planb-temp-badge.cyan{background:#3795a7}
+.planb-new-art{width:58px!important;height:58px!important;display:inline-block!important}
+.planb-clean-modal button,.phone-bank-modal button,.phone-hub-modal button{background-image:none!important;box-shadow:none!important;border-radius:12px!important}
+.planb-text-nav button{background-image:none!important;box-shadow:none!important}.planb-text-nav button>span{font-weight:1000!important}
+body:has(#modal.open) #mobileNav{visibility:hidden!important;pointer-events:none!important}
+.modal-close-top{background:#eef3f8!important;background-image:none!important;color:#233b57!important;border:1px solid #cbd8e6!important;box-shadow:none!important;font-size:0!important}
+.modal-close-top::before{content:"×";font:1000 30px/1 Arial,sans-serif;color:#314b68}
+</style>
+<script id="v19942-center-text-authority">
+(function(){
+  const previous=drawCity;
+  drawCity=function(){
+    previous.apply(this,arguments);
+    const badges=[["銀",1060,356,"#3c9b73"],["保",420,631,"#8867bb"],["捷",1060,631,"#c88c2f"],["標",740,470,"#c88c2f"]];
+    badges.forEach(([label,x,y,color])=>{ctx.save();ctx.beginPath();ctx.arc(x,y,31,0,Math.PI*2);ctx.fillStyle="#fff";ctx.fill();ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(x-23,y-23,46,46,12);ctx.fill();ctx.fillStyle="#fff";ctx.textAlign="center";ctx.textBaseline="middle";ctx.font='1000 22px "Microsoft JhengHei","Noto Sans TC",sans-serif';ctx.fillText(label,x,y+1);ctx.restore()})
+  };
 })();
 </script>
 
