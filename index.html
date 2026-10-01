@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.38 WEB｜Q05/Q06/Q02/Q07 素材替換版</title>
+<title>財富帝國 V19.9.39 WEB｜方案 B 核心重整＋策略深化</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.38 WEB - 完成 Q05/Q06/Q02/Q07 新素材 render source 替換，並移除房產介面的舊 Q03 視覺來源">
+<meta name="description" content="財富帝國 V19.9.39 WEB - 完成 Q05/Q06/Q02/Q07 新素材 render source 替換，並移除房產介面的舊 Q03 視覺來源">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6499,7 +6499,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 </style>
 
 <style id="v19928-q07-property-authority">
-:root{--v19928-q07:url("./assets/v19928/q07_property10_v1.webp?v=19938")}
+:root{--v19928-q07:url("./assets/v19928/q07_property10_v1.webp?v=19939")}
 .q07-property-wrap{position:relative;display:inline-block;width:46px;height:46px;flex:0 0 46px}
 .q07-property-art{display:block;width:100%;height:100%;background-image:var(--v19928-q07);background-size:500% 200%;background-repeat:no-repeat;background-color:transparent}
 .q07-vacant{background-position:0 0}.q07-house{background-position:25% 0}.q07-lv1{background-position:50% 0}.q07-lv2{background-position:75% 0}
@@ -6517,12 +6517,13 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
   .q07-property-badge{width:16px!important;height:16px!important}
 }
 </style>
+<link rel="stylesheet" href="plan-b.css?v=19939">
 </head>
 <body class="lobby-mode">
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.38</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.39</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6565,7 +6566,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.38 WEB｜素材替換 Gate｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.39 WEB｜素材替換 Gate｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -6595,10 +6596,10 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
           <div class="dice-total-row"><span class="dice-total-label">總點數</span><div id="diceTotal" class="dtotal">2</div></div>
         </div>
       </div>
-      <button id="rollBtn" class="primary" onclick="sendAction('roll')"><span class="icon-label"><span class="q-icon q-roll" aria-hidden="true"></span>擲骰子</span></button>
-      <button id="propertyBtn" class="warn" onclick="openProperties()"><span class="icon-label"><span class="q-icon q-property" aria-hidden="true"></span>我的房產</span></button>
-      <button id="strategyBtn" class="warn" onclick="openStrategyItems()"><span class="icon-label"><span class="q-icon q-quick" aria-hidden="true"></span><span class="btn-label">策略道具</span></span></button>
-      <button id="marketOpsBtn" class="success" onclick="openMarketOperations()"><span class="icon-label"><span class="v19923-q03-art q03-stock control-feature-art" aria-hidden="true"></span><span class="btn-label">市場操作</span></span></button>
+      <button id="rollBtn" class="planb-main-action" onclick="planBRollAction()"><span class="icon-label"><span class="btn-label">擲骰子</span></span></button>
+      <button id="propertyBtn" class="planb-main-action" onclick="openProperties()"><span class="icon-label"><span class="btn-label">我的房產</span></span></button>
+      <button id="strategyBtn" class="planb-main-action" onclick="openStrategyItems()"><span class="icon-label"><span class="btn-label">策略道具</span></span></button>
+      <button id="marketOpsBtn" class="planb-main-action" onclick="openMarketOperations()"><span class="icon-label"><span class="btn-label">市場操作</span></span></button>
       <button id="turnLabel" class="ghost" disabled>等待目前玩家</button>
     </div>
   </div>
@@ -6831,8 +6832,8 @@ const MARKET_OPERATION_DEFS={
 const TILE_NAMES=[
 "起點","星港住宅","機會","翡翠商圈","收購中心","海灣公寓","海景大樓","稅務局",
 "中央車站","命運","科技園區","高低骰對決","創新園區","北城豪宅","國際機場","機會",
-"吃麵大賽","金融大道","皇家大道","命運","水岸別墅","能源公司","商務中心","財富賽馬場",
-"黃金商圈","影城","股市事件","山景莊園","30格連消轉盤","機會","綠能園區","國際飯店",
+"猜拳擂台","金融大道","皇家大道","命運","水岸別墅","能源公司","商務中心","財富賽馬場",
+"黃金商圈","影城","股市事件","山景莊園","綠燈反應王","機會","綠能園區","國際飯店",
 "天空豪宅","命運","國際港口","物流中心","百貨商場","全民骰王","湖畔豪宅","法院",
 "機會","晶鑽商業區","跨海大橋","命運","皇后大道","地產拍賣行","寶箱爭奪","城市更新局",
 "醫療中心","頂級飯店","雲端科技城","命運","帝王商圈","奢華莊園","海天御苑","世界中心"];
@@ -6891,7 +6892,7 @@ const NOODLE_BITES_REQUIRED=18;
 const NOODLE_RACE_MS=12000;
 const PROPERTY_MAX_LEVEL=2;
 const CHANCE_MINIGAME_RATE=0.58;
-const CHANCE_MINIGAMES=["rps","number","cup","coinrush","reaction","bomb","card","lane"];
+const CHANCE_MINIGAMES=["rps","number","cup","reaction","bomb","card","lane"];
 const PUBLIC_PROJECT_ICON_ASSETS={
   night:"assets/sixth10/public_night_market.png",
   tower:"assets/first10/public_tech_tower.png",
@@ -7098,11 +7099,11 @@ function buildTiles(){
     else if(name==="股市事件")type="stock";else if(name==="收購中心")type="acquire_center";else if(name==="城市更新局")type="renewal";else if(name==="稅務局")type="tax";
     else if(["中央車站","國際機場","國際港口","跨海大橋"].includes(name))type="station";
     else if(name==="財富賽馬場")type="race";
-    else if(name==="30格連消轉盤")type="wheel";
+    else if(name==="綠燈反應王")type="reaction";
     else if(name==="全民骰王")type="dicegame";
     else if(name==="寶箱爭奪")type="treasure";
     else if(name==="高低骰對決")type="hilow";
-    else if(name==="吃麵大賽")type="noodle";
+    else if(name==="猜拳擂台")type="rps";
     else if(name==="城市公園")type="park";else if(name==="地產拍賣行")type="auction";
     else if(name==="醫療中心")type="hospital";else if(name==="法院")type="court";else if(name==="自由市場")type="market";
     let group=null,price=0,rent=0;
@@ -7226,7 +7227,7 @@ function normalizeRecoveredHostState(savedState){
     else if(!p.ai)p.connected=false;
     return p
   });
-  const timedPending=["auction","group_game","group_game_result"];
+  const timedPending=["auction","group_game","group_game_result","reroll_choice","rent_boost_choice"];
   if(recovered.groupGame||timedPending.includes(recovered.pending?.type)){
     recovered.groupGame=null;
     recovered.pending=null;
@@ -7482,8 +7483,8 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19938";
-window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:2,mode:"natural-dimensions"},q07:{cols:5,rows:2,path:"./assets/v19928/q07_property10_v1.webp?v=19938"}};
+const APP_BUILD_ID="19939";
+window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:2,mode:"natural-dimensions"},q07:{cols:5,rows:2,path:"./assets/v19928/q07_property10_v1.webp?v=19939"}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -8128,11 +8129,8 @@ function hostAction(seat,msg){
     if(cur.seat!==seat||state.rolled||state.pending||state.groupGame)throw Error("只能在自己擲骰前、且沒有其他事件時交易股票");
     stockTrade(p,msg.code,Number(msg.qty)||1,msg.action==="buy_stock");broadcast();return;
   }
-  if(msg.action==="noodle_bite"){
-    handleNoodleBite(p);return;
-  }
-  if(msg.action==="bonus_click"){
-    handleCoinRushClick(p);return;
+  if(msg.action==="noodle_bite"||msg.action==="bonus_click"){
+    throw Error("這個小遊戲已從方案 B 移除");
   }
   if(msg.action==="reaction_click"){
     handleReactionClick(p);return;
@@ -8194,8 +8192,8 @@ function resolveLanding(p){
     startGroupGame("race",p.seat,t.id);
     return
   }
-  if(t.type==="wheel"){
-    startGroupGame("wheel",p.seat,t.id);
+  if(t.type==="reaction"){
+    startGroupGame("reaction",p.seat,t.id);
     return
   }
   if(t.type==="dicegame"){
@@ -8210,8 +8208,8 @@ function resolveLanding(p){
     startGroupGame("hilow",p.seat,t.id);
     return
   }
-  if(t.type==="noodle"){
-    startGroupGame("noodle",p.seat,t.id);
+  if(t.type==="rps"){
+    startGroupGame("rps",p.seat,t.id);
     return
   }
   if(t.type==="acquire_center"){
@@ -9406,7 +9404,7 @@ function startGroupGame(type,triggerSeat,tileId){
     state.groupGame.rates=hiLowRates()
   }
   const trigger=state.players[triggerSeat];
-  const names={race:"財富賽馬",wheel:"30格連消轉盤",dice:"全民骰王",treasure:"寶箱爭奪",hilow:"高低骰對決",noodle:"吃麵大賽",rps:"猜拳擂台",number:"幸運數字",cup:"魔術金杯",coinrush:"金幣雨",reaction:"綠燈反應王",bomb:"數字炸彈",card:"神秘翻牌",lane:"幸運車道"};
+  const names={race:"財富賽馬",wheel:"綠燈反應王",dice:"全民骰王",treasure:"寶箱爭奪",hilow:"高低骰對決",noodle:"猜拳擂台",rps:"猜拳擂台",number:"幸運數字",cup:"魔術金杯",coinrush:"金幣雨",reaction:"綠燈反應王",bomb:"數字炸彈",card:"神秘翻牌",lane:"幸運車道"};
   addEvent("group_game_start",`${trigger.name} 踩到「${state.tiles[tileId].name}」，全房進入${names[type]}！`,{id,type,triggerSeat,tileId,deadline:state.groupGame.deadline});
 
   groupEligiblePlayers().forEach(p=>{
@@ -11911,7 +11909,7 @@ function handleIncomingEvents(){
       if(d)moneyFx("股票股息",d.amount,"持股帶來額外現金流",FINANCE_ICON_ASSETS.dividend);
     }
     else if(e.kind==="group_game_start"){
-      const gameName=({race:"財富賽馬場",wheel:"30格連消轉盤",dice:"全民骰王",treasure:"寶箱爭奪",hilow:"高低骰對決",noodle:"吃麵大賽",rps:"猜拳擂台",number:"幸運數字",cup:"魔術金杯",coinrush:"金幣雨",reaction:"綠燈反應王",bomb:"數字炸彈",card:"神秘翻牌",lane:"幸運車道"}[e.data.type]||"全民競技");
+      const gameName=({race:"財富賽馬場",wheel:"綠燈反應王",dice:"全民骰王",treasure:"寶箱爭奪",hilow:"高低骰對決",noodle:"猜拳擂台",rps:"猜拳擂台",number:"幸運數字",cup:"魔術金杯",coinrush:"金幣雨",reaction:"綠燈反應王",bomb:"數字炸彈",card:"神秘翻牌",lane:"幸運車道"}[e.data.type]||"全民競技");
       queueFx({type:"fx-special-card",html:`<div class="fx-special"><img class="fx-special-art" src="${SPECIAL_FX_ASSETS.minigameTrigger}" alt=""><div class="fx-special-copy"><div class="fx-title">全民競技觸發</div><div class="fx-money">${gameName}</div><div class="fx-sub">${state.players[e.data.triggerSeat]?.name||"玩家"} 踩到特殊格，${e.data.type==="treasure"?"全房一起選寶箱！":"全房一起進入小遊戲！"}</div></div></div>`,duration:2000})
     }
     else if(e.kind==="city_event")queueFx({html:`<div class="fx-title">📢 城市景氣事件</div><div class="fx-money" style="font-size:28px">${e.data.name}</div><div class="fx-sub">租金 ×${e.data.rentMult}｜建築成本 ×${e.data.buildMult}｜市場偏移 ${(e.data.stockBias*100).toFixed(1)}%</div>`,duration:2300});
@@ -12264,9 +12262,9 @@ function compactTileName(name){
     "起點":"起點","星港住宅":"星港","機會":"機會","翡翠商圈":"翡翠","收購中心":"收購",
     "海灣公寓":"海灣","海景大樓":"海景","稅務局":"稅務","中央車站":"中央","命運":"命運",
     "科技園區":"科技","高低骰對決":"高低骰","創新園區":"創新","北城豪宅":"北城","國際機場":"機場",
-    "吃麵大賽":"吃麵","金融大道":"金融","皇家大道":"皇家","水岸別墅":"水岸","能源公司":"能源",
+    "猜拳擂台":"吃麵","金融大道":"金融","皇家大道":"皇家","水岸別墅":"水岸","能源公司":"能源",
     "商務中心":"商務","財富賽馬場":"賽馬","黃金商圈":"黃金","影城":"影城","股市事件":"股市",
-    "山景莊園":"山景","30格連消轉盤":"轉盤","綠能園區":"綠能","國際飯店":"飯店","天空豪宅":"天空",
+    "山景莊園":"山景","綠燈反應王":"轉盤","綠能園區":"綠能","國際飯店":"飯店","天空豪宅":"天空",
     "國際港口":"港口","物流中心":"物流","百貨商場":"百貨","全民骰王":"骰王","湖畔豪宅":"湖畔",
     "法院":"法院","晶鑽商業區":"晶鑽","跨海大橋":"跨海","皇后大道":"皇后","地產拍賣行":"拍賣",
     "寶箱爭奪":"寶箱","城市更新局":"更新","醫療中心":"醫療","頂級飯店":"頂級","雲端科技城":"雲端",
@@ -12277,7 +12275,7 @@ function compactTileName(name){
 
 const Q07_PROPERTY_SPRITE_IMAGE=new Image();
 Q07_PROPERTY_SPRITE_IMAGE.decoding="async";
-Q07_PROPERTY_SPRITE_IMAGE.src="./assets/v19928/q07_property10_v1.webp?v=19938";
+Q07_PROPERTY_SPRITE_IMAGE.src="./assets/v19928/q07_property10_v1.webp?v=19939";
 Q07_PROPERTY_SPRITE_IMAGE.onload=()=>{try{drawBoard()}catch{}};
 const Q07_GRID_COLS=5,Q07_GRID_ROWS=2;
 const Q07_CELLS={
@@ -15218,7 +15216,7 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
 }
 </style>
 <style id="v19936-rev-asset-authority">
-:root{--v19936-rev:url("./assets/v19936/rev_all30_v1.webp?v=19938")}
+:root{--v19936-rev:url("./assets/v19936/rev_all30_v1.webp?v=19939")}
 .rev36-art{display:inline-block;flex:0 0 auto;width:36px;height:36px;background-image:var(--v19936-rev);background-size:500% 600%;background-repeat:no-repeat;background-color:transparent!important;border:0!important;box-shadow:none!important;vertical-align:middle}
 .rev36-stock-buy{background-position:0 0}.rev36-stock-sell{background-position:25% 0}.rev36-tender-accept{background-position:50% 0}.rev36-tender-locked{background-position:75% 0}.rev36-insurance-buy{background-position:100% 0}
 .rev36-insurance-owned{background-position:0 20%}.rev36-holding{background-position:25% 20%}.rev36-cost-basis{background-position:50% 20%}.rev36-pnl-up{background-position:75% 20%}.rev36-pnl-down{background-position:100% 20%}
@@ -15241,7 +15239,7 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
 }
 </style>
 <style id="v19938-direct-action-replacement">
-/* V19.9.38 authority: new action art REPLACES the old pill/button skin. Never layer new art on old warn/success skins. */
+/* V19.9.39 authority: new action art REPLACES the old pill/button skin. Never layer new art on old warn/success skins. */
 .rev38-asset-action{
   appearance:none!important;
   -webkit-appearance:none!important;
@@ -15311,7 +15309,7 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
 </style>
 <script id="v19936-rev-asset-runtime">
 (function(){
-  const REV36_SPRITE="./assets/v19936/rev_all30_v1.webp?v=19938";
+  const REV36_SPRITE="./assets/v19936/rev_all30_v1.webp?v=19939";
   const REV36_CELL=64,REV36_COLS=5;
   const REV36_INDEX={
     stockBuy:0,stockSell:1,tenderAccept:2,tenderLocked:3,insuranceBuy:4,insuranceOwned:5,holding:6,costBasis:7,pnlUp:8,pnlDown:9,
@@ -15455,5 +15453,6 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
   try{renderMarket();drawBoard()}catch(e){}
 })();
 </script>
+<script src="plan-b-core.js?v=19939"></script>
 </body>
 </html>
