@@ -408,7 +408,7 @@
     if(strategyItemCount(me,"fixedStep")<=0){sendAction("roll");return;}
     let buttons="";
     for(let i=1;i<=6;i++){
-      buttons+='<button class="primary" onclick="closeModal();sendAction(\\'fixed_move\\',{steps:'+i+'})">'+i+'</button>';
+      buttons+='<button class="primary" onclick="closeModal();sendAction(\'fixed_move\',{steps:'+i+'})">'+i+'</button>';
     }
     showModal("要使用指定步數券嗎？",
       '<div class="hub-rule">指定步數券 ×'+strategyItemCount(me,"fixedStep")+'。選擇 1～6 步後直接移動；也可以保留道具正常擲骰。</div>'+
@@ -756,8 +756,8 @@
         '<div class="planb-stock-top"><div class="planb-stock-name">'+st.name+' <span class="planb-item-badge">'+code+'</span></div><div class="planb-stock-price">'+st.price+'</div></div>'+
         '<div class="planb-stock-meta">持股 '+qty+'｜均價 '+(avg?avg.toFixed(1):"—")+'｜未實現 '+(pnl>=0?"+":"")+money(pnl)+'</div>'+
         '<div class="planb-stock-actions"><input id="planb_q_'+code+'" type="number" min="1" value="1">'+
-          '<button class="success" onclick="planBStockAction(\\'buy_stock\\',\\''+code+'\\')">買</button>'+
-          '<button class="danger" onclick="planBStockAction(\\'sell_stock\\',\\''+code+'\\')" '+(qty<=0?'disabled':'')+'>賣</button>'+
+          '<button class="success" onclick="planBStockAction(\'buy_stock\',\''+code+'\')">買</button>'+
+          '<button class="danger" onclick="planBStockAction(\'sell_stock\',\''+code+'\')" '+(qty<=0?'disabled':'')+'>賣</button>'+
         '</div>'+
       '</div>';
     }).join("");
@@ -769,7 +769,7 @@
       const blocked=active||!can||me.cash<cashNeed||(key==="hedge"&&stockValue(me)<=0);
       return '<div class="market-op-card '+(active?'active':'')+'"><div class="market-op-icon">'+d.icon+'</div><div class="market-op-name">'+d.name+'</div>'+
         '<div class="market-op-desc">'+d.desc+'</div><div class="market-op-cost">'+(active?'等待觸發':(coupon?'原價 '+money(d.cost)+'｜有折抵券':'費用 '+money(d.cost)))+'</div>'+
-        '<button class="primary" '+(blocked?'disabled':'')+' onclick="requestMarketOperation(\\''+key+'\\')">'+(active?'已啟用':(!can?'本 ROUND 已使用':'啟用操作'))+'</button></div>';
+        '<button class="primary" '+(blocked?'disabled':'')+' onclick="requestMarketOperation(\''+key+'\')">'+(active?'已啟用':(!can?'本 ROUND 已使用':'啟用操作'))+'</button></div>';
     }).join("");
 
     const body=
