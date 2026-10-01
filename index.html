@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.39 WEB｜Q05/Q06/Q02/Q07 素材替換版</title>
+<title>財富帝國 V19.9.40 WEB｜Plan B Phase 2 安全清理版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.39 WEB - 完成 Q05/Q06/Q02/Q07 新素材 render source 替換，並移除房產介面的舊 Q03 視覺來源">
+<meta name="description" content="財富帝國 V19.9.40 WEB - Plan B Phase 2：角色技能 legacy state 清理、主操作舊 render source 收尾，保留多人重連主幹">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6499,7 +6499,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 </style>
 
 <style id="v19928-q07-property-authority">
-:root{--v19928-q07:url("./assets/v19928/q07_property10_v1.webp?v=19939")}
+:root{--v19928-q07:url("./assets/v19928/q07_property10_v1.webp?v=19940")}
 .q07-property-wrap{position:relative;display:inline-block;width:46px;height:46px;flex:0 0 46px}
 .q07-property-art{display:block;width:100%;height:100%;background-image:var(--v19928-q07);background-size:500% 200%;background-repeat:no-repeat;background-color:transparent}
 .q07-vacant{background-position:0 0}.q07-house{background-position:25% 0}.q07-lv1{background-position:50% 0}.q07-lv2{background-position:75% 0}
@@ -6522,7 +6522,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.39</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.40</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6565,7 +6565,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.39 WEB｜素材替換 Gate｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.40 WEB｜Plan B Phase 2｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -7142,7 +7142,20 @@ function refreshMonopolyState(){
     state.monopolyOwners[group]=owner;
   }
 }
-function snapshot(){return JSON.parse(JSON.stringify(state))}
+const LEGACY_ROLE_SKILL_KEYS=Object.freeze(["skill","skills","characterSkill","characterSkills","roleSkill","roleSkills","avatarSkill","avatarSkills"]);
+function stripLegacyRoleSkills(gameState){
+  if(!gameState||typeof gameState!=="object")return gameState;
+  const strip=obj=>{
+    if(!obj||typeof obj!=="object")return;
+    for(const key of LEGACY_ROLE_SKILL_KEYS){
+      if(Object.prototype.hasOwnProperty.call(obj,key))delete obj[key]
+    }
+  };
+  strip(gameState);
+  if(Array.isArray(gameState.players))for(const p of gameState.players)strip(p);
+  return gameState
+}
+function snapshot(){return stripLegacyRoleSkills(JSON.parse(JSON.stringify(state)))}
 function safeConnSend(conn,msg){
   if(!conn?.open)return false;
   try{
@@ -7240,7 +7253,7 @@ function loadHostRecovery(code){
   }catch{return null}
 }
 function normalizeRecoveredHostState(savedState){
-  const recovered=JSON.parse(JSON.stringify(savedState));
+  const recovered=stripLegacyRoleSkills(JSON.parse(JSON.stringify(savedState)));
   recovered.players=(recovered.players||[]).map((p,seat)=>{
     if(!p)return p;
     if(seat===0){p.connected=true;p.ai=false}
@@ -7503,8 +7516,8 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19939";
-window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:2,mode:"natural-dimensions"},q07:{cols:5,rows:2,path:"./assets/v19928/q07_property10_v1.webp?v=19939"}};
+const APP_BUILD_ID="19940";
+window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:2,mode:"natural-dimensions"},q07:{cols:5,rows:2,path:"./assets/v19928/q07_property10_v1.webp?v=19940"}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -7993,7 +8006,7 @@ function wireHostConn(conn,name,resumeInfo=null){
     else if(msg.type==="welcome"){
       clearTimeout(joinTimeoutTimer);
       clearTimeout(initialJoinRetryTimer);initialJoinRetryTimer=null;initialJoinRetryAttempts=0;
-      mySeat=msg.seat;state=msg.state;
+      mySeat=msg.seat;state=stripLegacyRoleSkills(msg.state);
       if(msg.resumeToken)clientResumeToken=msg.resumeToken;
       guestDisplayName=name;
       guestReconnectInFlight=false;guestReconnectPendingReason="";guestConnectedSince=Date.now();
@@ -8007,7 +8020,7 @@ function wireHostConn(conn,name,resumeInfo=null){
       showNetRecovery(msg.resumed?"已重新接回原座位，進度同步完成":"連線正常","good",1800);
       render();handleIncomingEvents();saveGuestResume()
     }else if(msg.type==="state"){
-      state=msg.state;render();handleIncomingEvents();saveGuestResume()
+      state=stripLegacyRoleSkills(msg.state);render();handleIncomingEvents();saveGuestResume()
     }else if(msg.type==="reject"){
       guestReconnectInFlight=false;
       clearTimeout(joinTimeoutTimer);toast(msg.reason);$("connectionText").textContent="❌ "+msg.reason;
@@ -8078,6 +8091,8 @@ function handleClientMessage(seat,msg){
 function hostAction(seat,msg){
   const p=state.players[seat],cur=state.players[state.current];
   if(state.status!=="playing")throw Error("遊戲尚未開始");
+  const legacyAction=String(msg?.action||"");
+  if(/skill|ability/i.test(legacyAction))throw Error("角色技能已永久移除");
   if(msg.action==="roll"){
     if(cur.seat!==seat)throw Error("還沒輪到你");if(state.rolled||state.pending)throw Error("本回合現在不能擲骰");
     const d1=1+Math.floor(Math.random()*6),d2=1+Math.floor(Math.random()*6);state.rolled=true;
@@ -12314,7 +12329,7 @@ function compactTileName(name){
 
 const Q07_PROPERTY_SPRITE_IMAGE=new Image();
 Q07_PROPERTY_SPRITE_IMAGE.decoding="async";
-Q07_PROPERTY_SPRITE_IMAGE.src="./assets/v19928/q07_property10_v1.webp?v=19939";
+Q07_PROPERTY_SPRITE_IMAGE.src="./assets/v19928/q07_property10_v1.webp?v=19940";
 Q07_PROPERTY_SPRITE_IMAGE.onload=()=>{try{drawBoard()}catch{}};
 const Q07_GRID_COLS=5,Q07_GRID_ROWS=2;
 const Q07_CELLS={
@@ -14730,9 +14745,7 @@ body.phone-landscape .minigame-overlay .minigame-card.wheel-big-card{
 .q-commission{background-position:50% 0%}
 .q-disabled{background-position:75% 0%}
 .q-metro{background-position:100% 0%}
-.q-property{background-position:0% 100%}
 .q-quick{background-position:25% 100%}
-.q-roll{background-position:50% 100%}
 .q-trade{background-position:75% 100%}
 .q-upgrade{background-position:100% 100%}
 
@@ -15156,12 +15169,6 @@ body.phone-landscape .modal.mission-choice-modal #modalBody > .hub-card.active{
 .dice-status-icon.v19923-q04-art{width:24px!important;height:24px!important;margin-right:5px!important}
 .fx-special-art.v19923-q04-art{display:block!important}
 
-.q-icon.q-roll{
-  background-image:var(--v19923-q04)!important;
-  background-size:500% 200%!important;
-  background-position:25% 100%!important;
-}
-
 /* V19.9.23: 市政標案與委託/捷運共用同一個手機橫向三欄 authority。 */
 body.phone-landscape .modal.project-choice-modal{align-items:center!important;justify-content:center!important}
 body.phone-landscape .modal.project-choice-modal .modal-card{
@@ -15255,7 +15262,7 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
 }
 </style>
 <style id="v19936-rev-asset-authority">
-:root{--v19936-rev:url("./assets/v19936/rev_all30_v1.webp?v=19939")}
+:root{--v19936-rev:url("./assets/v19936/rev_all30_v1.webp?v=19940")}
 .rev36-art{display:inline-block;flex:0 0 auto;width:36px;height:36px;background-image:var(--v19936-rev);background-size:500% 600%;background-repeat:no-repeat;background-color:transparent!important;border:0!important;box-shadow:none!important;vertical-align:middle}
 .rev36-stock-buy{background-position:0 0}.rev36-stock-sell{background-position:25% 0}.rev36-tender-accept{background-position:50% 0}.rev36-tender-locked{background-position:75% 0}.rev36-insurance-buy{background-position:100% 0}
 .rev36-insurance-owned{background-position:0 20%}.rev36-holding{background-position:25% 20%}.rev36-cost-basis{background-position:50% 20%}.rev36-pnl-up{background-position:75% 20%}.rev36-pnl-down{background-position:100% 20%}
@@ -15394,7 +15401,7 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
 </style>
 <script id="v19936-rev-asset-runtime">
 (function(){
-  const REV36_SPRITE="./assets/v19936/rev_all30_v1.webp?v=19939";
+  const REV36_SPRITE="./assets/v19936/rev_all30_v1.webp?v=19940";
   const REV36_CELL=64,REV36_COLS=5;
   const REV36_INDEX={
     stockBuy:0,stockSell:1,tenderAccept:2,tenderLocked:3,insuranceBuy:4,insuranceOwned:5,holding:6,costBasis:7,pnlUp:8,pnlDown:9,
