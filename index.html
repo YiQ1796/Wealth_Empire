@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.30 WEB｜Q05/Q06/Q02/Q07 素材替換版</title>
+<title>財富帝國 V19.9.31 WEB｜Q05/Q06/Q02/Q07 素材替換版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.30 WEB - 完成 Q05/Q06/Q02/Q07 新素材 render source 替換，並移除房產介面的舊 Q03 視覺來源">
+<meta name="description" content="財富帝國 V19.9.31 WEB - 完成 Q05/Q06/Q02/Q07 新素材 render source 替換，並移除房產介面的舊 Q03 視覺來源">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6499,7 +6499,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 </style>
 
 <style id="v19928-q07-property-authority">
-:root{--v19928-q07:url("./assets/v19928/q07_property10_v1.webp?v=19930")}
+:root{--v19928-q07:url("./assets/v19928/q07_property10_v1.webp?v=19931")}
 .q07-property-wrap{position:relative;display:inline-block;width:46px;height:46px;flex:0 0 46px}
 .q07-property-art{display:block;width:100%;height:100%;background-image:var(--v19928-q07);background-size:500% 200%;background-repeat:no-repeat;background-color:transparent}
 .q07-vacant{background-position:0 0}.q07-house{background-position:25% 0}.q07-lv1{background-position:50% 0}.q07-lv2{background-position:75% 0}
@@ -6522,7 +6522,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.30</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.31</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6565,7 +6565,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.30 WEB｜素材替換 Gate｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.31 WEB｜素材替換 Gate｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -7479,8 +7479,8 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19930";
-window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:2,mode:"natural-dimensions"},q07:{cols:5,rows:2,path:"./assets/v19928/q07_property10_v1.webp?v=19930"}};
+const APP_BUILD_ID="19931";
+window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:2,mode:"natural-dimensions"},q07:{cols:5,rows:2,path:"./assets/v19928/q07_property10_v1.webp?v=19931"}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -8282,12 +8282,18 @@ function buildCost(t){
   const baseRate=t.level<=0 ? 0.35 : 0.50;
   return Math.max(100,Math.round(t.price*baseRate*(state.cityEvent?.buildMult||1)))
 }
+const PROPERTY_RENT_BOOST=1.20;
+function propertyRentAmount(t,level,{requireOwner=true}={}){
+  if(!t||t.type!=="property"||t.mortgaged)return 0;
+  if(requireOwner&&t.owner==null)return 0;
+  const lv=Math.max(0,Math.min(PROPERTY_MAX_LEVEL,Number(level)||0));
+  const levelMult=[1,2,4][lv];
+  return Math.max(0,Math.round((t.rent||0)*levelMult*PROPERTY_RENT_BOOST*(state.cityEvent?.rentMult||1)))
+}
 function rentAtLevel(t,level){
   if(t.mortgaged||t.owner==null)return 0;
   if(t.type==="station")return rentFor(t);
-  const lv=Math.max(0,Math.min(PROPERTY_MAX_LEVEL,Number(level)||0));
-  const mult=[1,2,4][lv];
-  return Math.max(0,Math.round(t.rent*mult*(state.cityEvent?.rentMult||1)))
+  return propertyRentAmount(t,level)
 }
 function canUpgrade(p,t){
   if(!p||!t)return[false,"資料不存在"];
@@ -8307,9 +8313,7 @@ function rentFor(t){
     const n=o.properties.map(id=>state.tiles[id]).filter(x=>x.type==="station"&&!x.mortgaged).length;
     r=Math.round(t.rent*2**Math.max(0,n-1))
   }else{
-    const m=[1,2,4];
-    const lv=Math.max(0,Math.min(PROPERTY_MAX_LEVEL,t.level||0));
-    r=Math.round(t.rent*m[lv])
+    r=propertyRentAmount(t,t.level)
   }
   return Math.max(0,Math.round(r*(state.cityEvent?.rentMult||1)))
 }
@@ -8816,6 +8820,7 @@ function canForceAcquire(buyer,t){
   if(!buyer||!t)return[false,"資料不存在"];
   if(t.type!=="property")return[false,"只有一般地產可強制徵收"];
   if(t.owner==null||t.owner===buyer.seat)return[false,"此地不能強制徵收"];
+  if((t.level||0)>=PROPERTY_MAX_LEVEL)return[false,"滿級 Lv.2 地產受保護，只能透過一般收購協商"];
   if(buyer.lastForcedAcquireRound===state.round)return[false,"本 ROUND 已使用過一次強制徵收"];
   const price=forcedAcquisitionPrice(t);
   if(buyer.cash<price)return[false,`現金不足，需要 $${price.toLocaleString()}`];
@@ -10236,7 +10241,7 @@ function handlePending(){
     if(p.seat!==mySeat){closeModal();return}
     const t=state.tiles[p.tile];
     showModal("🏠 購買地產",
-      `你來到「${t.name}」。<br><br>售價：<b>$${t.price.toLocaleString()}</b><br>基本過路費：$${t.rent.toLocaleString()}<br><br><span style="font-size:11px;color:#64748b">若放棄購買，這塊地會立刻進入全房公開拍賣。</span>`,
+      `你來到「${t.name}」。<br><br>售價：<b>${t.price.toLocaleString()}</b><br>目前過路費：${propertyRentAmount(t,0,{requireOwner:false}).toLocaleString()}<br><br><span style="font-size:11px;color:#64748b">若放棄購買，這塊地會立刻進入全房公開拍賣。</span>`,
       [["買下","success",()=>sendAction("buy_property")],["放棄並拍賣","warn",()=>sendAction("pass_property")]]
     );
     return
@@ -10247,6 +10252,7 @@ function handlePending(){
     if(p.seat!==mySeat){closeModal();return}
     const t=state.tiles[p.tile],owner=state.players[t.owner],me=state.players[mySeat];
     const level=t.type==="property"?propertyLevelName(t.level):"交通設施";
+    const maxLevelProtected=t.type==="property"&&(t.level||0)>=PROPERTY_MAX_LEVEL;
     const shieldCount=strategyItemCount(me,"rentShield"),shieldPay=Math.ceil(p.rent*.5);
     showModal("🏛 路過對手地產",
       `<div class="foreign-property-card">
@@ -10263,9 +10269,9 @@ function handlePending(){
             <span class="rent-strategy-slot">${shieldCount?`<div class="strategy-context-inline"><b>🛡️ 可使用租金護盾 ×${shieldCount}</b><span>本次過路費可從 ${p.rent.toLocaleString()} 降為 <b>${shieldPay.toLocaleString()}</b>。要現在使用嗎？</span></div><button class="success" onclick="sendAction('pay_rent',{useItem:true})">使用護盾｜付 ${shieldPay.toLocaleString()}</button><button class="ghost" onclick="sendAction('pay_rent',{useItem:false})">保留道具｜照付全額</button>`:`<button class="primary" onclick="sendAction('pay_rent',{useItem:false})">支付過路費</button>`}</span>
           </div>
           <div class="foreign-choice force">
-            <div class="title v198-option-title"><img src="${FINANCE_ICON_ASSETS.forcedAcquire}" alt="">高價強制徵收</div>
-            <div class="money">$${p.forcePrice.toLocaleString()}</div>
-            <div class="desc">約為市場價 2.5 倍。地主不能拒絕，原有 Lv.${t.level||0} 升級會完整保留。每位玩家每 ROUND 最多使用一次。</div>
+            <div class="title v198-option-title"><img src="${FINANCE_ICON_ASSETS.forcedAcquire}" alt="">${maxLevelProtected?"滿級地產保護":"高價強制徵收"}</div>
+            <div class="money">${maxLevelProtected?"不可強制徵收":"$"+p.forcePrice.toLocaleString()}</div>
+            <div class="desc">${maxLevelProtected?"此地已升至最高 Lv.2，不能被強制徵收；一般收購協商仍保留，地主可以接受、拒絕或還價。":`約為市場價 2.5 倍。地主不能拒絕，原有 Lv.${t.level||0} 升級會完整保留。每位玩家每 ROUND 最多使用一次。`}</div>
             <button class="warn" ${p.canForce?"":"disabled"} onclick="sendAction('force_acquire')">${p.canForce?"強制徵收這塊地":p.forceReason}</button>
           </div>
         </div>
@@ -12243,7 +12249,7 @@ function compactTileName(name){
 
 const Q07_PROPERTY_SPRITE_IMAGE=new Image();
 Q07_PROPERTY_SPRITE_IMAGE.decoding="async";
-Q07_PROPERTY_SPRITE_IMAGE.src="./assets/v19928/q07_property10_v1.webp?v=19930";
+Q07_PROPERTY_SPRITE_IMAGE.src="./assets/v19928/q07_property10_v1.webp?v=19931";
 Q07_PROPERTY_SPRITE_IMAGE.onload=()=>{try{drawBoard()}catch{}};
 const Q07_GRID_COLS=5,Q07_GRID_ROWS=2;
 const Q07_CELLS={
