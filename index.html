@@ -15408,12 +15408,6 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
     greenLow:"rev36-green-low",greenMid:"rev36-green-mid",greenHigh:"rev36-green-high",civic:"rev36-fac-civic",commission:"rev36-fac-commission",bank:"rev36-fac-bank",insurance:"rev36-fac-insurance",metro:"rev36-fac-metro",nightFacility:"rev36-fac-night",realized:"rev36-realized",unrealized:"rev36-unrealized"
   };
   function art(key,extra=""){return `<span class="rev36-art ${cls[key]||""} ${extra}" aria-hidden="true"></span>`}
-  function projectTierKey(key,tier){
-    const map={night:["nightLow","nightMid","nightHigh"],tower:["towerLow","towerMid","towerHigh"],harbor:["wharfLow","wharfMid","wharfHigh"],green:["greenLow","greenMid","greenHigh"]};
-    return (map[key]||map.night)[Math.max(0,Math.min(2,tier))]
-  }
-  function projectHeroKey(key){return ({night:"nightFacility",tower:"towerLow",harbor:"wharfLow",green:"greenLow"})[key]||"civic"}
-
   renderMarket=function(){
     const me=state.players[mySeat];
     if(!me){$("market").innerHTML="";return}
@@ -15454,12 +15448,12 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
     const alreadyPicked=(me.lastMissionPickRound??-99)===state.round;
     if(me.cityMission){
       const d=CITY_MISSIONS[me.cityMission.type],prog=missionProgress(me),pct=Math.min(100,Math.round(prog.progress/prog.target*100));
-      showModal("城市委託中心",`<div class="hub-rule">每位玩家每 ROUND 最多承接 1 次委託。同時間只能進行一項；完成後可以領獎，但本 ROUND 不能再接第二張。</div><div class="hub-card active"><div class="hicon">${art("commission","rev36-hub-art")}</div><div class="hname">${d.name}</div><div class="hdesc">${d.desc}</div><div class="mission-progress"><div style="width:${pct}%"></div></div><div class="hvalue">${prog.progress} / ${prog.target}｜獎金 $${me.cityMission.reward.toLocaleString()}</div></div>`,[...(prog.done?[["領取委託獎金","success",()=>sendAction("hub_mission_claim")]]:[]),["關閉","ghost",closeModal]]);
+      showModal("城市委託中心",`<div class="hub-rule">每位玩家每 ROUND 最多承接 1 次委託。同時間只能進行一項；完成後可以領獎，但本 ROUND 不能再接第二張。</div><div class="hub-card active"><div class="hicon"><span class="rev41-cd-art rev41-commission planb-new-art" aria-hidden="true"></span></div><div class="hname">${d.name}</div><div class="hdesc">${d.desc}</div><div class="mission-progress"><div style="width:${pct}%"></div></div><div class="hvalue">${prog.progress} / ${prog.target}｜獎金 $${me.cityMission.reward.toLocaleString()}</div></div>`,[...(prog.done?[["領取委託獎金","success",()=>sendAction("hub_mission_claim")]]:[]),["關閉","ghost",closeModal]]);
       $("modal")?.classList.add("hub-choice-modal","mission-choice-modal","planb-clean-modal");return;
     }
     const canPick=can&&!alreadyPicked;
     const lockNote=alreadyPicked?`<div class="hub-rule mission-round-lock">⏳ 你在 ROUND ${state.round} 已經承接過一次城市委託。本 ROUND 不可再接；下一 ROUND 會重新開放。</div>`:`<div class="hub-rule">每位玩家每 ROUND 最多承接 1 次委託。任務組合每 ROUND 輪替。</div>`;
-    const cards=missionChoices().map(k=>{const d=CITY_MISSIONS[k];return `<div class="hub-card ${alreadyPicked?"mission-locked":""}"><div class="hicon">${art("commission","rev36-hub-art")}</div><div class="hname">${d.name}</div><div class="hdesc">${d.desc}</div><div class="hvalue">+$${d.reward.toLocaleString()}</div><button class="primary" ${canPick?"":"disabled"} onclick="sendAction('hub_mission_pick',{mission:'${k}'})">${alreadyPicked?"本 ROUND 已承接":"接下委託"}</button></div>`}).join("");
+    const cards=missionChoices().map(k=>{const d=CITY_MISSIONS[k];return `<div class="hub-card ${alreadyPicked?"mission-locked":""}"><div class="hicon"><span class="rev41-cd-art rev41-commission planb-new-art" aria-hidden="true"></span></div><div class="hname">${d.name}</div><div class="hdesc">${d.desc}</div><div class="hvalue">+$${d.reward.toLocaleString()}</div><button class="primary" ${canPick?"":"disabled"} onclick="sendAction('hub_mission_pick',{mission:'${k}'})">${alreadyPicked?"本 ROUND 已承接":"接下委託"}</button></div>`}).join("");
     showModal("城市委託中心",`${lockNote}<div class="hub-grid">${cards}</div>`,[["關閉","ghost",closeModal]]);$("modal")?.classList.add("hub-choice-modal","mission-choice-modal","planb-clean-modal");
   };
 
