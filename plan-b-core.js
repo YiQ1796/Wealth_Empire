@@ -61,6 +61,7 @@
 
   const base={
     renderControls:window.renderControls,
+    renderMarket:window.renderMarket,
     handlePending:window.handlePending,
     hostAction:window.hostAction,
     resolveLanding:window.resolveLanding,
@@ -677,8 +678,11 @@
       return;
     }
 
-    if((msg.action==="buy_stock"||msg.action==="sell_stock")&&p.planB&&p.planB.stockTradeLockedRound===state.round){
-      throw Error("你本回合剛造成棋盤產業價格變動，為避免自買自拉套利，本回合不能再交易股票");
+    if(msg.action==="buy_stock"||msg.action==="sell_stock"){
+      if(msg.context!=="market_center")throw Error("股票買賣請從「市場操作」進行");
+      if(p.planB&&p.planB.stockTradeLockedRound===state.round){
+        throw Error("你本回合剛造成棋盤產業價格變動，為避免自買自拉套利，本回合不能再交易股票");
+      }
     }
 
     return base.hostAction.apply(this,arguments);
@@ -781,7 +785,39 @@
   window.planBStockAction=function(action,code){
     const input=document.getElementById("planb_q_"+code);
     const qty=Math.max(1,parseInt(input&&input.value||"1",10));
-    sendAction(action,{code:code,qty:qty});
+    sendAction(action,{code:code,qty:qty,context:"market_center"});
+  };
+
+  window.renderMarket=function(){
+    if(!hasState())return base.renderMarket.apply(this,arguments);
+    const me=state.players[mySeat];
+    const root=document.getElementById("market");
+    if(!root||!me)return;
+    let totalValue=0,totalCost=0;
+    const rows=Object.entries(state.stocks).map(function(entry){
+      const code=entry[0],st=entry[1],h=me.stocks&&me.stocks[code]||{qty:0,avg:0};
+      const qty=Number(h.qty||0),avg=Number(h.avg||0),value=qty*st.price,cost=qty*avg,pnl=value-cost;
+      totalValue+=value;totalCost+=cost;
+      const d=Number(st.price||0)-Number(st.prev||0);
+      const pct=Number(st.prev||0)?d/Number(st.prev)*100:0;
+      return '<div class="planb-stock-row">'+
+        '<div class="planb-stock-top"><div class="planb-stock-name">'+st.name+' <span class="planb-item-badge">'+code+'</span></div>'+
+        '<div class="planb-stock-price">'+st.price+' '+(pct>=0?'▲ ':'▼ ')+Math.abs(pct).toFixed(1)+'%</div></div>'+
+        '<div class="planb-stock-meta">'+(qty?('持股 '+qty+'｜均價 '+avg.toFixed(1)+'｜損益 '+(pnl>=0?'+':'')+money(pnl)):'尚未持股')+'</div>'+
+      '</div>';
+    }).join("");
+    const totalPnl=totalValue-totalCost;
+    const ev=state.cityEvent||{name:"正常景氣"};
+    root.innerHTML=
+      '<div class="planb-market-event"><strong>'+ev.name+'</strong><span>'+marketEventEffectsText(ev)+'</span></div>'+
+      '<div class="planb-portfolio-grid">'+
+        '<div><span>持股市值</span><b>'+money(totalValue)+'</b></div>'+
+        '<div><span>未實現損益</span><b>'+(totalPnl>=0?'+':'')+money(totalPnl)+'</b></div>'+
+        '<div><span>已實現損益</span><b>'+((me.realizedPnl||0)>=0?'+':'')+money(me.realizedPnl||0)+'</b></div>'+
+        '<div><span>持股種類</span><b>'+Object.values(me.stocks||{}).filter(function(h){return Number(h.qty||0)>0;}).length+'</b></div>'+
+      '</div>'+
+      '<div class="planb-stock-compact">'+rows+'</div>'+
+      '<button class="primary" style="width:100%" onclick="openMarketOperations()">開啟市場操作｜買賣股票 / 策略</button>';
   };
 
   window.openMarketOperations=function(){
