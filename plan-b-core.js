@@ -68,7 +68,8 @@
     broadcast:window.broadcast,
     upgradeProperty:window.upgradeProperty,
     liquidate:window.liquidate,
-    nextTurn:window.nextTurn
+    nextTurn:window.nextTurn,
+    drawTile:window.drawTile
   };
 
   function money(v){return "$"+Math.round(Number(v)||0).toLocaleString();}
@@ -304,6 +305,46 @@
   };
 
   window.openUpgradeCenter=function(){openProperties();};
+
+  // Player free-trade UI is permanently retired in Plan B. Keep legacy names harmless for old callers.
+  window.openTradeCenter=function(){toast("玩家自由交易已取消");};
+  window.openTradeWith=function(){toast("玩家自由交易已取消");};
+  window.submitTradeOffer=function(){toast("玩家自由交易已取消");};
+
+  // Keep the current flat board angle/layout, but make region strategy visible on every property tile.
+  window.drawTile=function(t,x,y,index){
+    const result=base.drawTile.apply(this,arguments);
+    if(!t||!window.ctx)return result;
+    const size=tileSizeForIndex(index);
+    const phone=mobileReadableBoard();
+    ctx.save();
+    ctx.textAlign="center";
+    ctx.textBaseline="middle";
+
+    if(t.type==="property"&&t.group){
+      const shortName=String(t.group).replace(/區$/,"");
+      const badgeW=phone?Math.min(size.w-12,70):Math.min(size.w-10,50);
+      const badgeH=phone?18:13;
+      const bx=x-size.w/2+badgeW/2+5;
+      const by=y+size.h/2-badgeH/2-4;
+      ctx.fillStyle="rgba(25,54,82,.78)";
+      rr(bx-badgeW/2,by-badgeH/2,badgeW,badgeH,badgeH/2,true,false);
+      ctx.fillStyle="#fff";
+      ctx.font='1000 '+(phone?11:8)+'px "Microsoft JhengHei","Noto Sans TC",sans-serif';
+      ctx.fillText(shortName,bx,by,badgeW-6);
+    }else if(t.type==="rps"||t.type==="reaction"){
+      const label=t.type==="rps"?"猜拳":"反應";
+      const badgeW=phone?70:48,badgeH=phone?20:14;
+      const by=y+size.h/2-badgeH/2-5;
+      ctx.fillStyle="rgba(255,255,255,.92)";
+      rr(x-badgeW/2,by-badgeH/2,badgeW,badgeH,badgeH/2,true,false);
+      ctx.fillStyle="#2d4965";
+      ctx.font='1000 '+(phone?12:9)+'px "Microsoft JhengHei","Noto Sans TC",sans-serif';
+      ctx.fillText(label,x,by,badgeW-6);
+    }
+    ctx.restore();
+    return result;
+  };
 
   window.openProperties=function(){
     if(!hasState())return;
