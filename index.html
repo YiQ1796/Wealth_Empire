@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.31 WEB｜Q05/Q06/Q02/Q07 素材替換版</title>
+<title>財富帝國 V19.9.32 WEB｜Q05/Q06/Q02/Q07 素材替換版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.31 WEB - 完成 Q05/Q06/Q02/Q07 新素材 render source 替換，並移除房產介面的舊 Q03 視覺來源">
+<meta name="description" content="財富帝國 V19.9.32 WEB - 完成 Q05/Q06/Q02/Q07 新素材 render source 替換，並移除房產介面的舊 Q03 視覺來源">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6499,7 +6499,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 </style>
 
 <style id="v19928-q07-property-authority">
-:root{--v19928-q07:url("./assets/v19928/q07_property10_v1.webp?v=19931")}
+:root{--v19928-q07:url("./assets/v19928/q07_property10_v1.webp?v=19932")}
 .q07-property-wrap{position:relative;display:inline-block;width:46px;height:46px;flex:0 0 46px}
 .q07-property-art{display:block;width:100%;height:100%;background-image:var(--v19928-q07);background-size:500% 200%;background-repeat:no-repeat;background-color:transparent}
 .q07-vacant{background-position:0 0}.q07-house{background-position:25% 0}.q07-lv1{background-position:50% 0}.q07-lv2{background-position:75% 0}
@@ -6522,7 +6522,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.31</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.32</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6565,7 +6565,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.31 WEB｜素材替換 Gate｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.32 WEB｜素材替換 Gate｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -6946,11 +6946,14 @@ const CITY_MISSIONS={
   minigame:{name:"競技明星",icon:"🏆",target:1,reward:3000,desc:"贏得 1 次小遊戲"}
 };
 const GAME_MAX_ROUNDS=30;
+const BANK_DEPOSIT_RATE=.20;
+const PUBLIC_DIVIDEND_ROUNDS=3;
+const PUBLIC_LEVEL_BONUS_RATE=.15;
 const PUBLIC_PROJECTS={
-  night:{name:"都會夜市",icon:"夜",emoji:"🏮",yieldRate:.07,desc:"人氣商圈，每 4 ROUND 依持分發放 7% 分紅。"},
-  tower:{name:"智慧科技塔",icon:"科",emoji:"🏙️",yieldRate:.10,desc:"高波動科技開發，每 4 ROUND 依持分發放 10% 分紅。"},
-  harbor:{name:"觀光碼頭",icon:"港",emoji:"⚓",yieldRate:.08,desc:"觀光與交通建設，每 4 ROUND 依持分發放 8% 分紅。"},
-  green:{name:"綠能公園",icon:"綠",emoji:"🌿",yieldRate:.06,desc:"穩定公共建設，每 4 ROUND 依持分發放 6% 分紅。"}
+  night:{name:"都會夜市",icon:"夜",emoji:"🏮",yieldRate:.12,desc:"人氣商圈，每 3 ROUND 依持分發放 12% 分紅。"},
+  tower:{name:"智慧科技塔",icon:"科",emoji:"🏙️",yieldRate:.16,desc:"高成長科技開發，每 3 ROUND 依持分發放 16% 分紅。"},
+  harbor:{name:"觀光碼頭",icon:"港",emoji:"⚓",yieldRate:.14,desc:"觀光與交通建設，每 3 ROUND 依持分發放 14% 分紅。"},
+  green:{name:"綠能公園",icon:"綠",emoji:"🌿",yieldRate:.10,desc:"穩定公共建設，每 3 ROUND 依持分發放 10% 分紅。"}
 };
 const PUBLIC_LEVELS=[0,6000,15000,30000];
 
@@ -7479,8 +7482,8 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19931";
-window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:2,mode:"natural-dimensions"},q07:{cols:5,rows:2,path:"./assets/v19928/q07_property10_v1.webp?v=19931"}};
+const APP_BUILD_ID="19932";
+window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:2,mode:"natural-dimensions"},q07:{cols:5,rows:2,path:"./assets/v19928/q07_property10_v1.webp?v=19932"}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -8626,7 +8629,7 @@ function investPublicProject(p,key,amount){
 }
 function processPublicDividends(){
   ensurePublicInvestments();
-  if(state.round%4!==0)return;
+  if(state.round%PUBLIC_DIVIDEND_ROUNDS!==0)return;
   const payouts=[];
   for(const [key,def] of Object.entries(PUBLIC_PROJECTS)){
     const pr=state.publicInvestments[key];
@@ -8634,7 +8637,7 @@ function processPublicDividends(){
       const seat=Number(seatRaw),principal=Number(principalRaw||0),p=state.players[seat];
       if(!p||p.bankrupt||principal<=0)continue;
       const level=publicProjectLevel(key);
-      const levelBonus=1+level*.10;
+      const levelBonus=1+level*PUBLIC_LEVEL_BONUS_RATE;
       const amount=Math.max(1,Math.round(principal*def.yieldRate*levelBonus));
       p.cash+=amount;
       payouts.push({seat,key,amount,principal})
@@ -8699,7 +8702,7 @@ function startBankDeposit(p,amount){
   if(![5000,10000,20000].includes(amount))throw Error("定存金額不正確");
   if(p.cash<amount)throw Error("現金不足");
   p.cash-=amount;
-  p.bankDeposit={principal:amount,dueRound:state.round+2,payout:Math.round(amount*1.12)};
+  p.bankDeposit={principal:amount,dueRound:state.round+2,payout:Math.round(amount*(1+BANK_DEPOSIT_RATE))};
   addEvent("hub_bank",`🏦 ${p.name} 辦理 $${amount.toLocaleString()} 的 2 ROUND 定存。`,
     {seat:p.seat,amount:-amount,title:"都會銀行定存"})
 }
@@ -8786,7 +8789,7 @@ function maybeAIHubAction(p){
   }
 
   if(!p.bankDeposit&&p.cash>28000&&Math.random()<.13){
-    p.cash-=5000;p.bankDeposit={principal:5000,dueRound:state.round+2,payout:5600};
+    p.cash-=5000;p.bankDeposit={principal:5000,dueRound:state.round+2,payout:Math.round(5000*(1+BANK_DEPOSIT_RATE))};
     addEvent("hub_bank",`🏦 ${p.name} 辦理 $5,000 定存。`,{seat:p.seat,amount:-5000,title:"都會銀行定存"});
     changed=true
   }
@@ -10429,7 +10432,7 @@ function openPublicInvestment(key){
   const next=PUBLIC_LEVELS[level+1]??null;
   const leader=Object.entries(pr.bySeat||{}).sort((a,b)=>Number(b[1])-Number(a[1]))[0];
   const leaderName=leader?state.players[Number(leader[0])]?.name:"尚無";
-  const nextDividend=Math.round(mine*def.yieldRate*(1+level*.10));
+  const nextDividend=Math.round(mine*def.yieldRate*(1+level*PUBLIC_LEVEL_BONUS_RATE));
 
   const projectIcon=PUBLIC_PROJECT_ICON_ASSETS[key];
   showModal(def.name,
@@ -10449,7 +10452,7 @@ function openPublicInvestment(key){
     <div class="public-invest-buttons">
       ${[1000,3000,5000].map(v=>`<button class="primary" ${(!can||me.cash<v)?"disabled":""} onclick="sendAction('public_invest',{project:'${key}',amount:${v}})">投資 ${v.toLocaleString()}</button>`).join("")}
     </div>
-    <div class="hub-rule" style="margin-top:9px">每位玩家每 ROUND 最多投資一次公共建設。持分會計入總資產；每 4 ROUND 自動發放分紅。</div>`,
+    <div class="hub-rule" style="margin-top:9px">每位玩家每 ROUND 最多投資一次公共建設。持分會計入總資產；每 ${PUBLIC_DIVIDEND_ROUNDS} ROUND 自動發放分紅。</div>`,
     [["關閉","ghost",closeModal]]
   )
 }
@@ -10527,8 +10530,8 @@ function openBankHub(){
   }
   const cards=[5000,10000,20000].map(v=>`<div class="hub-card phone-feature-card">
     <div class="hicon"><span class="v19923-q03-art q03-bank" aria-hidden="true"></span></div><div class="hname">$${v.toLocaleString()} 定存</div>
-    <div class="hdesc">鎖定 2 ROUND，固定 12% 報酬。</div>
-    <div class="hvalue">到期 $${Math.round(v*1.12).toLocaleString()}</div>
+    <div class="hdesc">鎖定 2 ROUND，固定 ${Math.round(BANK_DEPOSIT_RATE*100)}% 報酬。</div>
+    <div class="hvalue">到期 ${Math.round(v*(1+BANK_DEPOSIT_RATE)).toLocaleString()}</div>
     <button class="success q-object-button q-bank-action" ${(!can||me.cash<v)?"disabled":""} onclick="sendAction('hub_deposit',{amount:${v}})"><span class="q-icon ${(!can||me.cash<v)?"q-disabled":"q-bank"}" aria-hidden="true"></span>辦理定存</button>
   </div>`).join("");
   showModal("都會銀行",
@@ -12249,7 +12252,7 @@ function compactTileName(name){
 
 const Q07_PROPERTY_SPRITE_IMAGE=new Image();
 Q07_PROPERTY_SPRITE_IMAGE.decoding="async";
-Q07_PROPERTY_SPRITE_IMAGE.src="./assets/v19928/q07_property10_v1.webp?v=19931";
+Q07_PROPERTY_SPRITE_IMAGE.src="./assets/v19928/q07_property10_v1.webp?v=19932";
 Q07_PROPERTY_SPRITE_IMAGE.onload=()=>{try{drawBoard()}catch{}};
 const Q07_GRID_COLS=5,Q07_GRID_ROWS=2;
 const Q07_CELLS={
