@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.35 WEB｜Q05/Q06/Q02/Q07 素材替換版</title>
+<title>財富帝國 V19.9.36 WEB｜Q05/Q06/Q02/Q07 素材替換版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.35 WEB - 完成 Q05/Q06/Q02/Q07 新素材 render source 替換，並移除房產介面的舊 Q03 視覺來源">
+<meta name="description" content="財富帝國 V19.9.36 WEB - 完成 Q05/Q06/Q02/Q07 新素材 render source 替換，並移除房產介面的舊 Q03 視覺來源">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6499,7 +6499,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 </style>
 
 <style id="v19928-q07-property-authority">
-:root{--v19928-q07:url("./assets/v19928/q07_property10_v1.webp?v=19935")}
+:root{--v19928-q07:url("./assets/v19928/q07_property10_v1.webp?v=19936")}
 .q07-property-wrap{position:relative;display:inline-block;width:46px;height:46px;flex:0 0 46px}
 .q07-property-art{display:block;width:100%;height:100%;background-image:var(--v19928-q07);background-size:500% 200%;background-repeat:no-repeat;background-color:transparent}
 .q07-vacant{background-position:0 0}.q07-house{background-position:25% 0}.q07-lv1{background-position:50% 0}.q07-lv2{background-position:75% 0}
@@ -6522,7 +6522,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.35</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.36</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6565,7 +6565,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.35 WEB｜素材替換 Gate｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.36 WEB｜素材替換 Gate｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -7482,8 +7482,8 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19935";
-window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:2,mode:"natural-dimensions"},q07:{cols:5,rows:2,path:"./assets/v19928/q07_property10_v1.webp?v=19935"}};
+const APP_BUILD_ID="19936";
+window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:2,mode:"natural-dimensions"},q07:{cols:5,rows:2,path:"./assets/v19928/q07_property10_v1.webp?v=19936"}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -12268,7 +12268,7 @@ function compactTileName(name){
 
 const Q07_PROPERTY_SPRITE_IMAGE=new Image();
 Q07_PROPERTY_SPRITE_IMAGE.decoding="async";
-Q07_PROPERTY_SPRITE_IMAGE.src="./assets/v19928/q07_property10_v1.webp?v=19935";
+Q07_PROPERTY_SPRITE_IMAGE.src="./assets/v19928/q07_property10_v1.webp?v=19936";
 Q07_PROPERTY_SPRITE_IMAGE.onload=()=>{try{drawBoard()}catch{}};
 const Q07_GRID_COLS=5,Q07_GRID_ROWS=2;
 const Q07_CELLS={
@@ -15208,5 +15208,174 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
   .property-manage-modal .modal-card{width:100%}
 }
 </style>
+<style id="v19936-rev-asset-authority">
+:root{--v19936-rev:url("./assets/v19936/rev_all30_v1.webp?v=19936")}
+.rev36-art{display:inline-block;flex:0 0 auto;width:36px;height:36px;background-image:var(--v19936-rev);background-size:500% 600%;background-repeat:no-repeat;background-color:transparent!important;border:0!important;box-shadow:none!important;vertical-align:middle}
+.rev36-stock-buy{background-position:0 0}.rev36-stock-sell{background-position:25% 0}.rev36-tender-accept{background-position:50% 0}.rev36-tender-locked{background-position:75% 0}.rev36-insurance-buy{background-position:100% 0}
+.rev36-insurance-owned{background-position:0 20%}.rev36-holding{background-position:25% 20%}.rev36-cost-basis{background-position:50% 20%}.rev36-pnl-up{background-position:75% 20%}.rev36-pnl-down{background-position:100% 20%}
+.rev36-night-low{background-position:0 40%}.rev36-night-mid{background-position:25% 40%}.rev36-night-high{background-position:50% 40%}.rev36-tower-low{background-position:75% 40%}.rev36-tower-mid{background-position:100% 40%}
+.rev36-tower-high{background-position:0 60%}.rev36-wharf-low{background-position:25% 60%}.rev36-wharf-mid{background-position:50% 60%}.rev36-wharf-high{background-position:75% 60%}.rev36-green-low{background-position:100% 60%}
+.rev36-green-mid{background-position:0 80%}.rev36-green-high{background-position:25% 80%}.rev36-fac-civic{background-position:50% 80%}.rev36-fac-commission{background-position:75% 80%}.rev36-fac-bank{background-position:100% 80%}
+.rev36-fac-insurance{background-position:0 100%}.rev36-fac-metro{background-position:25% 100%}.rev36-fac-night{background-position:50% 100%}.rev36-realized{background-position:75% 100%}.rev36-unrealized{background-position:100% 100%}
+.rev36-hub-art{width:58px;height:58px}.rev36-summary-art{width:24px;height:24px;margin-right:4px}.rev36-stock-action-art{width:30px;height:30px}.rev36-project-action-art,.rev36-invest-action-art{width:34px;height:34px}.rev36-insurance-action-art{width:42px;height:42px}.rev36-mobile-hub-art{width:52px;height:52px}
+.stock-action-btn{min-height:40px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:5px!important;font-size:12px!important;font-weight:1000!important}
+.stock-meta-line{display:flex;align-items:center;gap:5px;margin-top:4px;font-size:9px;font-weight:900;color:#60758b}.stock-meta-line .rev36-art{width:18px;height:18px}
+.stock-position-pnl{display:flex!important;align-items:center!important;gap:5px!important}.stock-position-pnl>.rev36-art{width:20px;height:20px}
+.rev36-wide-action{width:100%;min-height:54px!important;margin-top:10px;display:flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;font-size:15px!important;font-weight:1000!important}
+.project-option .rev36-hub-art,.hub-card .rev36-hub-art,.metro-option .rev36-hub-art{width:58px;height:58px}
+.rev36-project-button,.rev36-invest-button{display:flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;min-height:48px!important;padding:5px 10px!important}
+.rev36-invest-button .rev36-art{width:36px;height:36px}.rev36-project-button .rev36-art{width:34px;height:34px}
+.public-project-hero .rev36-art{width:64px;height:64px}.public-hub-card .rev36-art{width:56px;height:56px}
+.finance-stat-label{display:flex!important;align-items:center!important;gap:4px!important}
+@media(max-width:980px) and (orientation:landscape){
+  .rev36-hub-art,.rev36-mobile-hub-art{width:42px;height:42px}.rev36-invest-button{min-height:42px!important}.rev36-invest-button .rev36-art{width:30px;height:30px}.stock-action-btn{min-height:34px!important}.rev36-stock-action-art{width:25px;height:25px}
+}
+</style>
+<script id="v19936-rev-asset-runtime">
+(function(){
+  const REV36_SPRITE="./assets/v19936/rev_all30_v1.webp?v=19936";
+  const REV36_CELL=64,REV36_COLS=5;
+  const REV36_INDEX={
+    stockBuy:0,stockSell:1,tenderAccept:2,tenderLocked:3,insuranceBuy:4,insuranceOwned:5,holding:6,costBasis:7,pnlUp:8,pnlDown:9,
+    nightLow:10,nightMid:11,nightHigh:12,towerLow:13,towerMid:14,towerHigh:15,wharfLow:16,wharfMid:17,wharfHigh:18,greenLow:19,greenMid:20,greenHigh:21,
+    civic:22,commission:23,bank:24,insurance:25,metro:26,nightFacility:27,realized:28,unrealized:29
+  };
+  const cls={
+    stockBuy:"rev36-stock-buy",stockSell:"rev36-stock-sell",tenderAccept:"rev36-tender-accept",tenderLocked:"rev36-tender-locked",insuranceBuy:"rev36-insurance-buy",insuranceOwned:"rev36-insurance-owned",
+    holding:"rev36-holding",costBasis:"rev36-cost-basis",pnlUp:"rev36-pnl-up",pnlDown:"rev36-pnl-down",nightLow:"rev36-night-low",nightMid:"rev36-night-mid",nightHigh:"rev36-night-high",
+    towerLow:"rev36-tower-low",towerMid:"rev36-tower-mid",towerHigh:"rev36-tower-high",wharfLow:"rev36-wharf-low",wharfMid:"rev36-wharf-mid",wharfHigh:"rev36-wharf-high",
+    greenLow:"rev36-green-low",greenMid:"rev36-green-mid",greenHigh:"rev36-green-high",civic:"rev36-fac-civic",commission:"rev36-fac-commission",bank:"rev36-fac-bank",insurance:"rev36-fac-insurance",metro:"rev36-fac-metro",nightFacility:"rev36-fac-night",realized:"rev36-realized",unrealized:"rev36-unrealized"
+  };
+  function art(key,extra=""){return `<span class="rev36-art ${cls[key]||""} ${extra}" aria-hidden="true"></span>`}
+  function projectTierKey(key,tier){
+    const map={night:["nightLow","nightMid","nightHigh"],tower:["towerLow","towerMid","towerHigh"],harbor:["wharfLow","wharfMid","wharfHigh"],green:["greenLow","greenMid","greenHigh"]};
+    return (map[key]||map.night)[Math.max(0,Math.min(2,tier))]
+  }
+  function projectHeroKey(key){return ({night:"nightFacility",tower:"towerLow",harbor:"wharfLow",green:"greenLow"})[key]||"civic"}
+
+  renderMarket=function(){
+    const me=state.players[mySeat];
+    if(!me){$("market").innerHTML="";return}
+    let totalValue=0,totalCost=0;
+    const rows=Object.entries(state.stocks).map(([c,s])=>{
+      const d=s.price-s.prev,dayPct=s.prev?d/s.prev*100:0,h=me.stocks?.[c]||{qty:0,avg:0};
+      const qty=Number(h.qty||0),avg=Number(h.avg||0),value=qty*s.price,cost=qty*avg,pnl=value-cost,pnlPct=cost?pnl/cost*100:0;
+      totalValue+=value;totalCost+=cost;
+      const trend=d>0?art("pnlUp"):d<0?art("pnlDown"):"";
+      const positionIcon=pnl>0?art("pnlUp"):pnl<0?art("pnlDown"):art("holding");
+      return `<div class="stock" data-code="${c}">
+        <div class="stop">
+          <div><div class="sname">${s.name}</div><div class="scode">${c}${qty?`｜持股 ${qty} 股`:""}</div></div>
+          <div class="sprice">${s.price}</div>
+          <div class="stock-day ${d>0?"up":d<0?"down":"flat"}">${trend}${dayPct>=0?"+":""}${dayPct.toFixed(1)}%</div>
+        </div>
+        ${qty?`<div class="stock-meta-line">${art("costBasis")}平均成本 $${Math.round(avg).toLocaleString()}</div><div class="stock-position-pnl ${pnl>0?"profit":pnl<0?"loss":"flat"}">${positionIcon}<span>持倉損益</span><b>${pnl>=0?"+":"-"}${Math.abs(Math.round(pnl)).toLocaleString()} <em>(${pnlPct>=0?"+":""}${pnlPct.toFixed(1)}%)</em></b></div>`:""}
+        <div class="sbottom">
+          <input id="q_${c}" type="number" min="1" value="1">
+          <button class="success stock-action-btn" onclick="stockAction('buy_stock','${c}')">${art("stockBuy","rev36-stock-action-art")}<span>買進</span></button>
+          <button class="danger stock-action-btn" onclick="stockAction('sell_stock','${c}')">${art("stockSell","rev36-stock-action-art")}<span>賣出</span></button>
+        </div>
+      </div>`
+    }).join("");
+    const totalPnl=totalValue-totalCost,totalPct=totalCost?totalPnl/totalCost*100:0;
+    const unrealClass=totalPnl>0?"profit":totalPnl<0?"loss":"flat";
+    const realized=Number(me.realizedPnl||0),realClass=realized>0?"profit":realized<0?"loss":"flat";
+    $("market").innerHTML=`
+      <div class="market-summary-v10 pnl-summary">
+        <div class="portfolio-stat value"><div class="mk finance-stat-label">${art("holding","rev36-summary-art")}持股總市值</div><div class="mv">$${Math.round(totalValue).toLocaleString()}</div></div>
+        <div class="portfolio-stat unrealized ${unrealClass}"><div class="mk finance-stat-label">${art("unrealized","rev36-summary-art")}未實現損益</div><div class="mv">${totalCost?`${totalPnl>=0?"+":"-"}$${Math.abs(Math.round(totalPnl)).toLocaleString()}`:"—"}</div><div class="pnl-pct">${totalCost?`${totalPct>=0?"+":""}${totalPct.toFixed(1)}%`:"尚未持股"}</div></div>
+        <div class="portfolio-stat realized ${realClass}"><div class="mk finance-stat-label">${art("realized","rev36-summary-art")}已實現損益</div><div class="mv">${realized>=0?"+":"-"}$${Math.abs(Math.round(realized)).toLocaleString()}</div><div class="pnl-pct">已完成交易累計</div></div>
+      </div><div class="stock-grid">${rows}</div>`;
+  };
+
+  openMissionHub=function(){
+    const me=state.players[mySeat],can=hubCanAct();
+    const alreadyPicked=(me.lastMissionPickRound??-99)===state.round;
+    if(me.cityMission){
+      const d=CITY_MISSIONS[me.cityMission.type],prog=missionProgress(me),pct=Math.min(100,Math.round(prog.progress/prog.target*100));
+      showModal("城市委託中心",`<div class="hub-rule">每位玩家每 ROUND 最多承接 1 次委託。同時間只能進行一項；完成後可以領獎，但本 ROUND 不能再接第二張。</div><div class="hub-card active"><div class="hicon">${art("commission","rev36-hub-art")}</div><div class="hname">${d.name}</div><div class="hdesc">${d.desc}</div><div class="mission-progress"><div style="width:${pct}%"></div></div><div class="hvalue">${prog.progress} / ${prog.target}｜獎金 $${me.cityMission.reward.toLocaleString()}</div></div>`,[...(prog.done?[["領取委託獎金","success",()=>sendAction("hub_mission_claim")]]:[]),["關閉","ghost",closeModal]]);
+      $("modal")?.classList.add("hub-choice-modal","mission-choice-modal");return;
+    }
+    const canPick=can&&!alreadyPicked;
+    const lockNote=alreadyPicked?`<div class="hub-rule mission-round-lock">⏳ 你在 ROUND ${state.round} 已經承接過一次城市委託。本 ROUND 不可再接；下一 ROUND 會重新開放。</div>`:`<div class="hub-rule">每位玩家每 ROUND 最多承接 1 次委託。任務組合每 ROUND 輪替。</div>`;
+    const cards=missionChoices().map(k=>{const d=CITY_MISSIONS[k];return `<div class="hub-card ${alreadyPicked?"mission-locked":""}"><div class="hicon">${art("commission","rev36-hub-art")}</div><div class="hname">${d.name}</div><div class="hdesc">${d.desc}</div><div class="hvalue">+$${d.reward.toLocaleString()}</div><button class="primary" ${canPick?"":"disabled"} onclick="sendAction('hub_mission_pick',{mission:'${k}'})">${alreadyPicked?"本 ROUND 已承接":"接下委託"}</button></div>`}).join("");
+    showModal("城市委託中心",`${lockNote}<div class="hub-grid">${cards}</div>`,[["關閉","ghost",closeModal]]);$("modal")?.classList.add("hub-choice-modal","mission-choice-modal");
+  };
+
+  openBankHub=function(){
+    const me=state.players[mySeat],can=hubCanAct();
+    if(me.bankDeposit){const d=me.bankDeposit;showModal("都會銀行",`<div class="hub-rule">你的定存正在計息，不能提前解約。</div><div class="hub-card phone-feature-card active"><div class="hicon">${art("bank","rev36-hub-art")}</div><div class="hname">2 ROUND 定存</div><div class="hdesc">本金 $${d.principal.toLocaleString()}｜到期 ROUND ${d.dueRound}</div><div class="hvalue">到期領回 $${d.payout.toLocaleString()}</div></div>`,[["關閉","ghost",closeModal]]);$("modal")?.classList.add("phone-feature-modal","phone-bank-modal");return}
+    const cards=[5000,10000,20000].map(v=>`<div class="hub-card phone-feature-card"><div class="hicon">${art("bank","rev36-hub-art")}</div><div class="hname">$${v.toLocaleString()} 定存</div><div class="hdesc">鎖定 2 ROUND，固定 ${Math.round(BANK_DEPOSIT_RATE*100)}% 報酬。</div><div class="hvalue">到期 ${Math.round(v*(1+BANK_DEPOSIT_RATE)).toLocaleString()}</div><button class="success" ${(!can||me.cash<v)?"disabled":""} onclick="sendAction('hub_deposit',{amount:${v}})">辦理定存</button></div>`).join("");
+    showModal("都會銀行",`<div class="hub-rule">把閒置現金轉成未來現金流；每位玩家同時最多一筆定存。</div><div class="phone-feature-grid bank-feature-grid">${cards}</div>`,[["關閉","ghost",closeModal]]);$("modal")?.classList.add("phone-feature-modal","phone-bank-modal");
+  };
+
+  openInsuranceHub=function(){
+    const me=state.players[mySeat],can=hubCanAct(),has=(me.rentShield||0)>0;
+    const action=!has?`<button class="success rev36-wide-action" ${(!can||me.cash<1500)?"disabled":""} onclick="sendAction('hub_insurance')">${art("insuranceBuy","rev36-insurance-action-art")}<span>購買保險</span></button>`:"";
+    showModal("租金保險中心",`<div class="hub-rule">保費 $1,500。下一次踩到別人的地產時，你自己只付 50% 過路費，地主仍收到完整租金；剩下一半由保險系統補貼。</div><div class="hub-card ${has?"active":""}"><div class="hicon">${art(has?"insuranceOwned":"insuranceBuy","rev36-hub-art")}</div><div class="hname">${has?"租金護盾已啟用":"購買租金護盾"}</div><div class="hdesc">${has?"下一次支付租金時會自動消耗。":"每位玩家同時最多持有 1 次。"}</div><div class="hvalue">${has?"待觸發":"$1,500"}</div>${action}</div>`,[["關閉","ghost",closeModal]]);
+  };
+
+  openMetroHub=function(){
+    const me=state.players[mySeat],can=hubCanAct();const cooldown=Math.max(0,3-(state.round-(me.lastTransitRound??-99)));
+    const cards=Object.entries(METRO_ROUTES).map(([k,d])=>`<div class="metro-option"><div class="big">${art("metro","rev36-hub-art")}</div><div class="name">${d.name}</div><div class="desc">直接前進 ${d.steps} 格，不擲骰；落地後照常觸發格子。</div><div class="hvalue">$${d.cost.toLocaleString()}</div><button class="primary" ${(!can||cooldown>0||me.cash<d.cost)?"disabled":""} onclick="sendAction('hub_metro',{route:'${k}'})">搭乘快線</button></div>`).join("");
+    showModal("捷運樞紐",`<div class="hub-rule">不用增加外圈格子，也能主動改變落點。使用後進入 3 ROUND 冷卻。${cooldown>0?`目前還需等待 ${cooldown} ROUND。`:"目前可以搭乘。"}</div><div class="metro-grid">${cards}</div>`,[["關閉","ghost",closeModal]]);$("modal")?.classList.add("hub-choice-modal","metro-choice-modal");
+  };
+
+  openProjectHub=function(){
+    const me=state.players[mySeat],can=hubCanAct();
+    if(me.cityProject){const d=CITY_PROJECTS[me.cityProject.key];showModal("市政標案",`<div class="hub-rule">你的標案施工中，會在指定 ROUND 自動結算。</div><div class="hub-card active"><div class="hicon">${art("civic","rev36-hub-art")}</div><div class="hname">${d.name}</div><div class="hdesc">成功率 ${(Math.min(.95,d.success+Number(me.cityProject.successBonus||0))*100).toFixed(0)}%｜到期 ROUND ${me.cityProject.dueRound}</div><div class="hvalue">成功 $${d.win.toLocaleString()}｜失敗回收 $${d.fail.toLocaleString()}</div></div>`,[["關閉","ghost",closeModal]]);$("modal")?.classList.add("hub-choice-modal","project-choice-modal");return}
+    const cards=Object.entries(CITY_PROJECTS).map(([k,d])=>{const enabled=can&&me.cash>=d.cost;return `<div class="project-option"><div class="big">${art("civic","rev36-hub-art")}</div><div class="name">${d.name}</div><div class="desc">投入 $${d.cost.toLocaleString()}｜${d.rounds} ROUND 後結算｜成功率 ${(d.success*100).toFixed(0)}%</div><div class="hvalue">成功 $${d.win.toLocaleString()}<br><span style="font-size:11px">失敗仍回收 $${d.fail.toLocaleString()}</span></div><button class="warn rev36-project-button" ${enabled?"":"disabled"} onclick="requestCityProject('${k}')">${art(enabled?"tenderAccept":"tenderLocked","rev36-project-action-art")}<span>${enabled?"承接標案":"目前無法承接"}</span></button></div>`}).join("");
+    showModal("市政標案",`<div class="hub-rule">高風險的城市投資玩法。同時間只能承接一個標案，成功與否在到期時由房間同步節點統一判定。${strategyItemCount(me,"projectBoost")?`<br><b>📑 你有標案加成券 ×${strategyItemCount(me,"projectBoost")}，承接時會主動詢問是否使用。</b>`:""}</div><div class="project-grid">${cards}</div>`,[["關閉","ghost",closeModal]]);$("modal")?.classList.add("hub-choice-modal","project-choice-modal");
+  };
+
+  openPublicInvestment=function(key){
+    ensurePublicInvestments();const me=state.players[mySeat],def=PUBLIC_PROJECTS[key],pr=state.publicInvestments[key];if(!def||!me)return;
+    const can=hubCanAct()&&me.lastPublicInvestRound!==state.round;const mine=publicContribution(mySeat,key),level=publicProjectLevel(key);const next=PUBLIC_LEVELS[level+1]??null;
+    const leader=Object.entries(pr.bySeat||{}).sort((a,b)=>Number(b[1])-Number(a[1]))[0];const leaderName=leader?state.players[Number(leader[0])]?.name:"尚無";const nextDividend=Math.round(mine*def.yieldRate*(1+level*PUBLIC_LEVEL_BONUS_RATE));
+    const amounts=[1000,3000,5000];
+    showModal(def.name,`<div class="public-project-hero"><div class="pp-icon">${art(projectHeroKey(key))}</div><div><div class="pp-title">${def.name}｜Lv.${level}</div><div class="pp-desc">${def.desc}</div></div></div><div class="public-project-stats"><div><span>全城投入</span><b>${Number(pr.total||0).toLocaleString()}</b></div><div><span>你的持分</span><b>${mine.toLocaleString()}</b></div><div><span>預估下次分紅</span><b>+${nextDividend.toLocaleString()}</b></div><div><span>最大投資人</span><b>${leaderName||"尚無"}</b></div></div><div class="public-level-track"><i style="width:${next?Math.min(100,(pr.total/next)*100):100}%"></i></div><div class="pp-next">${next?`距離 Lv.${level+1} 尚差 ${Math.max(0,next-pr.total).toLocaleString()}`:"已達最高城市等級"}</div><div class="public-invest-buttons">${amounts.map((v,i)=>`<button class="primary rev36-invest-button" ${(!can||me.cash<v)?"disabled":""} onclick="sendAction('public_invest',{project:'${key}',amount:${v}})">${art(projectTierKey(key,i),"rev36-invest-action-art")}<span>投資 ${v.toLocaleString()}</span></button>`).join("")}</div><div class="hub-rule" style="margin-top:9px">每位玩家每 ROUND 最多投資一次公共建設。持分會計入總資產；每 ${PUBLIC_DIVIDEND_ROUNDS} ROUND 自動發放分紅。</div>`,[["關閉","ghost",closeModal]]);
+  };
+
+  openPublicInvestmentCenter=function(){
+    ensurePublicInvestments();const cards=Object.entries(PUBLIC_PROJECTS).map(([key,d])=>{const pr=state.publicInvestments[key],lv=publicProjectLevel(key),mine=publicContribution(mySeat,key);return `<div class="hub-card public-hub-card"><div class="hicon">${art(projectHeroKey(key),"rev36-hub-art")}</div><div class="hname">${d.name}｜Lv.${lv}</div><div class="hdesc">${d.desc}</div><div class="hvalue">全城 ${Number(pr.total||0).toLocaleString()}｜你 ${mine.toLocaleString()}</div><button class="primary" onclick="closeModal();openPublicInvestment('${key}')">查看 / 投資</button></div>`}).join("");
+    showModal("公共建設投資",`<div class="v198-modal-icon-title">${art("civic","rev36-hub-art")}<div><b>公共建設投資</b><span>累積持分、提升城市等級並定期領分紅</span></div></div><div class="hub-rule">中央都會 4 個公共開發點。玩家可以搶先累積持分、推高城市等級並定期領分紅。</div><div class="hub-grid">${cards}</div>`,[["關閉","ghost",closeModal]]);
+  };
+
+  openMobileHubMenu=function(){
+    if(!state)return;
+    showModal("🏙 都會核心",`<div class="hub-rule">手機快捷入口；六個都會設施集中於此。</div><div class="hub-grid compact-phone-grid hub-facility-grid"><div class="hub-card compact-phone-card"><div class="hicon">${art("commission","rev36-mobile-hub-art")}</div><div class="hname">城市委託</div><div class="hdesc">接任務、完成目標後領獎金。</div><button class="primary" onclick="closeModal();openHubFacility('mission')">開啟</button></div><div class="hub-card compact-phone-card"><div class="hicon">${art("bank","rev36-mobile-hub-art")}</div><div class="hname">都會銀行</div><div class="hdesc">2 ROUND 定存，管理閒置現金。</div><button class="success" onclick="closeModal();openHubFacility('bank')">開啟</button></div><div class="hub-card compact-phone-card"><div class="hicon">${art("insurance","rev36-mobile-hub-art")}</div><div class="hname">租金保險</div><div class="hdesc">降低下一次踩地產的現金壓力。</div><button class="primary" onclick="closeModal();openHubFacility('insurance')">開啟</button></div><div class="hub-card compact-phone-card"><div class="hicon">${art("metro","rev36-mobile-hub-art")}</div><div class="hname">捷運樞紐</div><div class="hdesc">不用擲骰，改走短／中／長快線。</div><button class="warn" onclick="closeModal();openHubFacility('metro')">開啟</button></div><div class="hub-card compact-phone-card"><div class="hicon">${art("civic","rev36-mobile-hub-art")}</div><div class="hname">市政標案</div><div class="hdesc">承接有風險的城市投資案。</div><button class="warn" onclick="closeModal();openHubFacility('project')">開啟</button></div><div class="hub-card compact-phone-card"><div class="hicon">${art("nightFacility","rev36-mobile-hub-art")}</div><div class="hname">公共建設</div><div class="hdesc">投資夜市、科技塔、碼頭與綠能公園。</div><button class="primary" onclick="closeModal();openPublicInvestmentCenter()">查看</button></div></div>`,[["關閉","ghost",closeModal]]);
+    $("modal")?.classList.add("phone-compact-modal","phone-hub-modal");
+  };
+
+  /* Canvas source substitution: intercept only known obsolete facility artwork and draw the new sprite cell instead. */
+  const revImg=new Image();revImg.decoding="async";revImg.src=REV36_SPRITE;
+  const oldDraw=CanvasRenderingContext2D.prototype.drawImage;
+  const sourceRules=[
+    ["hub_mission_center",REV36_INDEX.commission],["hub_city_bank",REV36_INDEX.bank],["hub_rent_insurance",REV36_INDEX.insurance],["hub_metro",REV36_INDEX.metro],["hub_city_policy",REV36_INDEX.civic],["public_night_market",REV36_INDEX.nightFacility]
+  ];
+  if(!window.__rev36DrawImagePatched){
+    window.__rev36DrawImagePatched=true;
+    CanvasRenderingContext2D.prototype.drawImage=function(image,...args){
+      const src=String(image?.currentSrc||image?.src||"");const rule=sourceRules.find(([needle])=>src.includes(needle));
+      if(rule&&revImg.complete&&revImg.naturalWidth>0){
+        const idx=rule[1],sx=(idx%REV36_COLS)*REV36_CELL,sy=Math.floor(idx/REV36_COLS)*REV36_CELL;
+        if(args.length===2)return oldDraw.call(this,revImg,sx,sy,REV36_CELL,REV36_CELL,args[0],args[1],REV36_CELL,REV36_CELL);
+        if(args.length===4)return oldDraw.call(this,revImg,sx,sy,REV36_CELL,REV36_CELL,args[0],args[1],args[2],args[3]);
+        if(args.length===8)return oldDraw.call(this,revImg,sx,sy,REV36_CELL,REV36_CELL,args[4],args[5],args[6],args[7]);
+      }
+      return oldDraw.call(this,image,...args)
+    };
+  }
+  revImg.addEventListener("load",()=>{try{drawBoard();renderMarket()}catch(e){}});
+
+  function replaceStaticStockHeading(){
+    document.querySelectorAll(".section-stock-art").forEach(el=>{el.className="rev36-art rev36-holding section-stock-art";el.removeAttribute("style")});
+  }
+  const oldRender36=render;
+  render=function(){const r=oldRender36.apply(this,arguments);replaceStaticStockHeading();return r};
+  replaceStaticStockHeading();
+  try{renderMarket();drawBoard()}catch(e){}
+})();
+</script>
 </body>
 </html>
