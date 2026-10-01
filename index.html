@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.29 WEB｜Q05/Q06/Q02/Q07 素材替換版</title>
+<title>財富帝國 V19.9.30 WEB｜Q05/Q06/Q02/Q07 素材替換版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.29 WEB - 完成 Q05/Q06/Q02/Q07 新素材 render source 替換，保留好友房續連修正">
+<meta name="description" content="財富帝國 V19.9.30 WEB - 完成 Q05/Q06/Q02/Q07 新素材 render source 替換，並移除房產介面的舊 Q03 視覺來源">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6499,13 +6499,15 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 </style>
 
 <style id="v19928-q07-property-authority">
-:root{--v19928-q07:url("./assets/v19928/q07_property10_v1.webp?v=19929")}
+:root{--v19928-q07:url("./assets/v19928/q07_property10_v1.webp?v=19930")}
 .q07-property-wrap{position:relative;display:inline-block;width:46px;height:46px;flex:0 0 46px}
 .q07-property-art{display:block;width:100%;height:100%;background-image:var(--v19928-q07);background-size:500% 200%;background-repeat:no-repeat;background-color:transparent}
 .q07-vacant{background-position:0 0}.q07-house{background-position:25% 0}.q07-lv1{background-position:50% 0}.q07-lv2{background-position:75% 0}
 .q07-owner-blue{background-position:100% 0}.q07-owner-coral{background-position:0 100%}.q07-owner-mint{background-position:25% 100%}.q07-owner-lavender{background-position:50% 100%}
 .q07-purchasable{background-position:75% 100%}.q07-mortgaged{background-position:100% 100%}
 .q07-property-badge{position:absolute!important;width:20px!important;height:20px!important;right:-4px;bottom:-2px;filter:drop-shadow(0 2px 3px rgba(27,48,73,.18))}
+.q07-modal-hero-wrap{width:86px;height:86px;flex-basis:86px}
+.q07-quick-property-wrap{width:48px;height:48px;flex-basis:48px}
 .property-manage-row>.q07-property-wrap{margin-right:8px}
 .upgrade-name{display:flex;align-items:center;gap:7px}
 .upgrade-name>.q07-property-wrap{width:42px;height:42px;flex-basis:42px}
@@ -6520,7 +6522,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.29</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.30</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6563,7 +6565,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.29 WEB｜素材替換 Gate｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.30 WEB｜素材替換 Gate｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -7477,8 +7479,8 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19929";
-window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:2,mode:"natural-dimensions"},q07:{cols:5,rows:2,path:"./assets/v19928/q07_property10_v1.webp?v=19929"}};
+const APP_BUILD_ID="19930";
+window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:2,mode:"natural-dimensions"},q07:{cols:5,rows:2,path:"./assets/v19928/q07_property10_v1.webp?v=19930"}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -10794,7 +10796,7 @@ function openUpgradeCenter(){
   }).join("");
 
   showModal("地產升級中心",
-    `<div class="v19923-modal-hero"><span class="v19923-q03-art q03-upgrade" aria-hidden="true"></span></div><div class="upgrade-rule">每塊一般地產最高升級 <b>2 次</b>。Lv.1 過路費約為基礎的 <b>2 倍</b>，Lv.2 約為基礎的 <b>4 倍</b>。只能在自己的回合、擲骰前升級。</div><div class="upgrade-center phone-feature-grid">${cards}</div>`,
+    `<div class="v19923-modal-hero"><span class="q07-property-wrap q07-modal-hero-wrap" aria-hidden="true"><span class="q07-property-art q07-lv1"></span></span></div><div class="upgrade-rule">每塊一般地產最高升級 <b>2 次</b>。Lv.1 過路費約為基礎的 <b>2 倍</b>，Lv.2 約為基礎的 <b>4 倍</b>。只能在自己的回合、擲骰前升級。</div><div class="upgrade-center phone-feature-grid">${cards}</div>`,
     [["關閉","ghost",closeModal]]
   );
   $("modal")?.classList.add("phone-feature-modal","phone-upgrade-modal");
@@ -10809,7 +10811,7 @@ function openProperties(){
     const cost=isProp&&t.level<PROPERTY_MAX_LEVEL?buildCost(t):0;
     return `<div class="property-manage-row">${isProp?q07PropertyHtml(t):""}<div class="property-manage-main"><b>${t.name}</b><span>${isProp?propertyLevelName(t.level):"交通設施"}</span><small>目前過路費 <b>$${rentFor(t).toLocaleString()}</b>${isProp&&t.level<PROPERTY_MAX_LEVEL?`｜下一級 $${next.toLocaleString()}｜升級費 $${cost.toLocaleString()}`:""}</small></div>${isProp&&t.level<PROPERTY_MAX_LEVEL?`<button class="warn property-inline-upgrade" ${(!canAct||!ok)?"disabled":""} onclick="requestPropertyUpgrade(${t.id})">${ok?"升級":"無法升級"}</button>`:`<span class="property-max-chip">${isProp?"已達 Lv.2":"不可升級"}</span>`}</div>`
   }).join("")||'<div class="hub-rule">目前尚未持有地產。</div>';
-  showModal("我的房產",`<div class="v19923-modal-hero"><span class="v19923-q03-art q03-rent" aria-hidden="true"></span></div><div class="hub-rule">查看與升級集中在同一頁。${strategyItemCount(me,"freeBuild")?`<br><b>🏗️ 免費建築許可 ×${strategyItemCount(me,"freeBuild")}：按升級時會主動詢問。</b>`:""}</div><div class="property-manage-list">${rows}</div>`,[["關閉","ghost",closeModal]]);
+  showModal("我的房產",`<div class="v19923-modal-hero"><span class="q07-property-wrap q07-modal-hero-wrap" aria-hidden="true"><span class="q07-property-art q07-house"></span></span></div><div class="hub-rule">查看與升級集中在同一頁。${strategyItemCount(me,"freeBuild")?`<br><b>🏗️ 免費建築許可 ×${strategyItemCount(me,"freeBuild")}：按升級時會主動詢問。</b>`:""}</div><div class="property-manage-list">${rows}</div>`,[["關閉","ghost",closeModal]]);
   $("modal")?.classList.add("property-manage-modal")
 }
 function showModal(t,b,acts){
@@ -12241,7 +12243,7 @@ function compactTileName(name){
 
 const Q07_PROPERTY_SPRITE_IMAGE=new Image();
 Q07_PROPERTY_SPRITE_IMAGE.decoding="async";
-Q07_PROPERTY_SPRITE_IMAGE.src="./assets/v19928/q07_property10_v1.webp?v=19929";
+Q07_PROPERTY_SPRITE_IMAGE.src="./assets/v19928/q07_property10_v1.webp?v=19930";
 Q07_PROPERTY_SPRITE_IMAGE.onload=()=>{try{drawBoard()}catch{}};
 const Q07_GRID_COLS=5,Q07_GRID_ROWS=2;
 const Q07_CELLS={
@@ -12704,7 +12706,7 @@ function openMobileActions(){
   const marketCan=myTurn&&!state.rolled&&!state.pending&&!state.groupGame&&(me?.lastMarketOpRound??-99)!==state.round;
   showModal("⚡ 手機快速操作",`<div class="hub-rule">四個主操作與桌面版一致；房產升級已整合進「我的房產」。</div><div class="hub-grid compact-phone-grid quick-grid">
     <div class="hub-card compact-phone-card"><div class="hicon"><span class="v19923-q04-art q04-roll" aria-hidden="true"></span></div><div class="hname">擲骰子</div><div class="hdesc">目前回合直接擲骰。</div><button class="primary" ${(!myTurn||state.rolled||state.pending||state.groupGame)?"disabled":""} onclick="closeModal();sendAction('roll')">擲骰</button></div>
-    <div class="hub-card compact-phone-card"><div class="hicon"><span class="v19923-q03-art q03-rent" aria-hidden="true"></span></div><div class="hname">我的房產</div><div class="hdesc">查看房產並直接升級。</div><button class="warn" onclick="closeModal();openProperties()">查看</button></div>
+    <div class="hub-card compact-phone-card"><div class="hicon"><span class="q07-property-wrap q07-quick-property-wrap" aria-hidden="true"><span class="q07-property-art q07-house"></span></span></div><div class="hname">我的房產</div><div class="hdesc">查看房產並直接升級。</div><button class="warn" onclick="closeModal();openProperties()">查看</button></div>
     <div class="hub-card compact-phone-card"><div class="hicon"><span class="q-icon q-quick" aria-hidden="true"></span></div><div class="hname">策略道具</div><div class="hdesc">持有 ${strategyItemTotal(me)} 件；符合情境會主動提示。</div><button class="warn" onclick="closeModal();openStrategyItems()">查看</button></div>
     <div class="hub-card compact-phone-card"><div class="hicon"><span class="v19923-q03-art q03-stock" aria-hidden="true"></span></div><div class="hname">市場操作</div><div class="hdesc">每 ROUND 一次，強化避險或股票交易。</div><button class="success" ${marketCan?"":"disabled"} onclick="closeModal();openMarketOperations()">操作</button></div>
   </div>`,[]);
