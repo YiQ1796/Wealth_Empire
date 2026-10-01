@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.37 WEB｜Q05/Q06/Q02/Q07 素材替換版</title>
+<title>財富帝國 V19.9.38 WEB｜Q05/Q06/Q02/Q07 素材替換版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.37 WEB - 完成 Q05/Q06/Q02/Q07 新素材 render source 替換，並移除房產介面的舊 Q03 視覺來源">
+<meta name="description" content="財富帝國 V19.9.38 WEB - 完成 Q05/Q06/Q02/Q07 新素材 render source 替換，並移除房產介面的舊 Q03 視覺來源">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6499,7 +6499,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 </style>
 
 <style id="v19928-q07-property-authority">
-:root{--v19928-q07:url("./assets/v19928/q07_property10_v1.webp?v=19937")}
+:root{--v19928-q07:url("./assets/v19928/q07_property10_v1.webp?v=19938")}
 .q07-property-wrap{position:relative;display:inline-block;width:46px;height:46px;flex:0 0 46px}
 .q07-property-art{display:block;width:100%;height:100%;background-image:var(--v19928-q07);background-size:500% 200%;background-repeat:no-repeat;background-color:transparent}
 .q07-vacant{background-position:0 0}.q07-house{background-position:25% 0}.q07-lv1{background-position:50% 0}.q07-lv2{background-position:75% 0}
@@ -6522,7 +6522,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.37</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.38</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6565,7 +6565,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.37 WEB｜素材替換 Gate｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.38 WEB｜素材替換 Gate｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -7482,8 +7482,8 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19937";
-window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:2,mode:"natural-dimensions"},q07:{cols:5,rows:2,path:"./assets/v19928/q07_property10_v1.webp?v=19937"}};
+const APP_BUILD_ID="19938";
+window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:2,mode:"natural-dimensions"},q07:{cols:5,rows:2,path:"./assets/v19928/q07_property10_v1.webp?v=19938"}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -12277,7 +12277,7 @@ function compactTileName(name){
 
 const Q07_PROPERTY_SPRITE_IMAGE=new Image();
 Q07_PROPERTY_SPRITE_IMAGE.decoding="async";
-Q07_PROPERTY_SPRITE_IMAGE.src="./assets/v19928/q07_property10_v1.webp?v=19937";
+Q07_PROPERTY_SPRITE_IMAGE.src="./assets/v19928/q07_property10_v1.webp?v=19938";
 Q07_PROPERTY_SPRITE_IMAGE.onload=()=>{try{drawBoard()}catch{}};
 const Q07_GRID_COLS=5,Q07_GRID_ROWS=2;
 const Q07_CELLS={
@@ -15218,7 +15218,7 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
 }
 </style>
 <style id="v19936-rev-asset-authority">
-:root{--v19936-rev:url("./assets/v19936/rev_all30_v1.webp?v=19937")}
+:root{--v19936-rev:url("./assets/v19936/rev_all30_v1.webp?v=19938")}
 .rev36-art{display:inline-block;flex:0 0 auto;width:36px;height:36px;background-image:var(--v19936-rev);background-size:500% 600%;background-repeat:no-repeat;background-color:transparent!important;border:0!important;box-shadow:none!important;vertical-align:middle}
 .rev36-stock-buy{background-position:0 0}.rev36-stock-sell{background-position:25% 0}.rev36-tender-accept{background-position:50% 0}.rev36-tender-locked{background-position:75% 0}.rev36-insurance-buy{background-position:100% 0}
 .rev36-insurance-owned{background-position:0 20%}.rev36-holding{background-position:25% 20%}.rev36-cost-basis{background-position:50% 20%}.rev36-pnl-up{background-position:75% 20%}.rev36-pnl-down{background-position:100% 20%}
@@ -15240,9 +15240,78 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
   .rev36-hub-art,.rev36-mobile-hub-art{width:42px;height:42px}.rev36-invest-button{min-height:42px!important}.rev36-invest-button .rev36-art{width:30px;height:30px}.stock-action-btn{min-height:34px!important}.rev36-stock-action-art{width:25px;height:25px}
 }
 </style>
+<style id="v19938-direct-action-replacement">
+/* V19.9.38 authority: new action art REPLACES the old pill/button skin. Never layer new art on old warn/success skins. */
+.rev38-asset-action{
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  background:none!important;
+  background-image:none!important;
+  border:0!important;
+  box-shadow:none!important;
+  text-shadow:none!important;
+  outline:0;
+  padding:4px!important;
+  margin:8px auto 0!important;
+  min-width:0!important;
+  min-height:0!important;
+  width:auto!important;
+  height:auto!important;
+  border-radius:16px!important;
+  display:inline-flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:4px!important;
+  color:#294663!important;
+  font-weight:1000!important;
+  line-height:1.15!important;
+  cursor:pointer;
+}
+.rev38-asset-action::before,
+.rev38-asset-action::after{content:none!important;display:none!important}
+.rev38-asset-action .rev38-action-art{
+  width:66px!important;
+  height:66px!important;
+  flex:0 0 66px!important;
+  display:block!important;
+  filter:none!important;
+}
+.rev38-asset-action .rev38-action-label{
+  display:block!important;
+  font-size:12px!important;
+  color:#294663!important;
+  background:none!important;
+  border:0!important;
+  padding:0!important;
+  margin:0!important;
+  white-space:nowrap;
+}
+.rev38-asset-action:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.03)}
+.rev38-asset-action:disabled{
+  background:none!important;
+  background-image:none!important;
+  border:0!important;
+  box-shadow:none!important;
+  opacity:.72!important;
+  filter:grayscale(.08)!important;
+}
+.project-option .rev38-project-action,
+.hub-card .rev38-insurance-action{
+  background:none!important;
+  background-image:none!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+@media(max-width:980px) and (orientation:landscape){
+  .rev38-asset-action .rev38-action-art{width:54px!important;height:54px!important;flex-basis:54px!important}
+  .rev38-asset-action .rev38-action-label{font-size:10px!important}
+  .rev38-asset-action{margin-top:5px!important;padding:2px!important}
+}
+</style>
 <script id="v19936-rev-asset-runtime">
 (function(){
-  const REV36_SPRITE="./assets/v19936/rev_all30_v1.webp?v=19937";
+  const REV36_SPRITE="./assets/v19936/rev_all30_v1.webp?v=19938";
   const REV36_CELL=64,REV36_COLS=5;
   const REV36_INDEX={
     stockBuy:0,stockSell:1,tenderAccept:2,tenderLocked:3,insuranceBuy:4,insuranceOwned:5,holding:6,costBasis:7,pnlUp:8,pnlDown:9,
@@ -15320,8 +15389,8 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
 
   openInsuranceHub=function(){
     const me=state.players[mySeat],can=hubCanAct(),has=(me.rentShield||0)>0;
-    const action=!has?`<button class="success rev36-wide-action" ${(!can||me.cash<1500)?"disabled":""} onclick="sendAction('hub_insurance')">${art("insuranceBuy","rev36-insurance-action-art")}<span>購買保險</span></button>`:"";
-    showModal("租金保險中心",`<div class="hub-rule">保費 $1,500。下一次踩到別人的地產時，你自己只付 50% 過路費，地主仍收到完整租金；剩下一半由保險系統補貼。</div><div class="hub-card ${has?"active":""}"><div class="hicon">${art(has?"insuranceOwned":"insuranceBuy","rev36-hub-art")}</div><div class="hname">${has?"租金護盾已啟用":"購買租金護盾"}</div><div class="hdesc">${has?"下一次支付租金時會自動消耗。":"每位玩家同時最多持有 1 次。"}</div><div class="hvalue">${has?"待觸發":"$1,500"}</div>${action}</div>`,[["關閉","ghost",closeModal]]);
+    const action=!has?`<button class="rev38-asset-action rev38-insurance-action" ${(!can||me.cash<1500)?"disabled":""} onclick="sendAction('hub_insurance')" aria-label="購買保險">${art("insuranceBuy","rev38-action-art")}<span class="rev38-action-label">購買保險</span></button>`:"";
+    showModal("租金保險中心",`<div class="hub-rule">保費 $1,500。下一次踩到別人的地產時，你自己只付 50% 過路費，地主仍收到完整租金；剩下一半由保險系統補貼。</div><div class="hub-card ${has?"active":""}"><div class="hicon">${art("insurance","rev36-hub-art")}</div><div class="hname">${has?"租金護盾已啟用":"購買租金護盾"}</div><div class="hdesc">${has?"下一次支付租金時會自動消耗。":"每位玩家同時最多持有 1 次。"}</div><div class="hvalue">${has?"待觸發":"$1,500"}</div>${action}</div>`,[["關閉","ghost",closeModal]]);
   };
 
   openMetroHub=function(){
@@ -15333,7 +15402,7 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
   openProjectHub=function(){
     const me=state.players[mySeat],can=hubCanAct();
     if(me.cityProject){const d=CITY_PROJECTS[me.cityProject.key];showModal("市政標案",`<div class="hub-rule">你的標案施工中，會在指定 ROUND 自動結算。</div><div class="hub-card active"><div class="hicon">${art("civic","rev36-hub-art")}</div><div class="hname">${d.name}</div><div class="hdesc">成功率 ${(Math.min(.95,d.success+Number(me.cityProject.successBonus||0))*100).toFixed(0)}%｜到期 ROUND ${me.cityProject.dueRound}</div><div class="hvalue">成功 $${d.win.toLocaleString()}｜失敗回收 $${d.fail.toLocaleString()}</div></div>`,[["關閉","ghost",closeModal]]);$("modal")?.classList.add("hub-choice-modal","project-choice-modal");return}
-    const cards=Object.entries(CITY_PROJECTS).map(([k,d])=>{const enabled=can&&me.cash>=d.cost;return `<div class="project-option"><div class="big">${art("civic","rev36-hub-art")}</div><div class="name">${d.name}</div><div class="desc">投入 $${d.cost.toLocaleString()}｜${d.rounds} ROUND 後結算｜成功率 ${(d.success*100).toFixed(0)}%</div><div class="hvalue">成功 $${d.win.toLocaleString()}<br><span style="font-size:11px">失敗仍回收 $${d.fail.toLocaleString()}</span></div><button class="warn rev36-project-button" ${enabled?"":"disabled"} onclick="requestCityProject('${k}')">${art(enabled?"tenderAccept":"tenderLocked","rev36-project-action-art")}<span>${enabled?"承接標案":"目前無法承接"}</span></button></div>`}).join("");
+    const cards=Object.entries(CITY_PROJECTS).map(([k,d])=>{const enabled=can&&me.cash>=d.cost;return `<div class="project-option"><div class="big">${art("civic","rev36-hub-art")}</div><div class="name">${d.name}</div><div class="desc">投入 $${d.cost.toLocaleString()}｜${d.rounds} ROUND 後結算｜成功率 ${(d.success*100).toFixed(0)}%</div><div class="hvalue">成功 $${d.win.toLocaleString()}<br><span style="font-size:11px">失敗仍回收 $${d.fail.toLocaleString()}</span></div><button class="rev38-asset-action rev38-project-action" ${enabled?"":"disabled"} onclick="requestCityProject('${k}')" aria-label="${enabled?"承接標案":"目前無法承接"}">${art(enabled?"tenderAccept":"tenderLocked","rev38-action-art")}<span class="rev38-action-label">${enabled?"承接標案":"目前無法承接"}</span></button></div>`}).join("");
     showModal("市政標案",`<div class="hub-rule">高風險的城市投資玩法。同時間只能承接一個標案，成功與否在到期時由房間同步節點統一判定。${strategyItemCount(me,"projectBoost")?`<br><b>📑 你有標案加成券 ×${strategyItemCount(me,"projectBoost")}，承接時會主動詢問是否使用。</b>`:""}</div><div class="project-grid">${cards}</div>`,[["關閉","ghost",closeModal]]);$("modal")?.classList.add("hub-choice-modal","project-choice-modal");
   };
 
