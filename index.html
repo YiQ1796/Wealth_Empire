@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.34 WEB｜Q05/Q06/Q02/Q07 素材替換版</title>
+<title>財富帝國 V19.9.35 WEB｜Q05/Q06/Q02/Q07 素材替換版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.34 WEB - 完成 Q05/Q06/Q02/Q07 新素材 render source 替換，並移除房產介面的舊 Q03 視覺來源">
+<meta name="description" content="財富帝國 V19.9.35 WEB - 完成 Q05/Q06/Q02/Q07 新素材 render source 替換，並移除房產介面的舊 Q03 視覺來源">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6499,7 +6499,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 </style>
 
 <style id="v19928-q07-property-authority">
-:root{--v19928-q07:url("./assets/v19928/q07_property10_v1.webp?v=19934")}
+:root{--v19928-q07:url("./assets/v19928/q07_property10_v1.webp?v=19935")}
 .q07-property-wrap{position:relative;display:inline-block;width:46px;height:46px;flex:0 0 46px}
 .q07-property-art{display:block;width:100%;height:100%;background-image:var(--v19928-q07);background-size:500% 200%;background-repeat:no-repeat;background-color:transparent}
 .q07-vacant{background-position:0 0}.q07-house{background-position:25% 0}.q07-lv1{background-position:50% 0}.q07-lv2{background-position:75% 0}
@@ -6522,7 +6522,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.34</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.35</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6565,7 +6565,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.34 WEB｜素材替換 Gate｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.35 WEB｜素材替換 Gate｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -7482,8 +7482,8 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19934";
-window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:2,mode:"natural-dimensions"},q07:{cols:5,rows:2,path:"./assets/v19928/q07_property10_v1.webp?v=19934"}};
+const APP_BUILD_ID="19935";
+window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:2,mode:"natural-dimensions"},q07:{cols:5,rows:2,path:"./assets/v19928/q07_property10_v1.webp?v=19935"}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -8113,8 +8113,8 @@ function hostAction(seat,msg){
     startAuction(tileId,seat);return;
   }
   if(msg.action==="upgrade"){
-    const fromLanding=state.pending?.type==="own"&&state.pending.seat===seat;
-    if(!fromLanding&&(cur.seat!==seat||state.rolled||state.pending||state.groupGame))throw Error("只能在自己的回合、擲骰前升級地產");
+    const fromLanding=state.pending?.type==="own"&&state.pending.seat===seat&&Number(state.pending.tile)===Number(msg.tile);
+    if(!fromLanding&&(cur.seat!==seat||state.rolled||state.pending||state.groupGame))throw Error("只能在擲骰前，或踩到自己的地產時升級");
     const id=Number(msg.tile);upgradeProperty(p,id,!!msg.useItem);
     if(fromLanding){state.pending=null;nextTurn()}else broadcast();return;
   }
@@ -10761,14 +10761,30 @@ function canOpenUpgradeCenter(){
   const me=state?.players?.[mySeat];
   return !!(state&&me&&state.status==="playing"&&state.current===mySeat&&!state.rolled&&!state.pending&&!state.groupGame&&!me.bankrupt)
 }
+function canRequestPropertyUpgrade(id){
+  const me=state?.players?.[mySeat];
+  if(!state||!me||state.status!=="playing"||state.current!==mySeat||state.groupGame||me.bankrupt)return false;
+  if(canOpenUpgradeCenter())return true;
+  const pending=state.pending;
+  return !!(pending&&pending.type==="own"&&pending.seat===mySeat&&Number(pending.tile)===Number(id));
+}
+function returnFromUpgradePrompt(){
+  closeModal();
+  const pending=state?.pending;
+  if(pending&&pending.type==="own"&&pending.seat===mySeat){
+    handlePending();
+    return;
+  }
+  openProperties();
+}
 function requestPropertyUpgrade(id,useItem=null){
-  if(!canOpenUpgradeCenter()){toast("只能在自己的回合、擲骰前升級地產");return}
+  if(!canRequestPropertyUpgrade(id)){toast("只能在擲骰前，或踩到自己的地產時升級");return}
   const me=state.players[mySeat],t=state.tiles[Number(id)];if(!me||!t)return;
   const cost=buildCost(t);
   if(useItem===null&&strategyItemCount(me,"freeBuild")>0){
     const acts=[["使用免費建築許可","success",()=>requestPropertyUpgrade(id,true)]];
     if(me.cash>=cost)acts.push(["不用道具，支付升級費","warn",()=>requestPropertyUpgrade(id,false)]);
-    acts.push(["返回我的房產","ghost",openProperties]);
+    acts.push(["返回","ghost",returnFromUpgradePrompt]);
     showModal("要使用策略道具嗎？",`<div class="strategy-context-prompt"><b>🏗️ 免費建築許可 ×${strategyItemCount(me,"freeBuild")}</b><span>「${t.name}」本次升級原價 <b>$${cost.toLocaleString()}</b>，使用後為 <b>$0</b>。</span></div>`,acts);
     return
   }
@@ -12252,7 +12268,7 @@ function compactTileName(name){
 
 const Q07_PROPERTY_SPRITE_IMAGE=new Image();
 Q07_PROPERTY_SPRITE_IMAGE.decoding="async";
-Q07_PROPERTY_SPRITE_IMAGE.src="./assets/v19928/q07_property10_v1.webp?v=19934";
+Q07_PROPERTY_SPRITE_IMAGE.src="./assets/v19928/q07_property10_v1.webp?v=19935";
 Q07_PROPERTY_SPRITE_IMAGE.onload=()=>{try{drawBoard()}catch{}};
 const Q07_GRID_COLS=5,Q07_GRID_ROWS=2;
 const Q07_CELLS={
