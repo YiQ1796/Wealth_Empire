@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.36 WEB｜Q05/Q06/Q02/Q07 素材替換版</title>
+<title>財富帝國 V19.9.37 WEB｜Q05/Q06/Q02/Q07 素材替換版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.36 WEB - 完成 Q05/Q06/Q02/Q07 新素材 render source 替換，並移除房產介面的舊 Q03 視覺來源">
+<meta name="description" content="財富帝國 V19.9.37 WEB - 完成 Q05/Q06/Q02/Q07 新素材 render source 替換，並移除房產介面的舊 Q03 視覺來源">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6499,7 +6499,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 </style>
 
 <style id="v19928-q07-property-authority">
-:root{--v19928-q07:url("./assets/v19928/q07_property10_v1.webp?v=19936")}
+:root{--v19928-q07:url("./assets/v19928/q07_property10_v1.webp?v=19937")}
 .q07-property-wrap{position:relative;display:inline-block;width:46px;height:46px;flex:0 0 46px}
 .q07-property-art{display:block;width:100%;height:100%;background-image:var(--v19928-q07);background-size:500% 200%;background-repeat:no-repeat;background-color:transparent}
 .q07-vacant{background-position:0 0}.q07-house{background-position:25% 0}.q07-lv1{background-position:50% 0}.q07-lv2{background-position:75% 0}
@@ -6522,7 +6522,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.36</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.37</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6565,7 +6565,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.36 WEB｜素材替換 Gate｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.37 WEB｜素材替換 Gate｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -7482,8 +7482,8 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19936";
-window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:2,mode:"natural-dimensions"},q07:{cols:5,rows:2,path:"./assets/v19928/q07_property10_v1.webp?v=19936"}};
+const APP_BUILD_ID="19937";
+window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:2,mode:"natural-dimensions"},q07:{cols:5,rows:2,path:"./assets/v19928/q07_property10_v1.webp?v=19937"}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -8578,6 +8578,15 @@ function resolveAuction(){
 
 
 
+const PUBLIC_INVEST_AMOUNTS={
+  night:[1000,3000,5000],
+  tower:[3000,5500,8000],
+  harbor:[1000,2500,4000],
+  green:[800,2000,3500]
+};
+function publicInvestAmounts(key){
+  return PUBLIC_INVEST_AMOUNTS[key]||[];
+}
 function ensurePublicInvestments(){
   if(!state.publicInvestments)state.publicInvestments={};
   for(const key of Object.keys(PUBLIC_PROJECTS)){
@@ -8607,7 +8616,7 @@ function investPublicProject(p,key,amount){
   const def=PUBLIC_PROJECTS[key];
   if(!def)throw Error("公共建設不存在");
   amount=Math.round(Number(amount)||0);
-  if(![1000,3000,5000].includes(amount))throw Error("投資金額不正確");
+  if(!publicInvestAmounts(key).includes(amount))throw Error("投資金額不正確");
   if(p.cash<amount)throw Error("現金不足");
 
   ensurePublicInvestments();
@@ -12268,7 +12277,7 @@ function compactTileName(name){
 
 const Q07_PROPERTY_SPRITE_IMAGE=new Image();
 Q07_PROPERTY_SPRITE_IMAGE.decoding="async";
-Q07_PROPERTY_SPRITE_IMAGE.src="./assets/v19928/q07_property10_v1.webp?v=19936";
+Q07_PROPERTY_SPRITE_IMAGE.src="./assets/v19928/q07_property10_v1.webp?v=19937";
 Q07_PROPERTY_SPRITE_IMAGE.onload=()=>{try{drawBoard()}catch{}};
 const Q07_GRID_COLS=5,Q07_GRID_ROWS=2;
 const Q07_CELLS={
@@ -15209,7 +15218,7 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
 }
 </style>
 <style id="v19936-rev-asset-authority">
-:root{--v19936-rev:url("./assets/v19936/rev_all30_v1.webp?v=19936")}
+:root{--v19936-rev:url("./assets/v19936/rev_all30_v1.webp?v=19937")}
 .rev36-art{display:inline-block;flex:0 0 auto;width:36px;height:36px;background-image:var(--v19936-rev);background-size:500% 600%;background-repeat:no-repeat;background-color:transparent!important;border:0!important;box-shadow:none!important;vertical-align:middle}
 .rev36-stock-buy{background-position:0 0}.rev36-stock-sell{background-position:25% 0}.rev36-tender-accept{background-position:50% 0}.rev36-tender-locked{background-position:75% 0}.rev36-insurance-buy{background-position:100% 0}
 .rev36-insurance-owned{background-position:0 20%}.rev36-holding{background-position:25% 20%}.rev36-cost-basis{background-position:50% 20%}.rev36-pnl-up{background-position:75% 20%}.rev36-pnl-down{background-position:100% 20%}
@@ -15233,7 +15242,7 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
 </style>
 <script id="v19936-rev-asset-runtime">
 (function(){
-  const REV36_SPRITE="./assets/v19936/rev_all30_v1.webp?v=19936";
+  const REV36_SPRITE="./assets/v19936/rev_all30_v1.webp?v=19937";
   const REV36_CELL=64,REV36_COLS=5;
   const REV36_INDEX={
     stockBuy:0,stockSell:1,tenderAccept:2,tenderLocked:3,insuranceBuy:4,insuranceOwned:5,holding:6,costBasis:7,pnlUp:8,pnlDown:9,
@@ -15332,7 +15341,7 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
     ensurePublicInvestments();const me=state.players[mySeat],def=PUBLIC_PROJECTS[key],pr=state.publicInvestments[key];if(!def||!me)return;
     const can=hubCanAct()&&me.lastPublicInvestRound!==state.round;const mine=publicContribution(mySeat,key),level=publicProjectLevel(key);const next=PUBLIC_LEVELS[level+1]??null;
     const leader=Object.entries(pr.bySeat||{}).sort((a,b)=>Number(b[1])-Number(a[1]))[0];const leaderName=leader?state.players[Number(leader[0])]?.name:"尚無";const nextDividend=Math.round(mine*def.yieldRate*(1+level*PUBLIC_LEVEL_BONUS_RATE));
-    const amounts=[1000,3000,5000];
+    const amounts=publicInvestAmounts(key);
     showModal(def.name,`<div class="public-project-hero"><div class="pp-icon">${art(projectHeroKey(key))}</div><div><div class="pp-title">${def.name}｜Lv.${level}</div><div class="pp-desc">${def.desc}</div></div></div><div class="public-project-stats"><div><span>全城投入</span><b>${Number(pr.total||0).toLocaleString()}</b></div><div><span>你的持分</span><b>${mine.toLocaleString()}</b></div><div><span>預估下次分紅</span><b>+${nextDividend.toLocaleString()}</b></div><div><span>最大投資人</span><b>${leaderName||"尚無"}</b></div></div><div class="public-level-track"><i style="width:${next?Math.min(100,(pr.total/next)*100):100}%"></i></div><div class="pp-next">${next?`距離 Lv.${level+1} 尚差 ${Math.max(0,next-pr.total).toLocaleString()}`:"已達最高城市等級"}</div><div class="public-invest-buttons">${amounts.map((v,i)=>`<button class="primary rev36-invest-button" ${(!can||me.cash<v)?"disabled":""} onclick="sendAction('public_invest',{project:'${key}',amount:${v}})">${art(projectTierKey(key,i),"rev36-invest-action-art")}<span>投資 ${v.toLocaleString()}</span></button>`).join("")}</div><div class="hub-rule" style="margin-top:9px">每位玩家每 ROUND 最多投資一次公共建設。持分會計入總資產；每 ${PUBLIC_DIVIDEND_ROUNDS} ROUND 自動發放分紅。</div>`,[["關閉","ghost",closeModal]]);
   };
 
