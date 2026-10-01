@@ -40,6 +40,10 @@ jobs:
           print(f"Validated extraction: {len(inline)} inline script block(s)")
           PY
           node --check /tmp/wealth_empire_inline.js
+          if [ -f plan-b-core.js ]; then
+            node --check plan-b-core.js
+            echo "Validated plan-b-core.js"
+          fi
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
