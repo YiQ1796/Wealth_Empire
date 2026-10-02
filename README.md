@@ -57,14 +57,15 @@ Pages #86 實際部署回歸發現 390px 高的 iPhone landscape 會被底部「
 - C01 / D01 Asset Registry 仍保留，房產素材用於房產管理與升級流程；不再塞到棋盤格造成視覺雜訊。
 
 ## 驗證
-- Inline JavaScript：15 段，syntax PASS。
+- Inline JavaScript：16 段，syntax PASS。
 - APP_BUILD_ID：19948。
 - signaling / DataConnection / heartbeat / reconnect / resume / Host Reload Recovery 核心函式保留。
 - USER VISUAL PASS：需正式 Pages 實機檢查後才能宣告。
 - MULTIPLAYER UAT PASS：仍需兩裝置不同網路實測，Pages SUCCESS 不能取代。
 
 ## 安全回退
-- `safe-rollback-v19.9.41`
+- `safe-rollback-v19.9.42`（主要回退點）
+- `safe-rollback-v19.9.41`（較早回退點）
 
 ## 下一步
 先驗 V19.9.48 正式頁 A15–A20 Full-Tile（Desktop + iPhone landscape），再依序提高 A11–A14 與 A05–A10 主圖比例；Visual PASS 前不宣告完成。
