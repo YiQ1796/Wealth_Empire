@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.53 WEB｜44 格八區連地版</title>
+<title>財富帝國 V19.9.54 WEB｜44 格八區連地版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.53 WEB - 依棋盤橘框重排 32 塊可購買地皮為 8 區 × 4 連格；同區持有越多，過路費階梯提高；四大主操作圖示同步放大">
+<meta name="description" content="財富帝國 V19.9.54 WEB - 依棋盤橘框重排 32 塊可購買地皮為 8 區 × 4 連格；同區持有越多，過路費階梯提高；四大主操作圖示同步放大">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6620,7 +6620,7 @@ body.force-mobile-preview .controls #rollBtn{
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.53 WEB｜八區連地｜44格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.54 WEB｜八區連地｜44格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -7776,7 +7776,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19953";
+const APP_BUILD_ID="19954";
 window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:4,mode:"REV-C01-D01-board-pawns"},q07:{cols:5,rows:4,path:"./assets/v19941/rev_c01_d01_all20_v1.webp?v=19941"},revC01D01:{cols:5,rows:4,count:20}};
 window.__WEALTH_BOARD_GATE={build:APP_BUILD_ID,...BOARD_DEFINITION_GATE};
 function getInviteUrl(){
@@ -10549,10 +10549,10 @@ function openMarketOperations(){
   const cards=Object.entries(MARKET_OPERATION_DEFS).map(([key,d])=>{
     const active=(me[d.flag]||0)>0,cashNeed=coupon?marketOperationCost(d,true):d.cost;
     const blocked=active||!can||me.cash<cashNeed||(key==="hedge"&&stockValue(me)<=0);
-    return `<div class="market-op-card ${active?"active":""}"><div class="market-op-icon">${d.icon}</div><div class="market-op-name">${d.name}</div><div class="market-op-desc">${d.desc}</div><div class="market-op-cost">${active?"等待觸發":coupon?`原價 $${d.cost.toLocaleString()}｜有折抵券`:`費用 $${d.cost.toLocaleString()}`}</div><button class="primary" ${blocked?"disabled":""} onclick="requestMarketOperation('${key}')">${active?"已啟用":!can?"本 ROUND 已使用":"啟用操作"}</button></div>`
+    return `<div class="market-op-card ${active?"active":""}"><div class="market-op-icon">${d.icon}</div><div class="market-op-name">${d.name}</div><div class="market-op-desc">${d.desc}</div><div class="market-op-cost">${active?"等待觸發":coupon?`原價 ${d.cost.toLocaleString()}｜有折抵券`:`費用 ${d.cost.toLocaleString()}`}</div><button class="primary q-object-button q-market-action market-op-action" ${blocked?"disabled":""} onclick="requestMarketOperation('${key}')"><span class="q-icon ${blocked?"q-disabled":"q-trade"}" aria-hidden="true"></span>${active?"已啟用":!can?"本 ROUND 已使用":"啟用操作"}</button></div>`
   }).join("");
   showModal("市場操作",`<div class="hub-rule">每 ROUND 最多啟用 1 次。這不是另一個股票買賣入口，而是替下一次市場更新或交易增加策略效果。</div><div class="market-op-status">本 ROUND：<b>${(me.lastMarketOpRound??-99)===state.round?"已使用":"尚未使用"}</b>${coupon?`｜🎟️ 折抵券 ×${coupon}`:""}</div><div class="market-op-grid">${cards}</div>`,[["關閉","ghost",closeModal]]);
-  $("modal")?.classList.add("market-ops-modal")
+  $("modal")?.classList.add("market-ops-modal","planb-clean-modal")
 }
 function requestCityProject(key,useItem=null){
   const me=state?.players?.[mySeat],d=CITY_PROJECTS[key];if(!me||!d)return;
@@ -11166,7 +11166,7 @@ function openProperties(){
         <small>購入價 <b>${Number(t.price||0).toLocaleString()}</b>｜建設投入 <b>${invested.toLocaleString()}</b>｜目前估值 <b>${propertyMarketValue(t).toLocaleString()}</b></small>
         <small>目前過路費 <b>${rentFor(t).toLocaleString()}</b>${isProp&&t.level<PROPERTY_MAX_LEVEL?`｜下一級 ${next.toLocaleString()}｜升級費 ${cost.toLocaleString()}`:""}｜本局收租 <b>${earned.toLocaleString()}</b></small>
       </div>
-      ${isProp&&t.level<PROPERTY_MAX_LEVEL?`<button class="warn property-inline-upgrade" ${(!canAct||!ok)?"disabled":""} onclick="requestPropertyUpgrade(${t.id})">${ok?"升級":"無法升級"}</button>`:`<span class="property-max-chip">${isProp?"已達 Lv.2":"不可升級"}</span>`}
+      ${isProp&&t.level<PROPERTY_MAX_LEVEL?`<button class="warn q-object-button q-upgrade-action property-inline-upgrade" ${(!canAct||!ok)?"disabled":""} onclick="requestPropertyUpgrade(${t.id})"><span class="q-icon ${(!canAct||!ok)?"q-disabled":"q-upgrade"}" aria-hidden="true"></span>${ok?"升級":"無法升級"}</button>`:`<span class="property-max-chip">${isProp?"已達 Lv.2":"不可升級"}</span>`}
     </div>`
   }).join("")||'<div class="hub-rule">目前尚未持有地產。</div>';
 
@@ -11188,7 +11188,7 @@ function openProperties(){
     <div class="planb-property-section"><h3>近期收租紀錄</h3><div class="planb-rent-list">${recent}</div></div>`,
     [["關閉","ghost",closeModal]]
   );
-  $("modal")?.classList.add("property-manage-modal")
+  $("modal")?.classList.add("property-manage-modal","planb-clean-modal")
 }
 function showModal(t,b,acts){
   const modalEl=$("modal");
@@ -16331,8 +16331,8 @@ openPublicInvestment=function(key){
 </script>
 
 
-<style id="v19953-final-ui-authority">
-/* V19.9.53 FINAL AUTHORITY
+<style id="v19954-final-ui-authority">
+/* V19.9.54 FINAL AUTHORITY
    Must stay after all legacy style blocks so older mobile/button rules cannot win. */
 
 /* Desktop: make the four main action illustrations visibly larger. */
@@ -16421,6 +16421,101 @@ body.force-mobile-preview .controls #rollBtn .v19944-action-icon{
   width:48px!important;
   height:48px!important;
   flex:0 0 48px!important;
+}
+
+/* V19.9.54 — remove the remaining V19.8 metallic button render source
+   from Market Operations and My Properties. Use the current Q action language. */
+#modal.market-ops-modal .market-op-card .market-op-action,
+#modal.property-manage-modal .property-inline-upgrade{
+  background-image:none!important;
+  background-repeat:no-repeat!important;
+  min-height:46px!important;
+  border-radius:14px!important;
+  border:1px solid #cad9e8!important;
+  text-shadow:none!important;
+  box-shadow:0 6px 14px rgba(43,70,105,.09),inset 0 1px 0 rgba(255,255,255,.92)!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:8px!important;
+  font-weight:1000!important;
+  opacity:1!important;
+}
+#modal.market-ops-modal .market-op-card .q-market-action:not(:disabled){
+  background:linear-gradient(180deg,#f4fbff,#dfeeff)!important;
+  color:#28527d!important;
+  border-color:#b9d2ec!important;
+}
+#modal.property-manage-modal .q-upgrade-action:not(:disabled){
+  background:linear-gradient(180deg,#fffdf4,#fff1c7)!important;
+  color:#76531b!important;
+  border-color:#efd58c!important;
+}
+#modal.market-ops-modal .market-op-card .market-op-action:disabled,
+#modal.property-manage-modal .property-inline-upgrade:disabled{
+  background:#eef2f6!important;
+  background-image:none!important;
+  color:#758396!important;
+  border-color:#d2dae4!important;
+  filter:none!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.92)!important;
+}
+#modal.market-ops-modal .market-op-card .market-op-action .q-icon,
+#modal.property-manage-modal .property-inline-upgrade .q-icon{
+  width:28px!important;
+  height:28px!important;
+  flex:0 0 28px!important;
+}
+
+/* Slightly enlarge the right-top information deck and make the middle controls
+   occupy the exact space down to the bottom navigation. */
+body.phone-landscape{
+  --phone-hud-h:clamp(128px,33dvh,148px)!important;
+}
+body.phone-landscape .mobile-turn-bar .mt-card{
+  padding:6px 8px!important;
+}
+body.phone-landscape .mobile-turn-bar .mt-label{
+  font-size:clamp(8px,1.8dvh,10px)!important;
+}
+body.phone-landscape .mobile-turn-bar b{
+  font-size:clamp(14px,3.3dvh,18px)!important;
+}
+body.phone-landscape .mobile-turn-bar small,
+body.phone-landscape #mobileRoundsLeft{
+  font-size:clamp(8px,1.7dvh,10px)!important;
+}
+body.phone-landscape .controls{
+  top:calc(env(safe-area-inset-top) + var(--phone-hud-h))!important;
+  bottom:calc(env(safe-area-inset-bottom) + var(--phone-nav-h))!important;
+  height:auto!important;
+}
+body.phone-landscape .control-row{
+  height:100%!important;
+}
+body.phone-landscape #rollBtn{
+  min-height:0!important;
+  height:100%!important;
+}
+
+@media(max-height:390px){
+  body.phone-landscape{--phone-hud-h:120px!important}
+}
+
+/* Desktop phone preview uses the same enlarged HUD proportion and no dead strip
+   between Roll Dice and the bottom navigation. */
+body.force-mobile-preview .mobile-turn-bar{
+  height:132px!important;
+}
+body.force-mobile-preview .controls{
+  top:132px!important;
+  height:162px!important;
+}
+body.force-mobile-preview .control-row{
+  height:100%!important;
+}
+body.force-mobile-preview #rollBtn{
+  height:100%!important;
 }
 </style>
 </body>
