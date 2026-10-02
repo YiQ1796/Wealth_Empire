@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.47 WEB｜股票買賣圖示恢復版</title>
+<title>財富帝國 V19.9.55 WEB｜44 格桌機恢復版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.47 WEB - 恢復既有新版股票買進/賣出圖示，保留 V19.9.46 其他內容">
+<meta name="description" content="財富帝國 V19.9.52 WEB - 依棋盤橘框重排 32 塊可購買地皮為 8 區 × 4 連格；同區持有越多，過路費階梯提高；四大主操作圖示同步放大">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -2303,7 +2303,7 @@ body{font-size:16px}
 }
 
 
-/* ===== V15 56-space large board + narrower stock sidebar ===== */
+/* ===== 44-space large board + narrower stock sidebar ===== */
 .main{
   grid-template-columns:minmax(0,1fr) 365px!important;
   gap:10px!important;
@@ -4692,7 +4692,7 @@ button:not(:disabled):active{transform:scale(.96)}
     box-shadow:inset 0 0 0 1px #c7dcf7!important;
   }
 
-  /* Board itself keeps the full 56 spaces, but the center and edge contrast are improved. */
+  /* Board uses the current 44-space route; center and edge contrast remain improved. */
   #board{
     filter:saturate(1.08) contrast(1.04)!important;
   }
@@ -6521,12 +6521,63 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
   .q07-upgrade-prompt-art{width:54px;height:54px}
 }
 </style>
+
+<style id="v19951-mobile-control-swap">
+/* V19.9.51 mobile-only action hierarchy.
+   Keep dice status at top-left, move Market Operations to top-right,
+   and make Roll Dice the full-width primary action on the bottom row.
+   Desktop layout is intentionally unchanged. */
+@media (max-width:980px) and (orientation:landscape){
+  html body .controls .dicebox{
+    grid-column:1!important;
+    grid-row:1!important;
+  }
+  html body .controls #marketOpsBtn{
+    grid-column:2!important;
+    grid-row:1!important;
+  }
+  html body .controls #propertyBtn{
+    grid-column:1!important;
+    grid-row:2!important;
+  }
+  html body .controls #strategyBtn{
+    grid-column:2!important;
+    grid-row:2!important;
+  }
+  html body .controls #rollBtn{
+    grid-column:1/3!important;
+    grid-row:3!important;
+  }
+}
+body.force-mobile-preview .controls .dicebox{
+  grid-column:1!important;
+  grid-row:1!important;
+}
+body.force-mobile-preview .controls #marketOpsBtn{
+  grid-column:2!important;
+  grid-row:1!important;
+}
+body.force-mobile-preview .controls #propertyBtn{
+  grid-column:1!important;
+  grid-row:2!important;
+}
+body.force-mobile-preview .controls #strategyBtn{
+  grid-column:2!important;
+  grid-row:2!important;
+}
+body.force-mobile-preview .controls #rollBtn{
+  grid-column:1/3!important;
+  grid-row:3!important;
+}
+</style>
+
+
 </head>
 <body class="lobby-mode">
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.43</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.55</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6569,7 +6620,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.47 WEB｜股票買賣圖示恢復｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.52 WEB｜八區連地｜44格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -6622,9 +6673,9 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
         <span><i class="dot" style="background:#e44747"></i>玩家2</span>
         <span><i class="dot" style="background:#18a26e"></i>玩家3</span>
         <span><i class="dot" style="background:#8b5cf6"></i>玩家4</span>
-        <span>粗框＝所有權｜LV.1 / LV.2＝地產升級</span><span class="board-size-chip">56 格大地圖</span>
+        <span>粗框＝所有權｜LV.1 / LV.2＝地產升級</span><span class="board-size-chip">44 格大地圖</span>
       </div>
-      <div class="board-map-note">外圈維持 56 格；已移除轉盤、金幣雨與吃麵，棋盤改以猜拳擂台／綠燈反應王等短事件為主。中央維持可點擊都會核心。</div>
+      <div class="board-map-note">44 格依橘框重排為 8 個連續地產區，每區 4 格；持有同區 2 / 3 / 4 格時，該區過路費依序提高至 ×1.35 / ×1.75 / ×2.40。其餘 12 格配置起點、機會、命運與經濟／事件功能。</div>
     </div>
     <div class="side">
       <div id="marketPanel" class="panel market"><h2><span class="section-icon-title">股票市場</span></h2><div id="market"></div></div>
@@ -6635,7 +6686,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 
 <div id="mobileHint" class="mobile-hint">
-  📱 手機橫向版會自動把完整 56 格棋盤適應到螢幕，不需要拖曳或縮放；右側固定提供資訊與所有主要操作。
+  📱 手機橫向版會自動把完整 44 格棋盤適應到螢幕；單格已放大，右側固定提供資訊與所有主要操作。
 </div>
 
 <nav id="mobileNav" class="mobile-nav planb-text-nav">
@@ -6833,13 +6884,23 @@ const MARKET_OPERATION_DEFS={
   profit_boost:{name:"獲利放大",icon:"📈",cost:1200,flag:"marketProfitBoost",desc:"下一次有獲利的股票賣出，額外增加該筆獲利 50%，最高 $2,000。"}
 };
 const TILE_NAMES=[
-"起點","星港住宅","機會","翡翠商圈","收購中心","海灣公寓","海景大樓","稅務局",
-"中央車站","命運","科技園區","高低骰對決","創新園區","北城豪宅","國際機場","機會",
-"猜拳擂台","金融大道","皇家大道","命運","水岸別墅","能源公司","商務中心","財富賽馬場",
-"黃金商圈","影城","股市事件","山景莊園","綠燈反應王","機會","綠能園區","國際飯店",
-"天空豪宅","命運","國際港口","物流中心","百貨商場","全民骰王","湖畔豪宅","法院",
-"機會","晶鑽商業區","跨海大橋","命運","皇后大道","地產拍賣行","寶箱爭奪","城市更新局",
-"醫療中心","頂級飯店","雲端科技城","命運","帝王商圈","奢華莊園","海天御苑","世界中心"];
+"起點",
+"星港住宅","海灣公寓","水岸別墅","海景大樓",
+"機會","中央車站","命運",
+"翡翠商圈","黃金商圈","百貨商場","物流中心",
+"稅務局",
+"科技園區","創新園區","雲端科技城","能源公司",
+"收購中心",
+"北城豪宅","綠能園區","湖畔豪宅","海天御苑",
+"股市事件",
+"金融大道","商務中心","晶鑽商業區","國際金融城",
+"機會","地產拍賣行","命運",
+"影城","國際飯店","頂級飯店","都會娛樂城",
+"財富賽馬場",
+"山景莊園","天空豪宅","奢華莊園","皇家大道",
+"城市更新局",
+"皇后大道","帝王商圈","世界中心","帝國廣場"];
+const BOARD_SCHEMA_ID=44;
 
 const HORSES=[
   {name:"閃電",icon:"🐎",odds:2.0,weight:38},
@@ -7115,9 +7176,122 @@ function buildTiles(){
     return{id:i,name,type,group,price,rent,owner:null,level:0,mortgaged:false,buildInvested:0}
   })
 }
+function tileOccurrenceKeys(tiles){
+  const seen=new Map();
+  return (tiles||[]).map(tile=>{
+    const name=String(tile?.name||"");
+    const occurrence=seen.get(name)||0;
+    seen.set(name,occurrence+1);
+    return `${name}#${occurrence}`
+  })
+}
+function boardShapeMatches(tiles){
+  return Array.isArray(tiles)
+    && tiles.length===TILE_NAMES.length
+    && tiles.every((tile,index)=>tile?.name===TILE_NAMES[index])
+}
+function migrateBoardStateToCurrent(gameState){
+  if(!gameState||typeof gameState!=="object")return gameState;
+  const oldTiles=Array.isArray(gameState.tiles)?gameState.tiles:[];
+  if(boardShapeMatches(oldTiles)){
+    gameState.boardSchema=BOARD_SCHEMA_ID;
+    return gameState
+  }
+  if(!oldTiles.length){
+    gameState.tiles=buildTiles();
+    gameState.boardSchema=BOARD_SCHEMA_ID;
+    gameState.pending=null;
+    gameState.groupGame=null;
+    gameState.rolled=false;
+    return gameState
+  }
+
+  const newTiles=buildTiles();
+  const newNames=new Set(newTiles.map(t=>t.name));
+  const oldByName=new Map(oldTiles.filter(Boolean).map((t,index)=>[t.name,{tile:t,index}]));
+
+  // Preserve surviving land ownership and upgrade state by stable unique land name.
+  newTiles.forEach(t=>{
+    if(!["property","station"].includes(t.type))return;
+    const old=oldByName.get(t.name)?.tile;
+    if(!old)return;
+    t.owner=old.owner??null;
+    t.level=Math.max(0,Math.min(PROPERTY_MAX_LEVEL,Number(old.level)||0));
+    t.mortgaged=!!old.mortgaged;
+    t.buildInvested=Number(old.buildInvested)||0
+  });
+
+  // Repeated cells such as 機會 / 命運 need occurrence-aware identities.
+  const oldKeys=tileOccurrenceKeys(oldTiles);
+  const newKeys=tileOccurrenceKeys(newTiles);
+  const newIndexByKey=new Map(newKeys.map((key,index)=>[key,index]));
+  const oldToNewPosition=oldPos=>{
+    const total=oldTiles.length;
+    if(!total)return 0;
+    const start=((Number(oldPos)||0)%total+total)%total;
+    for(let step=0;step<total;step++){
+      const oldIndex=(start+step)%total;
+      const mapped=newIndexByKey.get(oldKeys[oldIndex]);
+      if(mapped!=null)return mapped
+    }
+    return 0
+  };
+
+  const compensation=new Map();
+  oldTiles.forEach(old=>{
+    const owner=Number(old?.owner);
+    if(!Number.isInteger(owner)||owner<0||newNames.has(old?.name))return;
+    if(!["property","station"].includes(old?.type))return;
+    const price=Number(old?.price)||0;
+    const level=Math.max(0,Math.min(PROPERTY_MAX_LEVEL,Number(old?.level)||0));
+    const invested=Math.max(Number(old?.buildInvested)||0,Math.round(price*.5*level));
+    compensation.set(owner,(compensation.get(owner)||0)+price+invested)
+  });
+
+  gameState.players=(gameState.players||[]).map((p,seat)=>{
+    if(!p)return p;
+    p.pos=oldToNewPosition(p.pos);
+    const refund=Math.round(compensation.get(seat)||0);
+    if(refund>0)p.cash=(Number(p.cash)||0)+refund;
+    p.properties=newTiles.filter(t=>t.owner===seat).map(t=>t.id);
+    return p
+  });
+
+  gameState.tiles=newTiles;
+  gameState.boardSchema=BOARD_SCHEMA_ID;
+  gameState.pending=null;
+  gameState.groupGame=null;
+  gameState.rolled=false;
+  gameState.monopolyOwners={};
+  gameState.events=Array.isArray(gameState.events)?gameState.events:[];
+  gameState.eventId=Number(gameState.eventId||0)+1;
+  const refundTotal=[...compensation.values()].reduce((sum,v)=>sum+v,0);
+  gameState.events.push({
+    id:gameState.eventId,
+    kind:"board_migration",
+    text:`棋盤已安全遷移為 44 格；已移除的舊地產按原價與既有升級投入補償，共 $${Math.round(refundTotal).toLocaleString()}。`,
+    data:{title:"44 格棋盤遷移",from:oldTiles.length,to:TILE_NAMES.length,refund:Math.round(refundTotal)},
+    ts:Date.now()
+  });
+  gameState.events=gameState.events.slice(-80);
+  return gameState
+}
+function acceptRemoteBoardState(remoteState){
+  const incoming=stripLegacyRoleSkills(remoteState);
+  const count=Array.isArray(incoming?.tiles)?incoming.tiles.length:0;
+  if(!boardShapeMatches(incoming?.tiles)){
+    const msg=`房主棋盤版本與本機不同（房主 ${count||"未知"} 格／本機 44 格）。請房主重新整理一次，系統會用房主恢復資料安全遷移。`;
+    setLobbyConnectStatus("⚠️ "+msg,true);
+    showNetRecovery(msg,"bad");
+    toast("棋盤版本不同，請房主重新整理");
+    return null
+  }
+  incoming.boardSchema=BOARD_SCHEMA_ID;
+  return incoming
+}
 function newState(hostName,hostAvatar=0){
   return{
-    version:19,status:"lobby",round:1,current:0,rolled:false,
+    version:19,boardSchema:BOARD_SCHEMA_ID,status:"lobby",round:1,current:0,rolled:false,
     players:[player(hostName,0,false,hostAvatar),null,null,null],
     tiles:buildTiles(),
     stocks:Object.fromEntries(Object.entries(STOCK_DEFS).map(([c,d])=>[c,{name:d.name,price:d.price,prev:d.price,history:[d.price]}])),
@@ -7140,8 +7314,8 @@ function refreshMonopolyState(){
         {seat:previous,group,title:"區域壟斷解除"});
     }
     if(owner!=null&&state.players[owner]){
-      addEvent("monopoly_complete",`${state.players[owner].name} 完成「${group}」區域壟斷，該區地產租金 +25%。`,
-        {seat:owner,group,multiplier:MONOPOLY_RENT_BONUS,title:"區域壟斷完成"});
+      addEvent("monopoly_complete",`${state.players[owner].name} 完成「${group}」4 格完整持有，該區地產租金提升至 ×${REGION_COMPLETE_RENT_MULTIPLIER.toFixed(2)}。`,
+        {seat:owner,group,multiplier:REGION_COMPLETE_RENT_MULTIPLIER,title:"區域完整持有"});
     }
     state.monopolyOwners[group]=owner;
   }
@@ -7257,7 +7431,7 @@ function loadHostRecovery(code){
   }catch{return null}
 }
 function normalizeRecoveredHostState(savedState){
-  const recovered=stripLegacyRoleSkills(JSON.parse(JSON.stringify(savedState)));
+  const recovered=migrateBoardStateToCurrent(stripLegacyRoleSkills(JSON.parse(JSON.stringify(savedState))));
   recovered.players=(recovered.players||[]).map((p,seat)=>{
     if(!p)return p;
     if(seat===0){p.connected=true;p.ai=false}
@@ -7520,7 +7694,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19947";
+const APP_BUILD_ID="19955";
 window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:4,mode:"REV-C01-D01-board-pawns"},q07:{cols:5,rows:4,path:"./assets/v19941/rev_c01_d01_all20_v1.webp?v=19941"},revC01D01:{cols:5,rows:4,count:20}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
@@ -8010,7 +8184,7 @@ function wireHostConn(conn,name,resumeInfo=null){
     else if(msg.type==="welcome"){
       clearTimeout(joinTimeoutTimer);
       clearTimeout(initialJoinRetryTimer);initialJoinRetryTimer=null;initialJoinRetryAttempts=0;
-      mySeat=msg.seat;state=stripLegacyRoleSkills(msg.state);
+      const incomingState=acceptRemoteBoardState(msg.state);if(!incomingState){try{conn.close()}catch{};return;}mySeat=msg.seat;state=incomingState;
       if(msg.resumeToken)clientResumeToken=msg.resumeToken;
       guestDisplayName=name;
       guestReconnectInFlight=false;guestReconnectPendingReason="";guestConnectedSince=Date.now();
@@ -8024,7 +8198,7 @@ function wireHostConn(conn,name,resumeInfo=null){
       showNetRecovery(msg.resumed?"已重新接回原座位，進度同步完成":"連線正常","good",1800);
       render();handleIncomingEvents();saveGuestResume()
     }else if(msg.type==="state"){
-      state=stripLegacyRoleSkills(msg.state);render();handleIncomingEvents();saveGuestResume()
+      const incomingState=acceptRemoteBoardState(msg.state);if(!incomingState)return;state=incomingState;render();handleIncomingEvents();saveGuestResume()
     }else if(msg.type==="reject"){
       guestReconnectInFlight=false;
       clearTimeout(joinTimeoutTimer);toast(msg.reason);$("connectionText").textContent="❌ "+msg.reason;
@@ -8209,7 +8383,7 @@ function movePlayer(p,steps){
   for(let i=0;i<steps;i++){
     p.pos=(p.pos+1)%state.tiles.length;
     if(p.pos===0){
-      const bonus=3200+(state.cityEvent?.startBonus||0);
+      const bonus=2500+(state.cityEvent?.startBonus||0);
       p.cash+=bonus;
       addEvent("cash",`${p.name} 通過起點，獲得 $${bonus.toLocaleString()}。`,{seat:p.seat,amount:bonus,title:"通過起點"});
     }
@@ -8301,6 +8475,18 @@ function resolveLanding(p){
     addEvent("fee",`${p.name} 支付法律費 $1,200（進入城市公庫）。`,{seat:p.seat,amount:-1200,title:"法院"});
     liquidate(p)
   }
+  else if(t.type==="auction"){
+    const availableLots=state.tiles.filter(tile=>tile.type==="property"&&tile.owner==null);
+    if(availableLots.length){
+      const lot=availableLots[Math.floor(Math.random()*availableLots.length)];
+      addEvent("auction_house",`🔨 ${p.name} 抵達地產拍賣行，「${lot.name}」進入公開競標！`,
+        {seat:p.seat,tile:lot.id,title:"地產拍賣行"});
+      startAuction(lot.id,p.seat);
+      return
+    }
+    addEvent("auction_house_empty","🔨 目前沒有未持有的一般地產可供拍賣。",
+      {seat:p.seat,title:"地產拍賣行"})
+  }
   else if(t.type==="stock"){
     const c=Object.keys(state.stocks)[Math.floor(Math.random()*6)],s=state.stocks[c];
     const pct=(Math.random()<.5?-1:1)*(.07+Math.random()*.08);
@@ -8311,9 +8497,26 @@ function resolveLanding(p){
 }
 function groupTiles(g){return state.tiles.filter(t=>t.group===g&&t.type==="property")}
 function monopoly(seat,g){const a=groupTiles(g);return a.length>0&&a.every(t=>t.owner===seat)}
-const MONOPOLY_RENT_BONUS=1.25;
+const REGION_COMPLETE_RENT_MULTIPLIER=2.40;
+function regionRentMultiplierForCounts(owned,total){
+  owned=Math.max(0,Number(owned)||0);
+  total=Math.max(0,Number(total)||0);
+  if(total<=0||owned<=1)return 1;
+  if(total===3){
+    if(owned>=3)return 2.20;
+    if(owned===2)return 1.50;
+    return 1
+  }
+  if(owned>=4)return REGION_COMPLETE_RENT_MULTIPLIER;
+  if(owned===3)return 1.75;
+  if(owned===2)return 1.35;
+  return 1
+}
 function monopolyRentMultiplier(t){
-  return t?.type==="property"&&t.owner!=null&&monopoly(t.owner,t.group)?MONOPOLY_RENT_BONUS:1
+  if(t?.type!=="property"||t.owner==null||!t.group)return 1;
+  const tiles=groupTiles(t.group);
+  const owned=tiles.filter(tile=>tile.owner===t.owner).length;
+  return regionRentMultiplierForCounts(owned,tiles.length)
 }
 function buildCost(t){
   const baseRate=t.level<=0 ? 0.35 : 0.50;
@@ -10861,7 +11064,7 @@ function openProperties(){
     return `<div class="planb-region-card ${complete?"complete":""}">
       <div class="planb-region-head"><b>${group}</b><span>${ownedTiles.length} / ${tiles.length}</span></div>
       <div class="planb-region-progress"><i style="width:${tiles.length?ownedTiles.length/tiles.length*100:0}%"></i></div>
-      <div class="planb-region-desc">${complete?"區域壟斷已啟動｜租金 +25%":missing.length?"缺少："+missing.map(t=>t.name).join("、"):"—"}</div>
+      <div class="planb-region-desc">${ownedTiles.length>=2?`區域租金加成 ×${regionRentMultiplierForCounts(ownedTiles.length,tiles.length).toFixed(2)}${complete?"｜完整持有":""}`:missing.length?"持有 2 格起啟動區域加成｜缺少："+missing.map(t=>t.name).join("、"):"—"}</div>
     </div>`
   }).join("");
 
@@ -11978,21 +12181,21 @@ function handleIncomingEvents(){
 
 async function animateDice(a,b,name){rolling=true;$("die1").classList.add("rolling");$("die2").classList.add("rolling");const st=performance.now();await new Promise(r=>{const t=setInterval(()=>{$("die1").textContent=FACES[Math.floor(Math.random()*6)];$("die2").textContent=FACES[Math.floor(Math.random()*6)];$("diceStatus").textContent=`${name} 骰子滾動中...`;if(performance.now()-st>760){clearInterval(t);r()}},80)});$("die1").classList.remove("rolling");$("die2").classList.remove("rolling");$("die1").textContent=FACES[a-1];$("die2").textContent=FACES[b-1];$("diceTotal").textContent=a+b;$("diceStatus").textContent=`${name} 擲出 ${a+b}`;rolling=false;renderControls()}
 const BOARD_W=1680,BOARD_H=1040;
-const TOP_COUNT=17,RIGHT_COUNT=11,BOTTOM_COUNT=17,LEFT_COUNT=11;
-const TOP_H=72;
+const TOP_COUNT=13,RIGHT_COUNT=9,BOTTOM_COUNT=13,LEFT_COUNT=9;
+const TOP_H=88;
 const TOP_W=BOARD_W/TOP_COUNT;
 const SIDE_W=TOP_W;
 const SIDE_H=(BOARD_H-TOP_H*2)/RIGHT_COUNT;
 
 function perimeterPositions(n){
   const o=[];
-  // Top: 17 cells, left -> right, edge-to-edge.
+  // Top: 13 cells, left -> right, edge-to-edge.
   for(let i=0;i<TOP_COUNT;i++)o.push([(i+.5)*TOP_W,TOP_H/2]);
-  // Right: 11 cells, top -> bottom, directly under the top row.
+  // Right: 9 cells, top -> bottom, directly under the top row.
   for(let i=0;i<RIGHT_COUNT;i++)o.push([BOARD_W-SIDE_W/2,TOP_H+(i+.5)*SIDE_H]);
-  // Bottom: 17 cells, right -> left.
+  // Bottom: 13 cells, right -> left.
   for(let i=0;i<BOTTOM_COUNT;i++)o.push([BOARD_W-(i+.5)*TOP_W,BOARD_H-TOP_H/2]);
-  // Left: 11 cells, bottom -> top.
+  // Left: 9 cells, bottom -> top.
   for(let i=0;i<LEFT_COUNT;i++)o.push([SIDE_W/2,BOARD_H-TOP_H-(i+.5)*SIDE_H]);
   return o.slice(0,n)
 }
@@ -15590,18 +15793,33 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
     ctx.save();
     ctx.shadowColor="rgba(51,72,106,.12)";ctx.shadowBlur=phone?7:12;ctx.shadowOffsetY=phone?2:4;
     const base=ctx.createLinearGradient(x,y-h/2,x,y+h/2),c=tcolor(t);base.addColorStop(0,c);base.addColorStop(1,c);
-    ctx.fillStyle=base;ctx.strokeStyle="#7890a7";ctx.lineWidth=2;rr(x-w/2+1,y-h/2+1,w-2,h-2,phone?6:9,true,true);ctx.restore();
-    const artSize=phone?Math.min(42,Math.max(30,Math.min(w,h)*.50)):Math.min(34,Math.max(24,Math.min(w,h)*.42));
-    if(phone){
-      drawV19944TileIcon(t.type,x-artSize/2,y-h*.16-artSize/2,artSize,artSize);
-      ctx.fillStyle="#fff";ctx.textAlign="center";ctx.textBaseline="middle";
-      ctx.font='1000 22px "Microsoft JhengHei","Noto Sans TC",sans-serif';
-      ctx.fillText(compactTileName(t.name),x,y+h*.23,w-8)
-    }else{
-      drawV19944TileIcon(t.type,x-w/2+7,y-h/2+8,artSize,artSize);
-      ctx.fillStyle="#fff";ctx.textAlign="center";ctx.textBaseline="alphabetic";
-      ctx.font='1000 14px "Microsoft JhengHei"';ctx.fillText(t.name,x+8,y+5,w-38)
+    const tileX=x-w/2+1,tileY=y-h/2+1,tileW=w-2,tileH=h-2;
+    const titleH=phone?Math.max(20,Math.min(30,tileH*.28)):Math.max(14,Math.min(20,tileH*.30));
+    const radius=phone?6:9;
+
+    /* Neutral fallback only; the A15-A20 artwork is now the dominant render source. */
+    ctx.fillStyle="#eef3f8";ctx.strokeStyle="rgba(70,96,126,.48)";ctx.lineWidth=1.5;
+    rr(tileX,tileY,tileW,tileH,radius,true,true);ctx.restore();
+
+    ctx.save();
+    ctx.beginPath();ctx.roundRect(tileX,tileY,tileW,tileH,radius);ctx.clip();
+    const artY=tileY+titleH,artH=Math.max(1,tileH-titleH);
+    if(!drawV19948FullTileArt(t.type,tileX,artY,tileW,artH)){
+      ctx.fillStyle=base;ctx.fillRect(tileX,artY,tileW,artH);
     }
+    ctx.fillStyle="rgba(248,251,255,.96)";
+    ctx.fillRect(tileX,tileY,tileW,titleH);
+    ctx.restore();
+
+    ctx.save();
+    ctx.beginPath();ctx.roundRect(tileX+.5,tileY+.5,tileW-1,tileH-1,radius);
+    ctx.strokeStyle="rgba(55,82,112,.62)";ctx.lineWidth=1.25;ctx.stroke();
+    ctx.fillStyle="#18324f";ctx.textAlign="center";ctx.textBaseline="middle";
+    const tileLabel=phone?compactTileName(t.name):t.name;
+    const titleFont=phone?Math.max(14,Math.min(20,titleH*.68)):Math.max(10,Math.min(14,titleH*.72));
+    ctx.font='1000 '+titleFont+'px "Microsoft JhengHei","Noto Sans TC",sans-serif';
+    ctx.fillText(tileLabel,x,tileY+titleH/2,tileW-8);
+    ctx.restore();
   }
   const previousDrawTile=drawTile;
   drawTile=function(t,x,y,index){
@@ -15921,6 +16139,36 @@ function drawV19944TileIcon(type,x,y,w,h){
   const map={start:15,chance:16,fate:17,tax:18,auction:19,stock:20};
   return drawV19944CanvasAsset(map[type],x,y,w,h);
 }
+
+/* V19.9.48 BOARD_TILE renderer.
+   A15-A20 are rendered as the tile's main visual instead of a small icon.
+   The source cell is center-cropped to cover the full artwork region without changing board geometry. */
+function drawV19948FullTileArt(type,x,y,w,h){
+  const map={start:15,chance:16,fate:17,tax:18,auction:19,stock:20};
+  const cell=v19944SpriteCell(map[type]);
+  if(!cell||!cell.image.complete||!cell.image.naturalWidth||w<=0||h<=0)return false;
+
+  const cellW=cell.image.naturalWidth/5;
+  const cellH=cell.image.naturalHeight/2;
+  let sx=cell.col*cellW,sy=cell.row*cellH,sw=cellW,sh=cellH;
+  const sourceRatio=cellW/cellH;
+  const targetRatio=w/h;
+
+  if(sourceRatio>targetRatio){
+    sw=cellH*targetRatio;
+    sx=cell.col*cellW+(cellW-sw)/2;
+  }else if(sourceRatio<targetRatio){
+    sh=cellW/targetRatio;
+    sy=cell.row*cellH+(cellH-sh)/2;
+  }
+
+  ctx.save();
+  ctx.imageSmoothingEnabled=true;
+  ctx.imageSmoothingQuality="high";
+  ctx.drawImage(cell.image,sx,sy,sw,sh,x,y,w,h);
+  ctx.restore();
+  return true;
+}
 function drawV19944PublicIcon(key,x,y,w,h){
   const map={night:11,tower:12,harbor:13,green:14};
   return drawV19944CanvasAsset(map[key],x,y,w,h);
@@ -15999,5 +16247,190 @@ openPublicInvestment=function(key){
 [V19944_BATCH01_IMAGE,V19944_BATCH02_IMAGE].forEach(im=>im.addEventListener("load",()=>{try{drawBoard();render()}catch(e){}}));
 </script>
 
+
+<style id="v19952-final-ui-authority">
+/* V19.9.52 FINAL AUTHORITY
+   Must stay after all legacy style blocks so older mobile/button rules cannot win. */
+
+/* Desktop: make the four main action illustrations visibly larger. */
+html body .controls .planb-main-action .v19944-action-icon{
+  width:56px!important;
+  height:56px!important;
+  flex:0 0 56px!important;
+}
+html body .controls .planb-main-action{
+  gap:12px!important;
+}
+html body .controls .planb-main-action .btn-label{
+  font-size:17px!important;
+  font-weight:1000!important;
+  line-height:1.05!important;
+}
+
+/* Landscape mobile/tablet layout: dice status + market on row 1,
+   property + strategy on row 2, full-width roll on row 3. */
+@media(max-width:980px) and (orientation:landscape){
+  html body .controls .dicebox{
+    grid-column:1!important;
+    grid-row:1!important;
+  }
+  html body .controls #marketOpsBtn{
+    grid-column:2!important;
+    grid-row:1!important;
+  }
+  html body .controls #propertyBtn{
+    grid-column:1!important;
+    grid-row:2!important;
+  }
+  html body .controls #strategyBtn{
+    grid-column:2!important;
+    grid-row:2!important;
+  }
+  html body .controls #rollBtn{
+    grid-column:1/3!important;
+    grid-row:3!important;
+  }
+  html body .controls .planb-main-action .v19944-action-icon{
+    width:44px!important;
+    height:44px!important;
+    flex:0 0 44px!important;
+  }
+  html body .controls #rollBtn .v19944-action-icon{
+    width:48px!important;
+    height:48px!important;
+    flex:0 0 48px!important;
+  }
+  html body .controls .planb-main-action{
+    gap:8px!important;
+  }
+  html body .controls .planb-main-action .btn-label{
+    font-size:clamp(11px,2.5dvh,14px)!important;
+  }
+}
+
+/* Desktop mobile preview must mirror the real phone layout exactly. */
+body.force-mobile-preview .controls .dicebox{
+  grid-column:1!important;
+  grid-row:1!important;
+}
+body.force-mobile-preview .controls #marketOpsBtn{
+  grid-column:2!important;
+  grid-row:1!important;
+}
+body.force-mobile-preview .controls #propertyBtn{
+  grid-column:1!important;
+  grid-row:2!important;
+}
+body.force-mobile-preview .controls #strategyBtn{
+  grid-column:2!important;
+  grid-row:2!important;
+}
+body.force-mobile-preview .controls #rollBtn{
+  grid-column:1/3!important;
+  grid-row:3!important;
+}
+body.force-mobile-preview .controls .planb-main-action .v19944-action-icon{
+  width:44px!important;
+  height:44px!important;
+  flex:0 0 44px!important;
+}
+body.force-mobile-preview .controls #rollBtn .v19944-action-icon{
+  width:48px!important;
+  height:48px!important;
+  flex:0 0 48px!important;
+}
+</style>
+
+<style id="v19955-desktop-board-fit-gate">
+/* V19.9.55 recovery: desktop board must always fit the board panel.
+   This scope explicitly excludes the real phone landscape and phone preview layouts. */
+@media (min-width:981px){
+  html body:not(.phone-landscape):not(.force-mobile-preview) #boardPanel{
+    min-width:0!important;
+    overflow:hidden!important;
+  }
+  html body:not(.phone-landscape):not(.force-mobile-preview) #boardScroller{
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    height:auto!important;
+    max-height:none!important;
+    overflow:hidden!important;
+    margin:0!important;
+    padding:0!important;
+  }
+  html body:not(.phone-landscape):not(.force-mobile-preview) #board{
+    display:block!important;
+    width:100%!important;
+    height:auto!important;
+    min-width:0!important;
+    max-width:100%!important;
+    max-height:none!important;
+    margin:0!important;
+    transform:none!important;
+    object-fit:contain!important;
+    touch-action:auto!important;
+  }
+}
+</style>
+<script id="v19955-desktop-board-fit-runtime">
+(function(){
+  const DESKTOP_BREAKPOINT=981;
+  let resizeTimer=0;
+
+  function desktopBoardFitGate(){
+    const body=document.body;
+    const board=document.getElementById("board");
+    if(!body||!board)return false;
+
+    const desktop=window.innerWidth>=DESKTOP_BREAKPOINT
+      && !body.classList.contains("phone-landscape")
+      && !body.classList.contains("force-mobile-preview");
+
+    if(!desktop)return false;
+
+    // Desktop must never inherit a width/height/transform written by mobile zoom/preview code.
+    board.style.removeProperty("width");
+    board.style.removeProperty("height");
+    board.style.removeProperty("min-width");
+    board.style.removeProperty("max-width");
+    board.style.removeProperty("transform");
+
+    // Protect the canvas coordinate system used by POS / tileSizeForIndex.
+    if(typeof BOARD_W==="number"&&board.width!==BOARD_W)board.width=BOARD_W;
+    if(typeof BOARD_H==="number"&&board.height!==BOARD_H)board.height=BOARD_H;
+
+    const scroller=document.getElementById("boardScroller");
+    if(scroller){
+      scroller.scrollLeft=0;
+      scroller.scrollTop=0;
+    }
+
+    if(typeof drawBoard==="function"&&typeof state!=="undefined"&&state){
+      requestAnimationFrame(()=>drawBoard());
+    }
+    return true;
+  }
+
+  function scheduleDesktopBoardFit(){
+    clearTimeout(resizeTimer);
+    resizeTimer=setTimeout(desktopBoardFitGate,60);
+  }
+
+  window.addEventListener("resize",scheduleDesktopBoardFit,{passive:true});
+  window.addEventListener("pageshow",()=>setTimeout(desktopBoardFitGate,40),{passive:true});
+  document.addEventListener("visibilitychange",()=>{
+    if(!document.hidden)setTimeout(desktopBoardFitGate,40);
+  });
+  setTimeout(desktopBoardFitGate,0);
+  setTimeout(desktopBoardFitGate,250);
+
+  window.__WEALTH_DESKTOP_BOARD_FIT_GATE=Object.freeze({
+    build:"19955",
+    expectedCanvas:Object.freeze({width:1680,height:1040}),
+    expectedTiles:44
+  });
+})();
+</script>
 </body>
 </html>
