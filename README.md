@@ -1,6 +1,14 @@
-# 財富帝國 V19.9.42 WEB
+# 財富帝國 V19.9.43 WEB
 
 這是《財富帝國》desktop / iPhone 網頁發布版。
+
+## V19.9.43｜Visual Gate 殘留清除
+本版依正式 Pages Run #85 的 Desktop / iPhone landscape 回歸結果，修正 V19.9.42 尚未真正被壓掉的舊視覺來源。
+
+- 都會核心、都會銀行、公共建設、城市委託等 Plan B Modal：移除舊 v198 藍 / 綠 / 金色圖片按鈕皮膚，統一改成純色文字按鈕。
+- 股票市場：沒有 C01 / D01 對應的新素材，因此買進 / 賣出、持股摘要與損益資訊不再使用 REV36 舊 ICON，改成乾淨文字 UI。
+- 主棋盤小房子、中央裝飾小建築、中央設施文字色塊、手機底部純文字導覽、Modal 純 CSS × 維持 V19.9.42 的清理結果。
+- 本次不修改 signaling、DataConnection、heartbeat、reconnect、resume、Host Reload Recovery 邏輯。
 
 ## V19.9.42｜舊 Render Source 清除
 本版針對 V19.9.41 實機截圖暴露的殘留舊 UI / ICON 做清理，不再以新版素材蓋在舊素材上。
@@ -20,7 +28,7 @@
 
 ## 驗證
 - Inline JavaScript：15 段，syntax PASS。
-- APP_BUILD_ID：19942。
+- APP_BUILD_ID：19943。
 - signaling / DataConnection / heartbeat / reconnect / resume / Host Reload Recovery 核心函式保留。
 - USER VISUAL PASS：需正式 Pages 實機檢查後才能宣告。
 - MULTIPLAYER UAT PASS：仍需兩裝置不同網路實測，Pages SUCCESS 不能取代。
@@ -29,4 +37,4 @@
 - `safe-rollback-v19.9.41`
 
 ## 下一步
-先確認 V19.9.42 視覺殘留是否清乾淨；Visual PASS 後再按 Plan B 順序進策略道具 V1 / 市場操作深化，不先增加大型功能。
+先確認 V19.9.43 正式頁面的視覺殘留是否清乾淨；USER VISUAL PASS 與兩裝置不同網路 MULTIPLAYER UAT PASS 後，再按 Plan B 順序進 legacy dead-code audit 與策略道具 V1。
