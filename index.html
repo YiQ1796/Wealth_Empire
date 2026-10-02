@@ -6571,49 +6571,7 @@ body.force-mobile-preview .controls #rollBtn{
 }
 </style>
 
-<style id="v19952-property-zones-and-action-scale">
-/* V19.9.52 — enlarge the four primary action icons without reintroducing legacy button art. */
-.planb-main-action .v19944-action-icon{
-  width:56px!important;
-  height:56px!important;
-  flex:0 0 56px!important;
-}
-.planb-main-action{
-  gap:12px!important;
-}
-.planb-main-action .btn-label{
-  font-size:17px!important;
-  font-weight:1000!important;
-}
-@media(max-width:980px) and (orientation:landscape){
-  html body .controls .planb-main-action .v19944-action-icon{
-    width:44px!important;
-    height:44px!important;
-    flex:0 0 44px!important;
-  }
-  html body .controls #rollBtn .v19944-action-icon{
-    width:48px!important;
-    height:48px!important;
-    flex:0 0 48px!important;
-  }
-  html body .controls .planb-main-action{
-    gap:8px!important;
-  }
-  html body .controls .planb-main-action .btn-label{
-    font-size:clamp(11px,2.5dvh,14px)!important;
-  }
-}
-body.force-mobile-preview .controls .planb-main-action .v19944-action-icon{
-  width:44px!important;
-  height:44px!important;
-  flex:0 0 44px!important;
-}
-body.force-mobile-preview .controls #rollBtn .v19944-action-icon{
-  width:48px!important;
-  height:48px!important;
-  flex:0 0 48px!important;
-}
-</style>
+
 </head>
 <body class="lobby-mode">
 
@@ -16289,5 +16247,98 @@ openPublicInvestment=function(key){
 [V19944_BATCH01_IMAGE,V19944_BATCH02_IMAGE].forEach(im=>im.addEventListener("load",()=>{try{drawBoard();render()}catch(e){}}));
 </script>
 
+
+<style id="v19952-final-ui-authority">
+/* V19.9.52 FINAL AUTHORITY
+   Must stay after all legacy style blocks so older mobile/button rules cannot win. */
+
+/* Desktop: make the four main action illustrations visibly larger. */
+html body .controls .planb-main-action .v19944-action-icon{
+  width:56px!important;
+  height:56px!important;
+  flex:0 0 56px!important;
+}
+html body .controls .planb-main-action{
+  gap:12px!important;
+}
+html body .controls .planb-main-action .btn-label{
+  font-size:17px!important;
+  font-weight:1000!important;
+  line-height:1.05!important;
+}
+
+/* Landscape mobile/tablet layout: dice status + market on row 1,
+   property + strategy on row 2, full-width roll on row 3. */
+@media(max-width:980px) and (orientation:landscape){
+  html body .controls .dicebox{
+    grid-column:1!important;
+    grid-row:1!important;
+  }
+  html body .controls #marketOpsBtn{
+    grid-column:2!important;
+    grid-row:1!important;
+  }
+  html body .controls #propertyBtn{
+    grid-column:1!important;
+    grid-row:2!important;
+  }
+  html body .controls #strategyBtn{
+    grid-column:2!important;
+    grid-row:2!important;
+  }
+  html body .controls #rollBtn{
+    grid-column:1/3!important;
+    grid-row:3!important;
+  }
+  html body .controls .planb-main-action .v19944-action-icon{
+    width:44px!important;
+    height:44px!important;
+    flex:0 0 44px!important;
+  }
+  html body .controls #rollBtn .v19944-action-icon{
+    width:48px!important;
+    height:48px!important;
+    flex:0 0 48px!important;
+  }
+  html body .controls .planb-main-action{
+    gap:8px!important;
+  }
+  html body .controls .planb-main-action .btn-label{
+    font-size:clamp(11px,2.5dvh,14px)!important;
+  }
+}
+
+/* Desktop mobile preview must mirror the real phone layout exactly. */
+body.force-mobile-preview .controls .dicebox{
+  grid-column:1!important;
+  grid-row:1!important;
+}
+body.force-mobile-preview .controls #marketOpsBtn{
+  grid-column:2!important;
+  grid-row:1!important;
+}
+body.force-mobile-preview .controls #propertyBtn{
+  grid-column:1!important;
+  grid-row:2!important;
+}
+body.force-mobile-preview .controls #strategyBtn{
+  grid-column:2!important;
+  grid-row:2!important;
+}
+body.force-mobile-preview .controls #rollBtn{
+  grid-column:1/3!important;
+  grid-row:3!important;
+}
+body.force-mobile-preview .controls .planb-main-action .v19944-action-icon{
+  width:44px!important;
+  height:44px!important;
+  flex:0 0 44px!important;
+}
+body.force-mobile-preview .controls #rollBtn .v19944-action-icon{
+  width:48px!important;
+  height:48px!important;
+  flex:0 0 48px!important;
+}
+</style>
 </body>
 </html>
