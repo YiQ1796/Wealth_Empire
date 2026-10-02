@@ -1,0 +1,104 @@
+name: Apply V19.9.48 Full Tile Patch
+
+on:
+  push:
+    branches: ["work-v19.9.48-full-tile-render"]
+    paths:
+      - ".github/workflows/v19948_full_tile_patch.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: ${{ !contains(github.event.head_commit.message, 'V19.9.48 render A15-A20 as full tiles') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout work branch
+        uses: actions/checkout@v4
+        with:
+          ref: work-v19.9.48-full-tile-render
+          fetch-depth: 0
+
+      - name: Verify starting build
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -F 'const APP_BUILD_ID="19947";' index.html
+          git status --short
+          git log -3 --oneline
+
+      - name: Apply V19.9.48 patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          python tools/v19948_patch.py
+
+      - name: Validate inline JavaScript
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html = Path("index.html").read_text(encoding="utf-8")
+          scripts = re.findall(r"<script(?:\s[^>]*)?>(.*?)</script>", html, re.S | re.I)
+          inline = [s for s in scripts if s.strip()]
+          if not inline:
+              raise SystemExit("No inline script found")
+          Path("/tmp/wealth_empire_inline.js").write_text("\n".join(inline), encoding="utf-8")
+          print(f"Validated extraction: {len(inline)} inline script block(s)")
+          PY
+          node --check /tmp/wealth_empire_inline.js
+
+      - name: Static regression guards
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          html = Path("index.html").read_text(encoding="utf-8")
+          required = [
+              'const APP_BUILD_ID="19948";',
+              'function drawV19948FullTileArt(type,x,y,w,h)',
+              'art("stockBuy","rev36-stock-action-art")',
+              'art("stockSell","rev36-stock-action-art")',
+              '.stock-action-btn .v19923-q02-art{display:none!important',
+              'DataConnection',
+              'heartbeat',
+              'reconnect',
+              'resume',
+          ]
+          for marker in required:
+              if marker not in html:
+                  raise SystemExit(f"Required marker missing: {marker}")
+          forbidden = [
+              'drawV19944TileIcon(t.type,x-artSize/2',
+              'drawV19944TileIcon(t.type,x-w/2+7',
+          ]
+          for marker in forbidden:
+              if marker in html:
+                  raise SystemExit(f"Rejected small-icon render path still present: {marker}")
+          print("Static regression guards PASS")
+          PY
+          git diff --check
+          echo "---- change summary ----"
+          git diff --stat
+          echo "---- network keyword diff guard ----"
+          if git diff -- index.html | grep -E '^[+-].*(signaling|DataConnection|heartbeat|reconnect|resume|Host Reload Recovery)' ; then
+            echo "Network/recovery lines changed unexpectedly" >&2
+            exit 1
+          fi
+          echo "Network/recovery diff guard PASS"
+
+      - name: Commit clean work result
+        shell: bash
+        run: |
+          set -euo pipefail
+          git rm tools/v19948_patch.py .github/workflows/v19948_full_tile_patch.yml
+          git add index.html README.md
+          git diff --cached --check
+          git config user.name "Wealth Empire Build Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git commit -m "V19.9.48 render A15-A20 as full tiles"
+          git push origin HEAD:work-v19.9.48-full-tile-render
