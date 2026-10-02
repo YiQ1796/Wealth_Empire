@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.47 WEB｜股票買賣圖示恢復版</title>
+<title>財富帝國 V19.9.48 WEB｜棋盤 Full-Tile 第一版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.47 WEB - 恢復既有新版股票買進/賣出圖示，保留 V19.9.46 其他內容">
+<meta name="description" content="財富帝國 V19.9.48 WEB - A15-A20 棋盤特殊格改為標題在上、主圖在下的 Full-Tile render；保留 REV36 股票買賣新版素材">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6526,7 +6526,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.43</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.48</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6569,7 +6569,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.47 WEB｜股票買賣圖示恢復｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.48 WEB｜棋盤 Full-Tile｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -7520,7 +7520,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19947";
+const APP_BUILD_ID="19948";
 window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:4,mode:"REV-C01-D01-board-pawns"},q07:{cols:5,rows:4,path:"./assets/v19941/rev_c01_d01_all20_v1.webp?v=19941"},revC01D01:{cols:5,rows:4,count:20}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
@@ -15590,18 +15590,33 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
     ctx.save();
     ctx.shadowColor="rgba(51,72,106,.12)";ctx.shadowBlur=phone?7:12;ctx.shadowOffsetY=phone?2:4;
     const base=ctx.createLinearGradient(x,y-h/2,x,y+h/2),c=tcolor(t);base.addColorStop(0,c);base.addColorStop(1,c);
-    ctx.fillStyle=base;ctx.strokeStyle="#7890a7";ctx.lineWidth=2;rr(x-w/2+1,y-h/2+1,w-2,h-2,phone?6:9,true,true);ctx.restore();
-    const artSize=phone?Math.min(42,Math.max(30,Math.min(w,h)*.50)):Math.min(34,Math.max(24,Math.min(w,h)*.42));
-    if(phone){
-      drawV19944TileIcon(t.type,x-artSize/2,y-h*.16-artSize/2,artSize,artSize);
-      ctx.fillStyle="#fff";ctx.textAlign="center";ctx.textBaseline="middle";
-      ctx.font='1000 22px "Microsoft JhengHei","Noto Sans TC",sans-serif';
-      ctx.fillText(compactTileName(t.name),x,y+h*.23,w-8)
-    }else{
-      drawV19944TileIcon(t.type,x-w/2+7,y-h/2+8,artSize,artSize);
-      ctx.fillStyle="#fff";ctx.textAlign="center";ctx.textBaseline="alphabetic";
-      ctx.font='1000 14px "Microsoft JhengHei"';ctx.fillText(t.name,x+8,y+5,w-38)
+    const tileX=x-w/2+1,tileY=y-h/2+1,tileW=w-2,tileH=h-2;
+    const titleH=phone?Math.max(20,Math.min(30,tileH*.28)):Math.max(14,Math.min(20,tileH*.30));
+    const radius=phone?6:9;
+
+    /* Neutral fallback only; the A15-A20 artwork is now the dominant render source. */
+    ctx.fillStyle="#eef3f8";ctx.strokeStyle="rgba(70,96,126,.48)";ctx.lineWidth=1.5;
+    rr(tileX,tileY,tileW,tileH,radius,true,true);ctx.restore();
+
+    ctx.save();
+    ctx.beginPath();ctx.roundRect(tileX,tileY,tileW,tileH,radius);ctx.clip();
+    const artY=tileY+titleH,artH=Math.max(1,tileH-titleH);
+    if(!drawV19948FullTileArt(t.type,tileX,artY,tileW,artH)){
+      ctx.fillStyle=base;ctx.fillRect(tileX,artY,tileW,artH);
     }
+    ctx.fillStyle="rgba(248,251,255,.96)";
+    ctx.fillRect(tileX,tileY,tileW,titleH);
+    ctx.restore();
+
+    ctx.save();
+    ctx.beginPath();ctx.roundRect(tileX+.5,tileY+.5,tileW-1,tileH-1,radius);
+    ctx.strokeStyle="rgba(55,82,112,.62)";ctx.lineWidth=1.25;ctx.stroke();
+    ctx.fillStyle="#18324f";ctx.textAlign="center";ctx.textBaseline="middle";
+    const tileLabel=phone?compactTileName(t.name):t.name;
+    const titleFont=phone?Math.max(14,Math.min(20,titleH*.68)):Math.max(10,Math.min(14,titleH*.72));
+    ctx.font='1000 '+titleFont+'px "Microsoft JhengHei","Noto Sans TC",sans-serif';
+    ctx.fillText(tileLabel,x,tileY+titleH/2,tileW-8);
+    ctx.restore();
   }
   const previousDrawTile=drawTile;
   drawTile=function(t,x,y,index){
@@ -15920,6 +15935,36 @@ function drawV19944CanvasAsset(assetId,x,y,w,h){
 function drawV19944TileIcon(type,x,y,w,h){
   const map={start:15,chance:16,fate:17,tax:18,auction:19,stock:20};
   return drawV19944CanvasAsset(map[type],x,y,w,h);
+}
+
+/* V19.9.48 BOARD_TILE renderer.
+   A15-A20 are rendered as the tile's main visual instead of a small icon.
+   The source cell is center-cropped to cover the full artwork region without changing board geometry. */
+function drawV19948FullTileArt(type,x,y,w,h){
+  const map={start:15,chance:16,fate:17,tax:18,auction:19,stock:20};
+  const cell=v19944SpriteCell(map[type]);
+  if(!cell||!cell.image.complete||!cell.image.naturalWidth||w<=0||h<=0)return false;
+
+  const cellW=cell.image.naturalWidth/5;
+  const cellH=cell.image.naturalHeight/2;
+  let sx=cell.col*cellW,sy=cell.row*cellH,sw=cellW,sh=cellH;
+  const sourceRatio=cellW/cellH;
+  const targetRatio=w/h;
+
+  if(sourceRatio>targetRatio){
+    sw=cellH*targetRatio;
+    sx=cell.col*cellW+(cellW-sw)/2;
+  }else if(sourceRatio<targetRatio){
+    sh=cellW/targetRatio;
+    sy=cell.row*cellH+(cellH-sh)/2;
+  }
+
+  ctx.save();
+  ctx.imageSmoothingEnabled=true;
+  ctx.imageSmoothingQuality="high";
+  ctx.drawImage(cell.image,sx,sy,sw,sh,x,y,w,h);
+  ctx.restore();
+  return true;
 }
 function drawV19944PublicIcon(key,x,y,w,h){
   const map={night:11,tower:12,harbor:13,green:14};

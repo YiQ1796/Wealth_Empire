@@ -1,6 +1,17 @@
-# 財富帝國 V19.9.47 WEB
+# 財富帝國 V19.9.48 WEB
 
 這是《財富帝國》desktop / iPhone 網頁發布版。
+
+
+## V19.9.48｜A15–A20 棋盤 Full-Tile Render 第一版
+本版只處理目前最高優先的棋盤 Tile 視覺模型，不改棋盤角度、路線或多人連線。A15–A20（起點／機會／命運／稅務局／地產拍賣行／股市事件）不再以小 icon 塞進舊格框，而是改成「標題在上、主圖在下、主圖佔據整個剩餘格面」的 Full-Tile render。配色保持中性，不照抄示意圖，後續仍以使用者最終視覺決定為準。
+
+- A15–A20：移除 20–40px 小 icon render path，改用大面積主圖。
+- Board geometry：56 格路線、角度、座標與事件邏輯不變。
+- 股票：保留 V19.9.47 已恢復的 REV36 stockBuy / stockSell 新版圖示，舊 Q02 仍停用。
+- Multiplayer：signaling、DataConnection、heartbeat、reconnect、resume、Host Reload Recovery 不修改。
+- USER VISUAL PASS：仍需 Desktop + iPhone landscape 正式頁實機檢查後才能宣告。
+
 
 ## V19.9.47｜股票買進／賣出新版圖示恢復
 V19.9.43 清理舊 render source 時誤把已是新版素材的股票買進／賣出圖示一併停用。本版恢復既有 REV36 stockBuy / stockSell 素材，僅保留舊 Q02 股票圖示為停用狀態；其他 V19.9.46 內容與多人連線邏輯不變。
@@ -46,14 +57,15 @@ Pages #86 實際部署回歸發現 390px 高的 iPhone landscape 會被底部「
 - C01 / D01 Asset Registry 仍保留，房產素材用於房產管理與升級流程；不再塞到棋盤格造成視覺雜訊。
 
 ## 驗證
-- Inline JavaScript：15 段，syntax PASS。
-- APP_BUILD_ID：19947。
+- Inline JavaScript：16 段，syntax PASS。
+- APP_BUILD_ID：19948。
 - signaling / DataConnection / heartbeat / reconnect / resume / Host Reload Recovery 核心函式保留。
 - USER VISUAL PASS：需正式 Pages 實機檢查後才能宣告。
 - MULTIPLAYER UAT PASS：仍需兩裝置不同網路實測，Pages SUCCESS 不能取代。
 
 ## 安全回退
-- `safe-rollback-v19.9.41`
+- `safe-rollback-v19.9.42`（主要回退點）
+- `safe-rollback-v19.9.41`（較早回退點）
 
 ## 下一步
-先驗 V19.9.46 正式頁面的 A01–A20、iPhone 都會核心 2×3 與公共建設 2×2；Visual PASS 後再進下一批素材與 legacy dead-code audit。
+先驗 V19.9.48 正式頁 A15–A20 Full-Tile（Desktop + iPhone landscape），再依序提高 A11–A14 與 A05–A10 主圖比例；Visual PASS 前不宣告完成。
