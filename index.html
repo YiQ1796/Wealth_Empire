@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.49 WEB｜44 格棋盤重構第一版</title>
+<title>財富帝國 V19.9.50 WEB｜44 格棋盤功能平衡版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.49 WEB - 外圈由 56 格重構為 44 格，放大單格可視面積並保留主要地產、特殊事件與多人連線">
+<meta name="description" content="財富帝國 V19.9.50 WEB - 44 格棋盤功能平衡：保留收購中心、城市更新局、法院、醫療中心，維持 24 塊主要地產與放大格面">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6526,7 +6526,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.49</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.50</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6569,7 +6569,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.49 WEB｜44格棋盤重構｜44格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.50 WEB｜44格功能平衡｜44格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -6624,7 +6624,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
         <span><i class="dot" style="background:#8b5cf6"></i>玩家4</span>
         <span>粗框＝所有權｜LV.1 / LV.2＝地產升級</span><span class="board-size-chip">44 格大地圖</span>
       </div>
-      <div class="board-map-note">外圈已重構為 44 格，單格面積放大；保留房地產、股票、拍賣、交通與多人短事件。四大主操作仍留在 UI，不額外佔用棋盤格。</div>
+      <div class="board-map-note">外圈維持 44 格放大格面；保留收購中心、城市更新局、法院、醫療中心等唯一功能格，並將部分重複小遊戲集中到機會事件。四大主操作仍留在 UI，不額外佔用棋盤格。</div>
     </div>
     <div class="side">
       <div id="marketPanel" class="panel market"><h2><span class="section-icon-title">股票市場</span></h2><div id="market"></div></div>
@@ -6835,9 +6835,10 @@ const MARKET_OPERATION_DEFS={
 const TILE_NAMES=[
 "起點","星港住宅","機會","海灣公寓","稅務局","水岸別墅","中央車站","翡翠商圈",
 "命運","黃金商圈","高低骰對決","百貨商場","國際機場",
-"科技園區","機會","創新園區","猜拳擂台","雲端科技城","北城豪宅","財富賽馬場","綠能園區","湖畔豪宅",
-"股市事件","金融大道","綠燈反應王","商務中心","命運","晶鑽商業區","國際港口","影城","全民骰王","國際飯店","機會","頂級飯店","跨海大橋",
-"山景莊園","命運","天空豪宅","地產拍賣行","奢華莊園","皇后大道","寶箱爭奪","帝王商圈","世界中心"];
+"科技園區","機會","創新園區","收購中心","雲端科技城","北城豪宅","財富賽馬場","綠能園區","湖畔豪宅",
+"股市事件","金融大道","法院","商務中心","命運","晶鑽商業區","國際港口","影城","醫療中心","國際飯店",
+"機會","頂級飯店","跨海大橋","山景莊園","命運","天空豪宅","地產拍賣行","奢華莊園","皇后大道",
+"城市更新局","帝王商圈","世界中心"];
 const BOARD_SCHEMA_ID=44;
 
 const HORSES=[
@@ -7632,7 +7633,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19949";
+const APP_BUILD_ID="19950";
 window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:4,mode:"REV-C01-D01-board-pawns"},q07:{cols:5,rows:4,path:"./assets/v19941/rev_c01_d01_all20_v1.webp?v=19941"},revC01D01:{cols:5,rows:4,count:20}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
