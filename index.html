@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.45 WEB｜A01–A20 素材替換版</title>
+<title>財富帝國 V19.9.46 WEB｜A01–A20 素材替換版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.45 WEB - A01–A20 新素材正式替換與手機都會核心排版修正">
+<meta name="description" content="財富帝國 V19.9.46 WEB - A01–A20 新素材正式替換與手機都會核心/公共建設排版修正">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6569,7 +6569,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.45 WEB｜A01–A20 素材替換｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.46 WEB｜A01–A20 素材替換｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -7520,7 +7520,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19945";
+const APP_BUILD_ID="19946";
 window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:4,mode:"REV-C01-D01-board-pawns"},q07:{cols:5,rows:4,path:"./assets/v19941/rev_c01_d01_all20_v1.webp?v=19941"},revC01D01:{cols:5,rows:4,count:20}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
@@ -15843,6 +15843,54 @@ body.phone-landscape #modal.phone-hub-modal #modalBody{
     width:72px!important;min-width:72px!important;height:46px!important;min-height:46px!important;
   }
 }
+
+/* V19.9.46: 公共建設投資在手機橫向固定 2x2。 */
+body.phone-landscape #modal.public-invest-center-modal .modal-card{
+  width:min(96vw,850px)!important;max-width:850px!important;
+  max-height:calc(100dvh - 8px)!important;padding:8px 10px!important
+}
+body.phone-landscape #modal.public-invest-center-modal #modalTitle{
+  margin:0 0 4px!important;font-size:22px!important;line-height:1.05!important
+}
+body.phone-landscape #modal.public-invest-center-modal #modalBody{
+  min-height:0!important;overflow:hidden!important
+}
+#modal.public-invest-center-modal #modalActions{display:none!important}
+body.phone-landscape #modal.public-invest-center-modal .v198-modal-icon-title{
+  min-height:48px!important;margin:0 0 5px!important;padding:4px 8px!important
+}
+body.phone-landscape #modal.public-invest-center-modal .v198-modal-icon-title .v19944-art{
+  width:42px!important;height:42px!important;flex-basis:42px!important
+}
+body.phone-landscape #modal.public-invest-center-modal .hub-rule{
+  margin:0 0 5px!important;padding:5px 8px!important;font-size:10px!important;line-height:1.15!important
+}
+body.phone-landscape #modal.public-invest-center-modal .hub-grid{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:6px!important;align-items:stretch!important
+}
+body.phone-landscape #modal.public-invest-center-modal .public-hub-card{
+  display:grid!important;grid-template-columns:50px minmax(0,1fr) 80px!important;
+  grid-template-rows:auto auto auto!important;column-gap:6px!important;row-gap:2px!important;
+  min-height:82px!important;padding:5px 7px!important;align-items:center!important;overflow:hidden!important
+}
+body.phone-landscape #modal.public-invest-center-modal .public-hub-card>.v19944-art{
+  grid-column:1!important;grid-row:1 / 4!important;width:46px!important;height:46px!important;flex-basis:46px!important
+}
+body.phone-landscape #modal.public-invest-center-modal .public-hub-card .hname{
+  grid-column:2!important;grid-row:1!important;margin:0!important;font-size:13px!important;line-height:1.05!important;white-space:nowrap!important
+}
+body.phone-landscape #modal.public-invest-center-modal .public-hub-card .hdesc{
+  grid-column:2!important;grid-row:2!important;margin:0!important;font-size:9px!important;line-height:1.1!important;
+  display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important
+}
+body.phone-landscape #modal.public-invest-center-modal .public-hub-card .hvalue{
+  grid-column:2!important;grid-row:3!important;margin:0!important;font-size:9.5px!important;line-height:1.05!important;white-space:nowrap!important
+}
+body.phone-landscape #modal.public-invest-center-modal .public-hub-card>button{
+  grid-column:3!important;grid-row:1 / 4!important;width:80px!important;min-width:80px!important;
+  height:46px!important;min-height:46px!important;margin:0!important;padding:4px!important;align-self:center!important;font-size:10.5px!important
+}
 </style>
 <script id="v19944-batch01-02-runtime">
 const V19944_BATCH01_IMAGE=new Image();
@@ -15916,9 +15964,9 @@ openPublicInvestmentCenter=function(){
   showModal("公共建設投資",
     '<div class="v198-modal-icon-title">'+v19944ArtHtml(10)+'<div><b>公共建設投資</b><span>累積持分、提升城市等級並定期領分紅</span></div></div>'+
     '<div class="hub-rule">A11～A14 已替換夜市、科技塔、觀光碼頭、綠能公園舊素材。</div><div class="hub-grid">'+cards+'</div>',
-    [["關閉","ghost",closeModal]]
+    []
   );
-  $("modal")?.classList.add("planb-clean-modal");
+  $("modal")?.classList.add("planb-clean-modal","public-invest-center-modal");
 };
 
 openPublicInvestment=function(key){
