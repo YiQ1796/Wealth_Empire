@@ -1,6 +1,9 @@
-# 財富帝國 V19.9.46 WEB
+# 財富帝國 V19.9.47 WEB
 
 這是《財富帝國》desktop / iPhone 網頁發布版。
+
+## V19.9.47｜股票買進／賣出新版圖示恢復
+V19.9.43 清理舊 render source 時誤把已是新版素材的股票買進／賣出圖示一併停用。本版恢復既有 REV36 stockBuy / stockSell 素材，僅保留舊 Q02 股票圖示為停用狀態；其他 V19.9.46 內容與多人連線邏輯不變。
 
 ## V19.9.46｜iPhone 公共建設 2×2 修正
 Pages #87 部署回歸確認 A11–A14 素材本身正常，但「公共建設投資」仍沿用舊的一欄長頁，390px 高的 iPhone landscape 只能看到第一張。本版改成 2 欄 × 2 列並移除重複的底部關閉列，四張公共建設卡同屏顯示。
@@ -44,7 +47,7 @@ Pages #86 實際部署回歸發現 390px 高的 iPhone landscape 會被底部「
 
 ## 驗證
 - Inline JavaScript：15 段，syntax PASS。
-- APP_BUILD_ID：19946。
+- APP_BUILD_ID：19947。
 - signaling / DataConnection / heartbeat / reconnect / resume / Host Reload Recovery 核心函式保留。
 - USER VISUAL PASS：需正式 Pages 實機檢查後才能宣告。
 - MULTIPLAYER UAT PASS：仍需兩裝置不同網路實測，Pages SUCCESS 不能取代。
