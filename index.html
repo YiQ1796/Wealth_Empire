@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.50 WEB｜44 格棋盤功能平衡版</title>
+<title>財富帝國 V19.9.51 WEB｜手機主操作換位版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.50 WEB - 44 格棋盤功能平衡：保留收購中心、城市更新局、法院、醫療中心，維持 24 塊主要地產與放大格面">
+<meta name="description" content="財富帝國 V19.9.51 WEB - 手機橫向版市場操作與擲骰子換位；擲骰子改為底部整排主按鈕，桌機排列不變">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6521,12 +6521,61 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
   .q07-upgrade-prompt-art{width:54px;height:54px}
 }
 </style>
+
+<style id="v19951-mobile-control-swap">
+/* V19.9.51 mobile-only action hierarchy.
+   Keep dice status at top-left, move Market Operations to top-right,
+   and make Roll Dice the full-width primary action on the bottom row.
+   Desktop layout is intentionally unchanged. */
+@media (max-width:980px) and (orientation:landscape){
+  html body .controls .dicebox{
+    grid-column:1!important;
+    grid-row:1!important;
+  }
+  html body .controls #marketOpsBtn{
+    grid-column:2!important;
+    grid-row:1!important;
+  }
+  html body .controls #propertyBtn{
+    grid-column:1!important;
+    grid-row:2!important;
+  }
+  html body .controls #strategyBtn{
+    grid-column:2!important;
+    grid-row:2!important;
+  }
+  html body .controls #rollBtn{
+    grid-column:1/3!important;
+    grid-row:3!important;
+  }
+}
+body.force-mobile-preview .controls .dicebox{
+  grid-column:1!important;
+  grid-row:1!important;
+}
+body.force-mobile-preview .controls #marketOpsBtn{
+  grid-column:2!important;
+  grid-row:1!important;
+}
+body.force-mobile-preview .controls #propertyBtn{
+  grid-column:1!important;
+  grid-row:2!important;
+}
+body.force-mobile-preview .controls #strategyBtn{
+  grid-column:2!important;
+  grid-row:2!important;
+}
+body.force-mobile-preview .controls #rollBtn{
+  grid-column:1/3!important;
+  grid-row:3!important;
+}
+</style>
 </head>
 <body class="lobby-mode">
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.50</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.51</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6569,7 +6618,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.50 WEB｜44格功能平衡｜44格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.51 WEB｜手機主操作換位｜44格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -7633,7 +7682,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19950";
+const APP_BUILD_ID="19951";
 window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:4,mode:"REV-C01-D01-board-pawns"},q07:{cols:5,rows:4,path:"./assets/v19941/rev_c01_d01_all20_v1.webp?v=19941"},revC01D01:{cols:5,rows:4,count:20}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
