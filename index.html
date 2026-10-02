@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.56 WEB｜44 格桌機恢復版</title>
+<title>財富帝國 V19.9.57 CANDIDATE｜桌機裝置隔離修正</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.56 WEB - 修正 Windows 桌機誤套手機棋盤規則；保留 44 格八區連地與既有玩法">
+<meta name="description" content="財富帝國 V19.9.57 CANDIDATE - 根治桌機誤吃歷史手機 landscape media 規則；保留 44 格八區連地與既有玩法">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -3232,7 +3232,7 @@ body.force-mobile-preview #market .stock-grid{
 body.force-mobile-preview .mobile-hint{display:none!important}
 
 /* Real phone landscape. */
-@media(max-width:980px) and (orientation:landscape){
+@media(max-width:980px) and (orientation:landscape) and (hover:none) and (pointer:coarse){
   html,body{
     width:100%;
     height:100%;
@@ -3523,13 +3523,13 @@ body.force-mobile-preview .mobile-hint{display:none!important}
 }
 
 /* Very small landscape iPhones: reserve a smaller action panel so the board remains readable. */
-@media(max-width:740px) and (orientation:landscape){
+@media(max-width:740px) and (orientation:landscape) and (hover:none) and (pointer:coarse){
   :root{--phone-side-w:190px}
   #board{width:max(650px,126%)!important}
 }
 
 /* Pro Max / larger landscape phones can afford a wider control panel. */
-@media(min-width:900px) and (max-width:1180px) and (orientation:landscape){
+@media(min-width:900px) and (max-width:1180px) and (orientation:landscape) and (hover:none) and (pointer:coarse){
   :root{--phone-side-w:255px}
   #board{width:max(790px,116%)!important}
 }
@@ -3738,7 +3738,7 @@ body.force-mobile-preview #market .stock-grid{
 }
 
 /* REAL LANDSCAPE PHONE */
-@media(max-width:980px) and (orientation:landscape){
+@media(max-width:980px) and (orientation:landscape) and (hover:none) and (pointer:coarse){
   html,body{
     width:100%;
     height:100%;
@@ -3979,12 +3979,12 @@ body.force-mobile-preview #market .stock-grid{
 }
 
 /* extra small landscape phones */
-@media(max-width:740px) and (orientation:landscape){
+@media(max-width:740px) and (orientation:landscape) and (hover:none) and (pointer:coarse){
   :root{--phone-side-w:158px}
 }
 
 /* very tall / large landscape phones */
-@media(min-width:900px) and (min-height:420px) and (max-width:1180px) and (orientation:landscape){
+@media(min-width:900px) and (min-height:420px) and (max-width:1180px) and (orientation:landscape) and (hover:none) and (pointer:coarse){
   :root{--phone-side-w:190px}
 }
 
@@ -4114,7 +4114,7 @@ button:not(:disabled):active{transform:scale(.96)}
 .fx-card.good{box-shadow:0 0 0 1px rgba(255,255,255,.18),0 25px 80px rgba(16,115,72,.34)}
 .fx-card.bad{box-shadow:0 0 0 1px rgba(255,255,255,.18),0 25px 80px rgba(156,39,39,.34)}
 
-@media(max-width:980px) and (orientation:landscape){
+@media(max-width:980px) and (orientation:landscape) and (hover:none) and (pointer:coarse){
   .modal-card{
     max-height:92dvh!important;
   }
@@ -4131,7 +4131,7 @@ button:not(:disabled):active{transform:scale(.96)}
 
 
 /* ===== V18.3.3 mobile minigame unified viewport ===== */
-@media(max-width:980px) and (orientation:landscape){
+@media(max-width:980px) and (orientation:landscape) and (hover:none) and (pointer:coarse){
   .group-game-overlay,
   .minigame-overlay{
     position:fixed!important;
@@ -4386,7 +4386,7 @@ button:not(:disabled):active{transform:scale(.96)}
 }
 
 /* Very short landscape iPhones: keep the frame identical, only content density changes. */
-@media(max-height:390px) and (orientation:landscape){
+@media(max-height:390px) and (orientation:landscape) and (hover:none) and (pointer:coarse){
   .group-game-card,
   .minigame-overlay .minigame-card,
   .minigame-overlay .minigame-card.wheel-big-card{
@@ -4538,7 +4538,7 @@ button:not(:disabled):active{transform:scale(.96)}
 .public-invest-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
 .public-hub-card{border-top:4px solid #5d9ade!important}
 
-@media(max-width:980px) and (orientation:landscape){
+@media(max-width:980px) and (orientation:landscape) and (hover:none) and (pointer:coarse){
   .round-hud{display:none!important}
   #mobileLeader,#mobileRoundsLeft{
     display:block!important;
@@ -4556,7 +4556,7 @@ button:not(:disabled):active{transform:scale(.96)}
 
 
 /* ===== V19.1 landscape phone readability pass ===== */
-@media(max-width:980px) and (orientation:landscape){
+@media(max-width:980px) and (orientation:landscape) and (hover:none) and (pointer:coarse){
   :root{
     --phone-side-w:clamp(202px,23dvw,232px);
   }
@@ -4743,7 +4743,7 @@ button:not(:disabled):active{transform:scale(.96)}
 }
 
 /* Shorter iPhone landscape screens: preserve the same hierarchy instead of shrinking text too much. */
-@media(max-height:400px) and (orientation:landscape){
+@media(max-height:400px) and (orientation:landscape) and (hover:none) and (pointer:coarse){
   :root{--phone-side-w:194px}
   .mobile-turn-bar{
     height:122px!important;
@@ -4797,7 +4797,7 @@ button:not(:disabled):active{transform:scale(.96)}
   width:34px;height:34px;background-image:var(--v19927-q06);background-size:500% 200%;background-position:0 0;background-repeat:no-repeat;
   filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));
 }
-@media(max-width:980px) and (orientation:landscape){
+@media(max-width:980px) and (orientation:landscape) and (hover:none) and (pointer:coarse){
   .icon-label{gap:5px}
   .icon-label img{width:23px;height:23px}
   .nav-art-icon{width:25px;height:25px}
@@ -6620,7 +6620,7 @@ body.force-mobile-preview .controls #rollBtn{
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.56 WEB｜44格桌機修復｜八區連地</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.57 CANDIDATE｜桌機裝置隔離｜44格八區連地</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -7694,7 +7694,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19956";
+const APP_BUILD_ID="19957";
 window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:4,mode:"REV-C01-D01-board-pawns"},q07:{cols:5,rows:4,path:"./assets/v19941/rev_c01_d01_all20_v1.webp?v=19941"},revC01D01:{cols:5,rows:4,count:20}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
@@ -16350,8 +16350,8 @@ body.force-mobile-preview .controls #rollBtn .v19944-action-icon{
 }
 </style>
 
-<style id="v19956-desktop-device-board-gate">
-/* V19.9.56 authoritative desktop gate.
+<style id="v19957-desktop-device-board-gate">
+/* V19.9.57 desktop safety gate; legacy phone landscape media are device-gated at their source.
    Device type, not viewport width, decides whether desktop or phone board rules win. */
 html body.desktop-device:not(.force-mobile-preview) .main{
   position:static!important;
@@ -16410,7 +16410,7 @@ html body.desktop-device:not(.force-mobile-preview) .mobile-nav{
   display:none!important;
 }
 </style>
-<script id="v19956-desktop-device-board-runtime">
+<script id="v19957-desktop-device-board-runtime">
 (function(){
   let resizeTimer=0;
 
@@ -16452,15 +16452,32 @@ html body.desktop-device:not(.force-mobile-preview) .mobile-nav{
 
     const rect=board.getBoundingClientRect();
     const panelRect=panel.getBoundingClientRect();
+    const top=document.querySelector(".top");
+    const players=document.querySelector(".players");
+    const controls=["rollBtn","propertyBtn","strategyBtn","marketOpsBtn"].map(id=>document.getElementById(id));
+    const desktopLayoutOk=
+      !body.classList.contains("phone-device") &&
+      !body.classList.contains("phone-landscape") &&
+      board.width===1680 &&
+      board.height===1040 &&
+      typeof TILE_NAMES!=="undefined" &&
+      TILE_NAMES.length===44 &&
+      controls.every(Boolean) &&
+      rect.width>0 &&
+      rect.width<=panelRect.width+2;
     window.__WEALTH_DESKTOP_BOARD_RUNTIME={
-      build:"19956",
+      build:"19957",
       boardCssWidth:Math.round(rect.width),
       panelCssWidth:Math.round(panelRect.width),
       canvasWidth:board.width,
       canvasHeight:board.height,
-      expectedTiles:44
+      expectedTiles:44,
+      actualTiles:typeof TILE_NAMES!=="undefined"?TILE_NAMES.length:null,
+      topVisible:!!top&&getComputedStyle(top).display!=="none",
+      playersVisible:!!players&&getComputedStyle(players).display!=="none",
+      desktopLayoutOk
     };
-    return rect.width>0&&rect.width<=panelRect.width+2;
+    return desktopLayoutOk;
   }
 
   function scheduleDesktopBoardFit(){
@@ -16478,7 +16495,7 @@ html body.desktop-device:not(.force-mobile-preview) .mobile-nav{
   setTimeout(desktopBoardFitGate,900);
 
   window.__WEALTH_DESKTOP_BOARD_FIT_GATE=Object.freeze({
-    build:"19956",
+    build:"19957",
     expectedCanvas:Object.freeze({width:1680,height:1040}),
     expectedTiles:44,
     mode:"device-class-not-viewport"
