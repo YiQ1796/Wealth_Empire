@@ -1,6 +1,9 @@
-# 財富帝國 V19.9.44 WEB
+# 財富帝國 V19.9.45 WEB
 
 這是《財富帝國》desktop / iPhone 網頁發布版。
+
+## V19.9.45｜iPhone 都會核心排版修正
+Pages #86 實際部署回歸發現 390px 高的 iPhone landscape 會被底部「關閉」操作列遮住第三排卡片。本版移除該重複操作列，只保留左上角關閉 X，六張都會核心卡固定 2 欄 × 3 列完整顯示。
 
 ## V19.9.44｜A01–A20 正式素材替換
 本版把 2026-10-02 新產出的前兩批素材正式接入遊戲，不再用同功能舊 ICON 或文字色塊頂替。
@@ -38,7 +41,7 @@
 
 ## 驗證
 - Inline JavaScript：15 段，syntax PASS。
-- APP_BUILD_ID：19944。
+- APP_BUILD_ID：19945。
 - signaling / DataConnection / heartbeat / reconnect / resume / Host Reload Recovery 核心函式保留。
 - USER VISUAL PASS：需正式 Pages 實機檢查後才能宣告。
 - MULTIPLAYER UAT PASS：仍需兩裝置不同網路實測，Pages SUCCESS 不能取代。
@@ -47,4 +50,4 @@
 - `safe-rollback-v19.9.41`
 
 ## 下一步
-先驗 V19.9.44 正式頁面的 A01–A20 對應與排版；Visual PASS 後再進下一批素材與 legacy dead-code audit。
+先驗 V19.9.45 正式頁面的 A01–A20 對應與 iPhone 2×3 都會核心排版；Visual PASS 後再進下一批素材與 legacy dead-code audit。
