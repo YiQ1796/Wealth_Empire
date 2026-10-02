@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.48 WEB｜棋盤 Full-Tile 第一版</title>
+<title>財富帝國 V19.9.49 WEB｜44 格棋盤重構第一版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.48 WEB - A15-A20 棋盤特殊格改為標題在上、主圖在下的 Full-Tile render；保留 REV36 股票買賣新版素材">
+<meta name="description" content="財富帝國 V19.9.49 WEB - 外圈由 56 格重構為 44 格，放大單格可視面積並保留主要地產、特殊事件與多人連線">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6526,7 +6526,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.48</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.49</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6569,7 +6569,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.48 WEB｜棋盤 Full-Tile｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.49 WEB｜44格棋盤重構｜44格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -6622,9 +6622,9 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
         <span><i class="dot" style="background:#e44747"></i>玩家2</span>
         <span><i class="dot" style="background:#18a26e"></i>玩家3</span>
         <span><i class="dot" style="background:#8b5cf6"></i>玩家4</span>
-        <span>粗框＝所有權｜LV.1 / LV.2＝地產升級</span><span class="board-size-chip">56 格大地圖</span>
+        <span>粗框＝所有權｜LV.1 / LV.2＝地產升級</span><span class="board-size-chip">44 格大地圖</span>
       </div>
-      <div class="board-map-note">外圈維持 56 格；已移除轉盤、金幣雨與吃麵，棋盤改以猜拳擂台／綠燈反應王等短事件為主。中央維持可點擊都會核心。</div>
+      <div class="board-map-note">外圈已重構為 44 格，單格面積放大；保留房地產、股票、拍賣、交通與多人短事件。四大主操作仍留在 UI，不額外佔用棋盤格。</div>
     </div>
     <div class="side">
       <div id="marketPanel" class="panel market"><h2><span class="section-icon-title">股票市場</span></h2><div id="market"></div></div>
@@ -6635,7 +6635,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 
 <div id="mobileHint" class="mobile-hint">
-  📱 手機橫向版會自動把完整 56 格棋盤適應到螢幕，不需要拖曳或縮放；右側固定提供資訊與所有主要操作。
+  📱 手機橫向版會自動把完整 44 格棋盤適應到螢幕；單格已放大，右側固定提供資訊與所有主要操作。
 </div>
 
 <nav id="mobileNav" class="mobile-nav planb-text-nav">
@@ -6833,13 +6833,12 @@ const MARKET_OPERATION_DEFS={
   profit_boost:{name:"獲利放大",icon:"📈",cost:1200,flag:"marketProfitBoost",desc:"下一次有獲利的股票賣出，額外增加該筆獲利 50%，最高 $2,000。"}
 };
 const TILE_NAMES=[
-"起點","星港住宅","機會","翡翠商圈","收購中心","海灣公寓","海景大樓","稅務局",
-"中央車站","命運","科技園區","高低骰對決","創新園區","北城豪宅","國際機場","機會",
-"猜拳擂台","金融大道","皇家大道","命運","水岸別墅","能源公司","商務中心","財富賽馬場",
-"黃金商圈","影城","股市事件","山景莊園","綠燈反應王","機會","綠能園區","國際飯店",
-"天空豪宅","命運","國際港口","物流中心","百貨商場","全民骰王","湖畔豪宅","法院",
-"機會","晶鑽商業區","跨海大橋","命運","皇后大道","地產拍賣行","寶箱爭奪","城市更新局",
-"醫療中心","頂級飯店","雲端科技城","命運","帝王商圈","奢華莊園","海天御苑","世界中心"];
+"起點","星港住宅","機會","海灣公寓","稅務局","水岸別墅","中央車站","翡翠商圈",
+"命運","黃金商圈","高低骰對決","百貨商場","國際機場",
+"科技園區","機會","創新園區","猜拳擂台","雲端科技城","北城豪宅","財富賽馬場","綠能園區","湖畔豪宅",
+"股市事件","金融大道","綠燈反應王","商務中心","命運","晶鑽商業區","國際港口","影城","全民骰王","國際飯店","機會","頂級飯店","跨海大橋",
+"山景莊園","命運","天空豪宅","地產拍賣行","奢華莊園","皇后大道","寶箱爭奪","帝王商圈","世界中心"];
+const BOARD_SCHEMA_ID=44;
 
 const HORSES=[
   {name:"閃電",icon:"🐎",odds:2.0,weight:38},
@@ -7110,14 +7109,111 @@ function buildTiles(){
     else if(name==="城市公園")type="park";else if(name==="地產拍賣行")type="auction";
     else if(name==="醫療中心")type="hospital";else if(name==="法院")type="court";else if(name==="自由市場")type="market";
     let group=null,price=0,rent=0;
-    if(type==="property"){group=groups[Math.min(7,Math.floor(pc/4))];price=2200+pc*260;rent=Math.round(price*.14);pc++}
+    if(type==="property"){group=groups[Math.min(7,Math.floor(pc/3))];price=2200+pc*260;rent=Math.round(price*.14);pc++}
     else if(type==="station"){group="交通設施";price=5200+i*35;rent=850}
     return{id:i,name,type,group,price,rent,owner:null,level:0,mortgaged:false,buildInvested:0}
   })
 }
+function boardIndexByName(name){
+  return TILE_NAMES.indexOf(String(name||""))
+}
+function migrateBoardStateToCurrent(gameState){
+  if(!gameState||typeof gameState!=="object")return gameState;
+  const oldTiles=Array.isArray(gameState.tiles)?gameState.tiles:[];
+  if(oldTiles.length===TILE_NAMES.length){
+    gameState.boardSchema=BOARD_SCHEMA_ID;
+    return gameState
+  }
+  if(!oldTiles.length){
+    gameState.tiles=buildTiles();
+    gameState.boardSchema=BOARD_SCHEMA_ID;
+    gameState.pending=null;
+    gameState.groupGame=null;
+    gameState.rolled=false;
+    return gameState
+  }
+
+  const newTiles=buildTiles();
+  const newNames=new Set(newTiles.map(t=>t.name));
+  const oldByName=new Map(oldTiles.filter(Boolean).map((t,index)=>[t.name,{tile:t,index}]));
+
+  // Preserve surviving land ownership and upgrade state by stable tile name.
+  newTiles.forEach(t=>{
+    const old=oldByName.get(t.name)?.tile;
+    if(!old)return;
+    t.owner=old.owner??null;
+    t.level=Math.max(0,Math.min(PROPERTY_MAX_LEVEL,Number(old.level)||0));
+    t.mortgaged=!!old.mortgaged;
+    t.buildInvested=Number(old.buildInvested)||0
+  });
+
+  const oldToNewPosition=oldPos=>{
+    const total=oldTiles.length;
+    if(!total)return 0;
+    const start=((Number(oldPos)||0)%total+total)%total;
+    for(let step=0;step<total;step++){
+      const oldTile=oldTiles[(start+step)%total];
+      const mapped=boardIndexByName(oldTile?.name);
+      if(mapped>=0)return mapped
+    }
+    return 0
+  };
+
+  const compensation=new Map();
+  oldTiles.forEach(old=>{
+    const owner=Number(old?.owner);
+    if(!Number.isInteger(owner)||owner<0||newNames.has(old?.name))return;
+    if(!["property","station"].includes(old?.type))return;
+    const price=Number(old?.price)||0;
+    const level=Math.max(0,Math.min(PROPERTY_MAX_LEVEL,Number(old?.level)||0));
+    const invested=Math.max(Number(old?.buildInvested)||0,Math.round(price*.5*level));
+    compensation.set(owner,(compensation.get(owner)||0)+price+invested)
+  });
+
+  gameState.players=(gameState.players||[]).map((p,seat)=>{
+    if(!p)return p;
+    p.pos=oldToNewPosition(p.pos);
+    const refund=Math.round(compensation.get(seat)||0);
+    if(refund>0)p.cash=(Number(p.cash)||0)+refund;
+    p.properties=newTiles.filter(t=>t.owner===seat).map(t=>t.id);
+    return p
+  });
+
+  gameState.tiles=newTiles;
+  gameState.boardSchema=BOARD_SCHEMA_ID;
+  gameState.pending=null;
+  gameState.groupGame=null;
+  gameState.rolled=false;
+  gameState.monopolyOwners={};
+  gameState.events=Array.isArray(gameState.events)?gameState.events:[];
+  gameState.eventId=Number(gameState.eventId||0)+1;
+  const refundTotal=[...compensation.values()].reduce((sum,v)=>sum+v,0);
+  gameState.events.push({
+    id:gameState.eventId,
+    kind:"board_migration",
+    text:`棋盤已安全遷移為 44 格；已移除的舊地產按原價與既有升級投入補償，共 $${Math.round(refundTotal).toLocaleString()}。`,
+    data:{title:"44 格棋盤遷移",from:oldTiles.length,to:TILE_NAMES.length,refund:Math.round(refundTotal)},
+    ts:Date.now()
+  });
+  gameState.events=gameState.events.slice(-80);
+  return gameState
+}
+function acceptRemoteBoardState(remoteState){
+  const incoming=stripLegacyRoleSkills(remoteState);
+  const count=Array.isArray(incoming?.tiles)?incoming.tiles.length:0;
+  if(count!==TILE_NAMES.length){
+    const msg=`房主仍使用 ${count||"未知"} 格舊棋盤；本機已是 44 格新版。請房主重新整理一次，系統會用房主恢復資料安全遷移。`;
+    setLobbyConnectStatus("⚠️ "+msg,true);
+    showNetRecovery(msg,"bad");
+    toast("棋盤版本不同，請房主重新整理");
+    return null
+  }
+  incoming.boardSchema=BOARD_SCHEMA_ID;
+  return incoming
+}
 function newState(hostName,hostAvatar=0){
   return{
-    version:19,status:"lobby",round:1,current:0,rolled:false,
+    version:19,boardSchema:BOARD_SCHEMA_ID,status:"lobby",round:1,current:0,rolled:false,
     players:[player(hostName,0,false,hostAvatar),null,null,null],
     tiles:buildTiles(),
     stocks:Object.fromEntries(Object.entries(STOCK_DEFS).map(([c,d])=>[c,{name:d.name,price:d.price,prev:d.price,history:[d.price]}])),
@@ -7257,7 +7353,7 @@ function loadHostRecovery(code){
   }catch{return null}
 }
 function normalizeRecoveredHostState(savedState){
-  const recovered=stripLegacyRoleSkills(JSON.parse(JSON.stringify(savedState)));
+  const recovered=migrateBoardStateToCurrent(stripLegacyRoleSkills(JSON.parse(JSON.stringify(savedState))));
   recovered.players=(recovered.players||[]).map((p,seat)=>{
     if(!p)return p;
     if(seat===0){p.connected=true;p.ai=false}
@@ -7520,7 +7616,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19948";
+const APP_BUILD_ID="19949";
 window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:4,mode:"REV-C01-D01-board-pawns"},q07:{cols:5,rows:4,path:"./assets/v19941/rev_c01_d01_all20_v1.webp?v=19941"},revC01D01:{cols:5,rows:4,count:20}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
@@ -8010,7 +8106,7 @@ function wireHostConn(conn,name,resumeInfo=null){
     else if(msg.type==="welcome"){
       clearTimeout(joinTimeoutTimer);
       clearTimeout(initialJoinRetryTimer);initialJoinRetryTimer=null;initialJoinRetryAttempts=0;
-      mySeat=msg.seat;state=stripLegacyRoleSkills(msg.state);
+      const incomingState=acceptRemoteBoardState(msg.state);if(!incomingState){try{conn.close()}catch{};return;}mySeat=msg.seat;state=incomingState;
       if(msg.resumeToken)clientResumeToken=msg.resumeToken;
       guestDisplayName=name;
       guestReconnectInFlight=false;guestReconnectPendingReason="";guestConnectedSince=Date.now();
@@ -8024,7 +8120,7 @@ function wireHostConn(conn,name,resumeInfo=null){
       showNetRecovery(msg.resumed?"已重新接回原座位，進度同步完成":"連線正常","good",1800);
       render();handleIncomingEvents();saveGuestResume()
     }else if(msg.type==="state"){
-      state=stripLegacyRoleSkills(msg.state);render();handleIncomingEvents();saveGuestResume()
+      const incomingState=acceptRemoteBoardState(msg.state);if(!incomingState)return;state=incomingState;render();handleIncomingEvents();saveGuestResume()
     }else if(msg.type==="reject"){
       guestReconnectInFlight=false;
       clearTimeout(joinTimeoutTimer);toast(msg.reason);$("connectionText").textContent="❌ "+msg.reason;
@@ -8209,7 +8305,7 @@ function movePlayer(p,steps){
   for(let i=0;i<steps;i++){
     p.pos=(p.pos+1)%state.tiles.length;
     if(p.pos===0){
-      const bonus=3200+(state.cityEvent?.startBonus||0);
+      const bonus=2500+(state.cityEvent?.startBonus||0);
       p.cash+=bonus;
       addEvent("cash",`${p.name} 通過起點，獲得 $${bonus.toLocaleString()}。`,{seat:p.seat,amount:bonus,title:"通過起點"});
     }
@@ -11978,21 +12074,21 @@ function handleIncomingEvents(){
 
 async function animateDice(a,b,name){rolling=true;$("die1").classList.add("rolling");$("die2").classList.add("rolling");const st=performance.now();await new Promise(r=>{const t=setInterval(()=>{$("die1").textContent=FACES[Math.floor(Math.random()*6)];$("die2").textContent=FACES[Math.floor(Math.random()*6)];$("diceStatus").textContent=`${name} 骰子滾動中...`;if(performance.now()-st>760){clearInterval(t);r()}},80)});$("die1").classList.remove("rolling");$("die2").classList.remove("rolling");$("die1").textContent=FACES[a-1];$("die2").textContent=FACES[b-1];$("diceTotal").textContent=a+b;$("diceStatus").textContent=`${name} 擲出 ${a+b}`;rolling=false;renderControls()}
 const BOARD_W=1680,BOARD_H=1040;
-const TOP_COUNT=17,RIGHT_COUNT=11,BOTTOM_COUNT=17,LEFT_COUNT=11;
-const TOP_H=72;
+const TOP_COUNT=13,RIGHT_COUNT=9,BOTTOM_COUNT=13,LEFT_COUNT=9;
+const TOP_H=88;
 const TOP_W=BOARD_W/TOP_COUNT;
 const SIDE_W=TOP_W;
 const SIDE_H=(BOARD_H-TOP_H*2)/RIGHT_COUNT;
 
 function perimeterPositions(n){
   const o=[];
-  // Top: 17 cells, left -> right, edge-to-edge.
+  // Top: 13 cells, left -> right, edge-to-edge.
   for(let i=0;i<TOP_COUNT;i++)o.push([(i+.5)*TOP_W,TOP_H/2]);
-  // Right: 11 cells, top -> bottom, directly under the top row.
+  // Right: 9 cells, top -> bottom, directly under the top row.
   for(let i=0;i<RIGHT_COUNT;i++)o.push([BOARD_W-SIDE_W/2,TOP_H+(i+.5)*SIDE_H]);
-  // Bottom: 17 cells, right -> left.
+  // Bottom: 13 cells, right -> left.
   for(let i=0;i<BOTTOM_COUNT;i++)o.push([BOARD_W-(i+.5)*TOP_W,BOARD_H-TOP_H/2]);
-  // Left: 11 cells, bottom -> top.
+  // Left: 9 cells, bottom -> top.
   for(let i=0;i<LEFT_COUNT;i++)o.push([SIDE_W/2,BOARD_H-TOP_H-(i+.5)*SIDE_H]);
   return o.slice(0,n)
 }
