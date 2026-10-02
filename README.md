@@ -1,6 +1,19 @@
-# 財富帝國 V19.9.49 WEB
+# 財富帝國 V19.9.50 WEB
 
 這是《財富帝國》desktop / iPhone 網頁發布版。
+
+
+## V19.9.50｜44 格棋盤功能平衡修正版
+V19.9.49 已完成 56 → 44 的結構重構；本版針對 Code Review 發現的功能密度問題重新平衡格位。44 格與 24 塊一般地產維持不變，但恢復四個不可被其他入口完整取代的唯一功能格，避免「為了減格而誤刪玩法」。
+
+- 恢復唯一功能格：收購中心、城市更新局、法院、醫療中心。
+- 移除四個獨立小遊戲專用格：猜拳擂台、綠燈反應王、全民骰王、寶箱爭奪。
+- 猜拳／反應等相關玩法程式保留，可繼續由機會事件等既有入口觸發；本版只取消其獨立棋盤專用格。
+- Board content：44 格、24 塊一般地產、8 區 × 每區 3 塊、4 個交通設施維持不變。
+- Recovery：沿用 V19.9.49 的 56 → 44 舊局安全遷移，並支援 V19.9.49 → V19.9.50 的 44 格順序遷移；重複的機會／命運使用「名稱＋第幾次出現」辨識位置。
+- Multiplayer compatibility：客戶端會驗證完整 44 格順序，不只驗證格數，避免不同 44 格版本混用 tile id。
+- Economy：通過起點基礎獎金維持 $2,500。
+- Safe rollback：`safe-rollback-v19.9.49` 保留 V19.9.49 第一版 44 格結構。
 
 
 ## V19.9.49｜44 格棋盤結構重構第一版
@@ -71,15 +84,16 @@ Pages #86 實際部署回歸發現 390px 高的 iPhone landscape 會被底部「
 
 ## 驗證
 - Inline JavaScript：16 段，syntax PASS。
-- APP_BUILD_ID：19949。
+- APP_BUILD_ID：19950。
 - signaling / DataConnection / heartbeat / reconnect / resume / Host Reload Recovery 核心函式保留。
 - USER VISUAL PASS：需正式 Pages 實機檢查後才能宣告。
 - MULTIPLAYER UAT PASS：仍需兩裝置不同網路實測，Pages SUCCESS 不能取代。
 
 ## 安全回退
+- `safe-rollback-v19.9.49`（44 格第一版回退點）
 - `safe-rollback-v19.9.48`（本次 44 格重構前回退點）
 - `safe-rollback-v19.9.42`（舊版回退點）
 - `safe-rollback-v19.9.41`（較早回退點）
 
 ## 下一步
-先驗 V19.9.49 的 44 格完整走圈、24 地產買賣／升級／收租、4 個交通設施、機會／命運／拍賣／股票事件與 iPhone landscape；功能 Gate 通過後再進下一輪 Full-Tile 地皮美術。
+先驗 V19.9.50 的 44 格完整走圈、24 地產買賣／升級／收租、收購中心／城市更新局／法院／醫療中心、4 個交通設施、機會／命運／拍賣／股票事件與 iPhone landscape；功能 Gate 通過後再進下一輪 Full-Tile 地皮美術。
