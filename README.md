@@ -1,6 +1,19 @@
-# 財富帝國 V19.9.48 WEB
+# 財富帝國 V19.9.49 WEB
 
 這是《財富帝國》desktop / iPhone 網頁發布版。
+
+
+## V19.9.49｜44 格棋盤結構重構第一版
+本版依新版棋盤規劃，將外圈由 56 格正式重構為 44 格，目標是讓每一格取得足夠可視面積，後續地皮可以使用「上方名稱＋下方大主圖」的 Full-Tile 視覺，而不是再把素材壓成中央小 ICON。
+
+- Board geometry：13（上）+ 9（右）+ 13（下）+ 9（左）= 44 格；上／下格與左右格面積同步放大。
+- Board content：保留 24 塊一般地產、4 個交通設施、3 個機會、3 個命運，以及稅務、股市、拍賣與既有多人短事件；移除重複性高或價值較低的格位。
+- Region completion：24 塊一般地產改為 8 區 × 每區 3 塊，區域完成度更容易理解。
+- Economy：通過起點基礎獎金由 $3,200 調整為 $2,500，抵銷 44 格造成的跑圈頻率提高。
+- Recovery：新增 56 → 44 房主恢復資料遷移。保留中的地產依名稱搬移；被移除且已持有的舊地產，按原價＋既有升級投入退還現金；玩家位置會移到原位置起算的下一個有效格。
+- Multiplayer compatibility：44 格客戶端不接受 56 格舊房主的權威 state，會要求房主重新整理；房主重新整理後由 Host Reload Recovery 自動執行安全遷移，避免新舊 tile id 混用。
+- Visual：V19.9.48 的 A15–A20 Full-Tile render 保留；本版先完成結構，不宣告新美術 Visual PASS。
+- Safe rollback：建立 `safe-rollback-v19.9.48`，指向 V19.9.48 正式 HEAD。
 
 
 ## V19.9.48｜A15–A20 棋盤 Full-Tile Render 第一版
@@ -58,14 +71,15 @@ Pages #86 實際部署回歸發現 390px 高的 iPhone landscape 會被底部「
 
 ## 驗證
 - Inline JavaScript：16 段，syntax PASS。
-- APP_BUILD_ID：19948。
+- APP_BUILD_ID：19949。
 - signaling / DataConnection / heartbeat / reconnect / resume / Host Reload Recovery 核心函式保留。
 - USER VISUAL PASS：需正式 Pages 實機檢查後才能宣告。
 - MULTIPLAYER UAT PASS：仍需兩裝置不同網路實測，Pages SUCCESS 不能取代。
 
 ## 安全回退
-- `safe-rollback-v19.9.42`（主要回退點）
+- `safe-rollback-v19.9.48`（本次 44 格重構前回退點）
+- `safe-rollback-v19.9.42`（舊版回退點）
 - `safe-rollback-v19.9.41`（較早回退點）
 
 ## 下一步
-先驗 V19.9.48 正式頁 A15–A20 Full-Tile（Desktop + iPhone landscape），再依序提高 A11–A14 與 A05–A10 主圖比例；Visual PASS 前不宣告完成。
+先驗 V19.9.49 的 44 格完整走圈、24 地產買賣／升級／收租、4 個交通設施、機會／命運／拍賣／股票事件與 iPhone landscape；功能 Gate 通過後再進下一輪 Full-Tile 地皮美術。
