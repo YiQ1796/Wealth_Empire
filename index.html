@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.43 WEB｜Visual Gate 殘留清除版</title>
+<title>財富帝國 V19.9.44 WEB｜Visual Gate 殘留清除版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.43 WEB - Visual Gate 殘留清除；未有新素材者維持文字色塊">
+<meta name="description" content="財富帝國 V19.9.44 WEB - Visual Gate 殘留清除；未有新素材者維持文字色塊">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6569,7 +6569,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.43 WEB｜Visual Gate 清理｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.44 WEB｜Visual Gate 清理｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -6599,10 +6599,10 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
           <div class="dice-total-row"><span class="dice-total-label">總點數</span><div id="diceTotal" class="dtotal">2</div></div>
         </div>
       </div>
-      <button id="rollBtn" class="planb-main-action planb-dice" onclick="sendAction('roll')"><span class="btn-label">擲骰子</span></button>
-      <button id="propertyBtn" class="planb-main-action planb-property" onclick="openProperties()"><span class="btn-label">我的房產</span></button>
-      <button id="strategyBtn" class="planb-main-action planb-strategy" onclick="openStrategyItems()"><span class="btn-label">策略道具</span></button>
-      <button id="marketOpsBtn" class="planb-main-action planb-market" onclick="openMarketOperations()"><span class="btn-label">市場操作</span></button>
+      <button id="rollBtn" class="planb-main-action planb-dice" onclick="sendAction('roll')"><span class="v19944-art we-a01 v19944-action-icon" aria-hidden="true"></span><span class="btn-label">擲骰子</span></button>
+      <button id="propertyBtn" class="planb-main-action planb-property" onclick="openProperties()"><span class="v19944-art we-a02 v19944-action-icon" aria-hidden="true"></span><span class="btn-label">我的房產</span></button>
+      <button id="strategyBtn" class="planb-main-action planb-strategy" onclick="openStrategyItems()"><span class="v19944-art we-a03 v19944-action-icon" aria-hidden="true"></span><span class="btn-label">策略道具</span></button>
+      <button id="marketOpsBtn" class="planb-main-action planb-market" onclick="openMarketOperations()"><span class="v19944-art we-a04 v19944-action-icon" aria-hidden="true"></span><span class="btn-label">市場操作</span></button>
       <button id="turnLabel" class="ghost" disabled>等待目前玩家</button>
     </div>
   </div>
@@ -7520,7 +7520,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19943";
+const APP_BUILD_ID="19944";
 window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:4,mode:"REV-C01-D01-board-pawns"},q07:{cols:5,rows:4,path:"./assets/v19941/rev_c01_d01_all20_v1.webp?v=19941"},revC01D01:{cols:5,rows:4,count:20}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
@@ -10525,7 +10525,7 @@ function openMissionHub(){
     showModal("城市委託中心",
       `<div class="hub-rule">每位玩家每 ROUND 最多承接 1 次委託。同時間只能進行一項；完成後可以領獎，但本 ROUND 不能再接第二張。</div>
        <div class="hub-card active">
-        <div class="hicon"><span class="v19923-q03-art q03-commission" aria-hidden="true"></span></div><div class="hname">${d.name}</div>
+        <div class="hicon"><span class="v19944-art we-a05" aria-hidden="true"></span></div><div class="hname">${d.name}</div>
         <div class="hdesc">${d.desc}</div>
         <div class="mission-progress"><div style="width:${pct}%"></div></div>
         <div class="hvalue">${prog.progress} / ${prog.target}｜獎金 $${me.cityMission.reward.toLocaleString()}</div>
@@ -10544,7 +10544,7 @@ function openMissionHub(){
   const cards=missionChoices().map(k=>{
     const d=CITY_MISSIONS[k];
     return `<div class="hub-card ${alreadyPicked?"mission-locked":""}">
-      <div class="hicon"><span class="v19923-q03-art q03-commission" aria-hidden="true"></span></div><div class="hname">${d.name}</div>
+      <div class="hicon"><span class="v19944-art we-a05" aria-hidden="true"></span></div><div class="hname">${d.name}</div>
       <div class="hdesc">${d.desc}</div>
       <div class="hvalue">+$${d.reward.toLocaleString()}</div>
       <button class="primary q-object-button q-commission-action" ${canPick?"":"disabled"} onclick="sendAction('hub_mission_pick',{mission:'${k}'})"><span class="q-icon ${canPick?"q-commission":"q-disabled"}" aria-hidden="true"></span>${alreadyPicked?"本 ROUND 已承接":"接下委託"}</button>
@@ -12227,7 +12227,7 @@ function drawCity(){
     ctx.strokeStyle=n.c;ctx.lineWidth=hover?4:2.5;
     rr(n.x,n.y,n.w,n.h,16,true,true);
     ctx.restore();
-    ctx.fillStyle=n.c;ctx.font='1000 20px "Microsoft JhengHei"';ctx.fillText(def.icon,n.x+25,n.y+30);
+    drawV19944PublicIcon(n.key,n.x+8,n.y+7,40,40);
     ctx.fillStyle="#26425f";ctx.font='1000 12px "Microsoft JhengHei"';ctx.fillText(def.name,n.x+n.w/2+10,n.y+26,n.w-42);
     ctx.fillStyle="#6c7c90";ctx.font='900 9px "Microsoft JhengHei"';ctx.fillText(`Lv.${lv}｜$${Number(pr.total||0).toLocaleString()}`,n.x+n.w/2,n.y+51,n.w-12);
     ctx.fillStyle=n.c;rr(n.x+12,n.y+n.h-12,(n.w-24)*Math.min(1,(pr.total||0)/(PUBLIC_LEVELS[Math.min(3,lv+1)]||1)),5,3,true,false)
@@ -12790,10 +12790,10 @@ function openMobileActions(){
   const myTurn=!!(me&&state.status==="playing"&&state.current===mySeat&&!me.bankrupt);
   const marketCan=myTurn&&!state.rolled&&!state.pending&&!state.groupGame&&(me?.lastMarketOpRound??-99)!==state.round;
   showModal("手機快速操作",`<div class="hub-rule">四個主操作與桌面版一致；舊 ICON 已停用。</div><div class="hub-grid compact-phone-grid quick-grid">
-    <div class="hub-card compact-phone-card"><div class="planb-temp-badge blue">骰</div><div class="hname">擲骰子</div><div class="hdesc">目前回合直接擲骰。</div><button class="primary" ${(!myTurn||state.rolled||state.pending||state.groupGame)?"disabled":""} onclick="closeModal();sendAction('roll')">擲骰</button></div>
-    <div class="hub-card compact-phone-card"><div class="planb-temp-badge amber">房</div><div class="hname">我的房產</div><div class="hdesc">查看房產並直接升級。</div><button class="warn" onclick="closeModal();openProperties()">查看</button></div>
-    <div class="hub-card compact-phone-card"><div class="planb-temp-badge violet">道</div><div class="hname">策略道具</div><div class="hdesc">持有 ${strategyItemTotal(me)} 件；符合情境會主動提示。</div><button class="warn" onclick="closeModal();openStrategyItems()">查看</button></div>
-    <div class="hub-card compact-phone-card"><div class="planb-temp-badge green">市</div><div class="hname">市場操作</div><div class="hdesc">每 ROUND 一次，強化避險或股票交易。</div><button class="success" ${marketCan?"":"disabled"} onclick="closeModal();openMarketOperations()">操作</button></div>
+    <div class="hub-card compact-phone-card"><span class="v19944-art we-a01" aria-hidden="true"></span><div class="hname">擲骰子</div><div class="hdesc">目前回合直接擲骰。</div><button class="primary" ${(!myTurn||state.rolled||state.pending||state.groupGame)?"disabled":""} onclick="closeModal();sendAction('roll')">擲骰</button></div>
+    <div class="hub-card compact-phone-card"><span class="v19944-art we-a02" aria-hidden="true"></span><div class="hname">我的房產</div><div class="hdesc">查看房產並直接升級。</div><button class="warn" onclick="closeModal();openProperties()">查看</button></div>
+    <div class="hub-card compact-phone-card"><span class="v19944-art we-a03" aria-hidden="true"></span><div class="hname">策略道具</div><div class="hdesc">持有 ${strategyItemTotal(me)} 件；符合情境會主動提示。</div><button class="warn" onclick="closeModal();openStrategyItems()">查看</button></div>
+    <div class="hub-card compact-phone-card"><span class="v19944-art we-a04" aria-hidden="true"></span><div class="hname">市場操作</div><div class="hdesc">每 ROUND 一次，強化避險或股票交易。</div><button class="success" ${marketCan?"":"disabled"} onclick="closeModal();openMarketOperations()">操作</button></div>
   </div>`,[]);
   $("modal")?.classList.add("phone-compact-modal","phone-quick-modal","planb-clean-modal")
 }
@@ -12906,7 +12906,7 @@ function openMobileHubMenu(){
   showModal("🏙 都會核心",
     `<div class="hub-rule">手機版快捷入口。這五個中央設施跟地圖中間的建築完全相同。</div>
      <div class="hub-grid">
-       <div class="hub-card"><div class="hicon"><span class="v19923-q03-art q03-commission" aria-hidden="true"></span></div><div class="hname">城市委託</div><div class="hdesc">接任務、完成目標後領獎金。</div><button class="primary" onclick="closeModal();openHubFacility('mission')">開啟</button></div>
+       <div class="hub-card"><div class="hicon"><span class="v19944-art we-a05" aria-hidden="true"></span></div><div class="hname">城市委託</div><div class="hdesc">接任務、完成目標後領獎金。</div><button class="primary" onclick="closeModal();openHubFacility('mission')">開啟</button></div>
        <div class="hub-card"><div class="hicon"><span class="v19923-q03-art q03-bank" aria-hidden="true"></span></div><div class="hname">都會銀行</div><div class="hdesc">2 ROUND 定存，管理閒置現金。</div><button class="success" onclick="closeModal();openHubFacility('bank')">開啟</button></div>
        <div class="hub-card"><div class="hicon"><span class="v19923-q03-art q03-insurance" aria-hidden="true"></span></div><div class="hname">租金保險</div><div class="hdesc">降低下一次踩別人地產的現金壓力。</div><button class="primary" onclick="closeModal();openHubFacility('insurance')">開啟</button></div>
        <div class="hub-card"><div class="hicon"><span class="v19923-q03-art q03-metro" aria-hidden="true"></span></div><div class="hname">捷運樞紐</div><div class="hdesc">不用擲骰，改走短／中／長快線。</div><button class="warn" onclick="closeModal();openHubFacility('metro')">開啟</button></div>
@@ -15447,12 +15447,12 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
     const alreadyPicked=(me.lastMissionPickRound??-99)===state.round;
     if(me.cityMission){
       const d=CITY_MISSIONS[me.cityMission.type],prog=missionProgress(me),pct=Math.min(100,Math.round(prog.progress/prog.target*100));
-      showModal("城市委託中心",`<div class="hub-rule">每位玩家每 ROUND 最多承接 1 次委託。同時間只能進行一項；完成後可以領獎，但本 ROUND 不能再接第二張。</div><div class="hub-card active"><div class="hicon"><span class="rev41-cd-art rev41-commission planb-new-art" aria-hidden="true"></span></div><div class="hname">${d.name}</div><div class="hdesc">${d.desc}</div><div class="mission-progress"><div style="width:${pct}%"></div></div><div class="hvalue">${prog.progress} / ${prog.target}｜獎金 $${me.cityMission.reward.toLocaleString()}</div></div>`,[...(prog.done?[["領取委託獎金","success",()=>sendAction("hub_mission_claim")]]:[]),["關閉","ghost",closeModal]]);
+      showModal("城市委託中心",`<div class="hub-rule">每位玩家每 ROUND 最多承接 1 次委託。同時間只能進行一項；完成後可以領獎，但本 ROUND 不能再接第二張。</div><div class="hub-card active"><div class="hicon"><span class="v19944-art we-a05" aria-hidden="true"></span></div><div class="hname">${d.name}</div><div class="hdesc">${d.desc}</div><div class="mission-progress"><div style="width:${pct}%"></div></div><div class="hvalue">${prog.progress} / ${prog.target}｜獎金 $${me.cityMission.reward.toLocaleString()}</div></div>`,[...(prog.done?[["領取委託獎金","success",()=>sendAction("hub_mission_claim")]]:[]),["關閉","ghost",closeModal]]);
       $("modal")?.classList.add("hub-choice-modal","mission-choice-modal","planb-clean-modal");return;
     }
     const canPick=can&&!alreadyPicked;
     const lockNote=alreadyPicked?`<div class="hub-rule mission-round-lock">⏳ 你在 ROUND ${state.round} 已經承接過一次城市委託。本 ROUND 不可再接；下一 ROUND 會重新開放。</div>`:`<div class="hub-rule">每位玩家每 ROUND 最多承接 1 次委託。任務組合每 ROUND 輪替。</div>`;
-    const cards=missionChoices().map(k=>{const d=CITY_MISSIONS[k];return `<div class="hub-card ${alreadyPicked?"mission-locked":""}"><div class="hicon"><span class="rev41-cd-art rev41-commission planb-new-art" aria-hidden="true"></span></div><div class="hname">${d.name}</div><div class="hdesc">${d.desc}</div><div class="hvalue">+$${d.reward.toLocaleString()}</div><button class="primary" ${canPick?"":"disabled"} onclick="sendAction('hub_mission_pick',{mission:'${k}'})">${alreadyPicked?"本 ROUND 已承接":"接下委託"}</button></div>`}).join("");
+    const cards=missionChoices().map(k=>{const d=CITY_MISSIONS[k];return `<div class="hub-card ${alreadyPicked?"mission-locked":""}"><div class="hicon"><span class="v19944-art we-a05" aria-hidden="true"></span></div><div class="hname">${d.name}</div><div class="hdesc">${d.desc}</div><div class="hvalue">+$${d.reward.toLocaleString()}</div><button class="primary" ${canPick?"":"disabled"} onclick="sendAction('hub_mission_pick',{mission:'${k}'})">${alreadyPicked?"本 ROUND 已承接":"接下委託"}</button></div>`}).join("");
     showModal("城市委託中心",`${lockNote}<div class="hub-grid">${cards}</div>`,[["關閉","ghost",closeModal]]);$("modal")?.classList.add("hub-choice-modal","mission-choice-modal","planb-clean-modal");
   };
 
@@ -15460,22 +15460,22 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
     const me=state.players[mySeat],can=hubCanAct();
     if(me.bankDeposit){
       const d=me.bankDeposit;
-      showModal("都會銀行",`<div class="hub-rule">你的定存正在計息，不能提前解約。</div><div class="hub-card phone-feature-card active"><div class="planb-temp-badge green">銀</div><div class="hname">2 ROUND 定存</div><div class="hdesc">本金 $${d.principal.toLocaleString()}｜到期 ROUND ${d.dueRound}</div><div class="hvalue">到期領回 $${d.payout.toLocaleString()}</div></div>`,[["關閉","ghost",closeModal]]);
+      showModal("都會銀行",`<div class="hub-rule">你的定存正在計息，不能提前解約。</div><div class="hub-card phone-feature-card active"><span class="v19944-art we-a06" aria-hidden="true"></span><div class="hname">2 ROUND 定存</div><div class="hdesc">本金 $${d.principal.toLocaleString()}｜到期 ROUND ${d.dueRound}</div><div class="hvalue">到期領回 $${d.payout.toLocaleString()}</div></div>`,[["關閉","ghost",closeModal]]);
       $("modal")?.classList.add("phone-feature-modal","phone-bank-modal","planb-clean-modal");return
     }
-    const cards=[5000,10000,20000].map(v=>`<div class="hub-card phone-feature-card"><div class="planb-temp-badge green">銀</div><div class="hname">$${v.toLocaleString()} 定存</div><div class="hdesc">鎖定 2 ROUND，固定 ${Math.round(BANK_DEPOSIT_RATE*100)}% 報酬。</div><div class="hvalue">到期 $${Math.round(v*(1+BANK_DEPOSIT_RATE)).toLocaleString()}</div><button class="success" ${(!can||me.cash<v)?"disabled":""} onclick="sendAction('hub_deposit',{amount:${v}})">辦理定存</button></div>`).join("");
+    const cards=[5000,10000,20000].map(v=>`<div class="hub-card phone-feature-card"><span class="v19944-art we-a06" aria-hidden="true"></span><div class="hname">$${v.toLocaleString()} 定存</div><div class="hdesc">鎖定 2 ROUND，固定 ${Math.round(BANK_DEPOSIT_RATE*100)}% 報酬。</div><div class="hvalue">到期 $${Math.round(v*(1+BANK_DEPOSIT_RATE)).toLocaleString()}</div><button class="success" ${(!can||me.cash<v)?"disabled":""} onclick="sendAction('hub_deposit',{amount:${v}})">辦理定存</button></div>`).join("");
     showModal("都會銀行",`<div class="hub-rule">把閒置現金轉成未來現金流；每位玩家同時最多一筆定存。</div><div class="phone-feature-grid bank-feature-grid">${cards}</div>`,[["關閉","ghost",closeModal]]);
     $("modal")?.classList.add("phone-feature-modal","phone-bank-modal","planb-clean-modal")
   };
   openInsuranceHub=function(){
     const me=state.players[mySeat],can=hubCanAct(),has=(me.rentShield||0)>0;
     const action=!has?`<button class="primary" ${(!can||me.cash<1500)?"disabled":""} onclick="sendAction('hub_insurance')">購買保險</button>`:"";
-    showModal("租金保險中心",`<div class="hub-rule">保費 $1,500。下一次踩到別人的地產時，你自己只付 50% 過路費，地主仍收到完整租金。</div><div class="hub-card ${has?"active":""}"><div class="planb-temp-badge violet">保</div><div class="hname">${has?"租金護盾已啟用":"購買租金護盾"}</div><div class="hdesc">${has?"下一次支付租金時會自動消耗。":"每位玩家同時最多持有 1 次。"}</div><div class="hvalue">${has?"待觸發":"$1,500"}</div>${action}</div>`,[["關閉","ghost",closeModal]]);
+    showModal("租金保險中心",`<div class="hub-rule">保費 $1,500。下一次踩到別人的地產時，你自己只付 50% 過路費，地主仍收到完整租金。</div><div class="hub-card ${has?"active":""}"><span class="v19944-art we-a07" aria-hidden="true"></span><div class="hname">${has?"租金護盾已啟用":"購買租金護盾"}</div><div class="hdesc">${has?"下一次支付租金時會自動消耗。":"每位玩家同時最多持有 1 次。"}</div><div class="hvalue">${has?"待觸發":"$1,500"}</div>${action}</div>`,[["關閉","ghost",closeModal]]);
     $("modal")?.classList.add("planb-clean-modal")
   };
   openMetroHub=function(){
     const me=state.players[mySeat],can=hubCanAct();const cooldown=Math.max(0,3-(state.round-(me.lastTransitRound??-99)));
-    const cards=Object.entries(METRO_ROUTES).map(([k,d])=>`<div class="metro-option"><div class="planb-temp-badge amber">捷</div><div class="name">${d.name}</div><div class="desc">直接前進 ${d.steps} 格，不擲骰；落地後照常觸發格子。</div><div class="hvalue">$${d.cost.toLocaleString()}</div><button class="primary" ${(!can||cooldown>0||me.cash<d.cost)?"disabled":""} onclick="sendAction('hub_metro',{route:'${k}'})">搭乘快線</button></div>`).join("");
+    const cards=Object.entries(METRO_ROUTES).map(([k,d])=>`<div class="metro-option"><span class="v19944-art we-a08" aria-hidden="true"></span><div class="name">${d.name}</div><div class="desc">直接前進 ${d.steps} 格，不擲骰；落地後照常觸發格子。</div><div class="hvalue">$${d.cost.toLocaleString()}</div><button class="primary" ${(!can||cooldown>0||me.cash<d.cost)?"disabled":""} onclick="sendAction('hub_metro',{route:'${k}'})">搭乘快線</button></div>`).join("");
     showModal("捷運樞紐",`<div class="hub-rule">不用增加外圈格子，也能主動改變落點。使用後進入 3 ROUND 冷卻。${cooldown>0?`目前還需等待 ${cooldown} ROUND。`:"目前可以搭乘。"}</div><div class="metro-grid">${cards}</div>`,[["關閉","ghost",closeModal]]);
     $("modal")?.classList.add("hub-choice-modal","metro-choice-modal","planb-clean-modal")
   };
@@ -15483,10 +15483,10 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
     const me=state.players[mySeat],can=hubCanAct();
     if(me.cityProject){
       const d=CITY_PROJECTS[me.cityProject.key];
-      showModal("市政標案",`<div class="hub-rule">你的標案施工中，會在指定 ROUND 自動結算。</div><div class="hub-card active"><div class="planb-temp-badge amber">標</div><div class="hname">${d.name}</div><div class="hdesc">成功率 ${(Math.min(.95,d.success+Number(me.cityProject.successBonus||0))*100).toFixed(0)}%｜到期 ROUND ${me.cityProject.dueRound}</div><div class="hvalue">成功 $${d.win.toLocaleString()}｜失敗回收 $${d.fail.toLocaleString()}</div></div>`,[["關閉","ghost",closeModal]]);
+      showModal("市政標案",`<div class="hub-rule">你的標案施工中，會在指定 ROUND 自動結算。</div><div class="hub-card active"><span class="v19944-art we-a09" aria-hidden="true"></span><div class="hname">${d.name}</div><div class="hdesc">成功率 ${(Math.min(.95,d.success+Number(me.cityProject.successBonus||0))*100).toFixed(0)}%｜到期 ROUND ${me.cityProject.dueRound}</div><div class="hvalue">成功 $${d.win.toLocaleString()}｜失敗回收 $${d.fail.toLocaleString()}</div></div>`,[["關閉","ghost",closeModal]]);
       $("modal")?.classList.add("hub-choice-modal","project-choice-modal","planb-clean-modal");return
     }
-    const cards=Object.entries(CITY_PROJECTS).map(([k,d])=>{const enabled=can&&me.cash>=d.cost;return `<div class="project-option"><div class="planb-temp-badge amber">標</div><div class="name">${d.name}</div><div class="desc">投入 $${d.cost.toLocaleString()}｜${d.rounds} ROUND 後結算｜成功率 ${(d.success*100).toFixed(0)}%</div><div class="hvalue">成功 $${d.win.toLocaleString()}<br><span style="font-size:11px">失敗仍回收 $${d.fail.toLocaleString()}</span></div><button class="warn" ${enabled?"":"disabled"} onclick="requestCityProject('${k}')">${enabled?"承接標案":"目前無法承接"}</button></div>`}).join("");
+    const cards=Object.entries(CITY_PROJECTS).map(([k,d])=>{const enabled=can&&me.cash>=d.cost;return `<div class="project-option"><span class="v19944-art we-a09" aria-hidden="true"></span><div class="name">${d.name}</div><div class="desc">投入 $${d.cost.toLocaleString()}｜${d.rounds} ROUND 後結算｜成功率 ${(d.success*100).toFixed(0)}%</div><div class="hvalue">成功 $${d.win.toLocaleString()}<br><span style="font-size:11px">失敗仍回收 $${d.fail.toLocaleString()}</span></div><button class="warn" ${enabled?"":"disabled"} onclick="requestCityProject('${k}')">${enabled?"承接標案":"目前無法承接"}</button></div>`}).join("");
     showModal("市政標案",`<div class="hub-rule">高風險的城市投資玩法。同時間只能承接一個標案。${strategyItemCount(me,"projectBoost")?`<br><b>你有標案加成券 ×${strategyItemCount(me,"projectBoost")}，承接時會主動詢問是否使用。</b>`:""}</div><div class="project-grid">${cards}</div>`,[["關閉","ghost",closeModal]]);
     $("modal")?.classList.add("hub-choice-modal","project-choice-modal","planb-clean-modal")
   };
@@ -15495,24 +15495,24 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
     const can=hubCanAct()&&me.lastPublicInvestRound!==state.round;const mine=publicContribution(mySeat,key),level=publicProjectLevel(key);const next=PUBLIC_LEVELS[level+1]??null;
     const leader=Object.entries(pr.bySeat||{}).sort((a,b)=>Number(b[1])-Number(a[1]))[0];const leaderName=leader?state.players[Number(leader[0])]?.name:"尚無";const nextDividend=Math.round(mine*def.yieldRate*(1+level*PUBLIC_LEVEL_BONUS_RATE));const amounts=publicInvestAmounts(key);
     const badge={night:["夜","rose"],tower:["科","blue"],harbor:["港","cyan"],green:["綠","green"]}[key]||["建","blue"];
-    showModal(def.name,`<div class="public-project-hero"><div class="planb-temp-badge ${badge[1]}">${badge[0]}</div><div><div class="pp-title">${def.name}｜Lv.${level}</div><div class="pp-desc">${def.desc}</div></div></div><div class="public-project-stats"><div><span>全城投入</span><b>${Number(pr.total||0).toLocaleString()}</b></div><div><span>你的持分</span><b>${mine.toLocaleString()}</b></div><div><span>預估下次分紅</span><b>+${nextDividend.toLocaleString()}</b></div><div><span>最大投資人</span><b>${leaderName||"尚無"}</b></div></div><div class="public-level-track"><i style="width:${next?Math.min(100,(pr.total/next)*100):100}%"></i></div><div class="pp-next">${next?`距離 Lv.${level+1} 尚差 ${Math.max(0,next-pr.total).toLocaleString()}`:"已達最高城市等級"}</div><div class="public-invest-buttons">${amounts.map(v=>`<button class="primary" ${(!can||me.cash<v)?"disabled":""} onclick="sendAction('public_invest',{project:'${key}',amount:${v}})">投資 ${v.toLocaleString()}</button>`).join("")}</div><div class="hub-rule" style="margin-top:9px">每位玩家每 ROUND 最多投資一次公共建設。持分會計入總資產；每 ${PUBLIC_DIVIDEND_ROUNDS} ROUND 自動發放分紅。</div>`,[["關閉","ghost",closeModal]]);
+    showModal(def.name,`<div class="public-project-hero">${v19944PublicArtHtml(key)}<div><div class="pp-title">${def.name}｜Lv.${level}</div><div class="pp-desc">${def.desc}</div></div></div><div class="public-project-stats"><div><span>全城投入</span><b>${Number(pr.total||0).toLocaleString()}</b></div><div><span>你的持分</span><b>${mine.toLocaleString()}</b></div><div><span>預估下次分紅</span><b>+${nextDividend.toLocaleString()}</b></div><div><span>最大投資人</span><b>${leaderName||"尚無"}</b></div></div><div class="public-level-track"><i style="width:${next?Math.min(100,(pr.total/next)*100):100}%"></i></div><div class="pp-next">${next?`距離 Lv.${level+1} 尚差 ${Math.max(0,next-pr.total).toLocaleString()}`:"已達最高城市等級"}</div><div class="public-invest-buttons">${amounts.map(v=>`<button class="primary" ${(!can||me.cash<v)?"disabled":""} onclick="sendAction('public_invest',{project:'${key}',amount:${v}})">投資 ${v.toLocaleString()}</button>`).join("")}</div><div class="hub-rule" style="margin-top:9px">每位玩家每 ROUND 最多投資一次公共建設。持分會計入總資產；每 ${PUBLIC_DIVIDEND_ROUNDS} ROUND 自動發放分紅。</div>`,[["關閉","ghost",closeModal]]);
     $("modal")?.classList.add("planb-clean-modal")
   };
   openPublicInvestmentCenter=function(){
     ensurePublicInvestments();const badgeMap={night:["夜","rose"],tower:["科","blue"],harbor:["港","cyan"],green:["綠","green"]};
-    const cards=Object.entries(PUBLIC_PROJECTS).map(([key,d])=>{const pr=state.publicInvestments[key],lv=publicProjectLevel(key),mine=publicContribution(mySeat,key),badge=badgeMap[key]||["建","blue"];return `<div class="hub-card public-hub-card"><div class="planb-temp-badge ${badge[1]}">${badge[0]}</div><div class="hname">${d.name}｜Lv.${lv}</div><div class="hdesc">${d.desc}</div><div class="hvalue">全城 ${Number(pr.total||0).toLocaleString()}｜你 ${mine.toLocaleString()}</div><button class="primary" onclick="closeModal();openPublicInvestment('${key}')">查看 / 投資</button></div>`}).join("");
+    const cards=Object.entries(PUBLIC_PROJECTS).map(([key,d])=>{const pr=state.publicInvestments[key],lv=publicProjectLevel(key),mine=publicContribution(mySeat,key),badge=badgeMap[key]||["建","blue"];return `<div class="hub-card public-hub-card">${v19944PublicArtHtml(key)}<div class="hname">${d.name}｜Lv.${lv}</div><div class="hdesc">${d.desc}</div><div class="hvalue">全城 ${Number(pr.total||0).toLocaleString()}｜你 ${mine.toLocaleString()}</div><button class="primary" onclick="closeModal();openPublicInvestment('${key}')">查看 / 投資</button></div>`}).join("");
     showModal("公共建設投資",`<div class="hub-rule">沒有新版素材對應的舊 ICON 已停用，暫用文字色塊。</div><div class="hub-grid">${cards}</div>`,[["關閉","ghost",closeModal]]);
     $("modal")?.classList.add("planb-clean-modal")
   };
   openMobileHubMenu=function(){
     if(!state)return;
     showModal("都會核心",`<div class="hub-rule">沒有新版素材的功能先使用文字色塊，禁止舊 ICON 回來。</div><div class="hub-grid compact-phone-grid hub-facility-grid">
-      <div class="hub-card compact-phone-card"><div class="hicon"><span class="rev41-cd-art rev41-commission planb-new-art" aria-hidden="true"></span></div><div class="hname">城市委託</div><div class="hdesc">接任務、完成目標後領獎金。</div><button class="primary" onclick="closeModal();openHubFacility('mission')">開啟</button></div>
-      <div class="hub-card compact-phone-card"><div class="planb-temp-badge green">銀</div><div class="hname">都會銀行</div><div class="hdesc">2 ROUND 定存，管理閒置現金。</div><button class="success" onclick="closeModal();openHubFacility('bank')">開啟</button></div>
-      <div class="hub-card compact-phone-card"><div class="planb-temp-badge violet">保</div><div class="hname">租金保險</div><div class="hdesc">降低下一次踩地產的現金壓力。</div><button class="primary" onclick="closeModal();openHubFacility('insurance')">開啟</button></div>
-      <div class="hub-card compact-phone-card"><div class="planb-temp-badge amber">捷</div><div class="hname">捷運樞紐</div><div class="hdesc">不用擲骰，改走短／中／長快線。</div><button class="warn" onclick="closeModal();openHubFacility('metro')">開啟</button></div>
-      <div class="hub-card compact-phone-card"><div class="planb-temp-badge amber">標</div><div class="hname">市政標案</div><div class="hdesc">承接有風險的城市投資案。</div><button class="warn" onclick="closeModal();openHubFacility('project')">開啟</button></div>
-      <div class="hub-card compact-phone-card"><div class="planb-temp-badge blue">建</div><div class="hname">公共建設</div><div class="hdesc">投資夜市、科技塔、碼頭與綠能公園。</div><button class="primary" onclick="closeModal();openPublicInvestmentCenter()">查看</button></div>
+      <div class="hub-card compact-phone-card"><div class="hicon"><span class="v19944-art we-a05" aria-hidden="true"></span></div><div class="hname">城市委託</div><div class="hdesc">接任務、完成目標後領獎金。</div><button class="primary" onclick="closeModal();openHubFacility('mission')">開啟</button></div>
+      <div class="hub-card compact-phone-card"><span class="v19944-art we-a06" aria-hidden="true"></span><div class="hname">都會銀行</div><div class="hdesc">2 ROUND 定存，管理閒置現金。</div><button class="success" onclick="closeModal();openHubFacility('bank')">開啟</button></div>
+      <div class="hub-card compact-phone-card"><span class="v19944-art we-a07" aria-hidden="true"></span><div class="hname">租金保險</div><div class="hdesc">降低下一次踩地產的現金壓力。</div><button class="primary" onclick="closeModal();openHubFacility('insurance')">開啟</button></div>
+      <div class="hub-card compact-phone-card"><span class="v19944-art we-a08" aria-hidden="true"></span><div class="hname">捷運樞紐</div><div class="hdesc">不用擲骰，改走短／中／長快線。</div><button class="warn" onclick="closeModal();openHubFacility('metro')">開啟</button></div>
+      <div class="hub-card compact-phone-card"><span class="v19944-art we-a09" aria-hidden="true"></span><div class="hname">市政標案</div><div class="hdesc">承接有風險的城市投資案。</div><button class="warn" onclick="closeModal();openHubFacility('project')">開啟</button></div>
+      <div class="hub-card compact-phone-card"><span class="v19944-art we-a10" aria-hidden="true"></span><div class="hname">公共建設</div><div class="hdesc">投資夜市、科技塔、碼頭與綠能公園。</div><button class="primary" onclick="closeModal();openPublicInvestmentCenter()">查看</button></div>
     </div>`,[["關閉","ghost",closeModal]]);
     $("modal")?.classList.add("phone-compact-modal","phone-hub-modal","planb-clean-modal")
   };
@@ -15593,12 +15593,12 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
     ctx.fillStyle=base;ctx.strokeStyle="#7890a7";ctx.lineWidth=2;rr(x-w/2+1,y-h/2+1,w-2,h-2,phone?6:9,true,true);ctx.restore();
     const artSize=phone?Math.min(42,Math.max(30,Math.min(w,h)*.50)):Math.min(34,Math.max(24,Math.min(w,h)*.42));
     if(phone){
-      drawCell(EVENT_INDEX[t.type],x-artSize/2,y-h*.16-artSize/2,artSize,artSize);
+      drawV19944TileIcon(t.type,x-artSize/2,y-h*.16-artSize/2,artSize,artSize);
       ctx.fillStyle="#fff";ctx.textAlign="center";ctx.textBaseline="middle";
       ctx.font='1000 22px "Microsoft JhengHei","Noto Sans TC",sans-serif';
       ctx.fillText(compactTileName(t.name),x,y+h*.23,w-8)
     }else{
-      drawCell(EVENT_INDEX[t.type],x-w/2+7,y-h/2+8,artSize,artSize);
+      drawV19944TileIcon(t.type,x-w/2+7,y-h/2+8,artSize,artSize);
       ctx.fillStyle="#fff";ctx.textAlign="center";ctx.textBaseline="alphabetic";
       ctx.font='1000 14px "Microsoft JhengHei"';ctx.fillText(t.name,x+8,y+5,w-38)
     }
@@ -15612,12 +15612,7 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
   const previousDrawCity=drawCity;
   drawCity=function(){
     previousDrawCity.apply(this,arguments);
-    if(!ready())return;
-    const size=62;
-    ctx.save();ctx.fillStyle="rgba(255,255,255,.97)";ctx.beginPath();ctx.arc(420,356,size*.48,0,Math.PI*2);ctx.fill();
-    ctx.shadowColor="rgba(38,78,120,.20)";ctx.shadowBlur=8;
-    drawCell(REV41_INDEX.commission,420-size/2,356-size/2,size,size);
-    ctx.restore()
+    /* V19.9.44: old REV41 commission render source retired; A05 is authoritative. */
   };
 
   window.__WEALTH_ASSET_REGISTRY=Object.freeze({
@@ -15641,19 +15636,31 @@ body:has(#modal.open) #mobileNav{visibility:hidden!important;pointer-events:none
 .modal-close-top{background:#eef3f8!important;background-image:none!important;color:#233b57!important;border:1px solid #cbd8e6!important;box-shadow:none!important;font-size:0!important}
 .modal-close-top::before{content:"×";font:1000 30px/1 Arial,sans-serif;color:#314b68}
 </style>
-<script id="v19942-center-text-authority">
+<script id="v19944-center-asset-authority">
 (function(){
   const previous=drawCity;
   drawCity=function(){
     previous.apply(this,arguments);
-    const badges=[["銀",1060,356,"#3c9b73"],["保",420,631,"#8867bb"],["捷",1060,631,"#c88c2f"],["標",740,470,"#c88c2f"]];
-    badges.forEach(([label,x,y,color])=>{ctx.save();ctx.beginPath();ctx.arc(x,y,31,0,Math.PI*2);ctx.fillStyle="#fff";ctx.fill();ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(x-23,y-23,46,46,12);ctx.fill();ctx.fillStyle="#fff";ctx.textAlign="center";ctx.textBaseline="middle";ctx.font='1000 22px "Microsoft JhengHei","Noto Sans TC",sans-serif';ctx.fillText(label,x,y+1);ctx.restore()})
+    const hubs=[
+      [5,420,356],
+      [6,1060,356],
+      [7,420,631],
+      [8,1060,631],
+      [9,740,470]
+    ];
+    hubs.forEach(([assetId,x,y])=>{
+      ctx.save();
+      ctx.fillStyle="rgba(255,255,255,.97)";
+      ctx.beginPath();ctx.arc(x,y,32,0,Math.PI*2);ctx.fill();
+      drawV19944CanvasAsset(assetId,x-29,y-29,58,58);
+      ctx.restore();
+    });
   };
 })();
 </script>
 
 <style id="v19943-visual-gate-cleanup">
-/* V19.9.43: Plan B authoritative text-button skin.
+/* V19.9.44: Plan B authoritative text-button skin.
    Old v198 bitmap selectors have higher specificity than the V19.9.42 cleanup rule,
    so #modal scoping removes that obsolete render source rather than layering over it. */
 #modal.planb-clean-modal .modal-card button,
@@ -15688,6 +15695,161 @@ body:has(#modal.open) #mobileNav{visibility:hidden!important;pointer-events:none
 .stock-action-btn.success{background:#24986a!important;color:#fff!important}
 .stock-action-btn.danger{background:#d64d4d!important;color:#fff!important}
 </style>
+
+<style id="v19944-batch01-02-assets">
+:root{
+  --we-v19944-b1:url("./assets/v19944/batch01_a01_a10.webp?v=19944");
+  --we-v19944-b2:url("./assets/v19944/batch02_a11_a20.webp?v=19944");
+}
+.v19944-art{
+  display:inline-block!important;
+  width:58px;height:58px;
+  flex:0 0 58px;
+  background-repeat:no-repeat!important;
+  background-color:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  vertical-align:middle;
+}
+.we-a01,.we-a02,.we-a03,.we-a04,.we-a05,.we-a06,.we-a07,.we-a08,.we-a09,.we-a10{
+  background-image:var(--we-v19944-b1)!important;
+  background-size:500% 200%!important;
+}
+.we-a11,.we-a12,.we-a13,.we-a14,.we-a15,.we-a16,.we-a17,.we-a18,.we-a19,.we-a20{
+  background-image:var(--we-v19944-b2)!important;
+  background-size:500% 200%!important;
+}
+.we-a01,.we-a11{background-position:0 0!important}
+.we-a02,.we-a12{background-position:25% 0!important}
+.we-a03,.we-a13{background-position:50% 0!important}
+.we-a04,.we-a14{background-position:75% 0!important}
+.we-a05,.we-a15{background-position:100% 0!important}
+.we-a06,.we-a16{background-position:0 100%!important}
+.we-a07,.we-a17{background-position:25% 100%!important}
+.we-a08,.we-a18{background-position:50% 100%!important}
+.we-a09,.we-a19{background-position:75% 100%!important}
+.we-a10,.we-a20{background-position:100% 100%!important}
+
+.planb-main-action{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:8px!important;
+}
+.planb-main-action .v19944-action-icon{width:38px!important;height:38px!important;flex-basis:38px!important}
+.hicon>.v19944-art,.compact-phone-card>.v19944-art,.phone-feature-card>.v19944-art,.metro-option>.v19944-art{
+  width:58px!important;height:58px!important;flex-basis:58px!important;
+}
+.public-project-hero .v19944-art{width:72px!important;height:72px!important;flex-basis:72px!important}
+.public-hub-card>.v19944-art{width:58px!important;height:58px!important}
+body.phone-landscape .quick-grid .v19944-art{width:46px!important;height:46px!important;flex-basis:46px!important}
+</style>
+<script id="v19944-batch01-02-runtime">
+const V19944_BATCH01_IMAGE=new Image();
+const V19944_BATCH02_IMAGE=new Image();
+V19944_BATCH01_IMAGE.decoding="async";
+V19944_BATCH02_IMAGE.decoding="async";
+V19944_BATCH01_IMAGE.src="./assets/v19944/batch01_a01_a10.webp?v=19944";
+V19944_BATCH02_IMAGE.src="./assets/v19944/batch02_a11_a20.webp?v=19944";
+
+function v19944SpriteCell(assetId){
+  const id=Number(assetId);
+  if(id<1||id>20)return null;
+  const local=(id-1)%10;
+  return {image:id<=10?V19944_BATCH01_IMAGE:V19944_BATCH02_IMAGE,col:local%5,row:Math.floor(local/5)};
+}
+function drawV19944CanvasAsset(assetId,x,y,w,h){
+  const cell=v19944SpriteCell(assetId);
+  if(!cell||!cell.image.complete||!cell.image.naturalWidth)return false;
+  const sw=cell.image.naturalWidth/5,sh=cell.image.naturalHeight/2;
+  ctx.save();
+  ctx.imageSmoothingEnabled=true;
+  ctx.imageSmoothingQuality="high";
+  ctx.drawImage(cell.image,cell.col*sw,cell.row*sh,sw,sh,x,y,w,h);
+  ctx.restore();
+  return true;
+}
+function drawV19944TileIcon(type,x,y,w,h){
+  const map={start:15,chance:16,fate:17,tax:18,auction:19,stock:20};
+  return drawV19944CanvasAsset(map[type],x,y,w,h);
+}
+function drawV19944PublicIcon(key,x,y,w,h){
+  const map={night:11,tower:12,harbor:13,green:14};
+  return drawV19944CanvasAsset(map[key],x,y,w,h);
+}
+function v19944ArtHtml(assetId,extraClass=""){
+  const n=String(assetId).padStart(2,"0");
+  return '<span class="v19944-art we-a'+n+(extraClass?' '+extraClass:'')+'" aria-hidden="true"></span>';
+}
+function v19944PublicArtHtml(key){
+  const map={night:11,tower:12,harbor:13,green:14};
+  return v19944ArtHtml(map[key]||10);
+}
+
+openMobileHubMenu=function(){
+  if(!state)return;
+  showModal("都會核心",
+    '<div class="hub-rule">新版素材已正式替換原本的文字占位與舊 ICON。</div>'+
+    '<div class="hub-grid compact-phone-grid hub-facility-grid">'+
+    '<div class="hub-card compact-phone-card"><div class="hicon">'+v19944ArtHtml(5)+'</div><div class="hname">城市委託</div><div class="hdesc">接任務、完成目標後領獎金。</div><button class="primary" onclick="closeModal();openHubFacility(\'mission\')">開啟</button></div>'+
+    '<div class="hub-card compact-phone-card"><div class="hicon">'+v19944ArtHtml(6)+'</div><div class="hname">都會銀行</div><div class="hdesc">2 ROUND 定存，管理閒置現金。</div><button class="success" onclick="closeModal();openHubFacility(\'bank\')">開啟</button></div>'+
+    '<div class="hub-card compact-phone-card"><div class="hicon">'+v19944ArtHtml(7)+'</div><div class="hname">租金保險</div><div class="hdesc">降低下一次踩地產的現金壓力。</div><button class="primary" onclick="closeModal();openHubFacility(\'insurance\')">開啟</button></div>'+
+    '<div class="hub-card compact-phone-card"><div class="hicon">'+v19944ArtHtml(8)+'</div><div class="hname">捷運樞紐</div><div class="hdesc">不用擲骰，改走短／中／長快線。</div><button class="warn" onclick="closeModal();openHubFacility(\'metro\')">開啟</button></div>'+
+    '<div class="hub-card compact-phone-card"><div class="hicon">'+v19944ArtHtml(9)+'</div><div class="hname">市政標案</div><div class="hdesc">承接有風險的城市投資案。</div><button class="warn" onclick="closeModal();openHubFacility(\'project\')">開啟</button></div>'+
+    '<div class="hub-card compact-phone-card"><div class="hicon">'+v19944ArtHtml(10)+'</div><div class="hname">公共建設</div><div class="hdesc">投資夜市、科技塔、碼頭與綠能公園。</div><button class="primary" onclick="closeModal();openPublicInvestmentCenter()">查看</button></div>'+
+    '</div>',
+    [["關閉","ghost",closeModal]]
+  );
+  $("modal")?.classList.add("phone-hub-modal","planb-clean-modal");
+};
+
+openPublicInvestmentCenter=function(){
+  ensurePublicInvestments();
+  const cards=Object.entries(PUBLIC_PROJECTS).map(([key,d])=>{
+    const pr=state.publicInvestments[key],lv=publicProjectLevel(key),mine=publicContribution(mySeat,key);
+    return '<div class="hub-card public-hub-card">'+v19944PublicArtHtml(key)+
+      '<div class="hname">'+d.name+'｜Lv.'+lv+'</div>'+
+      '<div class="hdesc">'+d.desc+'</div>'+
+      '<div class="hvalue">全城 '+Number(pr.total||0).toLocaleString()+'｜你 '+mine.toLocaleString()+'</div>'+
+      '<button class="primary" onclick="closeModal();openPublicInvestment(\''+key+'\')">查看 / 投資</button></div>';
+  }).join("");
+  showModal("公共建設投資",
+    '<div class="v198-modal-icon-title">'+v19944ArtHtml(10)+'<div><b>公共建設投資</b><span>累積持分、提升城市等級並定期領分紅</span></div></div>'+
+    '<div class="hub-rule">A11～A14 已替換夜市、科技塔、觀光碼頭、綠能公園舊素材。</div><div class="hub-grid">'+cards+'</div>',
+    [["關閉","ghost",closeModal]]
+  );
+  $("modal")?.classList.add("planb-clean-modal");
+};
+
+openPublicInvestment=function(key){
+  ensurePublicInvestments();
+  const me=state.players[mySeat],def=PUBLIC_PROJECTS[key],pr=state.publicInvestments[key];
+  if(!def||!me)return;
+  const can=hubCanAct()&&me.lastPublicInvestRound!==state.round;
+  const mine=publicContribution(mySeat,key),level=publicProjectLevel(key);
+  const next=PUBLIC_LEVELS[level+1]??null;
+  const leader=Object.entries(pr.bySeat||{}).sort((a,b)=>Number(b[1])-Number(a[1]))[0];
+  const leaderName=leader?state.players[Number(leader[0])]?.name:"尚無";
+  const nextDividend=Math.round(mine*def.yieldRate*(1+level*PUBLIC_LEVEL_BONUS_RATE));
+  showModal(def.name,
+    '<div class="public-project-hero">'+v19944PublicArtHtml(key)+
+    '<div><div class="pp-title">'+def.name+'｜Lv.'+level+'</div><div class="pp-desc">'+def.desc+'</div></div></div>'+
+    '<div class="public-project-stats">'+
+    '<div><span>全城投入</span><b>'+Number(pr.total||0).toLocaleString()+'</b></div>'+
+    '<div><span>你的持分</span><b>'+mine.toLocaleString()+'</b></div>'+
+    '<div><span>預估下次分紅</span><b>+'+nextDividend.toLocaleString()+'</b></div>'+
+    '<div><span>最大投資人</span><b>'+(leaderName||"尚無")+'</b></div></div>'+
+    '<div class="public-level-track"><i style="width:'+(next?Math.min(100,(pr.total/next)*100):100)+'%"></i></div>'+
+    '<div class="pp-next">'+(next?'距離 Lv.'+(level+1)+' 尚差 '+Math.max(0,next-pr.total).toLocaleString():'已達最高城市等級')+'</div>'+
+    '<div class="public-invest-buttons">'+[1000,3000,5000].map(v=>'<button class="primary" '+((!can||me.cash<v)?'disabled':'')+' onclick="sendAction(\'public_invest\',{project:\''+key+'\',amount:'+v+'})">投資 '+v.toLocaleString()+'</button>').join("")+'</div>'+
+    '<div class="hub-rule" style="margin-top:9px">每位玩家每 ROUND 最多投資一次公共建設。持分會計入總資產；每 '+PUBLIC_DIVIDEND_ROUNDS+' ROUND 自動發放分紅。</div>',
+    [["關閉","ghost",closeModal]]
+  );
+  $("modal")?.classList.add("planb-clean-modal");
+};
+
+[V19944_BATCH01_IMAGE,V19944_BATCH02_IMAGE].forEach(im=>im.addEventListener("load",()=>{try{drawBoard();render()}catch(e){}}));
+</script>
 
 </body>
 </html>
