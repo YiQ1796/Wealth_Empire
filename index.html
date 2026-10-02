@@ -7114,13 +7114,24 @@ function buildTiles(){
     return{id:i,name,type,group,price,rent,owner:null,level:0,mortgaged:false,buildInvested:0}
   })
 }
-function boardIndexByName(name){
-  return TILE_NAMES.indexOf(String(name||""))
+function tileOccurrenceKeys(tiles){
+  const seen=new Map();
+  return (tiles||[]).map(tile=>{
+    const name=String(tile?.name||"");
+    const occurrence=seen.get(name)||0;
+    seen.set(name,occurrence+1);
+    return `${name}#${occurrence}`
+  })
+}
+function boardShapeMatches(tiles){
+  return Array.isArray(tiles)
+    && tiles.length===TILE_NAMES.length
+    && tiles.every((tile,index)=>tile?.name===TILE_NAMES[index])
 }
 function migrateBoardStateToCurrent(gameState){
   if(!gameState||typeof gameState!=="object")return gameState;
   const oldTiles=Array.isArray(gameState.tiles)?gameState.tiles:[];
-  if(oldTiles.length===TILE_NAMES.length){
+  if(boardShapeMatches(oldTiles)){
     gameState.boardSchema=BOARD_SCHEMA_ID;
     return gameState
   }
@@ -7137,8 +7148,9 @@ function migrateBoardStateToCurrent(gameState){
   const newNames=new Set(newTiles.map(t=>t.name));
   const oldByName=new Map(oldTiles.filter(Boolean).map((t,index)=>[t.name,{tile:t,index}]));
 
-  // Preserve surviving land ownership and upgrade state by stable tile name.
+  // Preserve surviving land ownership and upgrade state by stable unique land name.
   newTiles.forEach(t=>{
+    if(!["property","station"].includes(t.type))return;
     const old=oldByName.get(t.name)?.tile;
     if(!old)return;
     t.owner=old.owner??null;
@@ -7147,14 +7159,18 @@ function migrateBoardStateToCurrent(gameState){
     t.buildInvested=Number(old.buildInvested)||0
   });
 
+  // Repeated cells such as 機會 / 命運 need occurrence-aware identities.
+  const oldKeys=tileOccurrenceKeys(oldTiles);
+  const newKeys=tileOccurrenceKeys(newTiles);
+  const newIndexByKey=new Map(newKeys.map((key,index)=>[key,index]));
   const oldToNewPosition=oldPos=>{
     const total=oldTiles.length;
     if(!total)return 0;
     const start=((Number(oldPos)||0)%total+total)%total;
     for(let step=0;step<total;step++){
-      const oldTile=oldTiles[(start+step)%total];
-      const mapped=boardIndexByName(oldTile?.name);
-      if(mapped>=0)return mapped
+      const oldIndex=(start+step)%total;
+      const mapped=newIndexByKey.get(oldKeys[oldIndex]);
+      if(mapped!=null)return mapped
     }
     return 0
   };
@@ -7201,8 +7217,8 @@ function migrateBoardStateToCurrent(gameState){
 function acceptRemoteBoardState(remoteState){
   const incoming=stripLegacyRoleSkills(remoteState);
   const count=Array.isArray(incoming?.tiles)?incoming.tiles.length:0;
-  if(count!==TILE_NAMES.length){
-    const msg=`房主仍使用 ${count||"未知"} 格舊棋盤；本機已是 44 格新版。請房主重新整理一次，系統會用房主恢復資料安全遷移。`;
+  if(!boardShapeMatches(incoming?.tiles)){
+    const msg=`房主棋盤版本與本機不同（房主 ${count||"未知"} 格／本機 44 格）。請房主重新整理一次，系統會用房主恢復資料安全遷移。`;
     setLobbyConnectStatus("⚠️ "+msg,true);
     showNetRecovery(msg,"bad");
     toast("棋盤版本不同，請房主重新整理");
