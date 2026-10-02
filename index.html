@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.46 WEB｜A01–A20 素材替換版</title>
+<title>財富帝國 V19.9.47 WEB｜股票買賣圖示恢復版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.46 WEB - A01–A20 新素材正式替換與手機都會核心/公共建設排版修正">
+<meta name="description" content="財富帝國 V19.9.47 WEB - 恢復既有新版股票買進/賣出圖示，保留 V19.9.46 其他內容">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6569,7 +6569,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.46 WEB｜A01–A20 素材替換｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.47 WEB｜股票買賣圖示恢復｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -7520,7 +7520,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19946";
+const APP_BUILD_ID="19947";
 window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:4,mode:"REV-C01-D01-board-pawns"},q07:{cols:5,rows:4,path:"./assets/v19941/rev_c01_d01_all20_v1.webp?v=19941"},revC01D01:{cols:5,rows:4,count:20}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
@@ -15426,8 +15426,8 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
         ${qty?`<div class="stock-meta-line">平均成本 $${Math.round(avg).toLocaleString()}</div><div class="stock-position-pnl ${pnl>0?"profit":pnl<0?"loss":"flat"}">${positionIcon}<span>持倉損益</span><b>${pnl>=0?"+":"-"}${Math.abs(Math.round(pnl)).toLocaleString()} <em>(${pnlPct>=0?"+":""}${pnlPct.toFixed(1)}%)</em></b></div>`:""}
         <div class="sbottom">
           <input id="q_${c}" type="number" min="1" value="1">
-          <button class="success stock-action-btn" onclick="stockAction('buy_stock','${c}')"><span>買進</span></button>
-          <button class="danger stock-action-btn" onclick="stockAction('sell_stock','${c}')"><span>賣出</span></button>
+          <button class="success stock-action-btn" onclick="stockAction('buy_stock','${c}')">${art("stockBuy","rev36-stock-action-art")}<span>買進</span></button>
+          <button class="danger stock-action-btn" onclick="stockAction('sell_stock','${c}')">${art("stockSell","rev36-stock-action-art")}<span>賣出</span></button>
         </div>
       </div>`
     }).join("");
@@ -15689,8 +15689,8 @@ body:has(#modal.open) #mobileNav{visibility:hidden!important;pointer-events:none
 #modal.phone-hub-modal .modal-card button.ghost{background:#eef3f8!important;color:#2d4663!important;border-color:#cbd8e6!important}
 
 /* Market actions have no current C01/D01 replacement art; keep clean text blocks. */
-.stock-action-btn .rev36-stock-action-art,
 .stock-action-btn .v19923-q02-art{display:none!important;background-image:none!important}
+.stock-action-btn .rev36-stock-action-art{display:inline-block!important}
 .stock-action-btn{background-image:none!important;box-shadow:none!important;border-radius:10px!important}
 .stock-action-btn.success{background:#24986a!important;color:#fff!important}
 .stock-action-btn.danger{background:#d64d4d!important;color:#fff!important}
