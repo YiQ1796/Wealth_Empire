@@ -1,56 +1,6 @@
-# 財富帝國 V19.9.51 WEB
+# 財富帝國 V19.9.47 WEB
 
 這是《財富帝國》desktop / iPhone 網頁發布版。
-
-
-## V19.9.51｜手機主操作換位
-依 iPhone landscape 實機畫面調整右側操作層級，只修改手機／手機預覽，不改桌機排列與遊戲邏輯。
-
-- 第一排：骰子資訊｜市場操作。
-- 第二排：我的房產｜策略道具。
-- 第三排：擲骰子改成橫跨兩欄的整排大按鈕。
-- 理由：擲骰子是每回合最高頻主操作，改到靠近拇指的下方整排位置，提高辨識與點擊面積。
-- 市場操作頻率較低，移到原本擲骰子的右上位置。
-- 不修改 roll / market operation 行為、多人同步、44 格棋盤與股票交易邏輯。
-- Safe rollback：`safe-rollback-v19.9.50`。
-
-
-## V19.9.50｜44 格棋盤功能平衡修正版
-V19.9.49 已完成 56 → 44 的結構重構；本版針對 Code Review 發現的功能密度問題重新平衡格位。44 格與 24 塊一般地產維持不變，但恢復四個不可被其他入口完整取代的唯一功能格，避免「為了減格而誤刪玩法」。
-
-- 恢復唯一功能格：收購中心、城市更新局、法院、醫療中心。
-- 移除四個獨立小遊戲專用格：猜拳擂台、綠燈反應王、全民骰王、寶箱爭奪。
-- 猜拳／反應等相關玩法程式保留，可繼續由機會事件等既有入口觸發；本版只取消其獨立棋盤專用格。
-- Board content：44 格、24 塊一般地產、8 區 × 每區 3 塊、4 個交通設施維持不變。
-- Recovery：沿用 V19.9.49 的 56 → 44 舊局安全遷移，並支援 V19.9.49 → V19.9.50 的 44 格順序遷移；重複的機會／命運使用「名稱＋第幾次出現」辨識位置。
-- Multiplayer compatibility：客戶端會驗證完整 44 格順序，不只驗證格數，避免不同 44 格版本混用 tile id。
-- Economy：通過起點基礎獎金維持 $2,500。
-- 地產拍賣行：修正舊版只有格位、沒有落地事件的問題；踩到後會從尚未持有的一般地產中抽出 1 塊，啟動既有 12 秒全民公開拍賣。若所有一般地產都已有地主，則顯示無可拍賣標的並正常結束回合。
-- Safe rollback：`safe-rollback-v19.9.49` 保留 V19.9.49 第一版 44 格結構。
-
-
-## V19.9.49｜44 格棋盤結構重構第一版
-本版依新版棋盤規劃，將外圈由 56 格正式重構為 44 格，目標是讓每一格取得足夠可視面積，後續地皮可以使用「上方名稱＋下方大主圖」的 Full-Tile 視覺，而不是再把素材壓成中央小 ICON。
-
-- Board geometry：13（上）+ 9（右）+ 13（下）+ 9（左）= 44 格；上／下格與左右格面積同步放大。
-- Board content：保留 24 塊一般地產、4 個交通設施、3 個機會、3 個命運，以及稅務、股市、拍賣與既有多人短事件；移除重複性高或價值較低的格位。
-- Region completion：24 塊一般地產改為 8 區 × 每區 3 塊，區域完成度更容易理解。
-- Economy：通過起點基礎獎金由 $3,200 調整為 $2,500，抵銷 44 格造成的跑圈頻率提高。
-- Recovery：新增 56 → 44 房主恢復資料遷移。保留中的地產依名稱搬移；被移除且已持有的舊地產，按原價＋既有升級投入退還現金；玩家位置會移到原位置起算的下一個有效格。
-- Multiplayer compatibility：44 格客戶端不接受 56 格舊房主的權威 state，會要求房主重新整理；房主重新整理後由 Host Reload Recovery 自動執行安全遷移，避免新舊 tile id 混用。
-- Visual：V19.9.48 的 A15–A20 Full-Tile render 保留；本版先完成結構，不宣告新美術 Visual PASS。
-- Safe rollback：建立 `safe-rollback-v19.9.48`，指向 V19.9.48 正式 HEAD。
-
-
-## V19.9.48｜A15–A20 棋盤 Full-Tile Render 第一版
-本版只處理目前最高優先的棋盤 Tile 視覺模型，不改棋盤角度、路線或多人連線。A15–A20（起點／機會／命運／稅務局／地產拍賣行／股市事件）不再以小 icon 塞進舊格框，而是改成「標題在上、主圖在下、主圖佔據整個剩餘格面」的 Full-Tile render。配色保持中性，不照抄示意圖，後續仍以使用者最終視覺決定為準。
-
-- A15–A20：移除 20–40px 小 icon render path，改用大面積主圖。
-- Board geometry：56 格路線、角度、座標與事件邏輯不變。
-- 股票：保留 V19.9.47 已恢復的 REV36 stockBuy / stockSell 新版圖示，舊 Q02 仍停用。
-- Multiplayer：signaling、DataConnection、heartbeat、reconnect、resume、Host Reload Recovery 不修改。
-- USER VISUAL PASS：仍需 Desktop + iPhone landscape 正式頁實機檢查後才能宣告。
-
 
 ## V19.9.47｜股票買進／賣出新版圖示恢復
 V19.9.43 清理舊 render source 時誤把已是新版素材的股票買進／賣出圖示一併停用。本版恢復既有 REV36 stockBuy / stockSell 素材，僅保留舊 Q02 股票圖示為停用狀態；其他 V19.9.46 內容與多人連線邏輯不變。
@@ -96,18 +46,14 @@ Pages #86 實際部署回歸發現 390px 高的 iPhone landscape 會被底部「
 - C01 / D01 Asset Registry 仍保留，房產素材用於房產管理與升級流程；不再塞到棋盤格造成視覺雜訊。
 
 ## 驗證
-- Inline JavaScript：16 段，syntax PASS。
-- APP_BUILD_ID：19951。
+- Inline JavaScript：15 段，syntax PASS。
+- APP_BUILD_ID：19947。
 - signaling / DataConnection / heartbeat / reconnect / resume / Host Reload Recovery 核心函式保留。
 - USER VISUAL PASS：需正式 Pages 實機檢查後才能宣告。
 - MULTIPLAYER UAT PASS：仍需兩裝置不同網路實測，Pages SUCCESS 不能取代。
 
 ## 安全回退
-- `safe-rollback-v19.9.50`（手機主操作換位前回退點）
-- `safe-rollback-v19.9.49`（44 格第一版回退點）
-- `safe-rollback-v19.9.48`（本次 44 格重構前回退點）
-- `safe-rollback-v19.9.42`（舊版回退點）
-- `safe-rollback-v19.9.41`（較早回退點）
+- `safe-rollback-v19.9.41`
 
 ## 下一步
-先驗 V19.9.51 iPhone landscape 右側主操作是否符合「骰子資訊＋市場操作／我的房產＋策略道具／底部整排擲骰子」；確認後再繼續 44 格 Full-Tile 地皮美術。
+先驗 V19.9.46 正式頁面的 A01–A20、iPhone 都會核心 2×3 與公共建設 2×2；Visual PASS 後再進下一批素材與 legacy dead-code audit。
