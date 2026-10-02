@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.42 WEB｜舊 Render Source 清除版</title>
+<title>財富帝國 V19.9.43 WEB｜Visual Gate 殘留清除版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -6526,7 +6526,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.42</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.43</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -7520,7 +7520,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19942";
+const APP_BUILD_ID="19943";
 window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:4,mode:"REV-C01-D01-board-pawns"},q07:{cols:5,rows:4,path:"./assets/v19941/rev_c01_d01_all20_v1.webp?v=19941"},revC01D01:{cols:5,rows:4,count:20}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
@@ -15415,19 +15415,19 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
       const d=s.price-s.prev,dayPct=s.prev?d/s.prev*100:0,h=me.stocks?.[c]||{qty:0,avg:0};
       const qty=Number(h.qty||0),avg=Number(h.avg||0),value=qty*s.price,cost=qty*avg,pnl=value-cost,pnlPct=cost?pnl/cost*100:0;
       totalValue+=value;totalCost+=cost;
-      const trend=d>0?art("pnlUp"):d<0?art("pnlDown"):"";
-      const positionIcon=pnl>0?art("pnlUp"):pnl<0?art("pnlDown"):art("holding");
+      const trend="";
+      const positionIcon="";
       return `<div class="stock" data-code="${c}">
         <div class="stop">
           <div><div class="sname">${s.name}</div><div class="scode">${c}${qty?`｜持股 ${qty} 股`:""}</div></div>
           <div class="sprice">${s.price}</div>
           <div class="stock-day ${d>0?"up":d<0?"down":"flat"}">${trend}${dayPct>=0?"+":""}${dayPct.toFixed(1)}%</div>
         </div>
-        ${qty?`<div class="stock-meta-line">${art("costBasis")}平均成本 $${Math.round(avg).toLocaleString()}</div><div class="stock-position-pnl ${pnl>0?"profit":pnl<0?"loss":"flat"}">${positionIcon}<span>持倉損益</span><b>${pnl>=0?"+":"-"}${Math.abs(Math.round(pnl)).toLocaleString()} <em>(${pnlPct>=0?"+":""}${pnlPct.toFixed(1)}%)</em></b></div>`:""}
+        ${qty?`<div class="stock-meta-line">平均成本 $${Math.round(avg).toLocaleString()}</div><div class="stock-position-pnl ${pnl>0?"profit":pnl<0?"loss":"flat"}">${positionIcon}<span>持倉損益</span><b>${pnl>=0?"+":"-"}${Math.abs(Math.round(pnl)).toLocaleString()} <em>(${pnlPct>=0?"+":""}${pnlPct.toFixed(1)}%)</em></b></div>`:""}
         <div class="sbottom">
           <input id="q_${c}" type="number" min="1" value="1">
-          <button class="success stock-action-btn" onclick="stockAction('buy_stock','${c}')">${art("stockBuy","rev36-stock-action-art")}<span>買進</span></button>
-          <button class="danger stock-action-btn" onclick="stockAction('sell_stock','${c}')">${art("stockSell","rev36-stock-action-art")}<span>賣出</span></button>
+          <button class="success stock-action-btn" onclick="stockAction('buy_stock','${c}')"><span>買進</span></button>
+          <button class="danger stock-action-btn" onclick="stockAction('sell_stock','${c}')"><span>賣出</span></button>
         </div>
       </div>`
     }).join("");
@@ -15436,9 +15436,9 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
     const realized=Number(me.realizedPnl||0),realClass=realized>0?"profit":realized<0?"loss":"flat";
     $("market").innerHTML=`
       <div class="market-summary-v10 pnl-summary">
-        <div class="portfolio-stat value"><div class="mk finance-stat-label">${art("holding","rev36-summary-art")}持股總市值</div><div class="mv">$${Math.round(totalValue).toLocaleString()}</div></div>
-        <div class="portfolio-stat unrealized ${unrealClass}"><div class="mk finance-stat-label">${art("unrealized","rev36-summary-art")}未實現損益</div><div class="mv">${totalCost?`${totalPnl>=0?"+":"-"}$${Math.abs(Math.round(totalPnl)).toLocaleString()}`:"—"}</div><div class="pnl-pct">${totalCost?`${totalPct>=0?"+":""}${totalPct.toFixed(1)}%`:"尚未持股"}</div></div>
-        <div class="portfolio-stat realized ${realClass}"><div class="mk finance-stat-label">${art("realized","rev36-summary-art")}已實現損益</div><div class="mv">${realized>=0?"+":"-"}$${Math.abs(Math.round(realized)).toLocaleString()}</div><div class="pnl-pct">已完成交易累計</div></div>
+        <div class="portfolio-stat value"><div class="mk finance-stat-label">持股總市值</div><div class="mv">$${Math.round(totalValue).toLocaleString()}</div></div>
+        <div class="portfolio-stat unrealized ${unrealClass}"><div class="mk finance-stat-label">未實現損益</div><div class="mv">${totalCost?`${totalPnl>=0?"+":"-"}$${Math.abs(Math.round(totalPnl)).toLocaleString()}`:"—"}</div><div class="pnl-pct">${totalCost?`${totalPct>=0?"+":""}${totalPct.toFixed(1)}%`:"尚未持股"}</div></div>
+        <div class="portfolio-stat realized ${realClass}"><div class="mk finance-stat-label">已實現損益</div><div class="mv">${realized>=0?"+":"-"}$${Math.abs(Math.round(realized)).toLocaleString()}</div><div class="pnl-pct">已完成交易累計</div></div>
       </div><div class="stock-grid">${rows}</div>`;
   };
 
@@ -15651,6 +15651,43 @@ body:has(#modal.open) #mobileNav{visibility:hidden!important;pointer-events:none
   };
 })();
 </script>
+
+<style id="v19943-visual-gate-cleanup">
+/* V19.9.43: Plan B authoritative text-button skin.
+   Old v198 bitmap selectors have higher specificity than the V19.9.42 cleanup rule,
+   so #modal scoping removes that obsolete render source rather than layering over it. */
+#modal.planb-clean-modal .modal-card button,
+#modal.phone-bank-modal .modal-card button,
+#modal.phone-hub-modal .modal-card button{
+  background-image:none!important;
+  box-shadow:none!important;
+  border:1px solid transparent!important;
+  border-radius:12px!important;
+  font-weight:1000!important;
+}
+#modal.planb-clean-modal .modal-card button.primary,
+#modal.phone-bank-modal .modal-card button.primary,
+#modal.phone-hub-modal .modal-card button.primary{background:#3f78c5!important;color:#fff!important}
+#modal.planb-clean-modal .modal-card button.success,
+#modal.phone-bank-modal .modal-card button.success,
+#modal.phone-hub-modal .modal-card button.success{background:#32936f!important;color:#fff!important}
+#modal.planb-clean-modal .modal-card button.warn,
+#modal.phone-bank-modal .modal-card button.warn,
+#modal.phone-hub-modal .modal-card button.warn{background:#c58a2d!important;color:#fff!important}
+#modal.planb-clean-modal .modal-card button.danger,
+#modal.phone-bank-modal .modal-card button.danger,
+#modal.phone-hub-modal .modal-card button.danger{background:#c95555!important;color:#fff!important}
+#modal.planb-clean-modal .modal-card button.ghost,
+#modal.phone-bank-modal .modal-card button.ghost,
+#modal.phone-hub-modal .modal-card button.ghost{background:#eef3f8!important;color:#2d4663!important;border-color:#cbd8e6!important}
+
+/* Market actions have no current C01/D01 replacement art; keep clean text blocks. */
+.stock-action-btn .rev36-stock-action-art,
+.stock-action-btn .v19923-q02-art{display:none!important;background-image:none!important}
+.stock-action-btn{background-image:none!important;box-shadow:none!important;border-radius:10px!important}
+.stock-action-btn.success{background:#24986a!important;color:#fff!important}
+.stock-action-btn.danger{background:#d64d4d!important;color:#fff!important}
+</style>
 
 </body>
 </html>
