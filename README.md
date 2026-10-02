@@ -1,6 +1,16 @@
-# 財富帝國 V19.9.43 WEB
+# 財富帝國 V19.9.44 WEB
 
 這是《財富帝國》desktop / iPhone 網頁發布版。
+
+## V19.9.44｜A01–A20 正式素材替換
+本版把 2026-10-02 新產出的前兩批素材正式接入遊戲，不再用同功能舊 ICON 或文字色塊頂替。
+
+- A01–A04：擲骰子／我的房產／策略道具／市場操作，Desktop 與手機快速操作共用新版來源。
+- A05–A10：城市委託／都會銀行／租金保險／捷運樞紐／市政標案／公共建設，取代 V19.9.42 的臨時文字占位與舊委託圖。
+- A11–A14：都會夜市／智慧科技塔／觀光碼頭／綠能公園，取代公共建設舊圖／文字占位。
+- A15–A20：起點／機會／命運／稅務局／地產拍賣行／股市事件，改由新版棋盤事件素材直接繪製。
+- 舊 REV41 城市委託 Canvas render source 已退出；六個新版棋盤功能格也不再從 REV41 事件圖取圖。
+- 本次不改 signaling、DataConnection、heartbeat、reconnect、resume、Host Reload Recovery。
 
 ## V19.9.43｜Visual Gate 殘留清除
 本版依正式 Pages Run #85 的 Desktop / iPhone landscape 回歸結果，修正 V19.9.42 尚未真正被壓掉的舊視覺來源。
@@ -28,7 +38,7 @@
 
 ## 驗證
 - Inline JavaScript：15 段，syntax PASS。
-- APP_BUILD_ID：19943。
+- APP_BUILD_ID：19944。
 - signaling / DataConnection / heartbeat / reconnect / resume / Host Reload Recovery 核心函式保留。
 - USER VISUAL PASS：需正式 Pages 實機檢查後才能宣告。
 - MULTIPLAYER UAT PASS：仍需兩裝置不同網路實測，Pages SUCCESS 不能取代。
@@ -37,4 +47,4 @@
 - `safe-rollback-v19.9.41`
 
 ## 下一步
-先確認 V19.9.43 正式頁面的視覺殘留是否清乾淨；USER VISUAL PASS 與兩裝置不同網路 MULTIPLAYER UAT PASS 後，再按 Plan B 順序進 legacy dead-code audit 與策略道具 V1。
+先驗 V19.9.44 正式頁面的 A01–A20 對應與排版；Visual PASS 後再進下一批素材與 legacy dead-code audit。
