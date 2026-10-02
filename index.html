@@ -8414,6 +8414,18 @@ function resolveLanding(p){
     addEvent("fee",`${p.name} 支付法律費 $1,200（進入城市公庫）。`,{seat:p.seat,amount:-1200,title:"法院"});
     liquidate(p)
   }
+  else if(t.type==="auction"){
+    const availableLots=state.tiles.filter(tile=>tile.type==="property"&&tile.owner==null);
+    if(availableLots.length){
+      const lot=availableLots[Math.floor(Math.random()*availableLots.length)];
+      addEvent("auction_house",`🔨 ${p.name} 抵達地產拍賣行，「${lot.name}」進入公開競標！`,
+        {seat:p.seat,tile:lot.id,title:"地產拍賣行"});
+      startAuction(lot.id,p.seat);
+      return
+    }
+    addEvent("auction_house_empty","🔨 目前沒有未持有的一般地產可供拍賣。",
+      {seat:p.seat,title:"地產拍賣行"})
+  }
   else if(t.type==="stock"){
     const c=Object.keys(state.stocks)[Math.floor(Math.random()*6)],s=state.stocks[c];
     const pct=(Math.random()<.5?-1:1)*(.07+Math.random()*.08);
