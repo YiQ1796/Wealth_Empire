@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.52 WEB｜44 格八區連地版</title>
+<title>財富帝國 V19.9.53 WEB｜44 格八區連地版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.52 WEB - 依棋盤橘框重排 32 塊可購買地皮為 8 區 × 4 連格；同區持有越多，過路費階梯提高；四大主操作圖示同步放大">
+<meta name="description" content="財富帝國 V19.9.53 WEB - 依棋盤橘框重排 32 塊可購買地皮為 8 區 × 4 連格；同區持有越多，過路費階梯提高；四大主操作圖示同步放大">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6620,7 +6620,7 @@ body.force-mobile-preview .controls #rollBtn{
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.52 WEB｜八區連地｜44格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.53 WEB｜八區連地｜44格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -6901,6 +6901,52 @@ const TILE_NAMES=[
 "城市更新局",
 "皇后大道","帝王商圈","世界中心","帝國廣場"];
 const BOARD_SCHEMA_ID=44;
+const PROPERTY_REGION_DEFS=Object.freeze({
+  "海港區":Object.freeze(["星港住宅","海灣公寓","水岸別墅","海景大樓"]),
+  "商業區":Object.freeze(["翡翠商圈","黃金商圈","百貨商場","物流中心"]),
+  "科技區":Object.freeze(["科技園區","創新園區","雲端科技城","能源公司"]),
+  "住宅區":Object.freeze(["北城豪宅","綠能園區","湖畔豪宅","海天御苑"]),
+  "金融區":Object.freeze(["金融大道","商務中心","晶鑽商業區","國際金融城"]),
+  "娛樂區":Object.freeze(["影城","國際飯店","頂級飯店","都會娛樂城"]),
+  "豪宅區":Object.freeze(["山景莊園","天空豪宅","奢華莊園","皇家大道"]),
+  "帝王區":Object.freeze(["皇后大道","帝王商圈","世界中心","帝國廣場"])
+});
+const PROPERTY_REGION_BY_NAME=Object.freeze(Object.fromEntries(
+  Object.entries(PROPERTY_REGION_DEFS).flatMap(([region,names])=>names.map(name=>[name,region]))
+));
+const EXPECTED_PROPERTY_INDICES=Object.freeze([
+  1,2,3,4,8,9,10,11,13,14,15,16,18,19,20,21,
+  23,24,25,26,30,31,32,33,35,36,37,38,40,41,42,43
+]);
+function boardDefinitionGate(){
+  const errors=[];
+  const regionEntries=Object.entries(PROPERTY_REGION_DEFS);
+  const propertyNames=regionEntries.flatMap(([,names])=>names);
+  const uniqueNames=new Set(propertyNames);
+  const actualIndices=TILE_NAMES
+    .map((name,index)=>PROPERTY_REGION_BY_NAME[name]?index:null)
+    .filter(index=>index!==null);
+  const sameIndices=actualIndices.length===EXPECTED_PROPERTY_INDICES.length
+    && actualIndices.every((value,index)=>value===EXPECTED_PROPERTY_INDICES[index]);
+
+  if(TILE_NAMES.length!==44)errors.push(`棋盤總格數應為 44，實際 ${TILE_NAMES.length}`);
+  if(regionEntries.length!==8)errors.push(`地產區域應為 8 區，實際 ${regionEntries.length}`);
+  if(regionEntries.some(([,names])=>names.length!==4))errors.push("每個地產區都必須固定 4 格");
+  if(propertyNames.length!==32||uniqueNames.size!==32)errors.push("可購買地產必須是 32 個不重複名稱");
+  if(propertyNames.some(name=>!TILE_NAMES.includes(name)))errors.push("區域定義包含不在 44 格棋盤內的地產名稱");
+  if(!sameIndices)errors.push(`地產索引偏離橘框規格：${actualIndices.join(",")}`);
+
+  return Object.freeze({
+    ok:errors.length===0,
+    errors:Object.freeze(errors),
+    tileCount:TILE_NAMES.length,
+    propertyCount:propertyNames.length,
+    regionCount:regionEntries.length,
+    propertyIndices:Object.freeze(actualIndices)
+  })
+}
+const BOARD_DEFINITION_GATE=boardDefinitionGate();
+if(!BOARD_DEFINITION_GATE.ok)console.error("WEALTH BOARD DEFINITION GATE FAILED",BOARD_DEFINITION_GATE.errors);
 
 const HORSES=[
   {name:"閃電",icon:"🐎",odds:2.0,weight:38},
@@ -7157,7 +7203,7 @@ function player(name,seat,ai=false,avatar=seat%4){
   }
 }
 function buildTiles(){
-  const groups=["海港區","商業區","科技區","住宅區","金融區","娛樂區","豪宅區","帝王區"];let pc=0;
+  let propertyOrder=0;
   return TILE_NAMES.map((name,i)=>{let type="property";
     if(i===0)type="start";else if(name==="機會")type="chance";else if(name==="命運")type="fate";
     else if(name==="股市事件")type="stock";else if(name==="收購中心")type="acquire_center";else if(name==="城市更新局")type="renewal";else if(name==="稅務局")type="tax";
@@ -7171,7 +7217,13 @@ function buildTiles(){
     else if(name==="城市公園")type="park";else if(name==="地產拍賣行")type="auction";
     else if(name==="醫療中心")type="hospital";else if(name==="法院")type="court";else if(name==="自由市場")type="market";
     let group=null,price=0,rent=0;
-    if(type==="property"){group=groups[Math.min(7,Math.floor(pc/4))];price=2200+pc*260;rent=Math.round(price*.14);pc++}
+    if(type==="property"){
+      group=PROPERTY_REGION_BY_NAME[name]||null;
+      if(!group)throw new Error(`44 格棋盤地產缺少區域定義：${name}`);
+      price=2200+propertyOrder*260;
+      rent=Math.round(price*.14);
+      propertyOrder++
+    }
     else if(type==="station"){group="交通設施";price=5200+i*35;rent=850}
     return{id:i,name,type,group,price,rent,owner:null,level:0,mortgaged:false,buildInvested:0}
   })
@@ -7190,11 +7242,32 @@ function boardShapeMatches(tiles){
     && tiles.length===TILE_NAMES.length
     && tiles.every((tile,index)=>tile?.name===TILE_NAMES[index])
 }
+function boardSchemaMatchesCurrent(tiles){
+  if(!boardShapeMatches(tiles))return false;
+  const canonical=buildTiles();
+  return tiles.every((tile,index)=>{
+    const expected=canonical[index];
+    return tile?.name===expected.name
+      && tile?.type===expected.type
+      && (tile?.group??null)===(expected.group??null)
+      && Number(tile?.price||0)===expected.price
+      && Number(tile?.rent||0)===expected.rent
+  })
+}
+function syncPlayerPropertyIds(gameState,tiles){
+  gameState.players=(gameState.players||[]).map((p,seat)=>{
+    if(!p)return p;
+    p.properties=tiles.filter(t=>t.owner===seat).map(t=>t.id);
+    return p
+  });
+}
 function migrateBoardStateToCurrent(gameState){
   if(!gameState||typeof gameState!=="object")return gameState;
   const oldTiles=Array.isArray(gameState.tiles)?gameState.tiles:[];
-  if(boardShapeMatches(oldTiles)){
+
+  if(boardSchemaMatchesCurrent(oldTiles)){
     gameState.boardSchema=BOARD_SCHEMA_ID;
+    syncPlayerPropertyIds(gameState,oldTiles);
     return gameState
   }
   if(!oldTiles.length){
@@ -7203,18 +7276,20 @@ function migrateBoardStateToCurrent(gameState){
     gameState.pending=null;
     gameState.groupGame=null;
     gameState.rolled=false;
+    syncPlayerPropertyIds(gameState,gameState.tiles);
     return gameState
   }
 
   const newTiles=buildTiles();
-  const newNames=new Set(newTiles.map(t=>t.name));
+  const newByName=new Map(newTiles.filter(Boolean).map(t=>[t.name,t]));
   const oldByName=new Map(oldTiles.filter(Boolean).map((t,index)=>[t.name,{tile:t,index}]));
 
-  // Preserve surviving land ownership and upgrade state by stable unique land name.
+  // Stateful ownership data is copied only onto the current canonical land schema.
+  // type/group/price/rent always come from buildTiles(), never from an older save.
   newTiles.forEach(t=>{
     if(!["property","station"].includes(t.type))return;
     const old=oldByName.get(t.name)?.tile;
-    if(!old)return;
+    if(!old||!["property","station"].includes(old.type))return;
     t.owner=old.owner??null;
     t.level=Math.max(0,Math.min(PROPERTY_MAX_LEVEL,Number(old.level)||0));
     t.mortgaged=!!old.mortgaged;
@@ -7240,11 +7315,13 @@ function migrateBoardStateToCurrent(gameState){
   const compensation=new Map();
   oldTiles.forEach(old=>{
     const owner=Number(old?.owner);
-    if(!Number.isInteger(owner)||owner<0||newNames.has(old?.name))return;
-    if(!["property","station"].includes(old?.type))return;
+    if(!Number.isInteger(owner)||owner<0||!["property","station"].includes(old?.type))return;
+    const current=newByName.get(old?.name);
+    if(current&&["property","station"].includes(current.type))return;
     const price=Number(old?.price)||0;
     const level=Math.max(0,Math.min(PROPERTY_MAX_LEVEL,Number(old?.level)||0));
-    const invested=Math.max(Number(old?.buildInvested)||0,Math.round(price*.5*level));
+    const fallbackInvested=Math.round((level>=1?price*.35:0)+(level>=2?price*.50:0));
+    const invested=Math.max(Number(old?.buildInvested)||0,fallbackInvested);
     compensation.set(owner,(compensation.get(owner)||0)+price+invested)
   });
 
@@ -7266,11 +7343,14 @@ function migrateBoardStateToCurrent(gameState){
   gameState.events=Array.isArray(gameState.events)?gameState.events:[];
   gameState.eventId=Number(gameState.eventId||0)+1;
   const refundTotal=[...compensation.values()].reduce((sum,v)=>sum+v,0);
+  const sameShape=boardShapeMatches(oldTiles);
   gameState.events.push({
     id:gameState.eventId,
     kind:"board_migration",
-    text:`棋盤已安全遷移為 44 格；已移除的舊地產按原價與既有升級投入補償，共 $${Math.round(refundTotal).toLocaleString()}。`,
-    data:{title:"44 格棋盤遷移",from:oldTiles.length,to:TILE_NAMES.length,refund:Math.round(refundTotal)},
+    text:sameShape
+      ?`44 格棋盤規格已同步為目前八區連地設定；舊規格地產補償共 $${Math.round(refundTotal).toLocaleString()}。`
+      :`棋盤已安全遷移為 44 格；已移除的舊地產按原價與既有升級投入補償，共 $${Math.round(refundTotal).toLocaleString()}。`,
+    data:{title:sameShape?"44 格棋盤規格同步":"44 格棋盤遷移",from:oldTiles.length,to:TILE_NAMES.length,refund:Math.round(refundTotal)},
     ts:Date.now()
   });
   gameState.events=gameState.events.slice(-80);
@@ -7279,16 +7359,18 @@ function migrateBoardStateToCurrent(gameState){
 function acceptRemoteBoardState(remoteState){
   const incoming=stripLegacyRoleSkills(remoteState);
   const count=Array.isArray(incoming?.tiles)?incoming.tiles.length:0;
-  if(!boardShapeMatches(incoming?.tiles)){
-    const msg=`房主棋盤版本與本機不同（房主 ${count||"未知"} 格／本機 44 格）。請房主重新整理一次，系統會用房主恢復資料安全遷移。`;
+  if(!boardSchemaMatchesCurrent(incoming?.tiles)){
+    const msg=`房主棋盤規格與本機不同（房主 ${count||"未知"} 格／本機 44 格八區連地）。請房主重新整理一次，系統會用房主恢復資料安全遷移。`;
     setLobbyConnectStatus("⚠️ "+msg,true);
     showNetRecovery(msg,"bad");
-    toast("棋盤版本不同，請房主重新整理");
+    toast("棋盤規格不同，請房主重新整理");
     return null
   }
   incoming.boardSchema=BOARD_SCHEMA_ID;
+  syncPlayerPropertyIds(incoming,incoming.tiles);
   return incoming
 }
+
 function newState(hostName,hostAvatar=0){
   return{
     version:19,boardSchema:BOARD_SCHEMA_ID,status:"lobby",round:1,current:0,rolled:false,
@@ -7694,8 +7776,8 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19952";
-window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:4,mode:"REV-C01-D01-board-pawns"},q07:{cols:5,rows:4,path:"./assets/v19941/rev_c01_d01_all20_v1.webp?v=19941"},revC01D01:{cols:5,rows:4,count:20}};
+const APP_BUILD_ID="19953";
+window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:4,mode:"REV-C01-D01-board-pawns"},q07:{cols:5,rows:4,path:"./assets/v19941/rev_c01_d01_all20_v1.webp?v=19941"},revC01D01:{cols:5,rows:4,count:20}};\nwindow.__WEALTH_BOARD_GATE={build:APP_BUILD_ID,...BOARD_DEFINITION_GATE};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
   const u=new URL(location.href);
@@ -16248,8 +16330,8 @@ openPublicInvestment=function(key){
 </script>
 
 
-<style id="v19952-final-ui-authority">
-/* V19.9.52 FINAL AUTHORITY
+<style id="v19953-final-ui-authority">
+/* V19.9.53 FINAL AUTHORITY
    Must stay after all legacy style blocks so older mobile/button rules cannot win. */
 
 /* Desktop: make the four main action illustrations visibly larger. */
