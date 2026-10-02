@@ -1,6 +1,18 @@
-# 財富帝國 V19.9.50 WEB
+# 財富帝國 V19.9.51 WEB
 
 這是《財富帝國》desktop / iPhone 網頁發布版。
+
+
+## V19.9.51｜手機主操作換位
+依 iPhone landscape 實機畫面調整右側操作層級，只修改手機／手機預覽，不改桌機排列與遊戲邏輯。
+
+- 第一排：骰子資訊｜市場操作。
+- 第二排：我的房產｜策略道具。
+- 第三排：擲骰子改成橫跨兩欄的整排大按鈕。
+- 理由：擲骰子是每回合最高頻主操作，改到靠近拇指的下方整排位置，提高辨識與點擊面積。
+- 市場操作頻率較低，移到原本擲骰子的右上位置。
+- 不修改 roll / market operation 行為、多人同步、44 格棋盤與股票交易邏輯。
+- Safe rollback：`safe-rollback-v19.9.50`。
 
 
 ## V19.9.50｜44 格棋盤功能平衡修正版
@@ -85,16 +97,17 @@ Pages #86 實際部署回歸發現 390px 高的 iPhone landscape 會被底部「
 
 ## 驗證
 - Inline JavaScript：16 段，syntax PASS。
-- APP_BUILD_ID：19950。
+- APP_BUILD_ID：19951。
 - signaling / DataConnection / heartbeat / reconnect / resume / Host Reload Recovery 核心函式保留。
 - USER VISUAL PASS：需正式 Pages 實機檢查後才能宣告。
 - MULTIPLAYER UAT PASS：仍需兩裝置不同網路實測，Pages SUCCESS 不能取代。
 
 ## 安全回退
+- `safe-rollback-v19.9.50`（手機主操作換位前回退點）
 - `safe-rollback-v19.9.49`（44 格第一版回退點）
 - `safe-rollback-v19.9.48`（本次 44 格重構前回退點）
 - `safe-rollback-v19.9.42`（舊版回退點）
 - `safe-rollback-v19.9.41`（較早回退點）
 
 ## 下一步
-先驗 V19.9.50 的 44 格完整走圈、24 地產買賣／升級／收租、收購中心／城市更新局／法院／醫療中心、4 個交通設施、機會／命運／拍賣／股票事件與 iPhone landscape；功能 Gate 通過後再進下一輪 Full-Tile 地皮美術。
+先驗 V19.9.51 iPhone landscape 右側主操作是否符合「骰子資訊＋市場操作／我的房產＋策略道具／底部整排擲骰子」；確認後再繼續 44 格 Full-Tile 地皮美術。
