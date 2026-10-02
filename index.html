@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.51 WEB｜手機主操作換位版</title>
+<title>財富帝國 V19.9.52 WEB｜44 格八區連地版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.51 WEB - 手機橫向版市場操作與擲骰子換位；擲骰子改為底部整排主按鈕，桌機排列不變">
+<meta name="description" content="財富帝國 V19.9.52 WEB - 依棋盤橘框重排 32 塊可購買地皮為 8 區 × 4 連格；同區持有越多，過路費階梯提高；四大主操作圖示同步放大">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6570,12 +6570,56 @@ body.force-mobile-preview .controls #rollBtn{
   grid-row:3!important;
 }
 </style>
+
+<style id="v19952-property-zones-and-action-scale">
+/* V19.9.52 — enlarge the four primary action icons without reintroducing legacy button art. */
+.planb-main-action .v19944-action-icon{
+  width:56px!important;
+  height:56px!important;
+  flex:0 0 56px!important;
+}
+.planb-main-action{
+  gap:12px!important;
+}
+.planb-main-action .btn-label{
+  font-size:17px!important;
+  font-weight:1000!important;
+}
+@media(max-width:980px) and (orientation:landscape){
+  html body .controls .planb-main-action .v19944-action-icon{
+    width:44px!important;
+    height:44px!important;
+    flex:0 0 44px!important;
+  }
+  html body .controls #rollBtn .v19944-action-icon{
+    width:48px!important;
+    height:48px!important;
+    flex:0 0 48px!important;
+  }
+  html body .controls .planb-main-action{
+    gap:8px!important;
+  }
+  html body .controls .planb-main-action .btn-label{
+    font-size:clamp(11px,2.5dvh,14px)!important;
+  }
+}
+body.force-mobile-preview .controls .planb-main-action .v19944-action-icon{
+  width:44px!important;
+  height:44px!important;
+  flex:0 0 44px!important;
+}
+body.force-mobile-preview .controls #rollBtn .v19944-action-icon{
+  width:48px!important;
+  height:48px!important;
+  flex:0 0 48px!important;
+}
+</style>
 </head>
 <body class="lobby-mode">
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.51</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.52</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6618,7 +6662,7 @@ body.force-mobile-preview .controls #rollBtn{
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.51 WEB｜手機主操作換位｜44格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.52 WEB｜八區連地｜44格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -6673,7 +6717,7 @@ body.force-mobile-preview .controls #rollBtn{
         <span><i class="dot" style="background:#8b5cf6"></i>玩家4</span>
         <span>粗框＝所有權｜LV.1 / LV.2＝地產升級</span><span class="board-size-chip">44 格大地圖</span>
       </div>
-      <div class="board-map-note">外圈維持 44 格放大格面；保留收購中心、城市更新局、法院、醫療中心等唯一功能格，並將部分重複小遊戲集中到機會事件。四大主操作仍留在 UI，不額外佔用棋盤格。</div>
+      <div class="board-map-note">44 格依橘框重排為 8 個連續地產區，每區 4 格；持有同區 2 / 3 / 4 格時，該區過路費依序提高至 ×1.35 / ×1.75 / ×2.40。其餘 12 格配置起點、機會、命運與經濟／事件功能。</div>
     </div>
     <div class="side">
       <div id="marketPanel" class="panel market"><h2><span class="section-icon-title">股票市場</span></h2><div id="market"></div></div>
@@ -6882,12 +6926,22 @@ const MARKET_OPERATION_DEFS={
   profit_boost:{name:"獲利放大",icon:"📈",cost:1200,flag:"marketProfitBoost",desc:"下一次有獲利的股票賣出，額外增加該筆獲利 50%，最高 $2,000。"}
 };
 const TILE_NAMES=[
-"起點","星港住宅","機會","海灣公寓","稅務局","水岸別墅","中央車站","翡翠商圈",
-"命運","黃金商圈","高低骰對決","百貨商場","國際機場",
-"科技園區","機會","創新園區","收購中心","雲端科技城","北城豪宅","財富賽馬場","綠能園區","湖畔豪宅",
-"股市事件","金融大道","法院","商務中心","命運","晶鑽商業區","國際港口","影城","醫療中心","國際飯店",
-"機會","頂級飯店","跨海大橋","山景莊園","命運","天空豪宅","地產拍賣行","奢華莊園","皇后大道",
-"城市更新局","帝王商圈","世界中心"];
+"起點",
+"星港住宅","海灣公寓","水岸別墅","海景大樓",
+"機會","中央車站","命運",
+"翡翠商圈","黃金商圈","百貨商場","物流中心",
+"稅務局",
+"科技園區","創新園區","雲端科技城","能源公司",
+"收購中心",
+"北城豪宅","綠能園區","湖畔豪宅","海天御苑",
+"股市事件",
+"金融大道","商務中心","晶鑽商業區","國際金融城",
+"機會","地產拍賣行","命運",
+"影城","國際飯店","頂級飯店","都會娛樂城",
+"財富賽馬場",
+"山景莊園","天空豪宅","奢華莊園","皇家大道",
+"城市更新局",
+"皇后大道","帝王商圈","世界中心","帝國廣場"];
 const BOARD_SCHEMA_ID=44;
 
 const HORSES=[
@@ -7159,7 +7213,7 @@ function buildTiles(){
     else if(name==="城市公園")type="park";else if(name==="地產拍賣行")type="auction";
     else if(name==="醫療中心")type="hospital";else if(name==="法院")type="court";else if(name==="自由市場")type="market";
     let group=null,price=0,rent=0;
-    if(type==="property"){group=groups[Math.min(7,Math.floor(pc/3))];price=2200+pc*260;rent=Math.round(price*.14);pc++}
+    if(type==="property"){group=groups[Math.min(7,Math.floor(pc/4))];price=2200+pc*260;rent=Math.round(price*.14);pc++}
     else if(type==="station"){group="交通設施";price=5200+i*35;rent=850}
     return{id:i,name,type,group,price,rent,owner:null,level:0,mortgaged:false,buildInvested:0}
   })
@@ -7302,8 +7356,8 @@ function refreshMonopolyState(){
         {seat:previous,group,title:"區域壟斷解除"});
     }
     if(owner!=null&&state.players[owner]){
-      addEvent("monopoly_complete",`${state.players[owner].name} 完成「${group}」區域壟斷，該區地產租金 +25%。`,
-        {seat:owner,group,multiplier:MONOPOLY_RENT_BONUS,title:"區域壟斷完成"});
+      addEvent("monopoly_complete",`${state.players[owner].name} 完成「${group}」4 格完整持有，該區地產租金提升至 ×${REGION_COMPLETE_RENT_MULTIPLIER.toFixed(2)}。`,
+        {seat:owner,group,multiplier:REGION_COMPLETE_RENT_MULTIPLIER,title:"區域完整持有"});
     }
     state.monopolyOwners[group]=owner;
   }
@@ -7682,7 +7736,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19951";
+const APP_BUILD_ID="19952";
 window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:4,mode:"REV-C01-D01-board-pawns"},q07:{cols:5,rows:4,path:"./assets/v19941/rev_c01_d01_all20_v1.webp?v=19941"},revC01D01:{cols:5,rows:4,count:20}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
@@ -8485,9 +8539,26 @@ function resolveLanding(p){
 }
 function groupTiles(g){return state.tiles.filter(t=>t.group===g&&t.type==="property")}
 function monopoly(seat,g){const a=groupTiles(g);return a.length>0&&a.every(t=>t.owner===seat)}
-const MONOPOLY_RENT_BONUS=1.25;
+const REGION_COMPLETE_RENT_MULTIPLIER=2.40;
+function regionRentMultiplierForCounts(owned,total){
+  owned=Math.max(0,Number(owned)||0);
+  total=Math.max(0,Number(total)||0);
+  if(total<=0||owned<=1)return 1;
+  if(total===3){
+    if(owned>=3)return 2.20;
+    if(owned===2)return 1.50;
+    return 1
+  }
+  if(owned>=4)return REGION_COMPLETE_RENT_MULTIPLIER;
+  if(owned===3)return 1.75;
+  if(owned===2)return 1.35;
+  return 1
+}
 function monopolyRentMultiplier(t){
-  return t?.type==="property"&&t.owner!=null&&monopoly(t.owner,t.group)?MONOPOLY_RENT_BONUS:1
+  if(t?.type!=="property"||t.owner==null||!t.group)return 1;
+  const tiles=groupTiles(t.group);
+  const owned=tiles.filter(tile=>tile.owner===t.owner).length;
+  return regionRentMultiplierForCounts(owned,tiles.length)
 }
 function buildCost(t){
   const baseRate=t.level<=0 ? 0.35 : 0.50;
@@ -11035,7 +11106,7 @@ function openProperties(){
     return `<div class="planb-region-card ${complete?"complete":""}">
       <div class="planb-region-head"><b>${group}</b><span>${ownedTiles.length} / ${tiles.length}</span></div>
       <div class="planb-region-progress"><i style="width:${tiles.length?ownedTiles.length/tiles.length*100:0}%"></i></div>
-      <div class="planb-region-desc">${complete?"區域壟斷已啟動｜租金 +25%":missing.length?"缺少："+missing.map(t=>t.name).join("、"):"—"}</div>
+      <div class="planb-region-desc">${ownedTiles.length>=2?`區域租金加成 ×${regionRentMultiplierForCounts(ownedTiles.length,tiles.length).toFixed(2)}${complete?"｜完整持有":""}`:missing.length?"持有 2 格起啟動區域加成｜缺少："+missing.map(t=>t.name).join("、"):"—"}</div>
     </div>`
   }).join("");
 
