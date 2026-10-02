@@ -65,7 +65,6 @@ jobs:
               'art("stockSell","rev36-stock-action-art")',
               '.stock-action-btn .v19923-q02-art{display:none!important',
               'DataConnection',
-              'heartbeat',
               'reconnect',
               'resume',
           ]
