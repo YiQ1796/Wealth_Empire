@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.55 WEB｜44 格桌機恢復版</title>
+<title>財富帝國 V19.9.56 WEB｜44 格桌機恢復版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.52 WEB - 依棋盤橘框重排 32 塊可購買地皮為 8 區 × 4 連格；同區持有越多，過路費階梯提高；四大主操作圖示同步放大">
+<meta name="description" content="財富帝國 V19.9.56 WEB - 修正 Windows 桌機誤套手機棋盤規則；保留 44 格八區連地與既有玩法">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6620,7 +6620,7 @@ body.force-mobile-preview .controls #rollBtn{
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.52 WEB｜八區連地｜44格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.56 WEB｜44格桌機修復｜八區連地</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -7694,7 +7694,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19955";
+const APP_BUILD_ID="19956";
 window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:4,mode:"REV-C01-D01-board-pawns"},q07:{cols:5,rows:4,path:"./assets/v19941/rev_c01_d01_all20_v1.webp?v=19941"},revC01D01:{cols:5,rows:4,count:20}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
@@ -12250,6 +12250,11 @@ function startVisualLoop(){
 
 function drawBoard(){
   if(!state)return;
+  // V19.9.56 frame gate: legacy renderers must never leak scale/transform state into the next frame.
+  if(typeof ctx.resetTransform==="function")ctx.resetTransform();
+  else ctx.setTransform(1,0,0,1,0,0);
+  ctx.globalAlpha=1;
+  ctx.globalCompositeOperation="source-over";
   const sky=ctx.createLinearGradient(0,0,0,BOARD_H);
   sky.addColorStop(0,"#edf6ff");
   sky.addColorStop(.45,"#e1edf9");
@@ -15145,16 +15150,20 @@ body.force-mobile-preview .controls .control-row>button::before{content:none!imp
 <script id="v19915-phone-responsive-runtime">
 (function(){
   function phoneCandidate(){
-    const coarse=window.matchMedia("(pointer:coarse)").matches || (navigator.maxTouchPoints||0)>0;
-    const sw=Math.min(screen.width||innerWidth,screen.height||innerHeight);
-    const vw=Math.min(innerWidth,innerHeight);
-    return coarse && (sw<=500 || vw<=500);
+    const ua=String(navigator.userAgent||"");
+    const platform=String(navigator.platform||"");
+    const touchPoints=Number(navigator.maxTouchPoints||0);
+    const appleTouchTablet=platform==="MacIntel"&&touchPoints>1;
+    const mobileUA=/iPhone|iPad|iPod|Android/i.test(ua)||appleTouchTablet;
+    const touchCapable=window.matchMedia("(pointer:coarse)").matches||touchPoints>0;
+    return mobileUA&&touchCapable;
   }
   function syncPhoneClasses(){
     const phone=phoneCandidate();
     const landscape=phone && innerWidth>innerHeight;
     const portrait=phone && !landscape;
     document.body.classList.toggle("phone-device",phone);
+    document.body.classList.toggle("desktop-device",!phone);
     document.body.classList.toggle("phone-landscape",landscape);
     document.body.classList.toggle("phone-portrait",portrait);
 
@@ -15173,7 +15182,7 @@ body.force-mobile-preview .controls .control-row>button::before{content:none!imp
   // Replace the old width-only decisions with device-aware decisions.
   window.isPhoneDevice=phoneCandidate;
   window.isMobileLayout=function(){
-    return phoneCandidate() || window.matchMedia("(max-width:980px)").matches;
+    return phoneCandidate() || document.body.classList.contains("force-mobile-preview");
   };
   window.isLandscapePhone=function(){
     return document.body.classList.contains("phone-landscape") ||
@@ -16341,62 +16350,93 @@ body.force-mobile-preview .controls #rollBtn .v19944-action-icon{
 }
 </style>
 
-<style id="v19955-desktop-board-fit-gate">
-/* V19.9.55 recovery: desktop board must always fit the board panel.
-   This scope explicitly excludes the real phone landscape and phone preview layouts. */
-@media (min-width:981px){
-  html body:not(.phone-landscape):not(.force-mobile-preview) #boardPanel{
-    min-width:0!important;
-    overflow:hidden!important;
-  }
-  html body:not(.phone-landscape):not(.force-mobile-preview) #boardScroller{
-    display:block!important;
-    width:100%!important;
-    max-width:100%!important;
-    height:auto!important;
-    max-height:none!important;
-    overflow:hidden!important;
-    margin:0!important;
-    padding:0!important;
-  }
-  html body:not(.phone-landscape):not(.force-mobile-preview) #board{
-    display:block!important;
-    width:100%!important;
-    height:auto!important;
-    min-width:0!important;
-    max-width:100%!important;
-    max-height:none!important;
-    margin:0!important;
-    transform:none!important;
-    object-fit:contain!important;
-    touch-action:auto!important;
-  }
+<style id="v19956-desktop-device-board-gate">
+/* V19.9.56 authoritative desktop gate.
+   Device type, not viewport width, decides whether desktop or phone board rules win. */
+html body.desktop-device:not(.force-mobile-preview) .main{
+  position:static!important;
+  inset:auto!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 365px!important;
+  gap:10px!important;
+  width:auto!important;
+  height:auto!important;
+  min-height:0!important;
+  overflow:visible!important;
+}
+html body.desktop-device:not(.force-mobile-preview) .side{
+  display:flex!important;
+  flex-direction:column!important;
+  gap:8px!important;
+}
+html body.desktop-device:not(.force-mobile-preview) #boardPanel{
+  position:static!important;
+  inset:auto!important;
+  display:block!important;
+  width:auto!important;
+  min-width:0!important;
+  height:auto!important;
+  min-height:0!important;
+  padding:8px!important;
+  overflow:hidden!important;
+}
+html body.desktop-device:not(.force-mobile-preview) #boardScroller{
+  position:static!important;
+  inset:auto!important;
+  display:block!important;
+  width:100%!important;
+  max-width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:hidden!important;
+}
+html body.desktop-device:not(.force-mobile-preview) #board{
+  display:block!important;
+  width:100%!important;
+  height:auto!important;
+  min-width:0!important;
+  max-width:100%!important;
+  max-height:none!important;
+  margin:0!important;
+  transform:none!important;
+  object-fit:contain!important;
+  touch-action:auto!important;
+}
+html body.desktop-device:not(.force-mobile-preview) .mobile-turn-bar,
+html body.desktop-device:not(.force-mobile-preview) .mobile-nav{
+  display:none!important;
 }
 </style>
-<script id="v19955-desktop-board-fit-runtime">
+<script id="v19956-desktop-device-board-runtime">
 (function(){
-  const DESKTOP_BREAKPOINT=981;
   let resizeTimer=0;
+
+  function isRuntimeDesktop(){
+    const body=document.body;
+    return !!body
+      && !body.classList.contains("phone-device")
+      && !body.classList.contains("phone-landscape")
+      && !body.classList.contains("force-mobile-preview");
+  }
 
   function desktopBoardFitGate(){
     const body=document.body;
     const board=document.getElementById("board");
-    if(!body||!board)return false;
+    const panel=document.getElementById("boardPanel");
+    if(!body||!board||!panel||!isRuntimeDesktop())return false;
 
-    const desktop=window.innerWidth>=DESKTOP_BREAKPOINT
-      && !body.classList.contains("phone-landscape")
-      && !body.classList.contains("force-mobile-preview");
+    body.classList.add("desktop-device");
+    body.classList.remove("phone-device","phone-landscape","phone-portrait");
 
-    if(!desktop)return false;
+    board.style.setProperty("width","100%","important");
+    board.style.setProperty("height","auto","important");
+    board.style.setProperty("min-width","0","important");
+    board.style.setProperty("max-width","100%","important");
+    board.style.setProperty("transform","none","important");
 
-    // Desktop must never inherit a width/height/transform written by mobile zoom/preview code.
-    board.style.removeProperty("width");
-    board.style.removeProperty("height");
-    board.style.removeProperty("min-width");
-    board.style.removeProperty("max-width");
-    board.style.removeProperty("transform");
-
-    // Protect the canvas coordinate system used by POS / tileSizeForIndex.
     if(typeof BOARD_W==="number"&&board.width!==BOARD_W)board.width=BOARD_W;
     if(typeof BOARD_H==="number"&&board.height!==BOARD_H)board.height=BOARD_H;
 
@@ -16409,7 +16449,18 @@ body.force-mobile-preview .controls #rollBtn .v19944-action-icon{
     if(typeof drawBoard==="function"&&typeof state!=="undefined"&&state){
       requestAnimationFrame(()=>drawBoard());
     }
-    return true;
+
+    const rect=board.getBoundingClientRect();
+    const panelRect=panel.getBoundingClientRect();
+    window.__WEALTH_DESKTOP_BOARD_RUNTIME={
+      build:"19956",
+      boardCssWidth:Math.round(rect.width),
+      panelCssWidth:Math.round(panelRect.width),
+      canvasWidth:board.width,
+      canvasHeight:board.height,
+      expectedTiles:44
+    };
+    return rect.width>0&&rect.width<=panelRect.width+2;
   }
 
   function scheduleDesktopBoardFit(){
@@ -16424,11 +16475,13 @@ body.force-mobile-preview .controls #rollBtn .v19944-action-icon{
   });
   setTimeout(desktopBoardFitGate,0);
   setTimeout(desktopBoardFitGate,250);
+  setTimeout(desktopBoardFitGate,900);
 
   window.__WEALTH_DESKTOP_BOARD_FIT_GATE=Object.freeze({
-    build:"19955",
+    build:"19956",
     expectedCanvas:Object.freeze({width:1680,height:1040}),
-    expectedTiles:44
+    expectedTiles:44,
+    mode:"device-class-not-viewport"
   });
 })();
 </script>
