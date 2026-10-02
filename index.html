@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.44 WEB｜Visual Gate 殘留清除版</title>
+<title>財富帝國 V19.9.45 WEB｜A01–A20 素材替換版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.44 WEB - Visual Gate 殘留清除；未有新素材者維持文字色塊">
+<meta name="description" content="財富帝國 V19.9.45 WEB - A01–A20 新素材正式替換與手機都會核心排版修正">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6569,7 +6569,7 @@ body.force-mobile-preview .dicebox::before,body.force-mobile-preview .dicebox::a
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.44 WEB｜Visual Gate 清理｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.45 WEB｜A01–A20 素材替換｜56格大地圖</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -7520,7 +7520,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19944";
+const APP_BUILD_ID="19945";
 window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:4,mode:"REV-C01-D01-board-pawns"},q07:{cols:5,rows:4,path:"./assets/v19941/rev_c01_d01_all20_v1.webp?v=19941"},revC01D01:{cols:5,rows:4,count:20}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
@@ -15820,6 +15820,13 @@ body.phone-landscape #modal.phone-hub-modal #modalTitle{
 body.phone-landscape #modal.phone-hub-modal #modalBody{
   overflow:hidden!important;
 }
+#modal.phone-hub-modal #modalActions{display:none!important}
+#modal.phone-hub-modal .hub-rule{
+  padding:6px 10px!important;
+  min-height:0!important;
+  font-size:11px!important;
+  line-height:1.2!important;
+}
 @media(max-width:760px) and (orientation:landscape){
   #modal.phone-hub-modal .hub-card.compact-phone-card{
     grid-template-columns:52px minmax(0,1fr) 72px!important;
@@ -15891,7 +15898,7 @@ openMobileHubMenu=function(){
     '<div class="hub-card compact-phone-card"><div class="hicon">'+v19944ArtHtml(9)+'</div><div class="hname">市政標案</div><div class="hdesc">承接有風險的城市投資案。</div><button class="warn" onclick="closeModal();openHubFacility(\'project\')">開啟</button></div>'+
     '<div class="hub-card compact-phone-card"><div class="hicon">'+v19944ArtHtml(10)+'</div><div class="hname">公共建設</div><div class="hdesc">投資夜市、科技塔、碼頭與綠能公園。</div><button class="primary" onclick="closeModal();openPublicInvestmentCenter()">查看</button></div>'+
     '</div>',
-    [["關閉","ghost",closeModal]]
+    []
   );
   $("modal")?.classList.add("phone-hub-modal","planb-clean-modal");
 };
