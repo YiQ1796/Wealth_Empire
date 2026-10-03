@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.60 WEB｜股票操作定位修正版</title>
+<title>財富帝國 V19.9.61 WEB｜iPhone HTTPS 備援連線版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.60 WEB - iPhone 股票輸入不再被自動捲回頂部，保留交易位置並強化持股顯示">
+<meta name="description" content="財富帝國 V19.9.61 WEB - iPhone 好友房改用 WebRTC + HTTPS/WSS relay 雙路徑；保留股票隨時交易與定位修正">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6577,7 +6577,7 @@ body.force-mobile-preview .controls #rollBtn{
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.60</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.61</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6620,7 +6620,7 @@ body.force-mobile-preview .controls #rollBtn{
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.60 WEB｜股票定位修正｜44格八區連地</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.61 WEB｜iPhone 雙路徑連線｜44格八區連地</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -7067,6 +7067,10 @@ let conns=new Map(),pendingJoinNames=new Map(),resumeTokens=new Map(),lastEventI
 let clientResumeToken="",guestDisplayName="",guestReconnectTimer=null,guestReconnectAttempts=0,guestHeartbeatTimer=null,lastHostActivity=0,hostSignalReconnectTimer=null,initialJoinRetryTimer=null,initialJoinRetryAttempts=0,autoGuestResumeAttempted=false,autoHostResumeAttempted=false;
 let guestReconnectInFlight=false,guestReconnectPendingReason="",guestConnectedSince=0,guestResumeHealthTimer=null,hostRecoverySaveTimer=null;
 let hostDisconnectGraceTimers=new Map();
+let relayLibraryPromise=null,hostRelayClient=null,guestRelayClient=null,hostRelayReady=false,guestRelayFallbackStarted=false;
+let guestTransportMode="",guestRelayClientId="",guestRelayConnectTimer=null,hostRelayWatchdogTimer=null;
+let relayGuestConns=new Map();
+const RELAY_BROKER_URL="wss://broker.emqx.io:8084/mqtt",RELAY_PROTOCOL="v1";
 const NET_HEARTBEAT_MS=7000,NET_STALE_MS=35000,NET_RECONNECT_DELAYS=[900,1800,3200,5000,7000,10000],INITIAL_JOIN_RETRY_DELAYS=[650,1100,1800,2800,4200,6000];
 const HOST_DISCONNECT_GRACE_MS=6500,HOST_RECOVERY_MAX_AGE_MS=12*60*60*1000;
 let fxQueue=[],fxRunning=false,victoryShownEvent=0,groupGameTimer=null,groupUiTimer=null,auctionTimer=null,auctionUiTimer=null,noodleAiTimer=null,coinRushAiTimer=null,reactionAiTimer=null;
@@ -7478,6 +7482,7 @@ async function autoResumeHostAfterReload(){
   $("connectionText").textContent="🔄 房主頁面已重新載入，正在恢復原房號並等待玩家自動續連…";
   syncGuestRoomToUrl(roomCode);
   saveHostRecoveryNow();
+  startHostRelayTransport();
   openHostPeer(true);
   return true
 }
@@ -7535,7 +7540,9 @@ async function autoResumeGuestAfterReload(){
   mySeat=saved.seat;clientResumeToken=saved.token;lastEventId=Number(saved.lastEventId||0);
   showWaiting();
   $("connectionText").textContent=`🔄 網頁已重新載入，正在自動接回原座位 P${mySeat+1}…`;
-  openGuestPeer(savedName,{seat:saved.seat,token:saved.token,lastEventId:saved.lastEventId,reconnect:true,fromReload:true})
+  const resumeInfo={seat:saved.seat,token:saved.token,lastEventId:saved.lastEventId,reconnect:true,fromReload:true};
+  if(isIOSDevice())startGuestRelayTransport(savedName,resumeInfo,"iPhone 重新載入續連");
+  else openGuestPeer(savedName,resumeInfo)
 }
 function clearGuestNetTimers(){
   clearTimeout(guestReconnectTimer);guestReconnectTimer=null;
@@ -7593,6 +7600,12 @@ function scheduleHostSignalReconnect(hostPeer,reason="signaling 中斷"){
 }
 function scheduleGuestReconnect(reason="連線中斷"){
   if(isHost||!roomCode||mySeat==null||!clientResumeToken)return;
+  if(guestTransportMode==="relay"||guestTransportMode==="relay-pending"){
+    guestReconnectPendingReason=reason;
+    showNetRecovery("HTTPS 備援通道正在自動重連，原座位會保留。","warn");
+    if(guestRelayClient&&!guestRelayClient.connected)try{guestRelayClient.reconnect()}catch{}
+    return
+  }
   guestReconnectPendingReason=reason;
   if(document.visibilityState==="hidden"||navigator.onLine===false)return;
   if(guestReconnectTimer||guestReconnectInFlight)return;
@@ -7610,36 +7623,27 @@ function scheduleGuestReconnect(reason="連線中斷"){
 }
 function scheduleInitialJoinRetry(name,reason="房主尚未完成註冊"){
   if(isHost||mySeat!=null||!roomCode)return;
-  if(initialJoinRetryTimer)return;
-
-  if(initialJoinRetryAttempts>=INITIAL_JOIN_RETRY_DELAYS.length){
-    $("connectionText").textContent="❌ 暫時找不到房主。請確認房主畫面已顯示「房間已上線」，房號也完全相同。";
-    const detail=$("connectionDetail");
-    if(detail)detail.textContent="若房主確定已上線仍持續失敗，請重新建立一個新房號再測；若之後變成 WebRTC 連線失敗，才需要進一步處理 TURN / 行動網路 NAT。";
-    setLobbyConnectStatus("❌ 好友房尚未連上房主；請先確認房主已顯示「房間已上線」。",true);
-    toast("暫時找不到房主");
+  if(!guestRelayFallbackStarted){
+    startGuestRelayTransport(name||guestDisplayName||"玩家",null,reason);
     return
   }
-
-  const delay=INITIAL_JOIN_RETRY_DELAYS[initialJoinRetryAttempts++];
-  const attempt=initialJoinRetryAttempts;
-  $("connectionText").textContent=`⏳ 尚未找到房主，${Math.ceil(delay/1000)} 秒後自動重試（${attempt}/${INITIAL_JOIN_RETRY_DELAYS.length}）…`;
-  const detail=$("connectionDetail");
-  if(detail)detail.textContent=`連線服務回報 ${reason}。第一次加入會自動等待房主完成房號註冊，不需要重新整理。`;
-
-  const oldConn=hostConn,oldPeer=peer;
-  hostConn=null;peer=null;
-  try{oldConn?.close()}catch{}
-  try{oldPeer?.destroy()}catch{}
-
+  if(initialJoinRetryTimer)return;
+  const delay=INITIAL_JOIN_RETRY_DELAYS[Math.min(initialJoinRetryAttempts,INITIAL_JOIN_RETRY_DELAYS.length-1)];
+  initialJoinRetryAttempts++;
+  $("connectionText").textContent=`⏳ P2P 暫時未完成，HTTPS 備援正在接手…`;
+  setConnectionDetail(`目前失敗階段：${reason}。這不再一律視為「找不到房主」；系統正在改走 WSS 中繼。`);
   initialJoinRetryTimer=setTimeout(()=>{
     initialJoinRetryTimer=null;
-    if(!isHost&&mySeat==null&&roomCode)openGuestPeer(name||guestDisplayName||"玩家",null)
-  },delay)
+    if(!isHost&&mySeat==null&&roomCode&&!guestRelayClient)startGuestRelayTransport(name||guestDisplayName||"玩家",null,reason)
+  },Math.max(700,delay))
 }
-
 function reconnectGuestTransport(reason="連線中斷"){
-  if(isHost||!roomCode||mySeat==null||!clientResumeToken||typeof Peer==="undefined")return;
+  if(isHost||!roomCode||mySeat==null||!clientResumeToken)return;
+  if(guestTransportMode==="relay"||guestTransportMode==="relay-pending"){
+    startGuestRelayTransport(guestDisplayName||"玩家",{seat:mySeat,token:clientResumeToken,lastEventId,reconnect:true},reason);
+    return
+  }
+  if(typeof Peer==="undefined")return;
   if(guestReconnectInFlight)return;
   guestReconnectInFlight=true;
   guestReconnectPendingReason="";
@@ -7694,7 +7698,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19960";
+const APP_BUILD_ID="19961";
 window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:4,mode:"REV-C01-D01-board-pawns"},q07:{cols:5,rows:4,path:"./assets/v19941/rev_c01_d01_all20_v1.webp?v=19941"},revC01D01:{cols:5,rows:4,count:20}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
@@ -7930,6 +7934,191 @@ function ensurePeerLibrary(){
   });
   return peerLoadPromise
 }
+function ensureRelayLibrary(){
+  if(typeof window.mqtt!=="undefined")return Promise.resolve(true);
+  if(relayLibraryPromise)return relayLibraryPromise;
+  const sources=[
+    "https://cdn.jsdelivr.net/npm/mqtt@5.14.1/dist/mqtt.min.js",
+    "https://unpkg.com/mqtt@5.14.1/dist/mqtt.min.js"
+  ];
+  relayLibraryPromise=new Promise((resolve,reject)=>{
+    let idx=0;
+    const tryNext=()=>{
+      if(typeof window.mqtt!=="undefined"){resolve(true);return}
+      if(idx>=sources.length){relayLibraryPromise=null;reject(new Error("MQTT relay 載入失敗"));return}
+      const s=document.createElement("script");
+      s.src=sources[idx++];s.async=true;
+      s.onload=()=>typeof window.mqtt!=="undefined"?resolve(true):tryNext();
+      s.onerror=()=>tryNext();
+      document.head.appendChild(s)
+    };
+    tryNext()
+  });
+  return relayLibraryPromise
+}
+function relayRandomId(prefix="c"){
+  try{
+    const bytes=new Uint8Array(8);crypto.getRandomValues(bytes);
+    return `${prefix}-${Array.from(bytes,b=>b.toString(16).padStart(2,"0")).join("")}`
+  }catch{return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,10)}`}
+}
+function relayBase(code){return `wealth-empire/${RELAY_PROTOCOL}/${String(code||"")}`}
+function relayPublish(client,topic,payload){
+  if(!client?.connected)throw Error("HTTPS relay 尚未連線");
+  client.publish(topic,JSON.stringify({payload,ts:Date.now()}),{qos:0,retain:false})
+}
+function stopHostRelayTransport(){
+  clearInterval(hostRelayWatchdogTimer);hostRelayWatchdogTimer=null;
+  const client=hostRelayClient;hostRelayClient=null;hostRelayReady=false;
+  for(const conn of relayGuestConns.values()){if(conn)conn.open=false}
+  relayGuestConns.clear();
+  try{client?.end(true)}catch{}
+}
+function stopGuestRelayTransport(){
+  clearTimeout(guestRelayConnectTimer);guestRelayConnectTimer=null;
+  const client=guestRelayClient;guestRelayClient=null;
+  if(hostConn?.relay){hostConn.open=false;hostConn=null}
+  guestRelayClientId="";guestRelayFallbackStarted=false;
+  if(guestTransportMode!=="webrtc")guestTransportMode="";
+  try{client?.end(true)}catch{}
+}
+function makeHostRelayConn(base,clientId){
+  let conn=relayGuestConns.get(clientId);
+  if(conn){conn.open=true;conn.__lastSeen=Date.now();return conn}
+  conn={
+    open:true,relay:true,peer:clientId,bufferSize:0,__lastSeen:Date.now(),__seat:null,
+    send(msg){
+      if(!this.open)throw Error("relay connection closed");
+      relayPublish(hostRelayClient,`${base}/host/${clientId}`,msg)
+    },
+    close(){
+      if(!this.open)return;
+      this.open=false;relayGuestConns.delete(clientId);
+      const seat=this.__seat;
+      if(seat!=null&&conns.get(seat)===this){conns.delete(seat);scheduleHostDisconnectGrace(seat,this)}
+    }
+  };
+  relayGuestConns.set(clientId,conn);
+  return conn
+}
+async function startHostRelayTransport(){
+  const localRoom=roomCode;
+  if(!isHost||!isValidRoomCode(localRoom))return false;
+  try{await ensureRelayLibrary()}catch{
+    if(isHost&&roomCode===localRoom)setConnectionDetail("P2P 可用；HTTPS 備援元件載入失敗，將繼續使用 WebRTC。");
+    return false
+  }
+  if(!isHost||roomCode!==localRoom)return false;
+  stopHostRelayTransport();
+  const base=relayBase(localRoom),clientId=relayRandomId(`we-host-${localRoom}`);
+  const client=window.mqtt.connect(RELAY_BROKER_URL,{clientId,clean:true,connectTimeout:8000,reconnectPeriod:1800,keepalive:15,protocolVersion:4});
+  hostRelayClient=client;
+  client.on("connect",()=>{
+    if(hostRelayClient!==client||!isHost||roomCode!==localRoom)return;
+    hostRelayReady=true;
+    client.subscribe(`${base}/guest/+`,{qos:0},err=>{
+      if(err){hostRelayReady=false;setConnectionDetail("HTTPS 備援訂閱失敗；P2P 仍可使用。");return}
+      const shareBtn=$("shareInviteBtn");if(shareBtn){shareBtn.disabled=false;shareBtn.textContent="📲 分享房號"}
+      if(!peer?.open)$("connectionText").textContent="✅ 房間已上線！HTTPS 備援已就緒，可以分享房號。";
+      setLobbyConnectStatus("✅ 房間已上線；iPhone 若無法 P2P 直連，會自動改走 HTTPS 備援。");
+      setConnectionDetail(peer?.open?"P2P signaling 與 HTTPS 備援都已就緒。":"HTTPS 備援已就緒；P2P signaling 仍在連線。")
+    })
+  });
+  client.on("message",(topic,raw)=>{
+    if(hostRelayClient!==client||!isHost||roomCode!==localRoom)return;
+    try{
+      const clientId=String(topic).split("/").pop();
+      const envelope=JSON.parse(raw.toString()),msg=envelope?.payload??envelope;
+      if(!clientId||!msg||typeof msg!=="object")return;
+      const conn=makeHostRelayConn(base,clientId);conn.__lastSeen=Date.now();conn.open=true;
+      if(msg.type==="relay_disconnect"){conn.close();return}
+      processIncomingConnectionMessage(conn,msg)
+    }catch{}
+  });
+  client.on("offline",()=>{hostRelayReady=false;if(isHost)setConnectionDetail("HTTPS 備援暫時離線，正在自動重連；既有 P2P 不受影響。")});
+  client.on("reconnect",()=>{if(isHost)setConnectionDetail("HTTPS 備援正在重新連線…")});
+  client.on("error",()=>{});
+  clearInterval(hostRelayWatchdogTimer);
+  hostRelayWatchdogTimer=setInterval(()=>{
+    if(!isHost)return;
+    const now=Date.now();
+    for(const conn of relayGuestConns.values()){
+      if(conn.open&&now-Number(conn.__lastSeen||0)>NET_STALE_MS+12000)conn.close()
+    }
+  },7000);
+  return true
+}
+function makeGuestRelayHostConn(base,clientId){
+  return {
+    open:false,relay:true,peer:"https-relay-host",bufferSize:0,
+    send(msg){
+      if(!this.open)throw Error("HTTPS relay 尚未連線");
+      relayPublish(guestRelayClient,`${base}/guest/${clientId}`,msg)
+    },
+    close(){this.open=false}
+  }
+}
+async function startGuestRelayTransport(name,resumeInfo=null,reason="WebRTC 無法建立"){
+  const localRoom=roomCode;
+  if(isHost||!isValidRoomCode(localRoom)||guestTransportMode==="webrtc")return false;
+  if(guestRelayFallbackStarted&&guestRelayClient)return true;
+  guestRelayFallbackStarted=true;guestTransportMode="relay-pending";
+  clearTimeout(joinTimeoutTimer);joinTimeoutTimer=null;
+  clearTimeout(initialJoinRetryTimer);initialJoinRetryTimer=null;
+  const oldConn=hostConn,oldPeer=peer;hostConn=null;peer=null;
+  try{oldConn?.close()}catch{};try{oldPeer?.destroy()}catch{}
+  $("connectionText").textContent="🔄 iPhone 正在改用 HTTPS 備援通道連線…";
+  setConnectionDetail(`WebRTC 未完成（${reason}）；改走加密 WebSocket 備援，不再受手機 NAT 限制。`);
+  try{await ensureRelayLibrary()}catch{
+    guestRelayFallbackStarted=false;guestTransportMode="";
+    $("connectionText").textContent="⚠️ HTTPS 備援載入失敗，正在回到 P2P 重試…";
+    setTimeout(()=>{if(!isHost&&mySeat==null&&roomCode===localRoom)openGuestPeer(name,resumeInfo)},900);
+    return false
+  }
+  if(isHost||roomCode!==localRoom)return false;
+  const base=relayBase(localRoom),clientId=relayRandomId(`we-guest-${localRoom}`);
+  guestRelayClientId=clientId;
+  const relayConn=makeGuestRelayHostConn(base,clientId);hostConn=relayConn;
+  const client=window.mqtt.connect(RELAY_BROKER_URL,{
+    clientId,clean:true,connectTimeout:8000,reconnectPeriod:1800,keepalive:15,protocolVersion:4,
+    will:{topic:`${base}/guest/${clientId}`,payload:JSON.stringify({payload:{type:"relay_disconnect"},ts:Date.now()}),qos:0,retain:false}
+  });
+  guestRelayClient=client;
+  const sendHandshake=()=>{
+    if(hostConn!==relayConn||!relayConn.open)return;
+    if(mySeat!=null&&clientResumeToken)relayConn.send({type:"resume",seat:mySeat,token:clientResumeToken,name,lastEventId});
+    else if(resumeInfo?.token&&Number.isInteger(resumeInfo.seat))relayConn.send({type:"resume",seat:resumeInfo.seat,token:resumeInfo.token,name,lastEventId:resumeInfo.lastEventId});
+    else relayConn.send({type:"join",name,avatar:guestAvatarChoice})
+  };
+  client.on("connect",()=>{
+    if(guestRelayClient!==client||isHost||roomCode!==localRoom)return;
+    relayConn.open=true;
+    client.subscribe(`${base}/host/${clientId}`,{qos:0},err=>{
+      if(err){relayConn.open=false;setConnectionDetail("HTTPS 備援訂閱失敗，正在重試…");return}
+      $("connectionText").textContent=mySeat!=null?"🔄 HTTPS 備援已接通，正在恢復座位…":"⏳ HTTPS 備援已接通，正在加入房間…";
+      setConnectionDetail("HTTPS/WSS 備援已連上中繼，正在與房主完成遊戲握手。");
+      sendHandshake()
+    })
+  });
+  client.on("message",(topic,raw)=>{
+    if(guestRelayClient!==client||hostConn!==relayConn||isHost)return;
+    try{
+      const envelope=JSON.parse(raw.toString()),msg=envelope?.payload??envelope;
+      if(msg&&typeof msg==="object")processHostProtocolMessage(relayConn,msg,name,resumeInfo,"relay",sendHandshake)
+    }catch{}
+  });
+  client.on("offline",()=>{relayConn.open=false;if(guestTransportMode==="relay")showNetRecovery("HTTPS 備援暫時中斷，正在自動重連…","warn")});
+  client.on("reconnect",()=>{if(!isHost)$("connectionText").textContent="🔄 HTTPS 備援正在重新連線…"});
+  client.on("error",()=>{});
+  clearTimeout(guestRelayConnectTimer);
+  guestRelayConnectTimer=setTimeout(()=>{
+    if(guestTransportMode!=="relay-pending"||mySeat!=null||isHost)return;
+    stopGuestRelayTransport();
+    $("connectionText").textContent="⚠️ HTTPS 備援暫時無回應，正在回到 P2P 重試…";
+    setTimeout(()=>{if(!isHost&&mySeat==null&&roomCode===localRoom)openGuestPeer(name,resumeInfo)},700)
+  },12000);
+  return true
+}
 function setLobbyConnectStatus(textValue,isError=false){
   const box=$("iosOnlineNotice");
   if(box){
@@ -7940,6 +8129,7 @@ function setLobbyConnectStatus(textValue,isError=false){
 }
 
 function resetPeerTransport(){
+  stopHostRelayTransport();stopGuestRelayTransport();guestTransportMode="";
   clearTimeout(joinTimeoutTimer);joinTimeoutTimer=null;
   clearTimeout(initialJoinRetryTimer);initialJoinRetryTimer=null;initialJoinRetryAttempts=0;
   clearGuestNetTimers();
@@ -7986,11 +8176,13 @@ async function createInternetRoom(){
   syncGuestRoomToUrl(roomCode);
   saveHostRecoveryNow();
   showWaiting();
-  $("connectionText").textContent="正在向好友房 signaling 服務註冊房號…";
+  $("connectionText").textContent="正在建立好友房：P2P 與 HTTPS 備援同步啟動…";
+  startHostRelayTransport();
   openHostPeer()
 }
 
 function openHostPeer(recovering=false){
+  if(isHost&&!hostRelayClient)startHostRelayTransport();
   if(typeof Peer==="undefined"){
     $("connectionText").textContent="❌ PeerJS 尚未載入，請回上一頁重新建立房間。";
     return
@@ -8011,7 +8203,7 @@ function openHostPeer(recovering=false){
     if(shareBtn){shareBtn.disabled=false;shareBtn.textContent="📲 分享房號"}
     $("connectionText").textContent=recovering?"✅ 房主連線已恢復，等待原玩家自動續連。":"✅ 房間已上線！現在可以分享房號。";
     const detail=$("connectionDetail");
-    if(detail)detail.textContent="房號已完成 signaling 註冊；朋友現在加入時不會再因為分享太早而直接 peer-unavailable。";
+    if(detail)detail.textContent=hostRelayReady?"P2P signaling 與 HTTPS 備援都已就緒。":"P2P signaling 已完成；HTTPS 備援仍在初始化。";
     setLobbyConnectStatus(recovering?"✅ 房主連線已恢復，原玩家可自動續連。":"✅ 房號已建立並完成註冊，現在可以讓好友加入。");
     showNetRecovery(recovering?"房主連線已恢復，正在接回原玩家":"房主連線正常", "good", 1600);
     render();if(recovering&&state)sendCriticalState()
@@ -8074,80 +8266,55 @@ function scheduleHostDisconnectGrace(seat,conn){
   },HOST_DISCONNECT_GRACE_MS);
   hostDisconnectGraceTimers.set(seat,timer)
 }
+function processIncomingConnectionMessage(conn,msg){
+  if(!isHost||!conn)return;
+  if(conn.relay)conn.__lastSeen=Date.now();
+  if(msg?.type==="relay_disconnect"){try{conn.close()}catch{};return}
+  if(msg?.type==="ping"){safeConnSend(conn,{type:"pong",ts:msg.ts||Date.now()});return}
+  if(msg?.type==="resume"){
+    const seat=Number(msg.seat),expected=resumeTokens.get(seat),p=state?.players?.[seat];
+    if(!Number.isInteger(seat)||seat<1||seat>3||!p||p.ai||!expected||msg.token!==expected){
+      safeConnSend(conn,{type:"reject",reason:"續連憑證失效，請回到房間重新加入。"});
+      if(!conn.relay)setTimeout(()=>{try{conn.close()}catch{}},250);
+      return
+    }
+    const old=conns.get(seat),wasDisconnected=p.connected===false;
+    clearHostDisconnectGrace(seat);conns.set(seat,conn);conn.__seat=seat;p.connected=true;
+    if(old&&old!==conn)try{old.close()}catch{}
+    if(wasDisconnected)addEvent("reconnect",`${p.name} 已重新連線並回到原座位。`,{seat});
+    safeConnSend(conn,{type:"welcome",seat,resumeToken:expected,resumed:true,state:snapshot()});
+    broadcast();return
+  }
+  if(msg?.type==="join"){
+    if(conn.__seat!=null){
+      safeConnSend(conn,{type:"welcome",seat:conn.__seat,resumeToken:resumeTokens.get(conn.__seat)||"",state:snapshot()});return
+    }
+    if(state.status!=="lobby"){
+      safeConnSend(conn,{type:"reject",reason:"遊戲已開始；若你是原玩家，請由原裝置自動續連。"});
+      if(!conn.relay)setTimeout(()=>{try{conn.close()}catch{}},250);
+      return
+    }
+    const seat=state.players.findIndex((p,i)=>i>0&&!p);
+    if(seat<0){safeConnSend(conn,{type:"reject",reason:"房間已滿"});if(!conn.relay)setTimeout(()=>{try{conn.close()}catch{}},250);return}
+    state.players[seat]=player((msg.name||"玩家").slice(0,12),seat,false,claimAvailableAvatar(seat,msg.avatar));
+    const token=randomResumeToken();resumeTokens.set(seat,token);
+    clearHostDisconnectGrace(seat);conns.set(seat,conn);conn.__seat=seat;
+    addEvent("join",`${state.players[seat].name} 加入房間。`);
+    safeConnSend(conn,{type:"welcome",seat,resumeToken:token,state:snapshot()});
+    broadcast();return
+  }
+  const seat=conn.__seat;if(seat==null)return;handleClientMessage(seat,msg)
+}
 function handleIncomingConnection(conn){
   attachIceDiagnostics(conn,"host");
-  conn.on("open",()=>{
-    if(!isHost)return;
-    safeConnSend(conn,{type:"hello_required",allowResume:true})
-  });
-
-  conn.on("data",msg=>{
-    if(!isHost)return;
-
-    if(msg?.type==="ping"){
-      safeConnSend(conn,{type:"pong",ts:msg.ts||Date.now()});
-      return
-    }
-
-    if(msg?.type==="resume"){
-      const seat=Number(msg.seat);
-      const expected=resumeTokens.get(seat);
-      const p=state?.players?.[seat];
-      if(!Number.isInteger(seat)||seat<1||seat>3||!p||p.ai||!expected||msg.token!==expected){
-        safeConnSend(conn,{type:"reject",reason:"續連憑證失效，請回到房間重新加入。"});
-        setTimeout(()=>{try{conn.close()}catch{}},250);return
-      }
-
-      const old=conns.get(seat);
-      const wasDisconnected=p.connected===false;
-      clearHostDisconnectGrace(seat);
-      conns.set(seat,conn);conn.__seat=seat;p.connected=true;
-      if(old&&old!==conn)try{old.close()}catch{}
-
-      if(wasDisconnected)addEvent("reconnect",`${p.name} 已重新連線並回到原座位。`,{seat});
-      safeConnSend(conn,{type:"welcome",seat,resumeToken:expected,resumed:true,state:snapshot()});
-      broadcast();
-      return
-    }
-
-    if(msg?.type==="join"){
-      if(conn.__seat!=null){
-        safeConnSend(conn,{type:"welcome",seat:conn.__seat,resumeToken:resumeTokens.get(conn.__seat)||"",state:snapshot()});
-        return
-      }
-
-      if(state.status!=="lobby"){
-        safeConnSend(conn,{type:"reject",reason:"遊戲已開始；若你是原玩家，請由原裝置自動續連。"});
-        setTimeout(()=>{try{conn.close()}catch{}},250);return
-      }
-
-      const seat=state.players.findIndex((p,i)=>i>0&&!p);
-      if(seat<0){safeConnSend(conn,{type:"reject",reason:"房間已滿"});setTimeout(()=>{try{conn.close()}catch{}},250);return}
-
-      state.players[seat]=player((msg.name||"玩家").slice(0,12),seat,false,claimAvailableAvatar(seat,msg.avatar));
-      const token=randomResumeToken();resumeTokens.set(seat,token);
-      clearHostDisconnectGrace(seat);
-      conns.set(seat,conn);conn.__seat=seat;
-      addEvent("join",`${state.players[seat].name} 加入房間。`);
-      safeConnSend(conn,{type:"welcome",seat,resumeToken:token,state:snapshot()});
-      broadcast();return
-    }
-
-    const seat=conn.__seat;
-    if(seat==null)return;
-    handleClientMessage(seat,msg)
-  });
-
-  conn.on("error",()=>{
-    // close normally follows. Seat remains reserved; short flaps are absorbed by grace period.
-  });
-
+  conn.on("open",()=>{if(!isHost)return;safeConnSend(conn,{type:"hello_required",allowResume:true})});
+  conn.on("data",msg=>processIncomingConnectionMessage(conn,msg));
+  conn.on("error",()=>{});
   conn.on("close",()=>{
     const seat=conn.__seat;
     if(seat==null||!state?.players?.[seat])return;
     if(conns.get(seat)!==conn)return;
-    conns.delete(seat);
-    scheduleHostDisconnectGrace(seat,conn)
+    conns.delete(seat);scheduleHostDisconnectGrace(seat,conn)
   })
 }
 async function joinInternetRoom(){
@@ -8181,8 +8348,16 @@ async function joinInternetRoom(){
     mySeat=null;lastEventId=0
   }
   showWaiting();
-  $("connectionText").textContent=savedResume?"正在嘗試恢復上一局座位…":"正在連線到房間…"; setConnectionDetail("正在建立 WebRTC 通道：直連失敗時會自動嘗試 TURN 中繼。");
-  openGuestPeer(name,savedResume?{seat:savedResume.seat,token:savedResume.token,lastEventId:savedResume.lastEventId,reconnect:true}:null)
+  const resumeInfo=savedResume?{seat:savedResume.seat,token:savedResume.token,lastEventId:savedResume.lastEventId,reconnect:true}:null;
+  if(isIOSDevice()){
+    $("connectionText").textContent=savedResume?"正在透過 HTTPS 備援恢復上一局座位…":"正在透過 HTTPS 備援加入房間…";
+    setConnectionDetail("iPhone 優先使用 WSS 中繼，避免兩支手機都位於嚴格 NAT 時卡住。");
+    startGuestRelayTransport(name,resumeInfo,"iPhone 優先備援")
+  }else{
+    $("connectionText").textContent=savedResume?"正在嘗試恢復上一局座位…":"正在連線到房間…";
+    setConnectionDetail("正在建立 WebRTC 通道；若失敗會自動切換 HTTPS 備援。");
+    openGuestPeer(name,resumeInfo)
+  }
 }
 
 function openGuestPeer(name,resumeInfo=null){
@@ -8241,57 +8416,64 @@ function openGuestPeer(name,resumeInfo=null){
     if(mySeat!=null&&clientResumeToken)scheduleGuestReconnect("Peer close")
   })
 }
+function processHostProtocolMessage(conn,msg,name,resumeInfo=null,transport="webrtc",sendHandshake=null){
+  if(isHost||hostConn!==conn)return;
+  noteHostActivity();
+  if(msg.type==="hello_required"){if(sendHandshake)sendHandshake();return}
+  if(msg.type==="pong")return;
+  if(msg.type==="welcome"){
+    clearTimeout(joinTimeoutTimer);joinTimeoutTimer=null;
+    clearTimeout(initialJoinRetryTimer);initialJoinRetryTimer=null;initialJoinRetryAttempts=0;
+    clearTimeout(guestRelayConnectTimer);guestRelayConnectTimer=null;
+    const incomingState=acceptRemoteBoardState(msg.state);if(!incomingState){try{conn.close()}catch{};return}
+    mySeat=msg.seat;state=incomingState;
+    if(msg.resumeToken)clientResumeToken=msg.resumeToken;
+    guestDisplayName=name;guestReconnectInFlight=false;guestReconnectPendingReason="";guestConnectedSince=Date.now();
+    clearTimeout(guestReconnectTimer);guestReconnectTimer=null;
+    if(transport==="relay"){
+      guestTransportMode="relay";guestRelayFallbackStarted=true;
+      const oldPeer=peer;peer=null;try{oldPeer?.destroy()}catch{}
+    }else{
+      stopGuestRelayTransport();guestTransportMode="webrtc"
+    }
+    if(msg.resumed&&resumeInfo?.fromReload&&resumeInfo.lastEventId==null){
+      lastEventId=Math.max(0,...(state?.events||[]).map(e=>Number(e?.id||0)))
+    }
+    startGuestHeartbeat();
+    const transportLabel=transport==="relay"?"HTTPS 備援":"P2P";
+    $("connectionText").textContent=msg.resumed?`✅ 已透過 ${transportLabel} 恢復原座位並同步進度`:`✅ 已成功加入房間（${transportLabel}）`;
+    setLobbyConnectStatus(msg.resumed?`✅ 重新連線成功，已透過 ${transportLabel} 回到原本座位。`:`✅ 已成功加入好友房（${transportLabel}）。`);
+    setConnectionDetail(transport==="relay"?"目前遊戲資料走 HTTPS/WSS 中繼；不需要 WebRTC TURN。":"WebRTC P2P 通道已建立。");
+    showNetRecovery(msg.resumed?"已重新接回原座位，進度同步完成":"連線正常","good",1800);
+    render();handleIncomingEvents();saveGuestResume();return
+  }
+  if(msg.type==="state"){
+    const incomingState=acceptRemoteBoardState(msg.state);if(!incomingState)return;
+    state=incomingState;render();handleIncomingEvents();saveGuestResume();return
+  }
+  if(msg.type==="reject"){
+    guestReconnectInFlight=false;clearTimeout(joinTimeoutTimer);
+    toast(msg.reason);$("connectionText").textContent="❌ "+msg.reason;
+    if(resumeInfo){clearGuestResume(roomCode);mySeat=null;clientResumeToken="";showNetRecovery("無法恢復原座位："+msg.reason,"bad")}
+    return
+  }
+  if(msg.type==="error")toast(msg.message)
+}
 function wireHostConn(conn,name,resumeInfo=null){
   let handshakeSent=false;
   const isCurrent=()=>!isHost&&hostConn===conn;
-
   const sendHandshakeOnce=()=>{
     if(!isCurrent()||handshakeSent||!conn.open)return;
     handshakeSent=true;
     if(resumeInfo?.token&&Number.isInteger(resumeInfo.seat))safeConnSend(conn,{type:"resume",seat:resumeInfo.seat,token:resumeInfo.token,name});
     else safeConnSend(conn,{type:"join",name,avatar:guestAvatarChoice})
   };
-
   conn.on("open",()=>{
     if(!isCurrent())return;
-    sendHandshakeOnce();noteHostActivity();
+    guestTransportMode="webrtc-pending";sendHandshakeOnce();noteHostActivity();
     $("connectionText").textContent=resumeInfo?"⏳ 已接上房主，正在恢復座位…":"✅ 已連線到房間"
   });
-
-  conn.on("data",msg=>{
-    if(!isCurrent())return;
-    noteHostActivity();
-
-    if(msg.type==="hello_required")sendHandshakeOnce();
-    else if(msg.type==="pong")return;
-    else if(msg.type==="welcome"){
-      clearTimeout(joinTimeoutTimer);
-      clearTimeout(initialJoinRetryTimer);initialJoinRetryTimer=null;initialJoinRetryAttempts=0;
-      const incomingState=acceptRemoteBoardState(msg.state);if(!incomingState){try{conn.close()}catch{};return;}mySeat=msg.seat;state=incomingState;
-      if(msg.resumeToken)clientResumeToken=msg.resumeToken;
-      guestDisplayName=name;
-      guestReconnectInFlight=false;guestReconnectPendingReason="";guestConnectedSince=Date.now();
-      clearTimeout(guestReconnectTimer);guestReconnectTimer=null;
-      if(msg.resumed&&resumeInfo?.fromReload&&resumeInfo.lastEventId==null){
-        lastEventId=Math.max(0,...(state?.events||[]).map(e=>Number(e?.id||0)))
-      }
-      startGuestHeartbeat();
-      $("connectionText").textContent=msg.resumed?"✅ 已恢復原座位並同步進度":"✅ 已成功加入房間";
-      setLobbyConnectStatus(msg.resumed?"✅ 重新連線成功，已回到原本座位。":"✅ 已成功加入好友房。");
-      showNetRecovery(msg.resumed?"已重新接回原座位，進度同步完成":"連線正常","good",1800);
-      render();handleIncomingEvents();saveGuestResume()
-    }else if(msg.type==="state"){
-      const incomingState=acceptRemoteBoardState(msg.state);if(!incomingState)return;state=incomingState;render();handleIncomingEvents();saveGuestResume()
-    }else if(msg.type==="reject"){
-      guestReconnectInFlight=false;
-      clearTimeout(joinTimeoutTimer);toast(msg.reason);$("connectionText").textContent="❌ "+msg.reason;
-      if(resumeInfo){
-        clearGuestResume(roomCode);mySeat=null;clientResumeToken="";
-        showNetRecovery("無法恢復原座位："+msg.reason,"bad")
-      }
-    }else if(msg.type==="error")toast(msg.message)
-  });
-
+  conn.on("data",msg=>{if(isCurrent())processHostProtocolMessage(conn,msg,name,resumeInfo,"webrtc",sendHandshakeOnce)});
   conn.on("error",()=>{
     if(!isCurrent())return;
     hostConn=null;guestReconnectInFlight=false;
@@ -8300,15 +8482,13 @@ function wireHostConn(conn,name,resumeInfo=null){
   });
   conn.on("close",()=>{
     if(!isCurrent())return;
-    hostConn=null;guestReconnectInFlight=false;
-    clearTimeout(joinTimeoutTimer);
+    hostConn=null;guestReconnectInFlight=false;clearTimeout(joinTimeoutTimer);
     if(mySeat!=null&&clientResumeToken){
       $("connectionText").textContent="⚠️ 與房間同步暫時中斷，正在自動續連…";
-      scheduleGuestReconnect("DataConnection close");
+      scheduleGuestReconnect("DataConnection close")
     }else scheduleInitialJoinRetry(name,"DataConnection close")
   })
 }
-
 function hostMsg(msg){if(isHost)handleClientMessage(mySeat,msg);else if(hostConn?.open)safeConnSend(hostConn,msg);else{toast("連線中斷，正在自動恢復");scheduleGuestReconnect("玩家操作時發現斷線")}}
 function sendReady(){hostMsg({type:"ready"})}
 function requestStart(){hostMsg({type:"start"})}
