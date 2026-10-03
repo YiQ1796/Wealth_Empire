@@ -7918,6 +7918,7 @@ function ensureRelayLibrary(){
   if(typeof window.mqtt!=="undefined")return Promise.resolve(true);
   if(relayLibraryPromise)return relayLibraryPromise;
   const sources=[
+    "https://cdnjs.cloudflare.com/ajax/libs/mqtt/5.14.1/mqtt.min.js",
     "https://cdn.jsdelivr.net/npm/mqtt@5.14.1/dist/mqtt.min.js",
     "https://unpkg.com/mqtt@5.14.1/dist/mqtt.min.js"
   ];
