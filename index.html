@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.58 WEB｜iPhone 好友房 TURN 修復候選</title>
+<title>財富帝國 V19.9.59 WEB｜股票隨時交易版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.58 WEB - iPhone 對 iPhone WebRTC 增加 TURN 中繼 fallback；保留 44 格八區連地與既有玩法">
+<meta name="description" content="財富帝國 V19.9.59 WEB - 股票改為遊戲中隨時買賣、重做漲跌機率與交易辨識；保留 iPhone TURN fallback">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6577,7 +6577,7 @@ body.force-mobile-preview .controls #rollBtn{
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.58</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.59</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6620,7 +6620,7 @@ body.force-mobile-preview .controls #rollBtn{
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.58 WEB｜iPhone 連線修復｜44格八區連地</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.59 WEB｜股票隨時交易｜44格八區連地</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -7694,7 +7694,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19958";
+const APP_BUILD_ID="19959";
 window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:4,mode:"REV-C01-D01-board-pawns"},q07:{cols:5,rows:4,path:"./assets/v19941/rev_c01_d01_all20_v1.webp?v=19941"},revC01D01:{cols:5,rows:4,count:20}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
@@ -8422,7 +8422,7 @@ function hostAction(seat,msg){
     applyMarketOperation(p,String(msg.operation||""),!!msg.useItem);broadcast();return;
   }
   if(msg.action==="buy_stock"||msg.action==="sell_stock"){
-    if(cur.seat!==seat||state.rolled||state.pending||state.groupGame)throw Error("只能在自己擲骰前、且沒有其他事件時交易股票");
+    if(!stockTradingAllowed(p))throw Error("股票市場目前未開放");
     stockTrade(p,msg.code,Number(msg.qty)||1,msg.action==="buy_stock");broadcast();return;
   }
   if(msg.action==="noodle_bite"||msg.action==="bonus_click"){
@@ -9265,7 +9265,11 @@ function chance(p,kind,tileId=p.pos){
   liquidate(p);
   return false
 }
+function stockTradingAllowed(p){
+  return !!(p&&state?.status==="playing"&&!p.bankrupt)
+}
 function stockTrade(p,c,q,buy){
+  if(!stockTradingAllowed(p))throw Error("目前不能交易股票");
   if(!state.stocks[c])throw Error("股票不存在");
   q=Math.max(1,q|0);const st=state.stocks[c],h=p.stocks[c];
   if(buy){
@@ -10110,14 +10114,33 @@ function cityEventTick(){
   state.cityEvent.until=state.round+2;
   addEvent("city_event",`📢 城市景氣切換：「${state.cityEvent.name}」。`,{...state.cityEvent})
 }
+function stockDirectionProbabilities(def,bias){
+  // Normal market: 47% rise / 47% fall / 6% flat.
+  // City events and each stock drift may shift rise/fall odds by up to 11 percentage points.
+  const directionalBias=Math.max(-.11,Math.min(.11,(Number(bias||0)+Number(def?.drift||0))*2));
+  return {up:.47+directionalBias,down:.47-directionalBias,flat:.06}
+}
 function marketTick(){
-  const bias=state.cityEvent?.stockBias||0,shocks=[],hedgeBefore={};
+  const bias=state.cityEvent?.stockBias||0,shocks=[],hedgeBefore={},directionCount={up:0,down:0,flat:0};
   state.players.filter(Boolean).forEach(p=>{if((p.marketHedge||0)>0)hedgeBefore[p.seat]=stockValue(p)});
   for(const [code,st] of Object.entries(state.stocks)){
-    const def=STOCK_DEFS[code]||{vol:.07,drift:0};st.prev=st.price;
-    let move=bias+(def.drift||0)+((Math.random()*2-1)*(def.vol||.07));
-    if(Math.random()<.22){const shock=(Math.random()<.5?-1:1)*(.05+Math.random()*.10);move+=shock;shocks.push({code,shock})}
-    move=Math.max(-.22,Math.min(.22,move));st.price=Math.max(20,Math.round(st.price*(1+move)));st.history.push(st.price);st.history=st.history.slice(-24)
+    const def=STOCK_DEFS[code]||{vol:.07,drift:0};
+    st.prev=st.price;
+    const odds=stockDirectionProbabilities(def,bias),roll=Math.random();
+    const direction=roll<odds.up?1:roll<odds.up+odds.down?-1:0;
+    directionCount[direction>0?"up":direction<0?"down":"flat"]++;
+    const baseMagnitude=direction===0?(Math.random()*.006-.003):direction*(.012+Math.random()*(def.vol||.07));
+    let move=baseMagnitude;
+    if(Math.random()<.18){
+      const shockDirection=direction||(Math.random()<.5?1:-1);
+      const shock=shockDirection*(.04+Math.random()*.09);
+      move+=shock;
+      shocks.push({code,shock})
+    }
+    move=Math.max(-.22,Math.min(.22,move));
+    st.price=Math.max(20,Math.round(st.price*(1+move)));
+    st.history.push(st.price);
+    st.history=st.history.slice(-24)
   }
   state.players.filter(Boolean).forEach(p=>{
     if((p.marketHedge||0)<=0)return;
@@ -10125,8 +10148,11 @@ function marketTick(){
     if(refund>0){p.cash+=refund;p.stats.marketOpBenefit=(p.stats.marketOpBenefit||0)+refund;addEvent("market_operation_benefit",`${p.name} 的避險合約生效，補貼 $${refund.toLocaleString()}。`,{seat:p.seat,amount:refund,title:"避險合約",before,after})}
     else addEvent("market_operation_benefit",`${p.name} 的避險合約到期，本輪沒有可補貼損失。`,{seat:p.seat,amount:0,title:"避險合約",before,after})
   });
-  if(shocks.length){const top=shocks.sort((a,b)=>Math.abs(b.shock)-Math.abs(a.shock))[0],st=state.stocks[top.code];addEvent("market",`📊 個股消息：${st.name} 本輪出現較大波動。`,{code:top.code,shock:top.shock})}
-  else addEvent("market","新一輪股票市場完成更新。")
+  const breadth=`上漲 ${directionCount.up}｜下跌 ${directionCount.down}｜平盤 ${directionCount.flat}`;
+  if(shocks.length){
+    const top=shocks.sort((a,b)=>Math.abs(b.shock)-Math.abs(a.shock))[0],st=state.stocks[top.code];
+    addEvent("market",`📊 股票更新：${breadth}；${st.name} 本輪出現較大波動。`,{code:top.code,shock:top.shock,...directionCount})
+  }else addEvent("market",`📊 股票更新：${breadth}。`,{...directionCount})
 }
 function aiBuyDecision(p,t){
   if(p.cash>t.price*1.65&&Math.random()<.68){
@@ -10484,7 +10510,12 @@ function renderMarket(){
     <div class="stock-grid">${rows}</div>`
 }
 function renderEvents(){$("events").innerHTML=[...state.events].reverse().map(e=>`<div class="event">#${e.id} ${e.text}</div>`).join("")}
-function stockAction(action,c){const q=Math.max(1,parseInt($(`q_${c}`).value||"1",10));sendAction(action,{code:c,qty:q})}
+function stockAction(action,c){
+  const me=state?.players?.[mySeat];
+  if(!stockTradingAllowed(me)){toast("股票市場目前未開放");return}
+  const input=$(`q_${c}`),q=Math.max(1,parseInt(input?.value||"1",10));
+  sendAction(action,{code:c,qty:q})
+}
 function strategyItemCount(p,key){return Math.max(0,Number(p?.[key]||0))}
 function strategyItemTotal(p){return Object.keys(STRATEGY_ITEM_DEFS).reduce((sum,key)=>sum+strategyItemCount(p,key),0)}
 function grantStrategyItem(p,key,amount=1){
@@ -15710,7 +15741,7 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
       const d=s.price-s.prev,dayPct=s.prev?d/s.prev*100:0,h=me.stocks?.[c]||{qty:0,avg:0};
       const qty=Number(h.qty||0),avg=Number(h.avg||0),value=qty*s.price,cost=qty*avg,pnl=value-cost,pnlPct=cost?pnl/cost*100:0;
       totalValue+=value;totalCost+=cost;
-      const trend="";
+      const trend=d>0?"▲ 上漲":d<0?"▼ 下跌":"● 平盤";
       const positionIcon="";
       return `<div class="stock" data-code="${c}">
         <div class="stop">
@@ -15730,6 +15761,7 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
     const unrealClass=totalPnl>0?"profit":totalPnl<0?"loss":"flat";
     const realized=Number(me.realizedPnl||0),realClass=realized>0?"profit":realized<0?"loss":"flat";
     $("market").innerHTML=`
+      <div class="stock-open-banner">⚡ 遊戲進行中可隨時買賣股票，不受玩家回合限制</div>
       <div class="market-summary-v10 pnl-summary">
         <div class="portfolio-stat value"><div class="mk finance-stat-label">持股總市值</div><div class="mv">$${Math.round(totalValue).toLocaleString()}</div></div>
         <div class="portfolio-stat unrealized ${unrealClass}"><div class="mk finance-stat-label">未實現損益</div><div class="mv">${totalCost?`${totalPnl>=0?"+":"-"}$${Math.abs(Math.round(totalPnl)).toLocaleString()}`:"—"}</div><div class="pnl-pct">${totalCost?`${totalPct>=0?"+":""}${totalPct.toFixed(1)}%`:"尚未持股"}</div></div>
@@ -16004,6 +16036,30 @@ body:has(#modal.open) #mobileNav{visibility:hidden!important;pointer-events:none
 .stock-action-btn{background-image:none!important;box-shadow:none!important;border-radius:10px!important}
 .stock-action-btn.success{background:#24986a!important;color:#fff!important}
 .stock-action-btn.danger{background:#d64d4d!important;color:#fff!important}
+</style>
+
+<style id="v19959-stock-anytime-authority">
+/* Stronger stock movement and trade affordance; board geometry is untouched. */
+.stock-open-banner{margin:0 0 8px!important;padding:7px 10px!important;border-radius:10px!important;border:1px solid #b9d9c8!important;background:#eefaf3!important;color:#18724f!important;font-size:11px!important;font-weight:1000!important;line-height:1.25!important}
+.stock-day{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-width:94px!important;padding:5px 7px!important;border-radius:999px!important;font-size:11px!important;font-weight:1000!important;line-height:1!important;border:1px solid transparent!important}
+.stock-day.up{background:#fff0ef!important;color:#c83232!important;border-color:#ffc9c5!important}
+.stock-day.down{background:#eefaf2!important;color:#14733d!important;border-color:#c5e8d1!important}
+.stock-day.flat{background:#f2f5f8!important;color:#68778a!important;border-color:#dce3ea!important}
+#market .sbottom{display:grid!important;grid-template-columns:72px minmax(0,1fr) minmax(0,1fr)!important;gap:7px!important;align-items:stretch!important;margin-top:7px!important}
+#market .sbottom input{width:100%!important;min-width:0!important;margin:0!important;padding:7px 5px!important;border:1px solid #bfcddb!important;border-radius:10px!important;background:#fff!important;color:#17324f!important;font-size:13px!important;font-weight:1000!important;text-align:center!important}
+.stock-action-btn{min-width:0!important;min-height:50px!important;padding:6px 10px!important;gap:7px!important;border:2px solid rgba(255,255,255,.36)!important;box-shadow:0 6px 14px rgba(35,61,91,.14)!important;font-size:14px!important;font-weight:1000!important}
+.stock-action-btn .rev36-stock-action-art{width:32px!important;height:32px!important;flex:0 0 32px!important}
+.stock-action-btn.success{background:#16895e!important;color:#fff!important}
+.stock-action-btn.danger{background:#d43f45!important;color:#fff!important}
+.stock-action-btn:active{transform:scale(.97)!important}
+@media(max-width:980px) and (orientation:landscape){
+  body.phone-landscape .stock-open-banner{margin-bottom:5px!important;padding:5px 7px!important;font-size:9px!important}
+  body.phone-landscape .stock-day{min-width:78px!important;padding:4px 5px!important;font-size:9px!important}
+  body.phone-landscape #market .sbottom{grid-template-columns:58px minmax(0,1fr) minmax(0,1fr)!important;gap:4px!important;margin-top:5px!important}
+  body.phone-landscape #market .sbottom input{font-size:11px!important;padding:5px 3px!important}
+  body.phone-landscape .stock-action-btn{min-height:42px!important;padding:4px 5px!important;gap:4px!important;font-size:11px!important}
+  body.phone-landscape .stock-action-btn .rev36-stock-action-art{width:25px!important;height:25px!important;flex-basis:25px!important}
+}
 </style>
 
 <style id="v19944-batch01-02-assets">
