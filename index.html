@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.61 WEB｜iPhone HTTPS 備援連線版</title>
+<title>財富帝國 V19.9.62 WEB｜iPhone HTTPS 備援連線版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.61 WEB - iPhone 好友房改用 WebRTC + HTTPS/WSS relay 雙路徑；保留股票隨時交易與定位修正">
+<meta name="description" content="財富帝國 V19.9.62 WEB - iPhone 好友房改用 WebRTC + HTTPS/WSS relay 雙路徑；保留股票隨時交易與定位修正">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -2303,7 +2303,7 @@ body{font-size:16px}
 }
 
 
-/* ===== 44-space large board + narrower stock sidebar ===== */
+/* ===== 32-space larger-tile board + narrower stock sidebar ===== */
 .main{
   grid-template-columns:minmax(0,1fr) 365px!important;
   gap:10px!important;
@@ -4692,7 +4692,7 @@ button:not(:disabled):active{transform:scale(.96)}
     box-shadow:inset 0 0 0 1px #c7dcf7!important;
   }
 
-  /* Board uses the current 44-space route; center and edge contrast remain improved. */
+  /* Board uses the current 32-space route; center and edge contrast remain improved. */
   #board{
     filter:saturate(1.08) contrast(1.04)!important;
   }
@@ -6620,7 +6620,7 @@ body.force-mobile-preview .controls #rollBtn{
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.61 WEB｜iPhone 雙路徑連線｜44格八區連地</div><div class="sub">免費網頁好友房｜P2P / HTTPS 雙路徑同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.62 WEB｜iPhone 雙路徑連線｜32格六區大格棋盤</div><div class="sub">免費網頁好友房｜P2P / HTTPS 雙路徑同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -6673,9 +6673,9 @@ body.force-mobile-preview .controls #rollBtn{
         <span><i class="dot" style="background:#e44747"></i>玩家2</span>
         <span><i class="dot" style="background:#18a26e"></i>玩家3</span>
         <span><i class="dot" style="background:#8b5cf6"></i>玩家4</span>
-        <span>粗框＝所有權｜LV.1 / LV.2＝地產升級</span><span class="board-size-chip">44 格大地圖</span>
+        <span>粗框＝所有權｜LV.1 / LV.2＝地產升級</span><span class="board-size-chip">32 格大格棋盤</span>
       </div>
-      <div class="board-map-note">44 格依橘框重排為 8 個連續地產區，每區 4 格；持有同區 2 / 3 / 4 格時，該區過路費依序提高至 ×1.35 / ×1.75 / ×2.40。其餘 12 格配置起點、機會、命運與經濟／事件功能。</div>
+      <div class="board-map-note">32 格重整為 6 個連續地產區（3 / 3 / 4 / 4 / 4 / 4，共 22 塊地產）＋10 格特殊功能。3 格區持有 2 / 3 格時租金為 ×1.50 / ×2.20；4 格區持有 2 / 3 / 4 格時為 ×1.35 / ×1.75 / ×2.40。</div>
     </div>
     <div class="side">
       <div id="marketPanel" class="panel market"><h2><span class="section-icon-title">股票市場</span></h2><div id="market"></div></div>
@@ -6686,7 +6686,7 @@ body.force-mobile-preview .controls #rollBtn{
 
 
 <div id="mobileHint" class="mobile-hint">
-  📱 手機橫向版會自動把完整 44 格棋盤適應到螢幕；單格已放大，右側固定提供資訊與所有主要操作。
+  📱 手機橫向版會自動把完整 32 格棋盤適應到螢幕；10×8 外框讓單格更大，右側固定提供資訊與所有主要操作。
 </div>
 
 <nav id="mobileNav" class="mobile-nav planb-text-nav">
@@ -6885,22 +6885,27 @@ const MARKET_OPERATION_DEFS={
 };
 const TILE_NAMES=[
 "起點",
-"星港住宅","海灣公寓","水岸別墅","海景大樓",
-"機會","中央車站","命運",
-"翡翠商圈","黃金商圈","百貨商場","物流中心",
-"稅務局",
+"星港住宅","海灣公寓","水岸別墅",
+"機會",
+"翡翠商圈","黃金商圈","百貨商場",
+"命運","收購中心",
 "科技園區","創新園區","雲端科技城","能源公司",
-"收購中心",
+"股市事件","機會","地產拍賣行",
 "北城豪宅","綠能園區","湖畔豪宅","海天御苑",
-"股市事件",
+"命運",
 "金融大道","商務中心","晶鑽商業區","國際金融城",
-"機會","地產拍賣行","命運",
-"影城","國際飯店","頂級飯店","都會娛樂城",
 "財富賽馬場",
-"山景莊園","天空豪宅","奢華莊園","皇家大道",
-"城市更新局",
-"皇后大道","帝王商圈","世界中心","帝國廣場"];
-const BOARD_SCHEMA_ID=44;
+"皇后大道","帝王商圈","世界中心","帝國廣場",
+"城市更新局"];
+const BOARD_SCHEMA_ID=32;
+const PROPERTY_REGION_LAYOUT=Object.freeze([
+  Object.freeze({name:"海港區",size:3}),
+  Object.freeze({name:"商業區",size:3}),
+  Object.freeze({name:"科技區",size:4}),
+  Object.freeze({name:"住宅區",size:4}),
+  Object.freeze({name:"金融區",size:4}),
+  Object.freeze({name:"帝王區",size:4})
+]);
 
 const HORSES=[
   {name:"閃電",icon:"🐎",odds:2.0,weight:38},
@@ -7160,8 +7165,16 @@ function player(name,seat,ai=false,avatar=seat%4){
     stats:{rentPaid:0,rentReceived:0,landSpent:0,buildSpent:0,stockRealized:0,miniGameNet:0,raceWins:0,wheelWins:0,diceWins:0,treasureNet:0,noodleWins:0,hiLowWins:0,bonusWins:0,largestRent:0,acquisitions:0,acquisitionSpent:0,acquisitionEarned:0,forcedAcquisitions:0,forcedSpent:0,forcedEarned:0,trades:0,auctionWins:0,upgrades:0,stockTrades:0,marketOps:0,marketOpBenefit:0}
   }
 }
+function propertyRegionForIndex(propertyIndex){
+  let cursor=0;
+  for(const region of PROPERTY_REGION_LAYOUT){
+    if(propertyIndex<cursor+region.size)return region.name;
+    cursor+=region.size
+  }
+  return PROPERTY_REGION_LAYOUT[PROPERTY_REGION_LAYOUT.length-1]?.name||null
+}
 function buildTiles(){
-  const groups=["海港區","商業區","科技區","住宅區","金融區","娛樂區","豪宅區","帝王區"];let pc=0;
+  let pc=0;
   return TILE_NAMES.map((name,i)=>{let type="property";
     if(i===0)type="start";else if(name==="機會")type="chance";else if(name==="命運")type="fate";
     else if(name==="股市事件")type="stock";else if(name==="收購中心")type="acquire_center";else if(name==="城市更新局")type="renewal";else if(name==="稅務局")type="tax";
@@ -7175,8 +7188,14 @@ function buildTiles(){
     else if(name==="城市公園")type="park";else if(name==="地產拍賣行")type="auction";
     else if(name==="醫療中心")type="hospital";else if(name==="法院")type="court";else if(name==="自由市場")type="market";
     let group=null,price=0,rent=0;
-    if(type==="property"){group=groups[Math.min(7,Math.floor(pc/4))];price=2200+pc*260;rent=Math.round(price*.14);pc++}
-    else if(type==="station"){group="交通設施";price=5200+i*35;rent=850}
+    if(type==="property"){
+      group=propertyRegionForIndex(pc);
+      price=2200+pc*260;
+      rent=Math.round(price*.14);
+      pc++
+    }else if(type==="station"){
+      group="交通設施";price=5200+i*35;rent=850
+    }
     return{id:i,name,type,group,price,rent,owner:null,level:0,mortgaged:false,buildInvested:0}
   })
 }
@@ -7273,8 +7292,8 @@ function migrateBoardStateToCurrent(gameState){
   gameState.events.push({
     id:gameState.eventId,
     kind:"board_migration",
-    text:`棋盤已安全遷移為 44 格；已移除的舊地產按原價與既有升級投入補償，共 $${Math.round(refundTotal).toLocaleString()}。`,
-    data:{title:"44 格棋盤遷移",from:oldTiles.length,to:TILE_NAMES.length,refund:Math.round(refundTotal)},
+    text:`棋盤已安全遷移為 32 格；已移除的舊地產按原價與既有升級投入補償，共 $${Math.round(refundTotal).toLocaleString()}。`,
+    data:{title:"32 格棋盤遷移",from:oldTiles.length,to:TILE_NAMES.length,refund:Math.round(refundTotal)},
     ts:Date.now()
   });
   gameState.events=gameState.events.slice(-80);
@@ -7284,7 +7303,7 @@ function acceptRemoteBoardState(remoteState){
   const incoming=stripLegacyRoleSkills(remoteState);
   const count=Array.isArray(incoming?.tiles)?incoming.tiles.length:0;
   if(!boardShapeMatches(incoming?.tiles)){
-    const msg=`房主棋盤版本與本機不同（房主 ${count||"未知"} 格／本機 44 格）。請房主重新整理一次，系統會用房主恢復資料安全遷移。`;
+    const msg=`房主棋盤版本與本機不同（房主 ${count||"未知"} 格／本機 32 格）。請房主重新整理一次，系統會用房主恢復資料安全遷移。`;
     setLobbyConnectStatus("⚠️ "+msg,true);
     showNetRecovery(msg,"bad");
     toast("棋盤版本不同，請房主重新整理");
@@ -7318,8 +7337,9 @@ function refreshMonopolyState(){
         {seat:previous,group,title:"區域壟斷解除"});
     }
     if(owner!=null&&state.players[owner]){
-      addEvent("monopoly_complete",`${state.players[owner].name} 完成「${group}」4 格完整持有，該區地產租金提升至 ×${REGION_COMPLETE_RENT_MULTIPLIER.toFixed(2)}。`,
-        {seat:owner,group,multiplier:REGION_COMPLETE_RENT_MULTIPLIER,title:"區域完整持有"});
+      const completeMultiplier=regionRentMultiplierForCounts(tiles.length,tiles.length);
+      addEvent("monopoly_complete",`${state.players[owner].name} 完成「${group}」${tiles.length} 格完整持有，該區地產租金提升至 ×${completeMultiplier.toFixed(2)}。`,
+        {seat:owner,group,multiplier:completeMultiplier,title:"區域完整持有"});
     }
     state.monopolyOwners[group]=owner;
   }
@@ -7700,7 +7720,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19961";
+const APP_BUILD_ID="19962";
 window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:4,mode:"REV-C01-D01-board-pawns"},q07:{cols:5,rows:4,path:"./assets/v19941/rev_c01_d01_all20_v1.webp?v=19941"},revC01D01:{cols:5,rows:4,count:20}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
@@ -12514,21 +12534,21 @@ function handleIncomingEvents(){
 
 async function animateDice(a,b,name){rolling=true;$("die1").classList.add("rolling");$("die2").classList.add("rolling");const st=performance.now();await new Promise(r=>{const t=setInterval(()=>{$("die1").textContent=FACES[Math.floor(Math.random()*6)];$("die2").textContent=FACES[Math.floor(Math.random()*6)];$("diceStatus").textContent=`${name} 骰子滾動中...`;if(performance.now()-st>760){clearInterval(t);r()}},80)});$("die1").classList.remove("rolling");$("die2").classList.remove("rolling");$("die1").textContent=FACES[a-1];$("die2").textContent=FACES[b-1];$("diceTotal").textContent=a+b;$("diceStatus").textContent=`${name} 擲出 ${a+b}`;rolling=false;renderControls()}
 const BOARD_W=1680,BOARD_H=1040;
-const TOP_COUNT=13,RIGHT_COUNT=9,BOTTOM_COUNT=13,LEFT_COUNT=9;
-const TOP_H=88;
+const TOP_COUNT=10,RIGHT_COUNT=6,BOTTOM_COUNT=10,LEFT_COUNT=6;
+const TOP_H=120;
 const TOP_W=BOARD_W/TOP_COUNT;
 const SIDE_W=TOP_W;
 const SIDE_H=(BOARD_H-TOP_H*2)/RIGHT_COUNT;
 
 function perimeterPositions(n){
   const o=[];
-  // Top: 13 cells, left -> right, edge-to-edge.
+  // Top: 10 cells, left -> right.
   for(let i=0;i<TOP_COUNT;i++)o.push([(i+.5)*TOP_W,TOP_H/2]);
-  // Right: 9 cells, top -> bottom, directly under the top row.
+  // Right: 6 cells, top -> bottom, directly under the top row.
   for(let i=0;i<RIGHT_COUNT;i++)o.push([BOARD_W-SIDE_W/2,TOP_H+(i+.5)*SIDE_H]);
-  // Bottom: 13 cells, right -> left.
+  // Bottom: 10 cells, right -> left.
   for(let i=0;i<BOTTOM_COUNT;i++)o.push([BOARD_W-(i+.5)*TOP_W,BOARD_H-TOP_H/2]);
-  // Left: 9 cells, bottom -> top.
+  // Left: 6 cells, bottom -> top.
   for(let i=0;i<LEFT_COUNT;i++)o.push([SIDE_W/2,BOARD_H-TOP_H-(i+.5)*SIDE_H]);
   return o.slice(0,n)
 }
@@ -16829,12 +16849,12 @@ html body.desktop-device:not(.force-mobile-preview) .mobile-nav{
     const rect=board.getBoundingClientRect();
     const panelRect=panel.getBoundingClientRect();
     window.__WEALTH_DESKTOP_BOARD_RUNTIME={
-      build:"19956",
+      build:APP_BUILD_ID,
       boardCssWidth:Math.round(rect.width),
       panelCssWidth:Math.round(panelRect.width),
       canvasWidth:board.width,
       canvasHeight:board.height,
-      expectedTiles:44
+      expectedTiles:32
     };
     return rect.width>0&&rect.width<=panelRect.width+2;
   }
@@ -16854,9 +16874,9 @@ html body.desktop-device:not(.force-mobile-preview) .mobile-nav{
   setTimeout(desktopBoardFitGate,900);
 
   window.__WEALTH_DESKTOP_BOARD_FIT_GATE=Object.freeze({
-    build:"19956",
+    build:APP_BUILD_ID,
     expectedCanvas:Object.freeze({width:1680,height:1040}),
-    expectedTiles:44,
+    expectedTiles:32,
     mode:"device-class-not-viewport"
   });
 })();
