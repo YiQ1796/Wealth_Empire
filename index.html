@@ -6613,14 +6613,14 @@ body.force-mobile-preview .controls #rollBtn{
         <button id="readyBtn" class="success" onclick="sendReady()">✅ 準備</button>
         <button id="startBtn" class="primary" onclick="requestStart()">🚀 開始遊戲</button>
       </div>
-      <div class="sub" style="margin-top:7px">所有真人玩家準備完成後，任何真人都可以按開始；空位會補 AI。建立房號的瀏覽器只是 P2P 同步節點，沒有任何遊戲特權。</div>
+      <div class="sub" style="margin-top:7px">所有真人玩家準備完成後，任何真人都可以按開始；空位會補 AI。建立房號的瀏覽器只是同步節點；系統可使用 P2P 或 HTTPS 備援，房主沒有任何遊戲特權。</div>
     </div>
   </div>
 </div>
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.61 WEB｜iPhone 雙路徑連線｜44格八區連地</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.61 WEB｜iPhone 雙路徑連線｜44格八區連地</div><div class="sub">免費網頁好友房｜P2P / HTTPS 雙路徑同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -8435,7 +8435,7 @@ function processHostProtocolMessage(conn,msg,name,resumeInfo=null,transport="web
     const transportLabel=transport==="relay"?"HTTPS 備援":"P2P";
     $("connectionText").textContent=msg.resumed?`✅ 已透過 ${transportLabel} 恢復原座位並同步進度`:`✅ 已成功加入房間（${transportLabel}）`;
     setLobbyConnectStatus(msg.resumed?`✅ 重新連線成功，已透過 ${transportLabel} 回到原本座位。`:`✅ 已成功加入好友房（${transportLabel}）。`);
-    setConnectionDetail(transport==="relay"?"目前遊戲資料走 HTTPS/WSS 中繼；不需要 WebRTC TURN。":"WebRTC P2P 通道已建立。");
+    setConnectionDetail(transport==="relay"?"目前遊戲資料走 HTTPS/WSS 中繼，不依賴 WebRTC NAT 穿透。":"WebRTC P2P 通道已建立。");
     showNetRecovery(msg.resumed?"已重新接回原座位，進度同步完成":"連線正常","good",1800);
     render();handleIncomingEvents();saveGuestResume();return
   }
