@@ -7469,9 +7469,10 @@ async function autoResumeHostAfterReload(){
   const saved=loadHostRecovery(code);if(!saved)return false;
   autoHostResumeAttempted=true;
   setLobbyConnectStatus("🔄 偵測到房主重新整理，正在恢復原房號與遊戲進度。");
-  try{await ensurePeerLibrary()}catch{
+  const [peerResult,relayResult]=await Promise.allSettled([ensurePeerLibrary(),ensureRelayLibrary()]);
+  if(peerResult.status!=="fulfilled"&&relayResult.status!=="fulfilled"){
     autoHostResumeAttempted=false;
-    setLobbyConnectStatus("❌ 房主恢復失敗：好友房連線元件載入失敗。請確認網路後重新整理。",true);
+    setLobbyConnectStatus("❌ 房主恢復失敗：兩種連線元件都載入失敗。請確認網路後重新整理。",true);
     return false
   }
   resetPeerTransport();
@@ -7529,7 +7530,8 @@ async function autoResumeGuestAfterReload(){
   if($("joinName"))$("joinName").value=savedName;
   setLobbyConnectStatus("🔄 偵測到上一局座位，正在自動恢復，不需要重新輸入房號。");
 
-  try{await ensurePeerLibrary()}catch{
+  const [peerResult,relayResult]=await Promise.allSettled([ensurePeerLibrary(),ensureRelayLibrary()]);
+  if(isIOSDevice()?relayResult.status!=="fulfilled":(peerResult.status!=="fulfilled"&&relayResult.status!=="fulfilled")){
     autoGuestResumeAttempted=false;
     setLobbyConnectStatus("❌ 自動恢復失敗：好友房連線元件載入失敗。請確認網路後再按加入。",true);
     return
@@ -8145,17 +8147,16 @@ async function createInternetRoom(){
 
   const btn=$("createRoomBtn");
   if(btn){btn.disabled=true;btn.textContent="連線元件載入中…"}
-  setLobbyConnectStatus("⏳ 正在載入好友房連線元件，第一次可能需要幾秒…");
-
-  try{
-    await ensurePeerLibrary()
-  }catch(err){
+  setLobbyConnectStatus("⏳ 正在載入好友房連線元件…");
+  const [peerResult,relayResult]=await Promise.allSettled([ensurePeerLibrary(),ensureRelayLibrary()]);
+  const peerReady=peerResult.status==="fulfilled"&&typeof Peer!=="undefined";
+  const relayReady=relayResult.status==="fulfilled"&&typeof window.mqtt!=="undefined";
+  if(!peerReady&&!relayReady){
     if(btn){btn.disabled=false;btn.textContent="建立跨網路房間"}
-    setLobbyConnectStatus("❌ 好友房連線元件載入失敗。請確認 iPhone 有網路，並使用 Safari 開啟正式網址。",true);
-    toast("好友連線元件載入失敗");
+    setLobbyConnectStatus("❌ 兩種好友房連線元件都載入失敗。請確認 iPhone 網路後重新整理。",true);
+    toast("好友房連線元件載入失敗");
     return
   }
-
   if(btn){btn.disabled=false;btn.textContent="建立跨網路房間"}
 
   resetPeerTransport();
@@ -8169,14 +8170,19 @@ async function createInternetRoom(){
   showWaiting();
   $("connectionText").textContent="正在建立好友房：P2P 與 HTTPS 備援同步啟動…";
   startHostRelayTransport();
-  openHostPeer()
+  if(typeof Peer!=="undefined")openHostPeer();
+  else setConnectionDetail("PeerJS 未載入；房間將使用 HTTPS/WSS 備援通道。")
 }
 
 function openHostPeer(recovering=false){
   if(isHost&&!hostRelayClient)startHostRelayTransport();
   if(typeof Peer==="undefined"){
-    $("connectionText").textContent="❌ PeerJS 尚未載入，請回上一頁重新建立房間。";
-    return
+    if(hostRelayReady){
+      $("connectionText").textContent="✅ 房間已上線！目前使用 HTTPS/WSS 備援，可以分享房號。";
+      return
+    }
+    $("connectionText").textContent="⏳ P2P 元件未載入；正在等待 HTTPS/WSS 備援房間上線…";
+    startHostRelayTransport();return
   }
 
   const hostPeer=new Peer(peerRoomId(roomCode),peerOptions());
@@ -8324,9 +8330,14 @@ async function joinInternetRoom(){
   const btn=$("joinRoomBtn");
   if(btn){btn.disabled=true;btn.textContent="連線元件載入中…"}
   setLobbyConnectStatus("⏳ 正在載入好友房連線元件…");
-  try{await ensurePeerLibrary()}catch(err){
+  const ios=isIOSDevice();
+  const [peerResult,relayResult]=await Promise.allSettled([ensurePeerLibrary(),ensureRelayLibrary()]);
+  const peerReady=peerResult.status==="fulfilled"&&typeof Peer!=="undefined";
+  const relayReady=relayResult.status==="fulfilled"&&typeof window.mqtt!=="undefined";
+  if((ios&&!relayReady)||(!ios&&!peerReady&&!relayReady)){
     if(btn){btn.disabled=false;btn.textContent="加入房間"}
-    setLobbyConnectStatus("❌ 好友房連線元件載入失敗。請確認 iPhone 有網路。",true);toast("好友連線元件載入失敗");return
+    setLobbyConnectStatus("❌ 好友房連線元件載入失敗。請確認網路後重新整理。",true);
+    toast("好友房連線元件載入失敗");return
   }
   if(btn){btn.disabled=false;btn.textContent="加入房間"}
 
@@ -8340,7 +8351,7 @@ async function joinInternetRoom(){
   }
   showWaiting();
   const resumeInfo=savedResume?{seat:savedResume.seat,token:savedResume.token,lastEventId:savedResume.lastEventId,reconnect:true}:null;
-  if(isIOSDevice()){
+  if(ios){
     $("connectionText").textContent=savedResume?"正在透過 HTTPS 備援恢復上一局座位…":"正在透過 HTTPS 備援加入房間…";
     setConnectionDetail("iPhone 優先使用 WSS 中繼，避免兩支手機都位於嚴格 NAT 時卡住。");
     startGuestRelayTransport(name,resumeInfo,"iPhone 優先備援")
