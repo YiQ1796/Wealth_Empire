@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.63 WEB｜iPhone HTTPS 備援連線版</title>
+<title>財富帝國 V19.9.64 WEB｜iPhone HTTPS 備援連線版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.63 WEB - iPhone 好友房改用 WebRTC + HTTPS/WSS relay 雙路徑；保留股票隨時交易與定位修正">
+<meta name="description" content="財富帝國 V19.9.64 WEB - iPhone 好友房改用 WebRTC + HTTPS/WSS relay 雙路徑；保留股票隨時交易與定位修正">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6620,7 +6620,7 @@ body.force-mobile-preview .controls #rollBtn{
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.63 WEB｜iPhone 雙路徑連線｜36格八區穿插棋盤</div><div class="sub">免費網頁好友房｜P2P / HTTPS 雙路徑同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.64 WEB｜iPhone 雙路徑連線｜36格四角事件池棋盤</div><div class="sub">免費網頁好友房｜P2P / HTTPS 雙路徑同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -6673,9 +6673,9 @@ body.force-mobile-preview .controls #rollBtn{
         <span><i class="dot" style="background:#e44747"></i>玩家2</span>
         <span><i class="dot" style="background:#18a26e"></i>玩家3</span>
         <span><i class="dot" style="background:#8b5cf6"></i>玩家4</span>
-        <span>粗框＝所有權｜LV.1 / LV.2＝地產升級</span><span class="board-size-chip">36 格平衡棋盤</span>
+        <span>粗框＝所有權｜LV.1 / LV.2＝地產升級</span><span class="board-size-chip">36 格四角事件棋盤</span>
       </div>
-      <div class="board-map-note">36 格採 28 塊地產＋8 格特殊功能；特殊格固定穿插在地產區之間，不再連續堆疊。8 個地產區為 3 / 3 / 3 / 3 / 4 / 4 / 4 / 4；3 格區完整持有最高 ×2.20，4 格區完整持有最高 ×2.40。</div>
+      <div class="board-map-note">36 格正式重排：四個角落全部為特殊格，28 塊地產只允許連續 3 格或 4 格成區。8 區依序為 4 / 4 / 3 / 3 / 4 / 4 / 3 / 3；投資、市場、全民與策略格皆改為隨機事件池，不再綁定單一事項。</div>
     </div>
     <div class="side">
       <div id="marketPanel" class="panel market"><h2><span class="section-icon-title">股票市場</span></h2><div id="market"></div></div>
@@ -6686,7 +6686,7 @@ body.force-mobile-preview .controls #rollBtn{
 
 
 <div id="mobileHint" class="mobile-hint">
-  📱 手機橫向版會自動把完整 36 格棋盤適應到螢幕；11×9 外框兼顧格子大小與路線長度，特殊格平均穿插在地產區之間。
+  📱 手機橫向版維持 36 格 11×9 外框；四角全部為特殊格，地產固定以連續 3 格或 4 格成區，事件格改為隨機事件池。
 </div>
 
 <nav id="mobileNav" class="mobile-nav planb-text-nav">
@@ -6885,31 +6885,31 @@ const MARKET_OPERATION_DEFS={
 };
 const TILE_NAMES=[
 "起點",
-"星港住宅","海灣公寓","水岸別墅",
-"機會",
-"翡翠商圈","黃金商圈","百貨商場",
-"命運",
+"星港住宅","海灣公寓","水岸別墅","海天御苑",
+"投資機遇",
+"翡翠商圈","黃金商圈","百貨商場","影城",
+"機會廣場",
 "科技園區","創新園區","雲端科技城",
-"股市事件",
+"市場風雲",
 "北城豪宅","綠能園區","湖畔豪宅",
-"機會",
+"命運廣場",
 "金融大道","商務中心","晶鑽商業區","國際金融城",
-"地產拍賣行",
-"山景莊園","天空豪宅","奢華莊園","海天御苑",
-"命運",
-"影城","國際飯店","頂級飯店","都會娛樂城",
-"財富賽馬場",
-"皇后大道","帝王商圈","世界中心","帝國廣場"];
+"全民同樂",
+"山景莊園","天空豪宅","奢華莊園","頂級飯店",
+"娛樂廣場",
+"國際飯店","都會娛樂城","世界中心",
+"策略奇遇",
+"皇后大道","帝王商圈","帝國廣場"];
 const BOARD_SCHEMA_ID=36;
 const PROPERTY_REGION_LAYOUT=Object.freeze([
-  Object.freeze({name:"海港區",size:3}),
-  Object.freeze({name:"商業區",size:3}),
+  Object.freeze({name:"海港區",size:4}),
+  Object.freeze({name:"商業區",size:4}),
   Object.freeze({name:"科技區",size:3}),
   Object.freeze({name:"住宅區",size:3}),
   Object.freeze({name:"金融區",size:4}),
   Object.freeze({name:"豪宅區",size:4}),
-  Object.freeze({name:"都會區",size:4}),
-  Object.freeze({name:"帝王區",size:4})
+  Object.freeze({name:"觀光區",size:3}),
+  Object.freeze({name:"帝王區",size:3})
 ]);
 
 const HORSES=[
@@ -7181,8 +7181,20 @@ function propertyRegionForIndex(propertyIndex){
 function buildTiles(){
   let pc=0;
   return TILE_NAMES.map((name,i)=>{let type="property";
-    if(i===0)type="start";else if(name==="機會")type="chance";else if(name==="命運")type="fate";
-    else if(name==="股市事件")type="stock";else if(name==="收購中心")type="acquire_center";else if(name==="城市更新局")type="renewal";else if(name==="稅務局")type="tax";
+    if(i===0)type="start";
+    else if(name==="機會廣場")type="chance";
+    else if(name==="命運廣場")type="fate";
+    else if(name==="投資機遇")type="investment_event";
+    else if(name==="市場風雲")type="market_event";
+    else if(name==="全民同樂")type="group_event";
+    else if(name==="娛樂廣場")type="entertainment_event";
+    else if(name==="策略奇遇")type="strategy_event";
+    else if(name==="機會")type="chance";
+    else if(name==="命運")type="fate";
+    else if(name==="股市事件")type="stock";
+    else if(name==="收購中心")type="acquire_center";
+    else if(name==="城市更新局")type="renewal";
+    else if(name==="稅務局")type="tax";
     else if(["中央車站","國際機場","國際港口","跨海大橋"].includes(name))type="station";
     else if(name==="財富賽馬場")type="race";
     else if(name==="綠燈反應王")type="reaction";
@@ -7190,8 +7202,11 @@ function buildTiles(){
     else if(name==="寶箱爭奪")type="treasure";
     else if(name==="高低骰對決")type="hilow";
     else if(name==="猜拳擂台")type="rps";
-    else if(name==="城市公園")type="park";else if(name==="地產拍賣行")type="auction";
-    else if(name==="醫療中心")type="hospital";else if(name==="法院")type="court";else if(name==="自由市場")type="market";
+    else if(name==="城市公園")type="park";
+    else if(name==="地產拍賣行")type="auction";
+    else if(name==="醫療中心")type="hospital";
+    else if(name==="法院")type="court";
+    else if(name==="自由市場")type="market";
     let group=null,price=0,rent=0;
     if(type==="property"){
       group=propertyRegionForIndex(pc);
@@ -7725,7 +7740,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19963";
+const APP_BUILD_ID="19964";
 window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:4,mode:"REV-C01-D01-board-pawns"},q07:{cols:5,rows:4,path:"./assets/v19941/rev_c01_d01_all20_v1.webp?v=19941"},revC01D01:{cols:5,rows:4,count:20}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
@@ -8681,9 +8696,120 @@ function movePlayer(p,steps){
   }
   addEvent("move",`${p.name} 前進 ${steps} 格。`,{seat:p.seat,from,to:p.pos,steps})
 }
+const COMPETITIVE_EVENT_GAMES=Object.freeze(["race","dice","treasure","hilow"]);
+const CASUAL_EVENT_GAMES=Object.freeze(["rps","number","cup","coinrush","reaction","bomb","card","lane"]);
+function randomEventPick(items){
+  return items[Math.floor(Math.random()*items.length)]
+}
+function startRandomEventGame(p,t,pool,eventKind,eventLabel){
+  const type=randomEventPick(pool);
+  const names={
+    race:"財富賽馬",dice:"全民骰王",treasure:"寶箱爭奪",hilow:"高低骰對決",
+    rps:"猜拳擂台",number:"幸運數字",cup:"魔術金杯",coinrush:"金幣雨",
+    reaction:"綠燈反應王",bomb:"數字炸彈",card:"神秘翻牌",lane:"幸運車道"
+  };
+  addEvent(eventKind,`${p.name} 在「${t.name}」抽中「${names[type]||type}」。`,
+    {seat:p.seat,tile:t.id,gameType:type,title:`${eventLabel}：${names[type]||type}`});
+  startGroupGame(type,p.seat,t.id);
+  return true
+}
+function resolveInvestmentEvent(p,t){
+  const availableLots=state.tiles.filter(tile=>tile.type==="property"&&tile.owner==null);
+  const outcomes=availableLots.length?["auction","acquire","build","cash"]:["acquire","build","cash"];
+  const outcome=randomEventPick(outcomes);
+  if(outcome==="auction"){
+    const lot=randomEventPick(availableLots);
+    addEvent("investment_event",`${p.name} 的「投資機遇」抽中公開競標：「${lot.name}」進入拍賣！`,
+      {seat:p.seat,tile:lot.id,title:"投資機遇：公開競標"});
+    startAuction(lot.id,p.seat);
+    return true
+  }
+  if(outcome==="acquire"){
+    p.acquireSubsidy=Math.max(Number(p.acquireSubsidy)||0,.15);
+    addEvent("investment_event",`${p.name} 抽中收購補助：下一次土地收購由城市補貼 15%。`,
+      {seat:p.seat,discount:.15,title:"投資機遇：收購補助"});
+    return false
+  }
+  if(outcome==="build"){
+    p.freeBuild=(Number(p.freeBuild)||0)+1;
+    addEvent("investment_event",`${p.name} 抽中建築補助：獲得 1 張免費建築許可。`,
+      {seat:p.seat,count:p.freeBuild,title:"投資機遇：建築補助"});
+    return false
+  }
+  const amount=2000;
+  p.cash+=amount;
+  addEvent("investment_event",`${p.name} 抽中資產獎勵，獲得 $${amount.toLocaleString()}。`,
+    {seat:p.seat,amount,title:"投資機遇：資產獎勵"});
+  return false
+}
+function moveStockPriceForEvent(code,pct){
+  const s=state.stocks?.[code];
+  if(!s)return;
+  s.prev=s.price;
+  s.price=Math.max(20,Math.round(s.price*(1+pct)));
+  s.history.push(s.price)
+}
+function resolveMarketEvent(p,t){
+  const codes=Object.keys(state.stocks||{});
+  if(!codes.length)return false;
+  const outcome=Math.floor(Math.random()*4);
+  if(outcome<2){
+    const code=randomEventPick(codes),s=state.stocks[code];
+    const pct=(outcome===0?1:-1)*(.08+Math.random()*.07);
+    moveStockPriceForEvent(code,pct);
+    addEvent("market",`市場風雲：${s.name} ${pct>0?"急升":"急跌"} ${Math.abs(pct*100).toFixed(1)}%。`,
+      {seat:p.seat,code,pct,title:`市場風雲：${pct>0?"個股急升":"個股急跌"}`});
+    return false
+  }
+  const pct=(outcome===2?1:-1)*(.03+Math.random()*.04);
+  codes.forEach(code=>moveStockPriceForEvent(code,pct));
+  addEvent("market",`市場風雲：全市場${pct>0?"同步走強":"同步修正"} ${Math.abs(pct*100).toFixed(1)}%。`,
+    {seat:p.seat,pct,marketWide:true,title:`市場風雲：${pct>0?"全面上漲":"全面修正"}`});
+  return false
+}
+function resolveStrategyEvent(p,t){
+  const keys=Object.keys(STRATEGY_ITEM_DEFS).filter(key=>strategyItemCount(p,key)<3);
+  if(!keys.length){
+    const amount=1500;
+    p.cash+=amount;
+    addEvent("strategy_event",`${p.name} 的策略道具已滿，改獲得 $${amount.toLocaleString()} 備用資金。`,
+      {seat:p.seat,amount,title:"策略奇遇：備用資金"});
+    return false
+  }
+  const key=randomEventPick(keys),def=STRATEGY_ITEM_DEFS[key];
+  grantStrategyItem(p,key,1);
+  addEvent("strategy_event",`${p.name} 在「策略奇遇」獲得「${def.name}」。`,
+    {seat:p.seat,item:key,itemName:def.name,title:`策略奇遇：${def.name}`});
+  return false
+}
+
 function resolveLanding(p){
   const t=state.tiles[p.pos];
   addEvent("land",`${p.name} 抵達「${t.name}」。`,{seat:p.seat,tile:t.id});
+
+  if(t.type==="investment_event"){
+    if(resolveInvestmentEvent(p,t))return;
+    if(!finishIfNeeded("投資機遇"))nextTurn();
+    return
+  }
+  if(t.type==="market_event"){
+    resolveMarketEvent(p,t);
+    if(!finishIfNeeded("市場風雲"))nextTurn();
+    return
+  }
+  if(t.type==="group_event"){
+    startRandomEventGame(p,t,COMPETITIVE_EVENT_GAMES,"group_event","全民同樂");
+    return
+  }
+  if(t.type==="entertainment_event"){
+    startRandomEventGame(p,t,CASUAL_EVENT_GAMES,"entertainment_event","娛樂廣場");
+    return
+  }
+  if(t.type==="strategy_event"){
+    resolveStrategyEvent(p,t);
+    if(!finishIfNeeded("策略奇遇"))nextTurn();
+    return
+  }
 
   if(t.type==="race"){
     startGroupGame("race",p.seat,t.id);
@@ -10491,7 +10617,8 @@ const PLAYER_AVATAR_PATHS=["data:image/webp;base64,UklGRsAdAABXRUJQVlA4WAoAAAAQA
 const TILE_ICONS={
   start:"start",property:"property",station:"station",chance:"chance",fate:"fate",stock:"stock",tax:"tax",
   park:"park",auction:"auction",hospital:"hospital",court:"court",market:"market",race:"race",wheel:"wheel",
-  dicegame:"dicegame",treasure:"treasure",hilow:"hilow",noodle:"noodle",acquire_center:"acquire_center",renewal:"renewal"
+  dicegame:"dicegame",treasure:"treasure",hilow:"hilow",noodle:"noodle",acquire_center:"acquire_center",renewal:"renewal",
+  investment_event:"chance",market_event:"stock",group_event:"dicegame",entertainment_event:"race",strategy_event:"chance"
 };
 function drawGlyph(type,x,y,size,color="#223a5a",accent="#6aa7ff"){
   const s=size;
@@ -12865,7 +12992,7 @@ function drawCity(){
     ctx.restore()
   });
 }
-function tcolor(t){return{start:"#ffc94d",chance:"#f28d43",fate:"#8957dd",stock:"#3dbd7d",tax:"#e65757",station:"#4ca6ca",park:"#8ebf55",auction:"#dfb934",hospital:"#5eb6aa",court:"#8390a2",market:"#ed79a7",race:"#d5a13b",wheel:"#d66bb1",dicegame:"#5f8ed3",treasure:"#c58c25",hilow:"#4a79c7",noodle:"#d78a45",acquire_center:"#2f8b88",renewal:"#6d7fb8",property:"#fff"}[t.type]||"#fff"}
+function tcolor(t){return{start:"#ffc94d",chance:"#f28d43",fate:"#8957dd",stock:"#3dbd7d",tax:"#e65757",station:"#4ca6ca",park:"#8ebf55",auction:"#dfb934",hospital:"#5eb6aa",court:"#8390a2",market:"#ed79a7",race:"#d5a13b",wheel:"#d66bb1",dicegame:"#5f8ed3",treasure:"#c58c25",hilow:"#4a79c7",noodle:"#d78a45",acquire_center:"#2f8b88",renewal:"#6d7fb8",investment_event:"#c58a2d",market_event:"#32936f",group_event:"#4f7fd1",entertainment_event:"#bd6c9f",strategy_event:"#7a63b8",property:"#fff"}[t.type]||"#fff"}
 
 function mobileReadableBoard(){
   return isLandscapePhone()||document.body.classList.contains("force-mobile-preview")
@@ -12882,7 +13009,8 @@ function compactTileName(name){
     "國際港口":"港口","物流中心":"物流","百貨商場":"百貨","全民骰王":"骰王","湖畔豪宅":"湖畔",
     "法院":"法院","晶鑽商業區":"晶鑽","跨海大橋":"跨海","皇后大道":"皇后","地產拍賣行":"拍賣",
     "寶箱爭奪":"寶箱","城市更新局":"更新","醫療中心":"醫療","頂級飯店":"頂級","雲端科技城":"雲端",
-    "帝王商圈":"帝王","奢華莊園":"奢華","海天御苑":"海天","世界中心":"世界"
+    "帝王商圈":"帝王","奢華莊園":"奢華","海天御苑":"海天","世界中心":"世界",
+    "機會廣場":"機會","命運廣場":"命運","投資機遇":"投資","市場風雲":"市場","全民同樂":"同樂","娛樂廣場":"娛樂","策略奇遇":"策略"
   };
   return map[name]||String(name).slice(0,3)
 }
@@ -13004,7 +13132,7 @@ function drawTile(t,x,y,index){
     }else{
       ctx.font='1000 20px "Microsoft JhengHei","Noto Sans TC",sans-serif';
       ctx.fillStyle="rgba(255,255,255,.96)";
-      const noteMap={chance:"機會",fate:"命運",tax:"稅務",stock:"投資",auction:"拍賣",park:"休息",market:"商圈",race:"賽馬",wheel:"轉盤",dicegame:"骰王",treasure:"寶箱",hilow:"高低骰",noodle:"吃麵",acquire_center:"收購",renewal:"更新"};
+      const noteMap={chance:"機會",fate:"命運",tax:"稅務",stock:"投資",auction:"拍賣",park:"休息",market:"商圈",race:"賽馬",wheel:"轉盤",dicegame:"骰王",treasure:"寶箱",hilow:"高低骰",noodle:"吃麵",acquire_center:"收購",renewal:"更新",investment_event:"隨機投資",market_event:"隨機市場",group_event:"隨機競技",entertainment_event:"隨機娛樂",strategy_event:"隨機策略"};
       ctx.fillText(noteMap[t.type]||"",x,y+14,w-8)
     }
 
@@ -13045,7 +13173,7 @@ function drawTile(t,x,y,index){
   }else if(!["property","station"].includes(t.type)){
     ctx.font='900 11px "Microsoft JhengHei"';
     ctx.fillStyle="rgba(255,255,255,.92)";
-    const noteMap={chance:"抽事件",fate:"命運",tax:"付款",stock:"投資",auction:"拍賣",park:"休息",market:"商圈",race:"賽馬",wheel:"轉盤",dicegame:"骰局",treasure:"寶箱",hilow:"猜大小",noodle:"吃麵",acquire_center:"收購",renewal:"建設"};
+    const noteMap={chance:"抽事件",fate:"命運",tax:"付款",stock:"投資",auction:"拍賣",park:"休息",market:"商圈",race:"賽馬",wheel:"轉盤",dicegame:"骰局",treasure:"寶箱",hilow:"猜大小",noodle:"吃麵",acquire_center:"收購",renewal:"建設",investment_event:"隨機投資",market_event:"隨機市場",group_event:"隨機競技",entertainment_event:"隨機娛樂",strategy_event:"隨機策略"};
     ctx.fillText(noteMap[t.type]||"",x+5,y+20,w-12)
   }
 
