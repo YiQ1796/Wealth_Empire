@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#f3ead3">
+<title>財富帝國 V20 Clean Rebuild</title>
+<link rel="stylesheet" href="./styles/app.css">
+</head>
+<body>
+<main class="app-shell">
+  <header class="topbar">
+    <div>
+      <h1>財富帝國 <span>V20 Clean Rebuild</span></h1>
+      <p>36 格｜28 地產｜8 事件｜乾淨重製線</p>
+    </div>
+    <div class="round-badge">ROUND <strong id="roundValue">1</strong> / 30</div>
+  </header>
+
+  <section id="players" class="players" aria-label="玩家資訊"></section>
+
+  <section class="toolbar">
+    <button id="rollButton" class="action-button primary">🎲 擲骰子</button>
+    <button id="buyButton" class="action-button" disabled>🏠 購買地產</button>
+    <button id="endTurnButton" class="action-button" disabled>➡️ 結束回合</button>
+    <div class="dice-result">骰子：<strong id="diceValue">—</strong></div>
+  </section>
+
+  <section class="game-layout">
+    <div class="board-panel">
+      <div id="board" class="board" aria-label="財富帝國棋盤">
+        <div id="centerStage" class="center-stage">
+          <img id="centerBackground" alt="" aria-hidden="true">
+          <div class="center-stage__shade"></div>
+          <div class="center-stage__content">
+            <h2>都會核心</h2>
+            <p id="statusText">等待擲骰。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="side-panel">
+      <section class="info-card">
+        <h2>目前格子</h2>
+        <div id="currentTileInfo" class="tile-info">—</div>
+      </section>
+      <section class="info-card">
+        <h2>即時事件</h2>
+        <div id="eventLog" class="event-log"></div>
+      </section>
+    </aside>
+  </section>
+</main>
+<script type="module" src="./js/main.js"></script>
+</body>
+</html>
