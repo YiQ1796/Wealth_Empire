@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.62 WEB｜iPhone HTTPS 備援連線版</title>
+<title>財富帝國 V19.9.63 WEB｜iPhone HTTPS 備援連線版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.62 WEB - iPhone 好友房改用 WebRTC + HTTPS/WSS relay 雙路徑；保留股票隨時交易與定位修正">
+<meta name="description" content="財富帝國 V19.9.63 WEB - iPhone 好友房改用 WebRTC + HTTPS/WSS relay 雙路徑；保留股票隨時交易與定位修正">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -2303,7 +2303,7 @@ body{font-size:16px}
 }
 
 
-/* ===== 32-space larger-tile board + narrower stock sidebar ===== */
+/* ===== 36-space balanced board + stabilized stock sidebar ===== */
 .main{
   grid-template-columns:minmax(0,1fr) 365px!important;
   gap:10px!important;
@@ -6620,7 +6620,7 @@ body.force-mobile-preview .controls #rollBtn{
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.62 WEB｜iPhone 雙路徑連線｜32格六區大格棋盤</div><div class="sub">免費網頁好友房｜P2P / HTTPS 雙路徑同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.63 WEB｜iPhone 雙路徑連線｜36格八區穿插棋盤</div><div class="sub">免費網頁好友房｜P2P / HTTPS 雙路徑同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -6673,9 +6673,9 @@ body.force-mobile-preview .controls #rollBtn{
         <span><i class="dot" style="background:#e44747"></i>玩家2</span>
         <span><i class="dot" style="background:#18a26e"></i>玩家3</span>
         <span><i class="dot" style="background:#8b5cf6"></i>玩家4</span>
-        <span>粗框＝所有權｜LV.1 / LV.2＝地產升級</span><span class="board-size-chip">32 格大格棋盤</span>
+        <span>粗框＝所有權｜LV.1 / LV.2＝地產升級</span><span class="board-size-chip">36 格平衡棋盤</span>
       </div>
-      <div class="board-map-note">32 格重整為 6 個連續地產區（3 / 3 / 4 / 4 / 4 / 4，共 22 塊地產）＋10 格特殊功能。3 格區持有 2 / 3 格時租金為 ×1.50 / ×2.20；4 格區持有 2 / 3 / 4 格時為 ×1.35 / ×1.75 / ×2.40。</div>
+      <div class="board-map-note">36 格採 28 塊地產＋8 格特殊功能；特殊格固定穿插在地產區之間，不再連續堆疊。8 個地產區為 3 / 3 / 3 / 3 / 4 / 4 / 4 / 4；3 格區完整持有最高 ×2.20，4 格區完整持有最高 ×2.40。</div>
     </div>
     <div class="side">
       <div id="marketPanel" class="panel market"><h2><span class="section-icon-title">股票市場</span></h2><div id="market"></div></div>
@@ -6686,7 +6686,7 @@ body.force-mobile-preview .controls #rollBtn{
 
 
 <div id="mobileHint" class="mobile-hint">
-  📱 手機橫向版會自動把完整 32 格棋盤適應到螢幕；10×8 外框讓單格更大，右側固定提供資訊與所有主要操作。
+  📱 手機橫向版會自動把完整 36 格棋盤適應到螢幕；11×9 外框兼顧格子大小與路線長度，特殊格平均穿插在地產區之間。
 </div>
 
 <nav id="mobileNav" class="mobile-nav planb-text-nav">
@@ -6888,22 +6888,27 @@ const TILE_NAMES=[
 "星港住宅","海灣公寓","水岸別墅",
 "機會",
 "翡翠商圈","黃金商圈","百貨商場",
-"命運","收購中心",
-"科技園區","創新園區","雲端科技城","能源公司",
-"股市事件","機會","地產拍賣行",
-"北城豪宅","綠能園區","湖畔豪宅","海天御苑",
 "命運",
+"科技園區","創新園區","雲端科技城",
+"股市事件",
+"北城豪宅","綠能園區","湖畔豪宅",
+"機會",
 "金融大道","商務中心","晶鑽商業區","國際金融城",
+"地產拍賣行",
+"山景莊園","天空豪宅","奢華莊園","海天御苑",
+"命運",
+"影城","國際飯店","頂級飯店","都會娛樂城",
 "財富賽馬場",
-"皇后大道","帝王商圈","世界中心","帝國廣場",
-"城市更新局"];
-const BOARD_SCHEMA_ID=32;
+"皇后大道","帝王商圈","世界中心","帝國廣場"];
+const BOARD_SCHEMA_ID=36;
 const PROPERTY_REGION_LAYOUT=Object.freeze([
   Object.freeze({name:"海港區",size:3}),
   Object.freeze({name:"商業區",size:3}),
-  Object.freeze({name:"科技區",size:4}),
-  Object.freeze({name:"住宅區",size:4}),
+  Object.freeze({name:"科技區",size:3}),
+  Object.freeze({name:"住宅區",size:3}),
   Object.freeze({name:"金融區",size:4}),
+  Object.freeze({name:"豪宅區",size:4}),
+  Object.freeze({name:"都會區",size:4}),
   Object.freeze({name:"帝王區",size:4})
 ]);
 
@@ -7292,8 +7297,8 @@ function migrateBoardStateToCurrent(gameState){
   gameState.events.push({
     id:gameState.eventId,
     kind:"board_migration",
-    text:`棋盤已安全遷移為 32 格；已移除的舊地產按原價與既有升級投入補償，共 $${Math.round(refundTotal).toLocaleString()}。`,
-    data:{title:"32 格棋盤遷移",from:oldTiles.length,to:TILE_NAMES.length,refund:Math.round(refundTotal)},
+    text:`棋盤已安全遷移為 36 格；已移除的舊地產按原價與既有升級投入補償，共 $${Math.round(refundTotal).toLocaleString()}。`,
+    data:{title:"36 格棋盤遷移",from:oldTiles.length,to:TILE_NAMES.length,refund:Math.round(refundTotal)},
     ts:Date.now()
   });
   gameState.events=gameState.events.slice(-80);
@@ -7303,7 +7308,7 @@ function acceptRemoteBoardState(remoteState){
   const incoming=stripLegacyRoleSkills(remoteState);
   const count=Array.isArray(incoming?.tiles)?incoming.tiles.length:0;
   if(!boardShapeMatches(incoming?.tiles)){
-    const msg=`房主棋盤版本與本機不同（房主 ${count||"未知"} 格／本機 32 格）。請房主重新整理一次，系統會用房主恢復資料安全遷移。`;
+    const msg=`房主棋盤版本與本機不同（房主 ${count||"未知"} 格／本機 36 格）。請房主重新整理一次，系統會用房主恢復資料安全遷移。`;
     setLobbyConnectStatus("⚠️ "+msg,true);
     showNetRecovery(msg,"bad");
     toast("棋盤版本不同，請房主重新整理");
@@ -7720,7 +7725,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19962";
+const APP_BUILD_ID="19963";
 window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:4,mode:"REV-C01-D01-board-pawns"},q07:{cols:5,rows:4,path:"./assets/v19941/rev_c01_d01_all20_v1.webp?v=19941"},revC01D01:{cols:5,rows:4,count:20}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
@@ -12534,21 +12539,17 @@ function handleIncomingEvents(){
 
 async function animateDice(a,b,name){rolling=true;$("die1").classList.add("rolling");$("die2").classList.add("rolling");const st=performance.now();await new Promise(r=>{const t=setInterval(()=>{$("die1").textContent=FACES[Math.floor(Math.random()*6)];$("die2").textContent=FACES[Math.floor(Math.random()*6)];$("diceStatus").textContent=`${name} 骰子滾動中...`;if(performance.now()-st>760){clearInterval(t);r()}},80)});$("die1").classList.remove("rolling");$("die2").classList.remove("rolling");$("die1").textContent=FACES[a-1];$("die2").textContent=FACES[b-1];$("diceTotal").textContent=a+b;$("diceStatus").textContent=`${name} 擲出 ${a+b}`;rolling=false;renderControls()}
 const BOARD_W=1680,BOARD_H=1040;
-const TOP_COUNT=10,RIGHT_COUNT=6,BOTTOM_COUNT=10,LEFT_COUNT=6;
-const TOP_H=120;
+const TOP_COUNT=11,RIGHT_COUNT=7,BOTTOM_COUNT=11,LEFT_COUNT=7;
+const TOP_H=108;
 const TOP_W=BOARD_W/TOP_COUNT;
 const SIDE_W=TOP_W;
 const SIDE_H=(BOARD_H-TOP_H*2)/RIGHT_COUNT;
 
 function perimeterPositions(n){
   const o=[];
-  // Top: 10 cells, left -> right.
   for(let i=0;i<TOP_COUNT;i++)o.push([(i+.5)*TOP_W,TOP_H/2]);
-  // Right: 6 cells, top -> bottom, directly under the top row.
   for(let i=0;i<RIGHT_COUNT;i++)o.push([BOARD_W-SIDE_W/2,TOP_H+(i+.5)*SIDE_H]);
-  // Bottom: 10 cells, right -> left.
   for(let i=0;i<BOTTOM_COUNT;i++)o.push([BOARD_W-(i+.5)*TOP_W,BOARD_H-TOP_H/2]);
-  // Left: 6 cells, bottom -> top.
   for(let i=0;i<LEFT_COUNT;i++)o.push([SIDE_W/2,BOARD_H-TOP_H-(i+.5)*SIDE_H]);
   return o.slice(0,n)
 }
@@ -16854,7 +16855,7 @@ html body.desktop-device:not(.force-mobile-preview) .mobile-nav{
       panelCssWidth:Math.round(panelRect.width),
       canvasWidth:board.width,
       canvasHeight:board.height,
-      expectedTiles:32
+      expectedTiles:36
     };
     return rect.width>0&&rect.width<=panelRect.width+2;
   }
@@ -16876,10 +16877,99 @@ html body.desktop-device:not(.force-mobile-preview) .mobile-nav{
   window.__WEALTH_DESKTOP_BOARD_FIT_GATE=Object.freeze({
     build:APP_BUILD_ID,
     expectedCanvas:Object.freeze({width:1680,height:1040}),
-    expectedTiles:32,
+    expectedTiles:36,
     mode:"device-class-not-viewport"
   });
 })();
 </script>
+
+<style id="v19963-stock-layout-authority">
+@media(min-width:1101px){
+  html body .main{
+    grid-template-columns:minmax(0,1fr) 440px!important;
+    gap:10px!important;
+    align-items:start!important;
+  }
+  html body .side{min-width:0!important}
+  html body #marketPanel{min-width:0!important;overflow:hidden!important}
+  html body #market .stock-grid{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:6px!important;
+  }
+  html body #market .stock{
+    min-width:0!important;
+    margin:0!important;
+    padding:6px!important;
+    overflow:hidden!important;
+  }
+  html body #market .stop{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) auto!important;
+    grid-template-areas:"name price" "name day"!important;
+    align-items:center!important;
+    column-gap:6px!important;
+    row-gap:1px!important;
+  }
+  html body #market .stop>div:first-child{grid-area:name!important;min-width:0!important}
+  html body #market .sname{
+    font-size:12px!important;line-height:1.15!important;white-space:nowrap!important;
+    overflow:hidden!important;text-overflow:ellipsis!important;
+  }
+  html body #market .scode{
+    font-size:8px!important;line-height:1.1!important;white-space:nowrap!important;
+    overflow:hidden!important;text-overflow:ellipsis!important;
+  }
+  html body #market .sprice{
+    grid-area:price!important;justify-self:end!important;font-size:15px!important;
+    line-height:1!important;white-space:nowrap!important;
+  }
+  html body #market .stock-day{
+    grid-area:day!important;justify-self:end!important;max-width:88px!important;
+    font-size:8.5px!important;line-height:1.1!important;white-space:nowrap!important;padding:3px 5px!important;
+  }
+  html body #market .stock-holding-badge{
+    min-width:0!important;gap:4px!important;margin-top:4px!important;
+    padding:4px 5px!important;font-size:8px!important;
+  }
+  html body #market .stock-holding-badge b{font-size:10px!important}
+  html body #market .stock-holding-badge small{
+    min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;font-size:7.5px!important;
+  }
+  html body #market .stock-position-pnl{
+    min-width:0!important;min-height:24px!important;margin-top:3px!important;
+    padding:3px 5px!important;gap:4px!important;font-size:8.5px!important;
+  }
+  html body #market .stock-position-pnl b{min-width:0!important;font-size:9.5px!important;white-space:nowrap!important}
+  html body #market .sbottom{
+    display:grid!important;grid-template-columns:42px minmax(0,1fr) minmax(0,1fr)!important;
+    gap:4px!important;margin-top:4px!important;align-items:center!important;
+  }
+  html body #market .sbottom input{
+    width:100%!important;min-width:0!important;height:34px!important;padding:3px 4px!important;font-size:10px!important;
+  }
+  html body #market .stock-action-btn{
+    min-width:0!important;min-height:34px!important;height:34px!important;
+    padding:3px 4px!important;gap:2px!important;font-size:9px!important;overflow:hidden!important;
+  }
+  html body #market .stock-action-btn .rev36-stock-action-art{
+    width:21px!important;height:21px!important;flex:0 0 21px!important;
+  }
+  html body #market .market-summary-v10{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:4px!important;
+  }
+  html body #market .market-summary-v10>div{min-width:0!important;padding:4px!important}
+  html body #market .market-summary-v10 .mk{font-size:8px!important}
+  html body #market .market-summary-v10 .mv{
+    font-size:10.5px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+  }
+  html body #market .pnl-pct{
+    font-size:7.5px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+  }
+}
+@media(min-width:1101px) and (max-width:1350px){
+  html body .main{grid-template-columns:minmax(0,1fr) 410px!important}
+}
+</style>
 </body>
 </html>
