@@ -7068,7 +7068,7 @@ let clientResumeToken="",guestDisplayName="",guestReconnectTimer=null,guestRecon
 let guestReconnectInFlight=false,guestReconnectPendingReason="",guestConnectedSince=0,guestResumeHealthTimer=null,hostRecoverySaveTimer=null;
 let hostDisconnectGraceTimers=new Map();
 let relayLibraryPromise=null,hostRelayClient=null,guestRelayClient=null,hostRelayReady=false,hostRelayStarting=false,guestRelayFallbackStarted=false;
-let guestTransportMode="",guestRelayClientId="",guestRelayConnectTimer=null,hostRelayWatchdogTimer=null;
+let guestTransportMode="",guestRelayClientId="",guestRelayConnectTimer=null,guestRelayHandshakeTimer=null,hostRelayWatchdogTimer=null;
 let relayGuestConns=new Map();
 const RELAY_BROKER_URL="wss://broker.emqx.io:8084/mqtt",RELAY_PROTOCOL="v1";
 const NET_HEARTBEAT_MS=7000,NET_STALE_MS=35000,NET_RECONNECT_DELAYS=[900,1800,3200,5000,7000,10000],INITIAL_JOIN_RETRY_DELAYS=[650,1100,1800,2800,4200,6000];
@@ -7958,6 +7958,7 @@ function stopHostRelayTransport(){
 }
 function stopGuestRelayTransport(){
   clearTimeout(guestRelayConnectTimer);guestRelayConnectTimer=null;
+  clearInterval(guestRelayHandshakeTimer);guestRelayHandshakeTimer=null;
   const client=guestRelayClient;guestRelayClient=null;
   if(hostConn?.relay){hostConn.open=false;hostConn=null}
   guestRelayClientId="";guestRelayFallbackStarted=false;
@@ -8082,7 +8083,12 @@ async function startGuestRelayTransport(name,resumeInfo=null,reason="WebRTC 無�
       if(err){relayConn.open=false;setConnectionDetail("HTTPS 備援訂閱失敗，正在重試…");return}
       $("connectionText").textContent=mySeat!=null?"🔄 HTTPS 備援已接通，正在恢復座位…":"⏳ HTTPS 備援已接通，正在加入房間…";
       setConnectionDetail("HTTPS/WSS 備援已連上中繼，正在與房主完成遊戲握手。");
-      sendHandshake()
+      sendHandshake();
+      clearInterval(guestRelayHandshakeTimer);
+      guestRelayHandshakeTimer=setInterval(()=>{
+        if(hostConn!==relayConn||guestTransportMode!=="relay-pending"||mySeat!=null){clearInterval(guestRelayHandshakeTimer);guestRelayHandshakeTimer=null;return}
+        try{sendHandshake()}catch{}
+      },1500)
     })
   });
   client.on("message",(topic,raw)=>{
@@ -8410,6 +8416,7 @@ function processHostProtocolMessage(conn,msg,name,resumeInfo=null,transport="web
     clearTimeout(joinTimeoutTimer);joinTimeoutTimer=null;
     clearTimeout(initialJoinRetryTimer);initialJoinRetryTimer=null;initialJoinRetryAttempts=0;
     clearTimeout(guestRelayConnectTimer);guestRelayConnectTimer=null;
+    clearInterval(guestRelayHandshakeTimer);guestRelayHandshakeTimer=null;
     const incomingState=acceptRemoteBoardState(msg.state);if(!incomingState){try{conn.close()}catch{};return}
     mySeat=msg.seat;state=incomingState;
     if(msg.resumeToken)clientResumeToken=msg.resumeToken;
