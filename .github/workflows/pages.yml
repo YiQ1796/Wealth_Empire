@@ -41,6 +41,43 @@ jobs:
           PY
           node --check /tmp/wealth_empire_inline.js
 
+      - name: Build V20 visual assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          PACK="v20/assets/packs/alpha2-assets.zip"
+          TMP="$(mktemp -d)"
+          test -s "$PACK"
+          mkdir -p v20/assets/board v20/assets/tiles
+          unzip -q "$PACK" -d "$TMP"
+          test -s "$TMP/center-bg.png"
+          mv "$TMP/center-bg.png" v20/assets/board/center-bg.png
+          for file in \
+            WE_T11_WATERFRONT_VILLA_V2.png \
+            WE_T12_SEA_SKY_GARDEN_V2.png \
+            WE_T13_EMERALD_SHOPPING_V2.png \
+            WE_T14_GOLDEN_SHOPPING_V2.png \
+            WE_T15_DEPARTMENT_STORE_V2.png \
+            WE_T16_CINEMA_V2.png \
+            WE_T17_TECH_PARK_V2.png \
+            WE_T18_INNOVATION_PARK_V2.png \
+            WE_T19_CLOUD_TECH_CITY_V2.png \
+            WE_T20_NORTH_CITY_MANSION_V2.png
+          do
+            test -s "$TMP/$file"
+            mv "$TMP/$file" v20/assets/tiles/"$file"
+          done
+          test "$(find v20/assets/tiles -maxdepth 1 -name 'WE_T*.png' | wc -l)" -eq 10
+          echo "V20 visual assets: center background + 10 complete-tile PNGs PASS"
+
+      - name: Validate V20 module syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in $(find v20/js -name '*.js' -type f | sort); do
+            node --input-type=module --check < "$file"
+          done
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
