@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.59 WEB｜股票隨時交易版</title>
+<title>財富帝國 V19.9.60 WEB｜股票操作定位修正版</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.59 WEB - 股票改為遊戲中隨時買賣、重做漲跌機率與交易辨識；保留 iPhone TURN fallback">
+<meta name="description" content="財富帝國 V19.9.60 WEB - iPhone 股票輸入不再被自動捲回頂部，保留交易位置並強化持股顯示">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6577,7 +6577,7 @@ body.force-mobile-preview .controls #rollBtn{
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.59</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.60</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6620,7 +6620,7 @@ body.force-mobile-preview .controls #rollBtn{
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.59 WEB｜股票隨時交易｜44格八區連地</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.60 WEB｜股票定位修正｜44格八區連地</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -7694,7 +7694,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19959";
+const APP_BUILD_ID="19960";
 window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:4,mode:"REV-C01-D01-board-pawns"},q07:{cols:5,rows:4,path:"./assets/v19941/rev_c01_d01_all20_v1.webp?v=19941"},revC01D01:{cols:5,rows:4,count:20}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
@@ -10463,7 +10463,38 @@ function renderControls(){
   if(marketOpsBtn){marketOpsBtn.disabled=!myTurn||state.rolled||!!state.pending||!!state.groupGame||(me?.lastMarketOpRound??-99)===state.round;marketOpsBtn.title=(me?.lastMarketOpRound??-99)===state.round?"本 ROUND 已使用市場操作":"每 ROUND 可使用一次市場操作"}
   $("turnLabel").textContent=state.status==="finished"?"遊戲結束":myTurn?"你的回合":"等待其他玩家"
 }
+let stockUiRestoreFrame=0;
+function captureStockUiContext(){
+  const panel=$("marketPanel"),active=document.activeElement;
+  const input=active?.id?.startsWith("q_")?active:null;
+  return {
+    scrollTop:Number(panel?.scrollTop||0),
+    activeInputId:input?.id||"",
+    activeInputValue:input?.value||"",
+    selectionStart:Number.isInteger(input?.selectionStart)?input.selectionStart:null,
+    selectionEnd:Number.isInteger(input?.selectionEnd)?input.selectionEnd:null
+  }
+}
+function restoreStockUiContext(context){
+  if(!context)return;
+  cancelAnimationFrame(stockUiRestoreFrame);
+  stockUiRestoreFrame=requestAnimationFrame(()=>{
+    const panel=$("marketPanel");
+    if(panel)panel.scrollTop=Math.max(0,context.scrollTop||0);
+    if(context.activeInputId){
+      const input=$(context.activeInputId);
+      if(input){
+        if(context.activeInputValue!=="")input.value=context.activeInputValue;
+        try{input.focus({preventScroll:true})}catch{try{input.focus()}catch{}}
+        try{
+          if(context.selectionStart!=null&&context.selectionEnd!=null)input.setSelectionRange(context.selectionStart,context.selectionEnd)
+        }catch{}
+      }
+    }
+  })
+}
 function renderMarket(){
+  const uiContext=captureStockUiContext();
   const me=state.players[mySeat];
   if(!me){$("market").innerHTML="";return}
   let totalValue=0,totalCost=0;
@@ -10507,7 +10538,8 @@ function renderMarket(){
         <div class="pnl-pct">已完成交易累計</div>
       </div>
     </div>
-    <div class="stock-grid">${rows}</div>`
+    <div class="stock-grid">${rows}</div>`;
+  restoreStockUiContext(uiContext)
 }
 function renderEvents(){$("events").innerHTML=[...state.events].reverse().map(e=>`<div class="event">#${e.id} ${e.text}</div>`).join("")}
 function stockAction(action,c){
@@ -12194,13 +12226,17 @@ function handleIncomingEvents(){
     }
     else if(e.kind==="stock"&&typeof e.data?.amount==="number"){
       const s=state.stocks[e.data.code];
-      const extra=e.data.side==="sell"?`已實現 ${e.data.realized>=0?"+":""}$${Math.round(e.data.realized).toLocaleString()}`:`${e.data.qty} 股 × $${e.data.price}`;
+      const extra=e.data.side==="sell"?`已實現 ${e.data.realized>=0?"+":""}${Math.round(e.data.realized).toLocaleString()}`:`${e.data.qty} 股 × ${e.data.price}`;
       moneyFx(
         `${e.data.side==="buy"?"股票買入":"股票賣出"}｜${s?.name||""}`,
         e.data.amount,
         extra,
         e.data.side==="buy"?FINANCE_ICON_ASSETS.buy:FINANCE_ICON_ASSETS.sell
-      )
+      );
+      if(e.data?.seat===mySeat){
+        const holding=Number(state.players?.[mySeat]?.stocks?.[e.data.code]?.qty||0);
+        toast(`${s?.name||e.data.code} ${e.data.side==="buy"?"買進":"賣出"} ${e.data.qty} 股｜目前持有 ${holding} 股`)
+      }
     }
     else if(e.kind==="strategy_item"&&e.data?.seat===mySeat){
       queueFx({html:`<div class="fx-title">🎒 獲得策略道具</div><div class="fx-money" style="font-size:27px">${e.data.itemName||"策略道具"}</div><div class="fx-sub">已放入策略道具；符合使用時機時系統會主動詢問。</div>`,duration:1900})
@@ -13148,14 +13184,15 @@ function updateMobileTurnBar(){
 
 function mobileSetView(view){
   if(!mobileModeActive())return;
+  const previousView=document.body.dataset.mobileView||"";
   document.body.dataset.mobileView=view;
   document.querySelectorAll("#mobileNav [data-mobile-view]").forEach(btn=>{
     btn.classList.toggle("active",btn.dataset.mobileView===view)
   });
-  if(view==="board"){
+  // iOS opens/closes the numeric keyboard by resizing visualViewport. That resize calls
+  // mobileSetView again; never scroll market/events back to the top during that sync.
+  if(view==="board"&&previousView!==view){
     setTimeout(()=>mobileFocusOnPlayer(false),80)
-  }else{
-    window.scrollTo({top:0,behavior:"smooth"})
   }
 }
 function applyMobileBoardSize(){
@@ -15734,6 +15771,7 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
   };
   function art(key,extra=""){return `<span class="rev36-art ${cls[key]||""} ${extra}" aria-hidden="true"></span>`}
   renderMarket=function(){
+    const uiContext=captureStockUiContext();
     const me=state.players[mySeat];
     if(!me){$("market").innerHTML="";return}
     let totalValue=0,totalCost=0;
@@ -15749,7 +15787,8 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
           <div class="sprice">${s.price}</div>
           <div class="stock-day ${d>0?"up":d<0?"down":"flat"}">${trend}${dayPct>=0?"+":""}${dayPct.toFixed(1)}%</div>
         </div>
-        ${qty?`<div class="stock-meta-line">平均成本 $${Math.round(avg).toLocaleString()}</div><div class="stock-position-pnl ${pnl>0?"profit":pnl<0?"loss":"flat"}">${positionIcon}<span>持倉損益</span><b>${pnl>=0?"+":"-"}${Math.abs(Math.round(pnl)).toLocaleString()} <em>(${pnlPct>=0?"+":""}${pnlPct.toFixed(1)}%)</em></b></div>`:""}
+        <div class="stock-holding-badge ${qty?"has-stock":"empty"}"><span>目前持有</span><b>${qty.toLocaleString()} 股</b>${qty?`<small>平均成本 ${Math.round(avg).toLocaleString()}</small>`:""}</div>
+        ${qty?`<div class="stock-position-pnl ${pnl>0?"profit":pnl<0?"loss":"flat"}">${positionIcon}<span>持倉損益</span><b>${pnl>=0?"+":"-"}${Math.abs(Math.round(pnl)).toLocaleString()} <em>(${pnlPct>=0?"+":""}${pnlPct.toFixed(1)}%)</em></b></div>`:""}
         <div class="sbottom">
           <input id="q_${c}" type="number" min="1" value="1">
           <button class="success stock-action-btn" onclick="stockAction('buy_stock','${c}')">${art("stockBuy","rev36-stock-action-art")}<span>買進</span></button>
@@ -15767,6 +15806,7 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
         <div class="portfolio-stat unrealized ${unrealClass}"><div class="mk finance-stat-label">未實現損益</div><div class="mv">${totalCost?`${totalPnl>=0?"+":"-"}$${Math.abs(Math.round(totalPnl)).toLocaleString()}`:"—"}</div><div class="pnl-pct">${totalCost?`${totalPct>=0?"+":""}${totalPct.toFixed(1)}%`:"尚未持股"}</div></div>
         <div class="portfolio-stat realized ${realClass}"><div class="mk finance-stat-label">已實現損益</div><div class="mv">${realized>=0?"+":"-"}$${Math.abs(Math.round(realized)).toLocaleString()}</div><div class="pnl-pct">已完成交易累計</div></div>
       </div><div class="stock-grid">${rows}</div>`;
+    restoreStockUiContext(uiContext)
   };
 
   openMissionHub=function(){
@@ -16059,6 +16099,20 @@ body:has(#modal.open) #mobileNav{visibility:hidden!important;pointer-events:none
   body.phone-landscape #market .sbottom input{font-size:11px!important;padding:5px 3px!important}
   body.phone-landscape .stock-action-btn{min-height:42px!important;padding:4px 5px!important;gap:4px!important;font-size:11px!important}
   body.phone-landscape .stock-action-btn .rev36-stock-action-art{width:25px!important;height:25px!important;flex-basis:25px!important}
+}
+</style>
+
+<style id="v19960-stock-context-authority">
+.stock-holding-badge{display:flex!important;align-items:center!important;gap:7px!important;margin-top:5px!important;padding:5px 7px!important;border-radius:9px!important;border:1px solid #d6e0ea!important;background:#f7fafc!important;color:#5e7186!important;font-size:9px!important;font-weight:900!important}
+.stock-holding-badge b{font-size:13px!important;color:#173b61!important;white-space:nowrap!important}
+.stock-holding-badge small{margin-left:auto!important;font-size:8.5px!important;color:#6b7d90!important;white-space:nowrap!important}
+.stock-holding-badge.has-stock{background:#eef6ff!important;border-color:#c7ddef!important}
+.stock-holding-badge.has-stock b{color:#155d9c!important}
+.stock-holding-badge.empty{opacity:.78!important}
+@media(max-width:980px) and (orientation:landscape){
+  body.phone-landscape .stock-holding-badge{margin-top:3px!important;padding:3px 5px!important;gap:4px!important;font-size:7.5px!important}
+  body.phone-landscape .stock-holding-badge b{font-size:10px!important}
+  body.phone-landscape .stock-holding-badge small{font-size:7px!important}
 }
 </style>
 
