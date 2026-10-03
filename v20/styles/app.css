@@ -18,12 +18,12 @@ button{font:inherit}
 .action-button{border:0;border-radius:12px;padding:11px 15px;font-weight:1000;background:#edf2f7;color:#2f4a66;cursor:pointer}
 .action-button.primary{background:#326fc0;color:white}.action-button:disabled{opacity:.4;cursor:not-allowed}
 .dice-result{margin-left:auto;font-weight:900}
-.game-layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:10px;align-items:start}
-.board-panel{border-radius:var(--radius);padding:7px;overflow:hidden}
+.game-layout{display:grid;grid-template-columns:minmax(0,1fr) clamp(260px,24vw,350px);gap:8px;align-items:start}
+.board-panel{border-radius:var(--radius);padding:7px;overflow:hidden;min-width:0}
 .board{position:relative;display:grid;grid-template-columns:repeat(11,minmax(0,1fr));grid-template-rows:repeat(9,minmax(0,1fr));aspect-ratio:1680/1040;overflow:hidden;border-radius:14px;background:#dfe8ef}
 .tile{position:relative;overflow:hidden;border:1px solid rgba(75,96,119,.48);background:#f8fbfd;min-width:0;min-height:0}
 .tile.corner{background:#f8eed0}
-.tile img.tile-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.tile img.tile-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}.tile.vertical img.tile-art{object-fit:contain;background:rgba(248,251,253,.96)}
 .tile__fallback-name{position:absolute;inset:0;display:grid;place-items:center;padding:6px;text-align:center;font-size:clamp(9px,1vw,15px);font-weight:1000;background:linear-gradient(180deg,#fff,#edf3f7)}
 .tile.has-art .tile__fallback-name{display:none}
 .tile__dynamic{position:absolute;left:4px;right:4px;bottom:3px;display:flex;justify-content:space-between;align-items:flex-end;gap:4px;pointer-events:none}
@@ -38,11 +38,11 @@ button{font:inherit}
 .center-stage__content{position:absolute;inset:0;display:grid;place-content:center;text-align:center;padding:20px}
 .center-stage__content h2{margin:0;font-size:28px;text-shadow:0 2px 8px rgba(255,255,255,.95)}
 .center-stage__content p{margin:7px 0 0;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.82);font-weight:900}
-.side-panel{display:grid;gap:10px}
+.side-panel{display:grid;gap:8px;min-width:0;align-content:start}
 .info-card{border-radius:var(--radius);padding:12px}
 .info-card h2{font-size:16px;margin:0 0 8px}
 .tile-info{line-height:1.65;font-size:13px}
 .event-log{display:flex;flex-direction:column;gap:6px;max-height:430px;overflow:auto}
 .event-entry{padding:7px 8px;border-radius:9px;background:#f2f6f9;font-size:12px;line-height:1.4}
-@media(max-width:1100px){.game-layout{grid-template-columns:1fr}.side-panel{grid-template-columns:1fr 1fr}}
-@media(max-width:760px){body{min-width:720px}.app-shell{padding:4px}.topbar{padding:6px 9px}.topbar h1{font-size:16px}.topbar p{font-size:9px}.players{padding:4px;gap:4px}.player-card{padding:5px}.toolbar{padding:4px}.action-button{padding:7px 9px;font-size:11px}.game-layout{grid-template-columns:1fr}.side-panel{display:none}}
+@media(max-width:1100px){.app-shell{width:min(1100px,100%);padding:6px}.game-layout{grid-template-columns:minmax(0,1fr) 270px;gap:6px}.side-panel{grid-template-columns:1fr}.players{gap:5px;padding:5px}.player-card{padding:6px}.player-card h3{font-size:12px}.player-stats{font-size:9px}.player-stats b{font-size:11px}.topbar{padding:8px 10px}.topbar h1{font-size:19px}.toolbar{padding:6px}.action-button{padding:8px 11px;font-size:12px}}
+@media(max-width:760px){body{min-width:900px}.app-shell{padding:4px}.topbar{padding:6px 9px}.topbar h1{font-size:16px}.topbar p{font-size:9px}.players{padding:4px;gap:4px}.player-card{padding:5px}.toolbar{padding:4px}.action-button{padding:7px 9px;font-size:11px}.game-layout{grid-template-columns:minmax(0,1fr) 245px;gap:5px}.side-panel{display:grid}}
