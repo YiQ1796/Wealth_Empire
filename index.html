@@ -10510,7 +10510,7 @@ function renderMarket(){
       </div>
       ${qty?`<div class="stock-position-pnl ${pnl>0?"profit":pnl<0?"loss":"flat"}"><span>持倉損益</span><b>${pnl>=0?"+":"-"}${Math.abs(Math.round(pnl)).toLocaleString()} <em>(${pnlPct>=0?"+":""}${pnlPct.toFixed(1)}%)</em></b></div>`:""}
       <div class="sbottom">
-        <input id="q_${c}" type="number" min="1" value="1">
+        <input id="q_${c}" type="number" min="1" step="1" inputmode="numeric" pattern="[0-9]*" value="1">
         <button class="success stock-action-btn" onclick="stockAction('buy_stock','${c}')"><span class="v19923-q02-art q02-buy" aria-hidden="true"></span>買</button>
         <button class="danger stock-action-btn" onclick="stockAction('sell_stock','${c}')"><span class="v19923-q02-art q02-sell" aria-hidden="true"></span>賣</button>
       </div>
@@ -12226,7 +12226,7 @@ function handleIncomingEvents(){
     }
     else if(e.kind==="stock"&&typeof e.data?.amount==="number"){
       const s=state.stocks[e.data.code];
-      const extra=e.data.side==="sell"?`已實現 ${e.data.realized>=0?"+":""}${Math.round(e.data.realized).toLocaleString()}`:`${e.data.qty} 股 × ${e.data.price}`;
+      const extra=e.data.side==="sell"?`已實現 ${e.data.realized>=0?"+":""}$${Math.round(e.data.realized).toLocaleString()}`:`${e.data.qty} 股 × $${e.data.price}`;
       moneyFx(
         `${e.data.side==="buy"?"股票買入":"股票賣出"}｜${s?.name||""}`,
         e.data.amount,
@@ -15787,10 +15787,10 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
           <div class="sprice">${s.price}</div>
           <div class="stock-day ${d>0?"up":d<0?"down":"flat"}">${trend}${dayPct>=0?"+":""}${dayPct.toFixed(1)}%</div>
         </div>
-        <div class="stock-holding-badge ${qty?"has-stock":"empty"}"><span>目前持有</span><b>${qty.toLocaleString()} 股</b>${qty?`<small>平均成本 ${Math.round(avg).toLocaleString()}</small>`:""}</div>
+        <div class="stock-holding-badge ${qty?"has-stock":"empty"}"><span>目前持有</span><b>${qty.toLocaleString()} 股</b>${qty?`<small>平均成本 $${Math.round(avg).toLocaleString()}</small>`:""}</div>
         ${qty?`<div class="stock-position-pnl ${pnl>0?"profit":pnl<0?"loss":"flat"}">${positionIcon}<span>持倉損益</span><b>${pnl>=0?"+":"-"}${Math.abs(Math.round(pnl)).toLocaleString()} <em>(${pnlPct>=0?"+":""}${pnlPct.toFixed(1)}%)</em></b></div>`:""}
         <div class="sbottom">
-          <input id="q_${c}" type="number" min="1" value="1">
+          <input id="q_${c}" type="number" min="1" step="1" inputmode="numeric" pattern="[0-9]*" value="1">
           <button class="success stock-action-btn" onclick="stockAction('buy_stock','${c}')">${art("stockBuy","rev36-stock-action-art")}<span>買進</span></button>
           <button class="danger stock-action-btn" onclick="stockAction('sell_stock','${c}')">${art("stockSell","rev36-stock-action-art")}<span>賣出</span></button>
         </div>
