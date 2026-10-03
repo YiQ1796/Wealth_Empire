@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>財富帝國 V19.9.56 WEB｜44 格桌機恢復版</title>
+<title>財富帝國 V19.9.58 WEB｜iPhone 好友房 TURN 修復候選</title>
 
 <meta name="theme-color" content="#102d4f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="screen-orientation" content="landscape">
-<meta name="description" content="財富帝國 V19.9.56 WEB - 修正 Windows 桌機誤套手機棋盤規則；保留 44 格八區連地與既有玩法">
+<meta name="description" content="財富帝國 V19.9.58 WEB - iPhone 對 iPhone WebRTC 增加 TURN 中繼 fallback；保留 44 格八區連地與既有玩法">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6577,7 +6577,7 @@ body.force-mobile-preview .controls #rollBtn{
 
 <div id="lobby" class="lobby">
   <div class="lobby-card">
-    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.55</span></div>
+    <div class="lobby-title">🌐 財富帝國｜網際網路臨時好友房 <span style="font-size:.46em;opacity:.72;white-space:nowrap">BUILD 19.9.58</span></div>
     <div class="sub">朋友不必在同一個 Wi‑Fi。兩支 iPhone 都用 Safari 開這個 HTTPS 網頁即可建立／加入好友房。建立成功後可直接把邀請連結傳給朋友。</div>
     <div id="iosOnlineNotice" class="ios-online-notice hidden"></div>
     <div class="invite-room-hint">網頁版玩法：兩支 iPhone 都開同一個 HTTPS 網址 → 一人建立房間 → 分享邀請 → 好友用 Safari 開啟邀請網址後加入。</div>
@@ -6620,7 +6620,7 @@ body.force-mobile-preview .controls #rollBtn{
 
 <div class="app">
   <div class="panel top">
-    <div><div class="title">📱 財富帝國 V19.9.56 WEB｜44格桌機修復｜八區連地</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
+    <div><div class="title">📱 財富帝國 V19.9.58 WEB｜iPhone 連線修復｜44格八區連地</div><div class="sub">免費網頁好友房｜公平 P2P 同步｜不需玩家註冊額外服務｜所有真人使用完全相同規則</div></div>
     <div class="top-tools">
       <button id="mobilePreviewBtn" class="ghost desktop-mobile-preview" onclick="toggleMobilePreview()">📱 全自適應手機預覽</button>
       <div class="room-pill">房間 <span id="topRoom">-----</span></div>
@@ -7694,7 +7694,7 @@ async function copyRoom(){
   const ok=await copyTextSafe(roomCode);
   toast(ok?"房號已複製":"無法自動複製，請長按房號複製")
 }
-const APP_BUILD_ID="19956";
+const APP_BUILD_ID="19958";
 window.__WEALTH_ASSET_GATE={build:APP_BUILD_ID,q05:{cols:5,rows:4,mode:"REV-C01-D01-board-pawns"},q07:{cols:5,rows:4,path:"./assets/v19941/rev_c01_d01_all20_v1.webp?v=19941"},revC01D01:{cols:5,rows:4,count:20}};
 function getInviteUrl(){
   if(!/^https?:$/.test(location.protocol))return null;
@@ -7745,22 +7745,103 @@ function showWaiting(){
     b.textContent=isHost?"⏳ 等待房間上線":"📲 分享房號";
   }
 }
+const WEBRTC_PUBLIC_RELAY={
+  username:"openrelayproject",
+  credential:"openrelayproject"
+};
 function peerOptions(){
+  // STUN is preferred for direct P2P. TURN is only used when carrier NAT / iPhone Safari
+  // cannot establish a direct path. Keeping UDP + TCP/TLS on 80/443 is important on mobile networks.
   return {
     debug:1,
     config:{
-      iceServers:[{
-        urls:[
-          "stun:stun.l.google.com:19302",
-          "stun:stun1.l.google.com:19302",
-          "stun:stun2.l.google.com:19302",
-          "stun:stun3.l.google.com:19302"
-        ]
-      }]
+      iceServers:[
+        {
+          urls:[
+            "stun:stun.l.google.com:19302",
+            "stun:stun1.l.google.com:19302",
+            "stun:stun2.l.google.com:19302",
+            "stun:stun3.l.google.com:19302",
+            "stun:openrelay.metered.ca:80"
+          ]
+        },
+        {
+          urls:[
+            "turn:openrelay.metered.ca:80",
+            "turn:openrelay.metered.ca:80?transport=tcp",
+            "turn:openrelay.metered.ca:443",
+            "turn:openrelay.metered.ca:443?transport=tcp",
+            "turns:openrelay.metered.ca:443?transport=tcp"
+          ],
+          username:WEBRTC_PUBLIC_RELAY.username,
+          credential:WEBRTC_PUBLIC_RELAY.credential
+        }
+      ],
+      iceCandidatePoolSize:4,
+      iceTransportPolicy:"all"
     }
   }
 }
 
+
+function setConnectionDetail(message){
+  const detail=$("connectionDetail");
+  if(detail)detail.textContent=message||""
+}
+function attachIceDiagnostics(conn,role){
+  if(!conn)return;
+  let attempts=0;
+  const attach=()=>{
+    const pc=conn.peerConnection;
+    if(!pc){
+      if(++attempts<30)setTimeout(attach,100);
+      return
+    }
+    if(pc.__wealthIceDiagnosticsAttached)return;
+    pc.__wealthIceDiagnosticsAttached=true;
+
+    const update=async()=>{
+      const ice=String(pc.iceConnectionState||"");
+      const state=String(pc.connectionState||"");
+      if(["new","checking"].includes(ice)){
+        setConnectionDetail("正在建立 WebRTC 通道：先嘗試直連，必要時自動改用 TURN 中繼…")
+      }else if(ice==="connected"||ice==="completed"||state==="connected"){
+        let path="WebRTC 通道已建立";
+        try{
+          const stats=await pc.getStats();
+          let pair=null;
+          stats.forEach(report=>{
+            if(report.type==="candidate-pair"&&(report.nominated||report.state==="succeeded"))pair=report
+          });
+          if(pair){
+            const local=stats.get(pair.localCandidateId);
+            const remote=stats.get(pair.remoteCandidateId);
+            const relay=local?.candidateType==="relay"||remote?.candidateType==="relay";
+            path=relay?"WebRTC 已透過 TURN 中繼連線（適用行動網路／嚴格 NAT）":"WebRTC 已直接連線";
+          }
+        }catch{}
+        setConnectionDetail(path)
+      }else if(ice==="failed"||state==="failed"){
+        setConnectionDetail("WebRTC ICE 建連失敗，正在重新嘗試直連／TURN 中繼…");
+        if(role==="guest"&&!isHost){
+          try{conn.close()}catch{}
+          if(mySeat!=null&&clientResumeToken)scheduleGuestReconnect("ICE failed");
+          else scheduleInitialJoinRetry(guestDisplayName||"玩家","ICE failed")
+        }
+      }else if(ice==="disconnected"){
+        setConnectionDetail("WebRTC 通道暫時中斷，正在等待網路恢復…")
+      }
+    };
+
+    pc.addEventListener("iceconnectionstatechange",update);
+    pc.addEventListener("connectionstatechange",update);
+    pc.addEventListener("icegatheringstatechange",()=>{
+      if(pc.iceGatheringState==="gathering")setConnectionDetail("正在搜尋可用的直連／TURN 網路路徑…")
+    });
+    update()
+  };
+  attach()
+}
 
 function isIOSDevice(){
   return /iPad|iPhone|iPod/.test(navigator.userAgent)||
@@ -7994,6 +8075,7 @@ function scheduleHostDisconnectGrace(seat,conn){
   hostDisconnectGraceTimers.set(seat,timer)
 }
 function handleIncomingConnection(conn){
+  attachIceDiagnostics(conn,"host");
   conn.on("open",()=>{
     if(!isHost)return;
     safeConnSend(conn,{type:"hello_required",allowResume:true})
@@ -8099,7 +8181,7 @@ async function joinInternetRoom(){
     mySeat=null;lastEventId=0
   }
   showWaiting();
-  $("connectionText").textContent=savedResume?"正在嘗試恢復上一局座位…":"正在連線到房間…";
+  $("connectionText").textContent=savedResume?"正在嘗試恢復上一局座位…":"正在連線到房間…"; setConnectionDetail("正在建立 WebRTC 通道：直連失敗時會自動嘗試 TURN 中繼。");
   openGuestPeer(name,savedResume?{seat:savedResume.seat,token:savedResume.token,lastEventId:savedResume.lastEventId,reconnect:true}:null)
 }
 
@@ -8122,6 +8204,7 @@ function openGuestPeer(name,resumeInfo=null){
     if(peer!==clientPeer||isHost)return;
     const conn=clientPeer.connect(peerRoomId(roomCode),{reliable:true});
     hostConn=conn;
+    attachIceDiagnostics(conn,"guest");
     wireHostConn(conn,name,resumeInfo)
   });
 
