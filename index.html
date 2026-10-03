@@ -7067,7 +7067,7 @@ let conns=new Map(),pendingJoinNames=new Map(),resumeTokens=new Map(),lastEventI
 let clientResumeToken="",guestDisplayName="",guestReconnectTimer=null,guestReconnectAttempts=0,guestHeartbeatTimer=null,lastHostActivity=0,hostSignalReconnectTimer=null,initialJoinRetryTimer=null,initialJoinRetryAttempts=0,autoGuestResumeAttempted=false,autoHostResumeAttempted=false;
 let guestReconnectInFlight=false,guestReconnectPendingReason="",guestConnectedSince=0,guestResumeHealthTimer=null,hostRecoverySaveTimer=null;
 let hostDisconnectGraceTimers=new Map();
-let relayLibraryPromise=null,hostRelayClient=null,guestRelayClient=null,hostRelayReady=false,guestRelayFallbackStarted=false;
+let relayLibraryPromise=null,hostRelayClient=null,guestRelayClient=null,hostRelayReady=false,hostRelayStarting=false,guestRelayFallbackStarted=false;
 let guestTransportMode="",guestRelayClientId="",guestRelayConnectTimer=null,hostRelayWatchdogTimer=null;
 let relayGuestConns=new Map();
 const RELAY_BROKER_URL="wss://broker.emqx.io:8084/mqtt",RELAY_PROTOCOL="v1";
@@ -7749,37 +7749,17 @@ function showWaiting(){
     b.textContent=isHost?"⏳ 等待房間上線":"📲 分享房號";
   }
 }
-const WEBRTC_PUBLIC_RELAY={
-  username:"openrelayproject",
-  credential:"openrelayproject"
-};
 function peerOptions(){
-  // STUN is preferred for direct P2P. TURN is only used when carrier NAT / iPhone Safari
-  // cannot establish a direct path. Keeping UDP + TCP/TLS on 80/443 is important on mobile networks.
+  // WebRTC is used only for direct P2P. If NAT traversal fails, the app switches
+  // to the HTTPS/WSS relay transport instead of depending on a hard-coded TURN credential.
   return {
     debug:1,
     config:{
       iceServers:[
-        {
-          urls:[
-            "stun:stun.l.google.com:19302",
-            "stun:stun1.l.google.com:19302",
-            "stun:stun2.l.google.com:19302",
-            "stun:stun3.l.google.com:19302",
-            "stun:openrelay.metered.ca:80"
-          ]
-        },
-        {
-          urls:[
-            "turn:openrelay.metered.ca:80",
-            "turn:openrelay.metered.ca:80?transport=tcp",
-            "turn:openrelay.metered.ca:443",
-            "turn:openrelay.metered.ca:443?transport=tcp",
-            "turns:openrelay.metered.ca:443?transport=tcp"
-          ],
-          username:WEBRTC_PUBLIC_RELAY.username,
-          credential:WEBRTC_PUBLIC_RELAY.credential
-        }
+        {urls:"stun:stun.l.google.com:19302"},
+        {urls:"stun:stun1.l.google.com:19302"},
+        {urls:"stun:stun2.l.google.com:19302"},
+        {urls:"stun:stun3.l.google.com:19302"}
       ],
       iceCandidatePoolSize:4,
       iceTransportPolicy:"all"
@@ -7808,7 +7788,7 @@ function attachIceDiagnostics(conn,role){
       const ice=String(pc.iceConnectionState||"");
       const state=String(pc.connectionState||"");
       if(["new","checking"].includes(ice)){
-        setConnectionDetail("正在建立 WebRTC 通道：先嘗試直連，必要時自動改用 TURN 中繼…")
+        setConnectionDetail("正在建立 WebRTC 直連；若直連失敗會自動改用 HTTPS/WSS 備援…")
       }else if(ice==="connected"||ice==="completed"||state==="connected"){
         let path="WebRTC 通道已建立";
         try{
@@ -7821,12 +7801,12 @@ function attachIceDiagnostics(conn,role){
             const local=stats.get(pair.localCandidateId);
             const remote=stats.get(pair.remoteCandidateId);
             const relay=local?.candidateType==="relay"||remote?.candidateType==="relay";
-            path=relay?"WebRTC 已透過 TURN 中繼連線（適用行動網路／嚴格 NAT）":"WebRTC 已直接連線";
+            path=relay?"WebRTC 已透過 relay candidate 連線":"WebRTC 已直接連線";
           }
         }catch{}
         setConnectionDetail(path)
       }else if(ice==="failed"||state==="failed"){
-        setConnectionDetail("WebRTC ICE 建連失敗，正在重新嘗試直連／TURN 中繼…");
+        setConnectionDetail("WebRTC 直連失敗，正在切換 HTTPS/WSS 備援…");
         if(role==="guest"&&!isHost){
           try{conn.close()}catch{}
           if(mySeat!=null&&clientResumeToken)scheduleGuestReconnect("ICE failed");
@@ -7840,7 +7820,7 @@ function attachIceDiagnostics(conn,role){
     pc.addEventListener("iceconnectionstatechange",update);
     pc.addEventListener("connectionstatechange",update);
     pc.addEventListener("icegatheringstatechange",()=>{
-      if(pc.iceGatheringState==="gathering")setConnectionDetail("正在搜尋可用的直連／TURN 網路路徑…")
+      if(pc.iceGatheringState==="gathering")setConnectionDetail("正在搜尋可用的 WebRTC 直連路徑…")
     });
     update()
   };
@@ -7968,6 +7948,7 @@ function relayPublish(client,topic,payload){
   client.publish(topic,JSON.stringify({payload,ts:Date.now()}),{qos:0,retain:false})
 }
 function stopHostRelayTransport(){
+  hostRelayStarting=false;
   clearInterval(hostRelayWatchdogTimer);hostRelayWatchdogTimer=null;
   const client=hostRelayClient;hostRelayClient=null;hostRelayReady=false;
   for(const conn of relayGuestConns.values()){if(conn)conn.open=false}
@@ -8004,15 +7985,18 @@ function makeHostRelayConn(base,clientId){
 async function startHostRelayTransport(){
   const localRoom=roomCode;
   if(!isHost||!isValidRoomCode(localRoom))return false;
+  if(hostRelayClient||hostRelayStarting)return true;
+  hostRelayStarting=true;
   try{await ensureRelayLibrary()}catch{
+    hostRelayStarting=false;
     if(isHost&&roomCode===localRoom)setConnectionDetail("P2P 可用；HTTPS 備援元件載入失敗，將繼續使用 WebRTC。");
     return false
   }
-  if(!isHost||roomCode!==localRoom)return false;
-  stopHostRelayTransport();
+  if(!isHost||roomCode!==localRoom){hostRelayStarting=false;return false}
+  stopHostRelayTransport();hostRelayStarting=true;
   const base=relayBase(localRoom),clientId=relayRandomId(`we-host-${localRoom}`);
   const client=window.mqtt.connect(RELAY_BROKER_URL,{clientId,clean:true,connectTimeout:8000,reconnectPeriod:1800,keepalive:15,protocolVersion:4});
-  hostRelayClient=client;
+  hostRelayClient=client;hostRelayStarting=false;
   client.on("connect",()=>{
     if(hostRelayClient!==client||!isHost||roomCode!==localRoom)return;
     hostRelayReady=true;
