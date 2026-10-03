@@ -10131,8 +10131,8 @@ function marketTick(){
     directionCount[direction>0?"up":direction<0?"down":"flat"]++;
     const baseMagnitude=direction===0?(Math.random()*.006-.003):direction*(.012+Math.random()*(def.vol||.07));
     let move=baseMagnitude;
-    if(Math.random()<.18){
-      const shockDirection=direction||(Math.random()<.5?1:-1);
+    if(direction!==0&&Math.random()<.18){
+      const shockDirection=direction;
       const shock=shockDirection*(.04+Math.random()*.09);
       move+=shock;
       shocks.push({code,shock})
@@ -15741,7 +15741,7 @@ body.force-mobile-preview .modal.project-choice-modal .project-grid{
       const d=s.price-s.prev,dayPct=s.prev?d/s.prev*100:0,h=me.stocks?.[c]||{qty:0,avg:0};
       const qty=Number(h.qty||0),avg=Number(h.avg||0),value=qty*s.price,cost=qty*avg,pnl=value-cost,pnlPct=cost?pnl/cost*100:0;
       totalValue+=value;totalCost+=cost;
-      const trend=d>0?"▲ 上漲":d<0?"▼ 下跌":"● 平盤";
+      const trend=d>0?"▲ 上漲 ":d<0?"▼ 下跌 ":"● 平盤 ";
       const positionIcon="";
       return `<div class="stock" data-code="${c}">
         <div class="stop">
