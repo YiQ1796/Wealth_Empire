@@ -1,30 +1,75 @@
-export const BOARD_VERSION="20.0.0-alpha.14";
+export const BOARD_VERSION="20.0.0-alpha.15";
 export const MAX_ROUNDS=30;
-const property=(number,name,group,price)=>({number,name,type:"property",group,price,rent:Math.round(price*0.14)});
-const event=(number,name,type)=>({number,name,type});
-export const BOARD_TILES=Object.freeze([
-event(1,"起點","start"),
-property(2,"星港住宅","海港區",2200),property(3,"海灣公寓","海港區",2460),property(4,"水岸別墅","海港區",2720),property(5,"海天御苑","海港區",2980),
-event(6,"投資機遇","investment"),
-property(7,"翡翠商圈","商業區",3240),property(8,"黃金商圈","商業區",3500),property(9,"百貨商場","商業區",3760),property(10,"影城","商業區",4020),
-event(11,"機會廣場","chance"),
-property(12,"科技園區","科技區",4280),property(13,"創新園區","科技區",4540),property(14,"雲端科技城","科技區",4800),
-event(15,"市場風雲","market"),
-property(16,"北城豪宅","住宅區",5060),property(17,"綠能園區","住宅區",5320),property(18,"湖畔豪宅","住宅區",5580),
-event(19,"命運廣場","fate"),
-property(20,"金融大道","金融區",5840),property(21,"商務中心","金融區",6100),property(22,"晶鑽商業區","金融區",6360),property(23,"國際金融城","金融區",6620),
-event(24,"全民同樂","group"),
-property(25,"山景莊園","豪宅區",6880),property(26,"天空豪宅","豪宅區",7140),property(27,"奢華莊園","豪宅區",7400),property(28,"頂級飯店","豪宅區",7660),
-event(29,"娛樂廣場","entertainment"),
-property(30,"國際飯店","觀光區",7920),property(31,"都會娛樂城","觀光區",8180),property(32,"世界中心","觀光區",8440),
-event(33,"策略奇遇","strategy"),
-property(34,"皇后大道","帝王區",8700),property(35,"帝王商圈","帝王區",8960),property(36,"帝國廣場","帝王區",9220)
+export const MAX_PROPERTY_LEVEL=2;
+export const COMPLETE_GROUP_RENT_BONUS=0.25;
+export const PROPERTY_LEVEL_RENT_BONUS=0.65;
+export const PROPERTY_UPGRADE_COST_RATE=0.5;
+
+export const GROUP_ORDER=Object.freeze([
+  "海港區","商業區","科技區","住宅區",
+  "金融區","觀光區","豪宅區","帝王區"
 ]);
-export const CORNER_INDEXES=Object.freeze([0,10,18,28]);
-export const GROUP_SIZES=Object.freeze({"海港區":4,"商業區":4,"科技區":3,"住宅區":3,"金融區":4,"豪宅區":4,"觀光區":3,"帝王區":3});
+export const GROUP_SIZES=Object.freeze(Object.fromEntries(GROUP_ORDER.map(group=>[group,3])));
+
+const property=(number,name,slot)=>{
+  const group=GROUP_ORDER[Math.floor(slot/3)];
+  const price=2200+slot*260;
+  return{number,name,type:"property",group,price,rent:Math.round(price*0.14)};
+};
+const event=(number,name,type)=>({number,name,type});
+
+export const BOARD_TILES=Object.freeze([
+  event(1,"起點","start"),
+  property(2,"星港住宅",0),
+  event(3,"機會","chance"),
+  property(4,"海灣公寓",1),
+  event(5,"稅務局","tax"),
+  property(6,"水岸別墅",2),
+  event(7,"中央車站","station"),
+  property(8,"翡翠商圈",3),
+  event(9,"命運","fate"),
+  property(10,"黃金商圈",4),
+  event(11,"高低骰對決","highlow"),
+  property(12,"百貨商場",5),
+  event(13,"國際機場","station"),
+  property(14,"科技園區",6),
+  event(15,"機會","chance"),
+  property(16,"創新園區",7),
+  event(17,"收購中心","acquisition"),
+  property(18,"雲端科技城",8),
+  property(19,"北城豪宅",9),
+  event(20,"財富賽馬場","horse"),
+  property(21,"綠能園區",10),
+  property(22,"湖畔豪宅",11),
+  event(23,"股市事件","market"),
+  property(24,"金融大道",12),
+  event(25,"法院","court"),
+  property(26,"商務中心",13),
+  event(27,"命運","fate"),
+  property(28,"晶鑽商業區",14),
+  event(29,"國際港口","station"),
+  property(30,"影城",15),
+  event(31,"醫療中心","hospital"),
+  property(32,"國際飯店",16),
+  event(33,"機會","chance"),
+  property(34,"頂級飯店",17),
+  event(35,"跨海大橋","station"),
+  property(36,"山景莊園",18),
+  event(37,"命運","fate"),
+  property(38,"天空豪宅",19),
+  event(39,"地產拍賣行","auction"),
+  property(40,"奢華莊園",20),
+  property(41,"皇后大道",21),
+  event(42,"城市更新局","urban"),
+  property(43,"帝王商圈",22),
+  property(44,"世界中心",23)
+]);
+
+export const CORNER_INDEXES=Object.freeze([0,12,22,34]);
+
 export function boardPlacement(index){
-  if(index<=10)return{row:1,col:index+1,orientation:"horizontal"};
-  if(index<=17)return{row:index-9,col:11,orientation:"vertical"};
-  if(index<=28)return{row:9,col:29-index,orientation:"horizontal"};
-  return{row:37-index,col:1,orientation:"vertical"};
+  if(index<=12)return{row:1,col:index+1,orientation:"horizontal"};
+  if(index<=21)return{row:index-11,col:13,orientation:"vertical"};
+  if(index<=34)return{row:11,col:35-index,orientation:"horizontal"};
+  return{row:45-index,col:1,orientation:"vertical"};
 }
