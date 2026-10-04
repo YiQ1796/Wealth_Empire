@@ -12,7 +12,11 @@
 *{box-sizing:border-box}
 html,body{
   margin:0;
-  min-height:100%;
+  width:100%;
+  height:100%;
+  min-height:0;
+  overflow:hidden;
+  overscroll-behavior:none;
   font-family:system-ui,-apple-system,"Segoe UI","Microsoft JhengHei",sans-serif;
   background:var(--bg);
   color:var(--text)
@@ -20,7 +24,16 @@ html,body{
 button{font:inherit}
 button:focus-visible{outline:3px solid rgba(50,111,192,.25);outline-offset:2px}
 
-.app-shell{width:min(1680px,100%);margin:auto;padding:8px}
+.app-shell{
+  width:min(1680px,100%);
+  height:100dvh;
+  margin:auto;
+  padding:7px;
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr);
+  gap:6px;
+  overflow:hidden
+}
 .topbar,.board-panel,.control-panel{
   background:var(--panel);
   border:1px solid var(--line);
@@ -32,7 +45,7 @@ button:focus-visible{outline:3px solid rgba(50,111,192,.25);outline-offset:2px}
   align-items:center;
   padding:9px 14px;
   border-radius:var(--radius);
-  margin-bottom:7px
+  margin-bottom:0
 }
 .topbar h1{margin:0;font-size:22px}
 .topbar h1 span{font-size:13px;color:var(--muted)}
@@ -40,18 +53,33 @@ button:focus-visible{outline:3px solid rgba(50,111,192,.25);outline-offset:2px}
 .round-badge{padding:8px 11px;border-radius:12px;background:#f8f1dd;font-weight:1000}
 
 .game-layout{
+  min-height:0;
+  height:100%;
   display:grid;
-  grid-template-columns:minmax(0,1fr) clamp(220px,16vw,245px);
+  grid-template-columns:minmax(0,1fr) clamp(205px,14vw,225px);
   gap:6px;
-  align-items:stretch
+  align-items:stretch;
+  overflow:hidden
 }
-.board-panel{border-radius:var(--radius);padding:6px;overflow:hidden;min-width:0}
+.board-panel{
+  min-width:0;
+  min-height:0;
+  height:100%;
+  border-radius:var(--radius);
+  padding:6px;
+  overflow:hidden;
+  display:flex
+}
 .board{
   position:relative;
   display:grid;
-  grid-template-columns:8.6% repeat(9,minmax(0,1fr)) 8.6%;
+  width:100%;
+  height:100%;
+  min-width:0;
+  min-height:0;
+  grid-template-columns:9.4% repeat(9,minmax(0,1fr)) 9.4%;
   grid-template-rows:10.2% repeat(7,minmax(0,1fr)) 10.2%;
-  aspect-ratio:1.54;
+  aspect-ratio:auto;
   overflow:hidden;
   border-radius:14px;
   background:#dfe8ef
@@ -73,7 +101,11 @@ button:focus-visible{outline:3px solid rgba(50,111,192,.25);outline-offset:2px}
   object-fit:cover;
   display:block
 }
-.tile.vertical img.tile-art{object-fit:cover;background:none}
+.tile.vertical img.tile-art{
+  object-fit:fill;
+  object-position:center;
+  background:none
+}
 .tile__fallback-name{
   position:absolute;
   inset:0;
@@ -184,9 +216,12 @@ button:focus-visible{outline:3px solid rgba(50,111,192,.25);outline-offset:2px}
 
 .right-rail{
   min-width:0;
+  min-height:0;
+  height:100%;
   display:flex;
   flex-direction:column;
-  gap:6px
+  gap:6px;
+  overflow:hidden
 }
 .control-panel{
   min-width:0;
@@ -270,6 +305,7 @@ button:focus-visible{outline:3px solid rgba(50,111,192,.25);outline-offset:2px}
 .action-button:disabled{opacity:.4;cursor:not-allowed}
 
 .quick-dock{
+  flex:0 0 auto;
   margin-top:auto;
   display:grid;
   grid-template-columns:repeat(4,minmax(0,1fr));
@@ -416,12 +452,12 @@ button:focus-visible{outline:3px solid rgba(50,111,192,.25);outline-offset:2px}
 .event-entry{padding:8px 9px;border-radius:9px;background:#f2f6f9;font-size:12px;line-height:1.4}
 
 @media(max-width:1100px){
-  .app-shell{width:min(1100px,100%);padding:5px}
+  .app-shell{width:min(1100px,100%);height:100dvh;padding:5px}
   .topbar{padding:7px 9px}
   .topbar h1{font-size:18px}
   .topbar p{font-size:9px}
-  .game-layout{grid-template-columns:minmax(0,1fr) 215px;gap:5px}
-  .board{grid-template-columns:8.8% repeat(9,minmax(0,1fr)) 8.8%}
+  .game-layout{grid-template-columns:minmax(0,1fr) 205px;gap:5px}
+  .board{grid-template-columns:9.6% repeat(9,minmax(0,1fr)) 9.6%}
   .control-panel{padding:6px}
   .control-panel__header h2{font-size:13px}
   .player-card{padding:5px}
@@ -432,11 +468,11 @@ button:focus-visible{outline:3px solid rgba(50,111,192,.25);outline-offset:2px}
 }
 
 @media(max-width:760px){
-  body{min-width:920px}
+  body{min-width:920px;height:100dvh;overflow:hidden}
   .app-shell{padding:4px}
   .topbar{margin-bottom:4px}
-  .game-layout{grid-template-columns:minmax(0,1fr) 205px;gap:4px}
-  .board{grid-template-columns:9% repeat(9,minmax(0,1fr)) 9%}
+  .game-layout{grid-template-columns:minmax(0,1fr) 195px;gap:4px}
+  .board{grid-template-columns:9.8% repeat(9,minmax(0,1fr)) 9.8%}
   .quick-dock{padding:5px;gap:4px}
   .quick-button{min-width:0;padding:6px 4px;font-size:16px}
   .quick-button span{font-size:8px}
@@ -446,4 +482,33 @@ button:focus-visible{outline:3px solid rgba(50,111,192,.25);outline-offset:2px}
   background:#f6d977;
   color:#5d4300;
   box-shadow:0 0 0 2px rgba(214,163,61,.2) inset;
+}
+
+@media(max-height:820px){
+  .app-shell{padding:4px;gap:4px}
+  .topbar{padding:5px 9px;border-radius:14px}
+  .topbar h1{font-size:17px}
+  .topbar h1 span{font-size:10px}
+  .topbar p{font-size:8px}
+  .round-badge{padding:5px 8px;font-size:12px}
+  .control-panel{padding:5px}
+  .control-panel__header{margin-bottom:4px}
+  .control-panel__header h2{font-size:13px}
+  .players.compact-players{gap:3px}
+  .player-card{padding:4px 5px}
+  .player-card h3{font-size:9px}
+  .player-stats{gap:3px;font-size:6px}
+  .player-stats b{font-size:8px}
+  .control-actions{gap:3px;margin-top:4px}
+  .action-button{padding:6px 4px;font-size:8px}
+  .action-button.primary{font-size:10px}
+  .quick-dock{padding:4px;gap:3px;border-radius:12px}
+  .quick-button{padding:5px 3px;font-size:14px}
+  .quick-button span{font-size:7px}
+}
+@media(max-height:680px){
+  .topbar p{display:none}
+  .control-panel__header p{display:none}
+  .player-stats span:nth-child(2){display:none}
+  .quick-button{font-size:13px}
 }
