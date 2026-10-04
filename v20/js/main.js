@@ -15,6 +15,12 @@ document.getElementById("confirmPurchaseButton").addEventListener("click",()=>en
 document.getElementById("declinePurchaseButton").addEventListener("click",()=>engine.declineCurrentProperty());
 document.getElementById("endTurnButton").addEventListener("click",()=>engine.endTurn());
 
+document.getElementById("propertyTabList").addEventListener("click",event=>{
+  const button=event.target.closest("[data-upgrade-property]");
+  if(!button)return;
+  engine.upgradeProperty(Number(button.dataset.upgradeProperty));
+});
+
 document.querySelectorAll(".feature-tab").forEach(button=>{
   button.addEventListener("click",()=>{
     const target=button.dataset.tab;
