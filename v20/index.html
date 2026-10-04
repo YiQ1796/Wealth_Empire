@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#f3ead3">
-<title>財富帝國 V20 Alpha 2</title>
+<title>財富帝國 V20 Alpha 3</title>
 <link rel="stylesheet" href="./styles/app.css">
 </head>
 <body>
 <main class="app-shell">
   <header class="topbar">
     <div>
-      <h1>財富帝國 <span>V20 Alpha 2</span></h1>
+      <h1>財富帝國 <span>V20 Alpha 3</span></h1>
       <p>36 格｜28 地產｜8 事件｜乾淨重製線</p>
     </div>
     <div class="round-badge">ROUND <strong id="roundValue">1</strong> / 30</div>
@@ -40,15 +40,31 @@
       </div>
     </div>
 
-    <aside class="side-panel">
-      <section class="info-card">
-        <h2>目前格子</h2>
-        <div id="currentTileInfo" class="tile-info">—</div>
+    <aside class="side-panel" aria-label="股票市場與回合資訊">
+      <section class="info-card stock-panel">
+        <div class="stock-panel__header">
+          <div>
+            <h2>股票市場</h2>
+            <p>本回合行情</p>
+          </div>
+          <span class="market-badge">開盤</span>
+        </div>
+        <div id="stockGrid" class="stock-grid"></div>
       </section>
-      <section class="info-card">
-        <h2>即時事件</h2>
-        <div id="eventLog" class="event-log"></div>
-      </section>
+
+      <details class="info-card turn-details">
+        <summary>回合資訊</summary>
+        <div class="turn-details__body">
+          <section>
+            <h3>目前格子</h3>
+            <div id="currentTileInfo" class="tile-info">—</div>
+          </section>
+          <section>
+            <h3>即時事件</h3>
+            <div id="eventLog" class="event-log"></div>
+          </section>
+        </div>
+      </details>
     </aside>
   </section>
 </main>

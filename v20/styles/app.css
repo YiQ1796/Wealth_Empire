@@ -18,7 +18,7 @@ button{font:inherit}
 .action-button{border:0;border-radius:12px;padding:11px 15px;font-weight:1000;background:#edf2f7;color:#2f4a66;cursor:pointer}
 .action-button.primary{background:#326fc0;color:white}.action-button:disabled{opacity:.4;cursor:not-allowed}
 .dice-result{margin-left:auto;font-weight:900}
-.game-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,32%);gap:8px;align-items:start}
+.game-layout{display:grid;grid-template-columns:minmax(0,1fr) clamp(330px,27vw,380px);gap:8px;align-items:start}
 .board-panel{border-radius:var(--radius);padding:7px;overflow:hidden;min-width:0}
 .board{position:relative;display:grid;grid-template-columns:repeat(11,minmax(0,1fr));grid-template-rows:repeat(9,minmax(0,1fr));aspect-ratio:1680/1040;overflow:hidden;border-radius:14px;background:#dfe8ef}
 .tile{position:relative;overflow:hidden;border:1px solid rgba(75,96,119,.48);background:#f8fbfd;min-width:0;min-height:0}
@@ -32,17 +32,38 @@ button{font:inherit}
 .tile__tokens{position:absolute;right:4px;top:4px;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:2px;max-width:48px}
 .token{width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.28)}
 .center-stage{grid-column:2 / 11;grid-row:2 / 9;position:relative;overflow:hidden;background:linear-gradient(135deg,#e5eef3,#fbf3dc)}
-.center-stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
+.center-stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;image-rendering:auto}
 .center-stage.has-art img{display:block}
 .center-stage__shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.18))}
 .center-stage__content{position:absolute;inset:0;display:grid;place-content:center;text-align:center;padding:20px}
 .center-stage__content h2{margin:0;font-size:28px;text-shadow:0 2px 8px rgba(255,255,255,.95)}
 .center-stage__content p{margin:7px 0 0;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.82);font-weight:900}
 .side-panel{display:grid;gap:8px;min-width:0;align-content:start}
+.stock-panel{padding:10px}
+.stock-panel__header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.stock-panel__header h2{margin:0;font-size:18px}
+.stock-panel__header p{margin:2px 0 0;color:var(--muted);font-size:11px;font-weight:800}
+.market-badge{padding:5px 9px;border-radius:999px;background:#e8f7ee;color:#24764a;font-size:11px;font-weight:1000}
+.stock-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.stock-card{min-width:0;border:1px solid #dfe7ee;border-radius:11px;padding:7px 8px;background:#fbfdff}
+.stock-card__top{display:flex;justify-content:space-between;align-items:flex-start;gap:5px}
+.stock-card__top strong{display:block;font-size:12px;line-height:1.15}
+.stock-card__top span{display:block;margin-top:2px;color:var(--muted);font-size:8px;font-weight:800}
+.stock-trend{font-style:normal;font-size:9px;font-weight:1000;white-space:nowrap}
+.stock-trend.up{color:#d74c43}.stock-trend.down{color:#26885f}.stock-trend.flat{color:#718096}
+.stock-card__price{margin-top:5px;font-size:20px;font-weight:1000;line-height:1}
+.stock-card__holding{margin-top:4px;color:var(--muted);font-size:9px;font-weight:800}
+.turn-details{padding:0;overflow:hidden}
+.turn-details>summary{cursor:pointer;list-style:none;padding:9px 11px;font-size:12px;font-weight:1000}
+.turn-details>summary::-webkit-details-marker{display:none}
+.turn-details__body{display:grid;gap:8px;padding:0 10px 10px}
+.turn-details__body h3{margin:0 0 4px;font-size:11px}
+.turn-details .event-log{max-height:120px}
+
 .info-card{border-radius:var(--radius);padding:12px}
 .info-card h2{font-size:16px;margin:0 0 8px}
 .tile-info{line-height:1.65;font-size:13px}
 .event-log{display:flex;flex-direction:column;gap:6px;max-height:430px;overflow:auto}
 .event-entry{padding:7px 8px;border-radius:9px;background:#f2f6f9;font-size:12px;line-height:1.4}
-@media(max-width:1100px){.app-shell{width:min(1100px,100%);padding:6px}.game-layout{grid-template-columns:minmax(0,1fr) 300px;gap:6px}.side-panel{grid-template-columns:1fr}.players{gap:5px;padding:5px}.player-card{padding:6px}.player-card h3{font-size:12px}.player-stats{font-size:9px}.player-stats b{font-size:11px}.topbar{padding:8px 10px}.topbar h1{font-size:19px}.toolbar{padding:6px}.action-button{padding:8px 11px;font-size:12px}}
-@media(max-width:760px){body{min-width:900px}.app-shell{padding:4px}.topbar{padding:6px 9px}.topbar h1{font-size:16px}.topbar p{font-size:9px}.players{padding:4px;gap:4px}.player-card{padding:5px}.toolbar{padding:4px}.action-button{padding:7px 9px;font-size:11px}.game-layout{grid-template-columns:minmax(0,1fr) 290px;gap:5px}.side-panel{display:grid}}
+@media(max-width:1100px){.app-shell{width:min(1100px,100%);padding:6px}.game-layout{grid-template-columns:minmax(0,1fr) 305px;gap:6px}.side-panel{grid-template-columns:1fr}.players{gap:5px;padding:5px}.player-card{padding:6px}.player-card h3{font-size:12px}.player-stats{font-size:9px}.player-stats b{font-size:11px}.topbar{padding:8px 10px}.topbar h1{font-size:19px}.toolbar{padding:6px}.action-button{padding:8px 11px;font-size:12px}}
+@media(max-width:760px){body{min-width:920px}.app-shell{padding:4px}.topbar{padding:6px 9px}.topbar h1{font-size:16px}.topbar p{font-size:9px}.players{padding:4px;gap:4px}.player-card{padding:5px}.toolbar{padding:4px}.action-button{padding:7px 9px;font-size:11px}.game-layout{grid-template-columns:minmax(0,1fr) 300px;gap:5px}.side-panel{display:grid}.stock-card{padding:6px}.stock-card__price{font-size:17px}}
