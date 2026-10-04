@@ -12,7 +12,7 @@ export function mountStaticBoard(boardElement){
     node.style.gridRow=String(placement.row);
     node.style.gridColumn=String(placement.col);
 
-    const artPath=TILE_ART[tile.name];
+    const artPath=TILE_ART[tile.number];
     if(artPath){
       const img=document.createElement("img");
       img.className="tile-art";

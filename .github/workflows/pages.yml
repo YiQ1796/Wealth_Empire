@@ -41,27 +41,27 @@ jobs:
           PY
           node --check /tmp/wealth_empire_inline.js
 
+      - name: Expand V20 tile art
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf v20/assets/tiles-v2
+          mkdir -p v20/assets/tiles-v2
+          for pack in             v20/assets/packs/tiles_01_10.zip             v20/assets/packs/tiles_11_20.zip             v20/assets/packs/tiles_21_30.zip             v20/assets/packs/tiles_31_36.zip
+          do
+            unzip -oq "$pack" -d v20/assets/tiles-v2
+          done
+
       - name: Validate V20 visual assets
         shell: bash
         run: |
           set -euo pipefail
           test -s v20/assets/board/center-bg.webp
-          for file in \
-            WE_T11_WATERFRONT_VILLA_V2.webp \
-            WE_T12_SEA_SKY_GARDEN_V2.webp \
-            WE_T13_EMERALD_SHOPPING_V2.webp \
-            WE_T14_GOLDEN_SHOPPING_V2.webp \
-            WE_T15_DEPARTMENT_STORE_V2.webp \
-            WE_T16_CINEMA_V2.webp \
-            WE_T17_TECH_PARK_V2.webp \
-            WE_T18_INNOVATION_PARK_V2.webp \
-            WE_T19_CLOUD_TECH_CITY_V2.webp \
-            WE_T20_NORTH_CITY_MANSION_V2.webp
-          do
-            test -s "v20/assets/tiles/$file"
+          for n in $(seq -w 1 36); do
+            test -s "v20/assets/tiles-v2/TILE_${n}.webp"
           done
-          test "$(find v20/assets/tiles -maxdepth 1 -name 'WE_T*.webp' | wc -l)" -eq 10
-          echo "V20 visual assets: center background + 10 complete-tile WebPs PASS"
+          test "$(find v20/assets/tiles-v2 -maxdepth 1 -name 'TILE_*.webp' | wc -l)" -eq 36
+          echo "V20 visual assets: center background + 36 complete-tile WebPs PASS"
 
       - name: Validate V20 module syntax
         shell: bash

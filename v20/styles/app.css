@@ -41,7 +41,7 @@ button:focus-visible{outline:3px solid rgba(50,111,192,.25);outline-offset:2px}
   min-height:0;
   height:100%;
   display:grid;
-  grid-template-columns:minmax(0,1fr) clamp(205px,13vw,220px);
+  grid-template-columns:minmax(0,1fr) clamp(300px,24vw,390px);
   gap:6px;
   align-items:stretch;
   overflow:hidden
@@ -104,6 +104,10 @@ button:focus-visible{outline:3px solid rgba(50,111,192,.25);outline-offset:2px}
   background:linear-gradient(180deg,#fff,#edf3f7)
 }
 .tile.vertical .tile__fallback-name{font-size:clamp(8px,.72vw,12px)}
+.tile.has-art{
+  background:transparent;
+  border-color:transparent
+}
 .tile.has-art .tile__fallback-name{display:none}
 .tile__dynamic{
   position:absolute;
@@ -446,7 +450,7 @@ button:focus-visible{outline:3px solid rgba(50,111,192,.25);outline-offset:2px}
 
 @media(max-width:1100px){
   .app-shell{width:min(1100px,100%);height:100dvh;padding:5px}
-  .game-layout{grid-template-columns:minmax(0,1fr) 200px;gap:5px}
+  .game-layout{grid-template-columns:minmax(0,1fr) 280px;gap:5px}
   .board{grid-template-columns:8.6% repeat(9,minmax(0,1fr)) 8.6%}
   .control-panel{padding:6px}
   .control-panel__header h2{font-size:13px}
@@ -460,7 +464,7 @@ button:focus-visible{outline:3px solid rgba(50,111,192,.25);outline-offset:2px}
 @media(max-width:760px){
   body{min-width:920px;height:100dvh;overflow:hidden}
   .app-shell{padding:4px}
-  .game-layout{grid-template-columns:minmax(0,1fr) 190px;gap:4px}
+  .game-layout{grid-template-columns:minmax(0,1fr) 260px;gap:4px}
   .board{grid-template-columns:8.8% repeat(9,minmax(0,1fr)) 8.8%}
   .quick-dock{padding:5px;gap:4px}
   .quick-button{min-width:0;padding:6px 4px;font-size:16px}
@@ -575,4 +579,58 @@ button:focus-visible{outline:3px solid rgba(50,111,192,.25);outline-offset:2px}
   .purchase-card h2{font-size:18px}
   .purchase-summary{margin-top:10px}
   .purchase-actions{margin-top:10px}
+}
+
+.stock-rail-panel{
+  min-width:0;
+  min-height:0;
+  overflow:hidden;
+  padding:8px;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:var(--panel);
+  box-shadow:var(--shadow)
+}
+.stock-rail-panel__header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:6px
+}
+.stock-rail-panel__header h2{margin:0;font-size:17px}
+.stock-rail-panel__header p{margin:1px 0 0;color:var(--muted);font-size:9px;font-weight:800}
+.market-badge{padding:4px 7px;border-radius:999px;background:#e8f7ee;color:#24764a;font-size:9px;font-weight:1000}
+.stock-grid--rail{
+  height:calc(100% - 34px);
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-rows:repeat(5,minmax(0,1fr));
+  gap:5px
+}
+.stock-grid--rail .stock-card{
+  min-height:0;
+  padding:6px 7px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center
+}
+.stock-grid--rail .stock-name-line strong{font-size:10px}
+.stock-grid--rail .stock-name-line b{font-size:14px}
+.stock-grid--rail .stock-trend{font-size:8px}
+.stock-grid--rail .stock-card__meta{font-size:7px;margin-top:3px}
+@media(max-width:1100px){
+  .stock-grid--rail{gap:3px}
+  .stock-grid--rail .stock-card{padding:4px 5px}
+  .stock-grid--rail .stock-name-line strong{font-size:9px}
+  .stock-grid--rail .stock-name-line b{font-size:12px}
+  .stock-grid--rail .stock-trend{font-size:7px}
+}
+@media(max-height:760px){
+  .stock-rail-panel{padding:5px}
+  .stock-rail-panel__header{margin-bottom:4px}
+  .stock-rail-panel__header h2{font-size:13px}
+  .stock-rail-panel__header p{display:none}
+  .stock-grid--rail{height:calc(100% - 22px);gap:3px}
+  .stock-grid--rail .stock-card{padding:3px 4px}
+  .stock-grid--rail .stock-card__meta{display:none}
 }

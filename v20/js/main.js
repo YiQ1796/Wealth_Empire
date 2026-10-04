@@ -7,7 +7,7 @@ const state=createInitialState();
 const engine=new GameEngine(state,render);
 
 mountStaticBoard(document.getElementById("board"));
-renderStockMarket(document.getElementById("stockGrid"));
+renderStockMarket(document.getElementById("stockGrid"));\nrenderStockMarket(document.getElementById("stockGridFixed"));
 render(state);
 
 document.getElementById("rollButton").addEventListener("click",()=>engine.roll());

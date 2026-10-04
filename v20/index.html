@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#f3ead3">
-<title>財富帝國 V20 Alpha 12</title>
+<title>財富帝國 V20 Alpha 13</title>
 <link rel="stylesheet" href="./styles/app.css">
 </head>
 <body>
@@ -23,22 +23,33 @@
       </div>
     </div>
 
-    <aside class="right-rail" aria-label="玩家與回合控制">
+    <aside class="right-rail" aria-label="遊戲資訊">
       <section class="control-panel">
-      <div class="control-panel__header">
-        <div class="turn-heading">
-          <h2>回合控制</h2>
-          <div class="round-inline">ROUND <strong id="roundValue">1</strong> / 30</div>
+        <div class="control-panel__header">
+          <div class="turn-heading">
+            <h2>玩家資訊</h2>
+            <div class="round-inline">ROUND <strong id="roundValue">1</strong> / 30</div>
+          </div>
+          <div class="dice-result">🎲 <strong id="diceValue">—</strong></div>
         </div>
-        <div class="dice-result">🎲 <strong id="diceValue">—</strong></div>
-      </div>
 
-      <section id="players" class="players compact-players" aria-label="玩家資訊"></section>
+        <section id="players" class="players compact-players" aria-label="玩家資訊"></section>
 
-      <div class="control-actions control-actions--compact">
-        <button id="rollButton" class="action-button primary">🎲 擲骰子</button>
-        <button id="endTurnButton" class="action-button">➡️ 結束回合</button>
-      </div>
+        <div class="control-actions control-actions--compact">
+          <button id="rollButton" class="action-button primary">🎲 擲骰子</button>
+          <button id="endTurnButton" class="action-button">➡️ 結束回合</button>
+        </div>
+      </section>
+
+      <section class="stock-rail-panel" aria-label="股票資訊">
+        <div class="stock-rail-panel__header">
+          <div>
+            <h2>股票資訊</h2>
+            <p>本回合行情</p>
+          </div>
+          <span class="market-badge">開盤</span>
+        </div>
+        <div id="stockGridFixed" class="stock-grid stock-grid--rail"></div>
       </section>
 
       <nav class="quick-dock" aria-label="快捷功能">
@@ -72,7 +83,7 @@
     <header class="dialog-header">
       <div>
         <h2>股票市場</h2>
-        <p>本回合行情</p>
+        <p>完整行情與後續買賣入口</p>
       </div>
       <button class="dialog-close" data-close-dialog aria-label="關閉">✕</button>
     </header>
