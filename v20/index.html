@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#eef3f7">
-<title>財富帝國 V20 Alpha 14</title>
+<title>財富帝國 V20 Alpha 15</title>
 <link rel="stylesheet" href="./styles/app.css">
 </head>
 <body>
 <main class="app-shell">
   <section class="game-layout">
     <div class="board-panel">
-      <div id="board" class="board" aria-label="財富帝國棋盤">
+      <div id="board" class="board" aria-label="財富帝國 44 格棋盤">
         <div id="centerStage" class="center-stage">
           <img id="centerBackground" alt="" aria-hidden="true">
           <div class="center-stage__shade"></div>
@@ -50,7 +50,7 @@
           <img src="./assets/ui/QUICK_STOCK.webp" alt=""><span>股票</span>
         </button>
         <button class="feature-tab" data-tab="property" aria-selected="false">
-          <img src="./assets/ui/QUICK_PROPERTY.webp" alt=""><span>房產</span>
+          <img src="./assets/ui/QUICK_PROPERTY.webp" alt=""><span>我的房產</span>
         </button>
         <button class="feature-tab" data-tab="item" aria-selected="false">
           <img src="./assets/ui/QUICK_ITEM.webp" alt=""><span>道具</span>
@@ -70,8 +70,12 @@
         </div>
 
         <div class="feature-pane" data-pane="property">
-          <div class="feature-heading"><div><h2>我的房產</h2><p>持有土地與租金</p></div></div>
+          <div class="feature-heading"><div><h2>我的房產</h2><p>24 塊地產｜8 區域｜最高 LV.2</p></div></div>
+          <div id="propertyRegionSummary" class="region-summary" aria-label="區域完成度"></div>
+          <div class="property-section-title">持有地產</div>
           <div id="propertyTabList" class="property-list"></div>
+          <div class="property-section-title">收租紀錄</div>
+          <div id="propertyRentHistory" class="rent-history"></div>
         </div>
 
         <div class="feature-pane" data-pane="item">
