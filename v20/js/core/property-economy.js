@@ -35,7 +35,7 @@ export function upgradeCost(tile){
   return Math.round(tile.price*PROPERTY_UPGRADE_COST_RATE);
 }
 
-export function canUpgradeProperty(state,playerSeat,tile){
+export function canUpgradeProperty(playerSeat,tile){
   return Boolean(
     tile&&
     tile.type==="property"&&
