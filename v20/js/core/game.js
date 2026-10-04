@@ -1,5 +1,5 @@
 import{MAX_PROPERTY_LEVEL}from"../data/board.js";
-import{ownsCompleteGroup,rentFor,upgradeCost}from"./property-economy.js";
+import{canUpgradeProperty,ownsCompleteGroup,rentFor,upgradeCost}from"./property-economy.js";
 
 export class GameEngine{
   constructor(state,onChange){
@@ -170,10 +170,7 @@ export class GameEngine{
     const validPhase=["await-roll","landed"].includes(this.state.phase)&&this.state.pendingPurchase==null;
     const canUpgrade=Boolean(
       validPhase&&
-      tile&&
-      tile.type==="property"&&
-      tile.owner===player.seat&&
-      tile.level<MAX_PROPERTY_LEVEL&&
+      canUpgradeProperty(player.seat,tile)&&
       player.cash>=cost
     );
 
