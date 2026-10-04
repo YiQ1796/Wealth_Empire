@@ -41,16 +41,17 @@ jobs:
           PY
           node --check /tmp/wealth_empire_inline.js
 
-      - name: Expand V20 tile art
+      - name: Expand V20 visual assets
         shell: bash
         run: |
           set -euo pipefail
-          rm -rf v20/assets/tiles-v2
-          mkdir -p v20/assets/tiles-v2
+          rm -rf v20/assets/tiles-v2 v20/assets/ui
+          mkdir -p v20/assets/tiles-v2 v20/assets/ui
           for pack in             v20/assets/packs/tiles_01_10.zip             v20/assets/packs/tiles_11_20.zip             v20/assets/packs/tiles_21_30.zip             v20/assets/packs/tiles_31_36.zip
           do
             unzip -oq "$pack" -d v20/assets/tiles-v2
           done
+          unzip -oq v20/assets/packs/batch05_core_ui10.zip -d v20/assets/ui
 
       - name: Validate V20 visual assets
         shell: bash
@@ -61,7 +62,12 @@ jobs:
             test -s "v20/assets/tiles-v2/TILE_${n}.webp"
           done
           test "$(find v20/assets/tiles-v2 -maxdepth 1 -name 'TILE_*.webp' | wc -l)" -eq 36
-          echo "V20 visual assets: center background + 36 complete-tile WebPs PASS"
+          for asset in             QUICK_STOCK QUICK_PROPERTY QUICK_ITEM QUICK_INFO             ACTION_ROLL ACTION_END_TURN             PAWN_BLUE PAWN_RED PAWN_GREEN PAWN_PURPLE
+          do
+            test -s "v20/assets/ui/${asset}.webp"
+          done
+          test "$(find v20/assets/ui -maxdepth 1 -name '*.webp' | wc -l)" -eq 10
+          echo "V20 visual assets PASS: center + 36 board tiles + Batch05 UI10"
 
       - name: Validate V20 module syntax
         shell: bash

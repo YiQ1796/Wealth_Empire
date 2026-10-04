@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#f3ead3">
-<title>財富帝國 V20 Alpha 13</title>
+<meta name="theme-color" content="#eef3f7">
+<title>財富帝國 V20 Alpha 14</title>
 <link rel="stylesheet" href="./styles/app.css">
 </head>
 <body>
@@ -23,48 +23,75 @@
       </div>
     </div>
 
-    <aside class="right-rail" aria-label="遊戲資訊">
-      <section class="control-panel">
-        <div class="control-panel__header">
-          <div class="turn-heading">
-            <h2>玩家資訊</h2>
-            <div class="round-inline">ROUND <strong id="roundValue">1</strong> / 30</div>
-          </div>
-          <div class="dice-result">🎲 <strong id="diceValue">—</strong></div>
+    <aside class="hud-panel" aria-label="玩家與功能資訊">
+      <header class="hud-header">
+        <div>
+          <h1>玩家資訊</h1>
+          <div class="round-inline">ROUND <strong id="roundValue">1</strong> / 30</div>
         </div>
+        <div class="dice-result">🎲 <strong id="diceValue">—</strong></div>
+      </header>
 
-        <section id="players" class="players compact-players" aria-label="玩家資訊"></section>
+      <section id="players" class="players" aria-label="玩家資訊"></section>
 
-        <div class="control-actions control-actions--compact">
-          <button id="rollButton" class="action-button primary">🎲 擲骰子</button>
-          <button id="endTurnButton" class="action-button">➡️ 結束回合</button>
-        </div>
-      </section>
+      <div class="control-actions">
+        <button id="rollButton" class="action-button action-button--primary">
+          <img src="./assets/ui/ACTION_ROLL.webp" alt="">
+          <span>擲骰子</span>
+        </button>
+        <button id="endTurnButton" class="action-button">
+          <img src="./assets/ui/ACTION_END_TURN.webp" alt="">
+          <span>結束回合</span>
+        </button>
+      </div>
 
-      <section class="stock-rail-panel" aria-label="股票資訊">
-        <div class="stock-rail-panel__header">
-          <div>
-            <h2>股票資訊</h2>
-            <p>本回合行情</p>
-          </div>
-          <span class="market-badge">開盤</span>
-        </div>
-        <div id="stockGridFixed" class="stock-grid stock-grid--rail"></div>
-      </section>
-
-      <nav class="quick-dock" aria-label="快捷功能">
-        <button class="quick-button" data-dialog="stockDialog">📈<span>股票</span></button>
-        <button class="quick-button" data-dialog="propertyDialog">🏠<span>房產</span></button>
-        <button class="quick-button" data-dialog="strategyDialog">🎴<span>道具</span></button>
-        <button class="quick-button" data-dialog="infoDialog">ℹ️<span>資訊</span></button>
+      <nav class="feature-tabs" aria-label="功能切換">
+        <button class="feature-tab active" data-tab="stock" aria-selected="true">
+          <img src="./assets/ui/QUICK_STOCK.webp" alt=""><span>股票</span>
+        </button>
+        <button class="feature-tab" data-tab="property" aria-selected="false">
+          <img src="./assets/ui/QUICK_PROPERTY.webp" alt=""><span>房產</span>
+        </button>
+        <button class="feature-tab" data-tab="item" aria-selected="false">
+          <img src="./assets/ui/QUICK_ITEM.webp" alt=""><span>道具</span>
+        </button>
+        <button class="feature-tab" data-tab="info" aria-selected="false">
+          <img src="./assets/ui/QUICK_INFO.webp" alt=""><span>資訊</span>
+        </button>
       </nav>
+
+      <section class="feature-body">
+        <div class="feature-pane active" data-pane="stock">
+          <div class="feature-heading">
+            <div><h2>股票資訊</h2><p>本回合行情</p></div>
+            <span class="market-badge">開盤</span>
+          </div>
+          <div id="stockTabGrid" class="stock-grid stock-grid--rail"></div>
+        </div>
+
+        <div class="feature-pane" data-pane="property">
+          <div class="feature-heading"><div><h2>我的房產</h2><p>持有土地與租金</p></div></div>
+          <div id="propertyTabList" class="property-list"></div>
+        </div>
+
+        <div class="feature-pane" data-pane="item">
+          <div class="feature-heading"><div><h2>策略道具</h2><p>可用時會主動提示</p></div></div>
+          <div class="empty-state">目前尚未持有策略道具。</div>
+        </div>
+
+        <div class="feature-pane" data-pane="info">
+          <div class="feature-heading"><div><h2>回合資訊</h2><p>目前格子與即時事件</p></div></div>
+          <div id="currentTileInfo" class="tile-info">—</div>
+          <div id="eventLog" class="event-log"></div>
+        </div>
+      </section>
     </aside>
   </section>
 </main>
 
 <dialog id="purchaseDialog" class="purchase-dialog">
   <div class="purchase-card">
-    <div class="purchase-icon">🏠</div>
+    <img class="purchase-card__icon" src="./assets/ui/QUICK_PROPERTY.webp" alt="">
     <h2 id="purchaseTitle">購買地產？</h2>
     <p id="purchaseSubtitle">—</p>
     <div class="purchase-summary">
@@ -75,65 +102,6 @@
       <button id="declinePurchaseButton" class="purchase-button secondary">不購買</button>
       <button id="confirmPurchaseButton" class="purchase-button confirm">購買</button>
     </div>
-  </div>
-</dialog>
-
-<dialog id="stockDialog" class="game-dialog">
-  <div class="dialog-shell dialog-shell--wide">
-    <header class="dialog-header">
-      <div>
-        <h2>股票市場</h2>
-        <p>完整行情與後續買賣入口</p>
-      </div>
-      <button class="dialog-close" data-close-dialog aria-label="關閉">✕</button>
-    </header>
-    <div id="stockGrid" class="stock-grid"></div>
-  </div>
-</dialog>
-
-<dialog id="propertyDialog" class="game-dialog">
-  <div class="dialog-shell">
-    <header class="dialog-header">
-      <div>
-        <h2>我的房產</h2>
-        <p>土地、價值與區域狀態</p>
-      </div>
-      <button class="dialog-close" data-close-dialog aria-label="關閉">✕</button>
-    </header>
-    <div id="propertyList" class="property-list"></div>
-  </div>
-</dialog>
-
-<dialog id="strategyDialog" class="game-dialog">
-  <div class="dialog-shell">
-    <header class="dialog-header">
-      <div>
-        <h2>策略道具</h2>
-        <p>符合條件時會主動提示使用</p>
-      </div>
-      <button class="dialog-close" data-close-dialog aria-label="關閉">✕</button>
-    </header>
-    <div class="empty-state">目前尚未持有策略道具。</div>
-  </div>
-</dialog>
-
-<dialog id="infoDialog" class="game-dialog">
-  <div class="dialog-shell">
-    <header class="dialog-header">
-      <div>
-        <h2>回合資訊</h2>
-        <p>目前格子與即時事件</p>
-      </div>
-      <button class="dialog-close" data-close-dialog aria-label="關閉">✕</button>
-    </header>
-    <section class="dialog-section">
-      <h3>目前格子</h3>
-      <div id="currentTileInfo" class="tile-info">—</div>
-    </section>
-    <section class="dialog-section">
-      <h3>即時事件</h3>
-      <div id="eventLog" class="event-log"></div>
-    </section>
   </div>
 </dialog>
 

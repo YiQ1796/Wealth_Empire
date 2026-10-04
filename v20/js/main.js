@@ -7,8 +7,7 @@ const state=createInitialState();
 const engine=new GameEngine(state,render);
 
 mountStaticBoard(document.getElementById("board"));
-renderStockMarket(document.getElementById("stockGrid"));
-renderStockMarket(document.getElementById("stockGridFixed"));
+renderStockMarket(document.getElementById("stockTabGrid"));
 render(state);
 
 document.getElementById("rollButton").addEventListener("click",()=>engine.roll());
@@ -16,23 +15,17 @@ document.getElementById("confirmPurchaseButton").addEventListener("click",()=>en
 document.getElementById("declinePurchaseButton").addEventListener("click",()=>engine.declineCurrentProperty());
 document.getElementById("endTurnButton").addEventListener("click",()=>engine.endTurn());
 
-document.querySelectorAll("[data-dialog]").forEach(button=>{
+document.querySelectorAll(".feature-tab").forEach(button=>{
   button.addEventListener("click",()=>{
-    const dialog=document.getElementById(button.dataset.dialog);
-    if(dialog&&!dialog.open)dialog.showModal();
-  });
-});
-
-document.querySelectorAll("[data-close-dialog]").forEach(button=>{
-  button.addEventListener("click",()=>{
-    const dialog=button.closest("dialog");
-    if(dialog?.open)dialog.close();
-  });
-});
-
-document.querySelectorAll("dialog").forEach(dialog=>{
-  dialog.addEventListener("click",event=>{
-    if(dialog.id!=="purchaseDialog"&&event.target===dialog)dialog.close();
+    const target=button.dataset.tab;
+    document.querySelectorAll(".feature-tab").forEach(tab=>{
+      const active=tab===button;
+      tab.classList.toggle("active",active);
+      tab.setAttribute("aria-selected",String(active));
+    });
+    document.querySelectorAll(".feature-pane").forEach(pane=>{
+      pane.classList.toggle("active",pane.dataset.pane===target);
+    });
   });
 });
 

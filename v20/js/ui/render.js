@@ -1,5 +1,6 @@
 import{BOARD_TILES,CORNER_INDEXES,boardPlacement}from"../data/board.js";
 import{CENTER_BACKGROUND,TILE_ART}from"../data/assets.js";
+import{UI_ASSETS}from"../data/ui-assets.js";
 
 function money(value){return"$"+Math.round(value).toLocaleString()}
 
@@ -47,7 +48,7 @@ export function mountStaticBoard(boardElement){
 }
 
 function renderProperties(state,currentPlayer){
-  const container=document.getElementById("propertyList");
+  const container=document.getElementById("propertyTabList");
   if(!container)return;
 
   if(currentPlayer.properties.length===0){
@@ -72,13 +73,16 @@ export function render(state){
     : "—";
 
   const players=document.getElementById("players");
-  players.innerHTML=state.players.map((p,index)=>
+  players.innerHTML=state.players.map((player,index)=>
     '<article class="player-card '+(index===state.currentPlayer?"active":"")+'">'+
-      '<h3>'+p.name+(index===state.currentPlayer?" 👑":"")+'</h3>'+
-      '<div class="player-stats">'+
-        '<span>現金 <b>'+money(p.cash)+'</b></span>'+
-        '<span>地產 <b>'+p.properties.length+'</b></span>'+
-        '<span>位置 <b>#'+(p.position+1)+'</b></span>'+
+      '<img class="player-pawn" src="'+UI_ASSETS.pawns[index]+'" alt="">'+
+      '<div class="player-card__body">'+
+        '<h3>'+player.name+(index===state.currentPlayer?" 👑":"")+'</h3>'+
+        '<div class="player-stats">'+
+          '<span>現金 <b>'+money(player.cash)+'</b></span>'+
+          '<span>地產 <b>'+player.properties.length+'</b></span>'+
+          '<span>位置 <b>#'+(player.position+1)+'</b></span>'+
+        '</div>'+
       '</div>'+
     '</article>'
   ).join("");
@@ -104,7 +108,7 @@ export function render(state){
 
     tokens.innerHTML=state.players
       .filter(player=>!player.bankrupt&&player.position===index)
-      .map(player=>'<i class="token" title="'+player.name+'" style="background:'+player.color+'"></i>')
+      .map(player=>'<img class="pawn-token" src="'+UI_ASSETS.pawns[player.seat]+'" alt="" title="'+player.name+'">')
       .join("");
   });
 
@@ -139,8 +143,10 @@ export function render(state){
     current.cash>=pending.price &&
     state.phase==="landed"
   );
+
   const purchaseDialog=document.getElementById("purchaseDialog");
   const confirmPurchaseButton=document.getElementById("confirmPurchaseButton");
+
   if(pending&&state.phase==="landed"){
     document.getElementById("purchaseTitle").textContent="是否購買「"+pending.name+"」？";
     document.getElementById("purchaseSubtitle").textContent=pending.group+"｜第 "+pending.number+" 格";
