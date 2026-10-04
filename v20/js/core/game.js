@@ -1,4 +1,3 @@
-import{MAX_PROPERTY_LEVEL}from"../data/board.js";
 import{canUpgradeProperty,ownsCompleteGroup,rentFor,upgradeCost}from"./property-economy.js";
 
 export class GameEngine{
