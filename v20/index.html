@@ -4,19 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#f3ead3">
-<title>財富帝國 V20 Alpha 9</title>
+<title>財富帝國 V20 Alpha 10</title>
 <link rel="stylesheet" href="./styles/app.css">
 </head>
 <body>
 <main class="app-shell">
-  <header class="topbar">
-    <div>
-      <h1>財富帝國 <span>V20 Alpha 9</span></h1>
-      <p>36 格｜28 地產｜8 事件｜乾淨重製線</p>
-    </div>
-    <div class="round-badge">ROUND <strong id="roundValue">1</strong> / 30</div>
-  </header>
-
   <section class="game-layout">
     <div class="board-panel">
       <div id="board" class="board" aria-label="財富帝國棋盤">
@@ -34,9 +26,9 @@
     <aside class="right-rail" aria-label="玩家與回合控制">
       <section class="control-panel">
       <div class="control-panel__header">
-        <div>
+        <div class="turn-heading">
           <h2>回合控制</h2>
-          <p>目前玩家與操作</p>
+          <div class="round-inline">ROUND <strong id="roundValue">1</strong> / 30</div>
         </div>
         <div class="dice-result">🎲 <strong id="diceValue">—</strong></div>
       </div>

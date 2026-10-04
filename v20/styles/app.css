@@ -29,34 +29,19 @@ button:focus-visible{outline:3px solid rgba(50,111,192,.25);outline-offset:2px}
   height:100dvh;
   margin:auto;
   padding:7px;
-  display:grid;
-  grid-template-rows:auto minmax(0,1fr);
-  gap:6px;
+  display:block;
   overflow:hidden
 }
-.topbar,.board-panel,.control-panel{
+.board-panel,.control-panel{
   background:var(--panel);
   border:1px solid var(--line);
   box-shadow:var(--shadow)
 }
-.topbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:9px 14px;
-  border-radius:var(--radius);
-  margin-bottom:0
-}
-.topbar h1{margin:0;font-size:22px}
-.topbar h1 span{font-size:13px;color:var(--muted)}
-.topbar p{margin:2px 0 0;color:var(--muted);font-size:12px;font-weight:800}
-.round-badge{padding:8px 11px;border-radius:12px;background:#f8f1dd;font-weight:1000}
-
 .game-layout{
   min-height:0;
   height:100%;
   display:grid;
-  grid-template-columns:minmax(0,1fr) clamp(205px,14vw,225px);
+  grid-template-columns:minmax(0,1fr) clamp(205px,13vw,220px);
   gap:6px;
   align-items:stretch;
   overflow:hidden
@@ -77,7 +62,7 @@ button:focus-visible{outline:3px solid rgba(50,111,192,.25);outline-offset:2px}
   height:100%;
   min-width:0;
   min-height:0;
-  grid-template-columns:9.4% repeat(9,minmax(0,1fr)) 9.4%;
+  grid-template-columns:11.5% repeat(9,minmax(0,1fr)) 11.5%;
   grid-template-rows:10.2% repeat(7,minmax(0,1fr)) 10.2%;
   aspect-ratio:auto;
   overflow:hidden;
@@ -235,8 +220,16 @@ button:focus-visible{outline:3px solid rgba(50,111,192,.25);outline-offset:2px}
   gap:6px;
   margin-bottom:6px
 }
+.turn-heading{min-width:0}
 .control-panel__header h2{margin:0;font-size:16px}
-.control-panel__header p{margin:1px 0 0;color:var(--muted);font-size:9px;font-weight:800}
+.round-inline{
+  margin-top:2px;
+  color:var(--muted);
+  font-size:9px;
+  font-weight:1000;
+  white-space:nowrap
+}
+.round-inline strong{color:var(--text);font-size:11px}
 .dice-result{
   padding:5px 7px;
   border-radius:9px;
@@ -453,11 +446,8 @@ button:focus-visible{outline:3px solid rgba(50,111,192,.25);outline-offset:2px}
 
 @media(max-width:1100px){
   .app-shell{width:min(1100px,100%);height:100dvh;padding:5px}
-  .topbar{padding:7px 9px}
-  .topbar h1{font-size:18px}
-  .topbar p{font-size:9px}
-  .game-layout{grid-template-columns:minmax(0,1fr) 205px;gap:5px}
-  .board{grid-template-columns:9.6% repeat(9,minmax(0,1fr)) 9.6%}
+  .game-layout{grid-template-columns:minmax(0,1fr) 200px;gap:5px}
+  .board{grid-template-columns:11.8% repeat(9,minmax(0,1fr)) 11.8%}
   .control-panel{padding:6px}
   .control-panel__header h2{font-size:13px}
   .player-card{padding:5px}
@@ -470,9 +460,8 @@ button:focus-visible{outline:3px solid rgba(50,111,192,.25);outline-offset:2px}
 @media(max-width:760px){
   body{min-width:920px;height:100dvh;overflow:hidden}
   .app-shell{padding:4px}
-  .topbar{margin-bottom:4px}
-  .game-layout{grid-template-columns:minmax(0,1fr) 195px;gap:4px}
-  .board{grid-template-columns:9.8% repeat(9,minmax(0,1fr)) 9.8%}
+  .game-layout{grid-template-columns:minmax(0,1fr) 190px;gap:4px}
+  .board{grid-template-columns:12% repeat(9,minmax(0,1fr)) 12%}
   .quick-dock{padding:5px;gap:4px}
   .quick-button{min-width:0;padding:6px 4px;font-size:16px}
   .quick-button span{font-size:8px}
@@ -486,11 +475,6 @@ button:focus-visible{outline:3px solid rgba(50,111,192,.25);outline-offset:2px}
 
 @media(max-height:820px){
   .app-shell{padding:4px;gap:4px}
-  .topbar{padding:5px 9px;border-radius:14px}
-  .topbar h1{font-size:17px}
-  .topbar h1 span{font-size:10px}
-  .topbar p{font-size:8px}
-  .round-badge{padding:5px 8px;font-size:12px}
   .control-panel{padding:5px}
   .control-panel__header{margin-bottom:4px}
   .control-panel__header h2{font-size:13px}
@@ -507,8 +491,17 @@ button:focus-visible{outline:3px solid rgba(50,111,192,.25);outline-offset:2px}
   .quick-button span{font-size:7px}
 }
 @media(max-height:680px){
-  .topbar p{display:none}
-  .control-panel__header p{display:none}
   .player-stats span:nth-child(2){display:none}
   .quick-button{font-size:13px}
+}
+
+.app-shell>.game-layout{height:100%}
+.tile.vertical .tile__fallback-name{
+  padding:6px;
+  font-size:clamp(9px,.78vw,13px);
+  line-height:1.12;
+}
+.tile.vertical .tile__price{
+  font-size:clamp(8px,.68vw,11px);
+  padding:2px 5px;
 }

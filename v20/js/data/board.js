@@ -1,4 +1,4 @@
-export const BOARD_VERSION="20.0.0-alpha.9";
+export const BOARD_VERSION="20.0.0-alpha.10";
 export const MAX_ROUNDS=30;
 const property=(number,name,group,price)=>({number,name,type:"property",group,price,rent:Math.round(price*0.14)});
 const event=(number,name,type)=>({number,name,type});
