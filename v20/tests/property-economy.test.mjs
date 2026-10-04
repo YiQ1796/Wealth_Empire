@@ -65,6 +65,25 @@ assert.equal(engine.upgradeProperty(firstGroupIndexes[0]),true,"LV1 -> LV2 upgra
 assert.equal(upgradedTile.level,MAX_PROPERTY_LEVEL);
 assert.equal(engine.upgradeProperty(firstGroupIndexes[0]),false,"upgrading past LV2 must be rejected");
 
+state.currentPlayer=1;
+state.phase="await-roll";
+state.pendingPurchase=null;
+assert.equal(
+  engine.upgradeProperty(firstGroupIndexes[1]),
+  false,
+  "a player must not upgrade another player's property"
+);
+
+state.currentPlayer=0;
+state.phase="landed";
+state.pendingPurchase=firstGroupIndexes[2];
+assert.equal(
+  engine.upgradeProperty(firstGroupIndexes[1]),
+  false,
+  "property upgrades must be blocked while a purchase decision is pending"
+);
+state.pendingPurchase=null;
+
 const payer=state.players[1];
 state.currentPlayer=1;
 state.phase="await-roll";
