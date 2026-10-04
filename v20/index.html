@@ -4,27 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#f3ead3">
-<title>財富帝國 V20 Alpha 6</title>
+<title>財富帝國 V20 Alpha 7</title>
 <link rel="stylesheet" href="./styles/app.css">
 </head>
 <body>
 <main class="app-shell">
   <header class="topbar">
     <div>
-      <h1>財富帝國 <span>V20 Alpha 6</span></h1>
+      <h1>財富帝國 <span>V20 Alpha 7</span></h1>
       <p>36 格｜28 地產｜8 事件｜乾淨重製線</p>
     </div>
     <div class="round-badge">ROUND <strong id="roundValue">1</strong> / 30</div>
   </header>
-
-  <section id="players" class="players" aria-label="玩家資訊"></section>
-
-  <section class="toolbar">
-    <button id="rollButton" class="action-button primary">🎲 擲骰子</button>
-    <button id="buyButton" class="action-button" disabled>🏠 購買地產</button>
-    <button id="endTurnButton" class="action-button" disabled>➡️ 結束回合</button>
-    <div class="dice-result">骰子：<strong id="diceValue">—</strong></div>
-  </section>
 
   <section class="game-layout">
     <div class="board-panel">
@@ -40,34 +31,92 @@
       </div>
     </div>
 
-    <aside class="side-panel" aria-label="股票市場與回合資訊">
-      <section class="info-card stock-panel">
-        <div class="stock-panel__header">
-          <div>
-            <h2>股票市場</h2>
-            <p>本回合行情</p>
-          </div>
-          <span class="market-badge">開盤</span>
+    <aside class="control-panel" aria-label="玩家與回合控制">
+      <div class="control-panel__header">
+        <div>
+          <h2>回合控制</h2>
+          <p>目前玩家與操作</p>
         </div>
-        <div id="stockGrid" class="stock-grid"></div>
-      </section>
+        <div class="dice-result">🎲 <strong id="diceValue">—</strong></div>
+      </div>
 
-      <details class="info-card turn-details">
-        <summary>回合資訊</summary>
-        <div class="turn-details__body">
-          <section>
-            <h3>目前格子</h3>
-            <div id="currentTileInfo" class="tile-info">—</div>
-          </section>
-          <section>
-            <h3>即時事件</h3>
-            <div id="eventLog" class="event-log"></div>
-          </section>
-        </div>
-      </details>
+      <section id="players" class="players compact-players" aria-label="玩家資訊"></section>
+
+      <div class="control-actions">
+        <button id="rollButton" class="action-button primary">🎲 擲骰子</button>
+        <button id="buyButton" class="action-button" disabled>🏠 購買地產</button>
+        <button id="endTurnButton" class="action-button" disabled>➡️ 結束回合</button>
+      </div>
     </aside>
   </section>
 </main>
+
+<nav class="quick-dock" aria-label="快捷功能">
+  <button class="quick-button" data-dialog="stockDialog">📈<span>股票</span></button>
+  <button class="quick-button" data-dialog="propertyDialog">🏠<span>房產</span></button>
+  <button class="quick-button" data-dialog="strategyDialog">🎴<span>道具</span></button>
+  <button class="quick-button" data-dialog="infoDialog">ℹ️<span>資訊</span></button>
+</nav>
+
+<dialog id="stockDialog" class="game-dialog">
+  <div class="dialog-shell dialog-shell--wide">
+    <header class="dialog-header">
+      <div>
+        <h2>股票市場</h2>
+        <p>本回合行情</p>
+      </div>
+      <button class="dialog-close" data-close-dialog aria-label="關閉">✕</button>
+    </header>
+    <div id="stockGrid" class="stock-grid"></div>
+  </div>
+</dialog>
+
+<dialog id="propertyDialog" class="game-dialog">
+  <div class="dialog-shell">
+    <header class="dialog-header">
+      <div>
+        <h2>我的房產</h2>
+        <p>土地、價值與區域狀態</p>
+      </div>
+      <button class="dialog-close" data-close-dialog aria-label="關閉">✕</button>
+    </header>
+    <div id="propertyList" class="property-list"></div>
+  </div>
+</dialog>
+
+<dialog id="strategyDialog" class="game-dialog">
+  <div class="dialog-shell">
+    <header class="dialog-header">
+      <div>
+        <h2>策略道具</h2>
+        <p>符合條件時會主動提示使用</p>
+      </div>
+      <button class="dialog-close" data-close-dialog aria-label="關閉">✕</button>
+    </header>
+    <div class="empty-state">目前尚未持有策略道具。</div>
+  </div>
+</dialog>
+
+<dialog id="infoDialog" class="game-dialog">
+  <div class="dialog-shell">
+    <header class="dialog-header">
+      <div>
+        <h2>回合資訊</h2>
+        <p>目前格子與即時事件</p>
+      </div>
+      <button class="dialog-close" data-close-dialog aria-label="關閉">✕</button>
+    </header>
+    <section class="dialog-section">
+      <h3>目前格子</h3>
+      <div id="currentTileInfo" class="tile-info">—</div>
+    </section>
+    <section class="dialog-section">
+      <h3>即時事件</h3>
+      <div id="eventLog" class="event-log"></div>
+    </section>
+  </div>
+</dialog>
+
 <script type="module" src="./js/main.js"></script>
 </body>
 </html>
