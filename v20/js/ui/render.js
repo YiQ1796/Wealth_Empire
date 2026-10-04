@@ -131,8 +131,20 @@ export function render(state){
   document.getElementById("rollButton").disabled=state.phase!=="await-roll";
 
   const pending=state.pendingPurchase!=null?state.tiles[state.pendingPurchase]:null;
-  document.getElementById("buyButton").disabled=
-    !(pending&&pending.owner==null&&current.cash>=pending.price);
+  const canBuy=Boolean(
+    pending &&
+    pending.type==="property" &&
+    pending.owner==null &&
+    current.position===state.pendingPurchase &&
+    current.cash>=pending.price &&
+    state.phase==="landed"
+  );
+  const buyButton=document.getElementById("buyButton");
+  buyButton.disabled=!canBuy;
+  buyButton.classList.toggle("purchase-ready",canBuy);
+  buyButton.textContent=canBuy
+    ? "🏠 購買 "+money(pending.price)
+    : "🏠 購買地產";
 
   document.getElementById("endTurnButton").disabled=state.phase!=="landed";
 

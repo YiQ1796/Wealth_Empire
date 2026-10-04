@@ -15,9 +15,10 @@ this.log(player.name+" 擲出 "+d1+" + "+d2+" = "+total+"，從第 "+(from+1)+" 
 this.resolveLanding(player);this.notify()
 }
 resolveLanding(player){
+this.state.pendingPurchase=null;
 const tile=this.state.tiles[player.position];
 if(tile.type==="property"){
-if(tile.owner==null){this.state.pendingPurchase=tile.number-1;this.state.phase="landed";this.log(player.name+" 抵達「"+tile.name+"」，可選擇購買。");return}
+if(tile.owner==null){this.state.pendingPurchase=player.position;this.state.phase="landed";this.log(player.name+" 抵達「"+tile.name+"」，可選擇購買。");return}
 if(tile.owner!==player.seat){const owner=this.state.players[tile.owner],rent=this.rentFor(tile),paid=Math.min(player.cash,rent);player.cash-=paid;owner.cash+=paid;this.log(player.name+" 支付「"+tile.name+"」租金 $"+paid.toLocaleString()+" 給 "+owner.name+"。")}
 else this.log(player.name+" 回到自己的「"+tile.name+"」。");
 this.state.phase="landed";return
@@ -28,10 +29,24 @@ this.log(player.name+" 抵達「"+tile.name+"」："+eventText)
 }
 rentFor(tile){return Math.round(tile.rent*(1+Math.max(0,tile.level||0)*0.65))}
 buyCurrentProperty(){
-const tileIndex=this.state.pendingPurchase;if(tileIndex==null)return false;
-const tile=this.state.tiles[tileIndex],player=this.currentPlayer;if(tile.owner!=null||player.cash<tile.price)return false;
-player.cash-=tile.price;player.properties.push(tileIndex);tile.owner=player.seat;this.state.pendingPurchase=null;
-this.log(player.name+" 以 $"+tile.price.toLocaleString()+" 購買「"+tile.name+"」。");this.notify();return true
+const tileIndex=this.state.pendingPurchase;
+const player=this.currentPlayer;
+if(tileIndex==null){this.log("目前沒有可購買的地產。");this.notify();return false}
+const tile=this.state.tiles[tileIndex];
+const canBuy=
+  this.state.phase==="landed" &&
+  player.position===tileIndex &&
+  tile?.type==="property" &&
+  tile.owner==null &&
+  player.cash>=tile.price;
+if(!canBuy){this.log("目前無法購買這塊地產。");this.notify();return false}
+player.cash-=tile.price;
+if(!player.properties.includes(tileIndex))player.properties.push(tileIndex);
+tile.owner=player.seat;
+this.state.pendingPurchase=null;
+this.log(player.name+" 以 $"+tile.price.toLocaleString()+" 購買「"+tile.name+"」。");
+this.notify();
+return true
 }
 endTurn(){
 if(!["landed","await-roll"].includes(this.state.phase))return;

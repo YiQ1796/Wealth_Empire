@@ -43,7 +43,7 @@ button:focus-visible{outline:3px solid rgba(50,111,192,.25);outline-offset:2px}
   display:grid;
   grid-template-columns:minmax(0,1fr) clamp(220px,16vw,245px);
   gap:6px;
-  align-items:start
+  align-items:stretch
 }
 .board-panel{border-radius:var(--radius);padding:6px;overflow:hidden;min-width:0}
 .board{
@@ -182,11 +182,16 @@ button:focus-visible{outline:3px solid rgba(50,111,192,.25);outline-offset:2px}
   font-weight:1000
 }
 
+.right-rail{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:6px
+}
 .control-panel{
   min-width:0;
   border-radius:var(--radius);
-  padding:8px;
-  align-self:start
+  padding:8px
 }
 .control-panel__header{
   display:flex;
@@ -265,24 +270,21 @@ button:focus-visible{outline:3px solid rgba(50,111,192,.25);outline-offset:2px}
 .action-button:disabled{opacity:.4;cursor:not-allowed}
 
 .quick-dock{
-  position:fixed;
-  right:max(10px,env(safe-area-inset-right));
-  bottom:max(10px,env(safe-area-inset-bottom));
-  z-index:60;
-  display:flex;
-  gap:6px;
+  margin-top:auto;
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:5px;
   padding:6px;
   border:1px solid rgba(217,226,236,.92);
   border-radius:16px;
-  background:rgba(255,255,255,.94);
-  box-shadow:0 12px 34px rgba(31,52,73,.2);
-  backdrop-filter:blur(12px)
+  background:rgba(255,255,255,.96);
+  box-shadow:0 12px 34px rgba(31,52,73,.14)
 }
 .quick-button{
   display:grid;
   place-items:center;
   gap:1px;
-  min-width:55px;
+  min-width:0;
   border:0;
   border-radius:11px;
   padding:7px 8px;
@@ -435,7 +437,13 @@ button:focus-visible{outline:3px solid rgba(50,111,192,.25);outline-offset:2px}
   .topbar{margin-bottom:4px}
   .game-layout{grid-template-columns:minmax(0,1fr) 205px;gap:4px}
   .board{grid-template-columns:9% repeat(9,minmax(0,1fr)) 9%}
-  .quick-dock{right:6px;bottom:6px}
-  .quick-button{min-width:49px;padding:6px;font-size:16px}
+  .quick-dock{padding:5px;gap:4px}
+  .quick-button{min-width:0;padding:6px 4px;font-size:16px}
   .quick-button span{font-size:8px}
+}
+
+.action-button.purchase-ready{
+  background:#f6d977;
+  color:#5d4300;
+  box-shadow:0 0 0 2px rgba(214,163,61,.2) inset;
 }

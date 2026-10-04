@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#f3ead3">
-<title>財富帝國 V20 Alpha 7</title>
+<title>財富帝國 V20 Alpha 8</title>
 <link rel="stylesheet" href="./styles/app.css">
 </head>
 <body>
 <main class="app-shell">
   <header class="topbar">
     <div>
-      <h1>財富帝國 <span>V20 Alpha 7</span></h1>
+      <h1>財富帝國 <span>V20 Alpha 8</span></h1>
       <p>36 格｜28 地產｜8 事件｜乾淨重製線</p>
     </div>
     <div class="round-badge">ROUND <strong id="roundValue">1</strong> / 30</div>
@@ -31,7 +31,8 @@
       </div>
     </div>
 
-    <aside class="control-panel" aria-label="玩家與回合控制">
+    <aside class="right-rail" aria-label="玩家與回合控制">
+      <section class="control-panel">
       <div class="control-panel__header">
         <div>
           <h2>回合控制</h2>
@@ -47,16 +48,17 @@
         <button id="buyButton" class="action-button" disabled>🏠 購買地產</button>
         <button id="endTurnButton" class="action-button" disabled>➡️ 結束回合</button>
       </div>
+      </section>
+
+      <nav class="quick-dock" aria-label="快捷功能">
+        <button class="quick-button" data-dialog="stockDialog">📈<span>股票</span></button>
+        <button class="quick-button" data-dialog="propertyDialog">🏠<span>房產</span></button>
+        <button class="quick-button" data-dialog="strategyDialog">🎴<span>道具</span></button>
+        <button class="quick-button" data-dialog="infoDialog">ℹ️<span>資訊</span></button>
+      </nav>
     </aside>
   </section>
 </main>
-
-<nav class="quick-dock" aria-label="快捷功能">
-  <button class="quick-button" data-dialog="stockDialog">📈<span>股票</span></button>
-  <button class="quick-button" data-dialog="propertyDialog">🏠<span>房產</span></button>
-  <button class="quick-button" data-dialog="strategyDialog">🎴<span>道具</span></button>
-  <button class="quick-button" data-dialog="infoDialog">ℹ️<span>資訊</span></button>
-</nav>
 
 <dialog id="stockDialog" class="game-dialog">
   <div class="dialog-shell dialog-shell--wide">
