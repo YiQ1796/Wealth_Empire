@@ -16,12 +16,11 @@ export function renderStockMarket(container){
   container.innerHTML=STOCKS.map(stock=>{
     const trend=trendClass(stock.change);
     return '<article class="stock-card">'+
-      '<div class="stock-card__top">'+
-        '<div><strong>'+stock.name+'</strong><span>'+stock.id+'</span></div>'+
+      '<div class="stock-card__main">'+
+        '<div class="stock-name-line"><strong>'+stock.name+'</strong><b>'+stock.price+'</b></div>'+
         '<em class="stock-trend '+trend+'">'+trendText(stock.change)+'</em>'+
       '</div>'+
-      '<div class="stock-card__price">'+stock.price+'</div>'+
-      '<div class="stock-card__holding">持有 0 股</div>'+
+      '<div class="stock-card__meta"><span>'+stock.id+'</span><span>持有 0 股</span></div>'+
     '</article>';
   }).join("");
 }
