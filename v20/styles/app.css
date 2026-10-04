@@ -20,7 +20,7 @@ button{font:inherit}
 .dice-result{margin-left:auto;font-weight:900}
 .game-layout{display:grid;grid-template-columns:minmax(0,1fr) clamp(260px,19vw,280px);gap:6px;align-items:start}
 .board-panel{border-radius:var(--radius);padding:7px;overflow:hidden;min-width:0}
-.board{position:relative;display:grid;grid-template-columns:5.6% repeat(9,minmax(0,1fr)) 5.6%;grid-template-rows:10.2% repeat(7,minmax(0,1fr)) 10.2%;aspect-ratio:1.54;overflow:hidden;border-radius:14px;background:#dfe8ef}
+.board{position:relative;display:grid;grid-template-columns:7.4% repeat(9,minmax(0,1fr)) 7.4%;grid-template-rows:10.2% repeat(7,minmax(0,1fr)) 10.2%;aspect-ratio:1.54;overflow:hidden;border-radius:14px;background:#dfe8ef}
 .tile{position:relative;overflow:hidden;border:1px solid rgba(75,96,119,.48);background:#f8fbfd;min-width:0;min-height:0}
 .tile.corner{background:#f8eed0}
 .tile img.tile-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}.tile.vertical img.tile-art{object-fit:cover;background:none}
