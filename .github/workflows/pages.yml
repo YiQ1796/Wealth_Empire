@@ -67,7 +67,7 @@ jobs:
             test -s "v20/assets/ui/${asset}.webp"
           done
           test "$(find v20/assets/ui -maxdepth 1 -name '*.webp' | wc -l)" -eq 10
-          echo "V20 visual assets PASS: center + 36 board tiles + Batch05 UI10"
+          echo "V20 visual assets PASS: center + 36 reusable full-tile WebPs + Batch05 UI10"
 
       - name: Validate V20 module syntax
         shell: bash
@@ -76,6 +76,11 @@ jobs:
           for file in $(find v20/js -name '*.js' -type f | sort); do
             node --input-type=module --check < "$file"
           done
+
+      - name: Validate V20 property economy
+        shell: bash
+        run: |
+          node --experimental-default-type=module v20/tests/property-economy.test.mjs
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
