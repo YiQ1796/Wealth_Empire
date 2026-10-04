@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#f3ead3">
-<title>財富帝國 V20 Alpha 10</title>
+<title>財富帝國 V20 Alpha 11</title>
 <link rel="stylesheet" href="./styles/app.css">
 </head>
 <body>
@@ -35,10 +35,9 @@
 
       <section id="players" class="players compact-players" aria-label="玩家資訊"></section>
 
-      <div class="control-actions">
+      <div class="control-actions control-actions--compact">
         <button id="rollButton" class="action-button primary">🎲 擲骰子</button>
-        <button id="buyButton" class="action-button" disabled>🏠 購買地產</button>
-        <button id="endTurnButton" class="action-button" disabled>➡️ 結束回合</button>
+        <button id="endTurnButton" class="action-button">➡️ 結束回合</button>
       </div>
       </section>
 
@@ -51,6 +50,22 @@
     </aside>
   </section>
 </main>
+
+<dialog id="purchaseDialog" class="purchase-dialog">
+  <div class="purchase-card">
+    <div class="purchase-icon">🏠</div>
+    <h2 id="purchaseTitle">購買地產？</h2>
+    <p id="purchaseSubtitle">—</p>
+    <div class="purchase-summary">
+      <div><span>售價</span><strong id="purchasePrice">—</strong></div>
+      <div><span>目前現金</span><strong id="purchaseCash">—</strong></div>
+    </div>
+    <div class="purchase-actions">
+      <button id="declinePurchaseButton" class="purchase-button secondary">不購買</button>
+      <button id="confirmPurchaseButton" class="purchase-button confirm">購買</button>
+    </div>
+  </div>
+</dialog>
 
 <dialog id="stockDialog" class="game-dialog">
   <div class="dialog-shell dialog-shell--wide">

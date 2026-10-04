@@ -11,7 +11,8 @@ renderStockMarket(document.getElementById("stockGrid"));
 render(state);
 
 document.getElementById("rollButton").addEventListener("click",()=>engine.roll());
-document.getElementById("buyButton").addEventListener("click",()=>engine.buyCurrentProperty());
+document.getElementById("confirmPurchaseButton").addEventListener("click",()=>engine.buyCurrentProperty());
+document.getElementById("declinePurchaseButton").addEventListener("click",()=>engine.declineCurrentProperty());
 document.getElementById("endTurnButton").addEventListener("click",()=>engine.endTurn());
 
 document.querySelectorAll("[data-dialog]").forEach(button=>{
@@ -30,9 +31,12 @@ document.querySelectorAll("[data-close-dialog]").forEach(button=>{
 
 document.querySelectorAll("dialog").forEach(dialog=>{
   dialog.addEventListener("click",event=>{
-    if(event.target===dialog)dialog.close();
+    if(dialog.id!=="purchaseDialog"&&event.target===dialog)dialog.close();
   });
 });
+
+const purchaseDialog=document.getElementById("purchaseDialog");
+purchaseDialog.addEventListener("cancel",event=>event.preventDefault());
 
 window.__WEALTH_V20__=Object.freeze({
   version:state.version,

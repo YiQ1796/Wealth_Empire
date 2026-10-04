@@ -48,6 +48,15 @@ this.log(player.name+" 以 $"+tile.price.toLocaleString()+" 購買「"+tile.name
 this.notify();
 return true
 }
+declineCurrentProperty(){
+const tileIndex=this.state.pendingPurchase;
+if(tileIndex==null)return false;
+const tile=this.state.tiles[tileIndex];
+this.state.pendingPurchase=null;
+this.log(this.currentPlayer.name+" 放棄購買「"+tile.name+"」。");
+this.notify();
+return true
+}
 endTurn(){
 if(!["landed","await-roll"].includes(this.state.phase))return;
 this.state.pendingPurchase=null;this.state.currentPlayer=(this.state.currentPlayer+1)%this.state.players.length;

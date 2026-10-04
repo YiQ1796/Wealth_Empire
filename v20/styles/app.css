@@ -62,7 +62,7 @@ button:focus-visible{outline:3px solid rgba(50,111,192,.25);outline-offset:2px}
   height:100%;
   min-width:0;
   min-height:0;
-  grid-template-columns:11.5% repeat(9,minmax(0,1fr)) 11.5%;
+  grid-template-columns:10.2% repeat(9,minmax(0,1fr)) 10.2%;
   grid-template-rows:10.2% repeat(7,minmax(0,1fr)) 10.2%;
   aspect-ratio:auto;
   overflow:hidden;
@@ -447,7 +447,7 @@ button:focus-visible{outline:3px solid rgba(50,111,192,.25);outline-offset:2px}
 @media(max-width:1100px){
   .app-shell{width:min(1100px,100%);height:100dvh;padding:5px}
   .game-layout{grid-template-columns:minmax(0,1fr) 200px;gap:5px}
-  .board{grid-template-columns:11.8% repeat(9,minmax(0,1fr)) 11.8%}
+  .board{grid-template-columns:10.5% repeat(9,minmax(0,1fr)) 10.5%}
   .control-panel{padding:6px}
   .control-panel__header h2{font-size:13px}
   .player-card{padding:5px}
@@ -461,7 +461,7 @@ button:focus-visible{outline:3px solid rgba(50,111,192,.25);outline-offset:2px}
   body{min-width:920px;height:100dvh;overflow:hidden}
   .app-shell{padding:4px}
   .game-layout{grid-template-columns:minmax(0,1fr) 190px;gap:4px}
-  .board{grid-template-columns:12% repeat(9,minmax(0,1fr)) 12%}
+  .board{grid-template-columns:10.7% repeat(9,minmax(0,1fr)) 10.7%}
   .quick-dock{padding:5px;gap:4px}
   .quick-button{min-width:0;padding:6px 4px;font-size:16px}
   .quick-button span{font-size:8px}
@@ -504,4 +504,75 @@ button:focus-visible{outline:3px solid rgba(50,111,192,.25);outline-offset:2px}
 .tile.vertical .tile__price{
   font-size:clamp(8px,.68vw,11px);
   padding:2px 5px;
+}
+
+.control-actions--compact{grid-template-columns:1fr}
+.control-actions--compact .action-button{grid-column:1}
+.control-actions--compact .action-button.primary{grid-column:1}
+.purchase-dialog{
+  width:min(390px,calc(100vw - 28px));
+  padding:0;
+  border:0;
+  background:transparent;
+  overflow:visible
+}
+.purchase-dialog::backdrop{
+  background:rgba(18,34,49,.46);
+  backdrop-filter:blur(3px)
+}
+.purchase-card{
+  padding:18px;
+  border:1px solid rgba(217,226,236,.96);
+  border-radius:20px;
+  background:#fff;
+  box-shadow:0 24px 70px rgba(18,36,56,.34);
+  text-align:center
+}
+.purchase-icon{font-size:30px;line-height:1}
+.purchase-card h2{margin:8px 0 4px;font-size:21px}
+.purchase-card>p{margin:0;color:var(--muted);font-size:12px;font-weight:800}
+.purchase-summary{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:14px
+}
+.purchase-summary>div{
+  padding:10px;
+  border:1px solid #e1e8ee;
+  border-radius:12px;
+  background:#f8fbfd
+}
+.purchase-summary span{
+  display:block;
+  color:var(--muted);
+  font-size:9px;
+  font-weight:900
+}
+.purchase-summary strong{
+  display:block;
+  margin-top:3px;
+  font-size:16px
+}
+.purchase-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:14px
+}
+.purchase-button{
+  border:0;
+  border-radius:12px;
+  padding:11px 10px;
+  font-weight:1000;
+  cursor:pointer
+}
+.purchase-button.secondary{background:#edf2f7;color:#35506a}
+.purchase-button.confirm{background:#d6a33d;color:#fff}
+.purchase-button:disabled{opacity:.45;cursor:not-allowed}
+@media(max-height:680px){
+  .purchase-card{padding:14px}
+  .purchase-card h2{font-size:18px}
+  .purchase-summary{margin-top:10px}
+  .purchase-actions{margin-top:10px}
 }

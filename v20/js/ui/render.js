@@ -139,14 +139,22 @@ export function render(state){
     current.cash>=pending.price &&
     state.phase==="landed"
   );
-  const buyButton=document.getElementById("buyButton");
-  buyButton.disabled=!canBuy;
-  buyButton.classList.toggle("purchase-ready",canBuy);
-  buyButton.textContent=canBuy
-    ? "🏠 購買 "+money(pending.price)
-    : "🏠 購買地產";
+  const purchaseDialog=document.getElementById("purchaseDialog");
+  const confirmPurchaseButton=document.getElementById("confirmPurchaseButton");
+  if(pending&&state.phase==="landed"){
+    document.getElementById("purchaseTitle").textContent="是否購買「"+pending.name+"」？";
+    document.getElementById("purchaseSubtitle").textContent=pending.group+"｜第 "+pending.number+" 格";
+    document.getElementById("purchasePrice").textContent=money(pending.price);
+    document.getElementById("purchaseCash").textContent=money(current.cash);
+    confirmPurchaseButton.disabled=!canBuy;
+    confirmPurchaseButton.textContent=canBuy?"購買":"現金不足";
+    if(!purchaseDialog.open)purchaseDialog.showModal();
+  }else if(purchaseDialog.open){
+    purchaseDialog.close();
+  }
 
-  document.getElementById("endTurnButton").disabled=state.phase!=="landed";
+  document.getElementById("endTurnButton").disabled=
+    state.phase!=="landed" || state.pendingPurchase!=null;
 
   renderProperties(state,current);
 }
