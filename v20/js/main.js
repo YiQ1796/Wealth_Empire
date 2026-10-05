@@ -1,4 +1,4 @@
-import{createInitialState,createLobbyState,hydrateState,setAiSeat,setHumanSeat}from"./core/state.js";
+import{createInitialState,createLobbyState,hydrateState,setAiSeat,setHumanSeat,setPlayerCharacter}from"./core/state.js";
 import{GameEngine}from"./core/game.js";
 import{
   PeerNetwork,
@@ -31,6 +31,7 @@ let initialGuestStatePending=false;
 let noticeQueue=[];
 let noticeActive=false;
 let movementQueue=Promise.resolve();
+let selectedCharacterIndex=0;
 const disconnectTimers=new Map();
 const ACTION_TOAST_KINDS=new Set([
   "property_buy",
@@ -77,6 +78,16 @@ function setEntryVisible(visible){
   document.body.classList.toggle("entry-pending",visible);
   entryGate.hidden=!visible;
 }
+function selectEntryCharacter(index){
+  const next=Math.max(0,Math.min(3,Math.floor(Number(index)||0)));
+  selectedCharacterIndex=next;
+  document.querySelectorAll("[data-character-choice]").forEach(button=>{
+    const selected=Number(button.dataset.characterChoice)===next;
+    button.classList.toggle("selected",selected);
+    button.setAttribute("aria-pressed",String(selected));
+  });
+}
+
 
 function maxEventId(targetState=state){
   return Math.max(0,...(targetState.events??[]).map(event=>Number(event.id)||0));
@@ -447,7 +458,7 @@ const network=new PeerNetwork({
     }
     renderAll();
   },
-  onJoin:({clientId,playerName})=>{
+  onJoin:({clientId,playerName,characterIndex})=>{
     const existing=state.players.find(player=>player.kind==="human"&&player.clientId===clientId);
     let seat=existing?.seat??null;
 
@@ -455,13 +466,32 @@ const network=new PeerNetwork({
       if(state.gameStatus!=="lobby"){
         return{ok:false,error:"遊戲已開始，只允許原玩家重新連線。"};
       }
+      const chosenCharacter=Math.max(0,Math.min(3,Math.floor(Number(characterIndex)||0)));
+      const usedByHuman=state.players.some(player=>
+        player.kind==="human"&&
+        player.clientId!==clientId&&
+        player.characterIndex===chosenCharacter
+      );
+      if(usedByHuman){
+        return{ok:false,error:"這個角色已被其他玩家選走，請換一個角色再加入。"};
+      }
       const available=state.players.find(player=>player.seat!==0&&player.kind==="ai");
       if(!available)return{ok:false,error:"房間已滿。"};
       seat=available.seat;
-      setHumanSeat(state,seat,{name:playerName,clientId,connected:true});
+      setHumanSeat(state,seat,{
+        name:playerName,
+        clientId,
+        connected:true,
+        characterIndex:chosenCharacter
+      });
       engine.log(playerName+" 加入房間，座位 "+(seat+1)+"。","network_join",{seat});
     }else{
-      setHumanSeat(state,seat,{name:playerName,clientId,connected:true});
+      setHumanSeat(state,seat,{
+        name:playerName,
+        clientId,
+        connected:true,
+        characterIndex:existing.characterIndex
+      });
       engine.log(playerName+" 已重新連回座位 "+(seat+1)+"。","network_reconnect",{seat});
       const timer=disconnectTimers.get(seat);
       if(timer){
@@ -678,12 +708,17 @@ networkDialog.addEventListener("click",event=>{
   if(event.target===networkDialog)networkDialog.close();
 });
 
+document.querySelectorAll("[data-character-choice]").forEach(button=>{
+  button.addEventListener("click",()=>selectEntryCharacter(button.dataset.characterChoice));
+});
+
 document.getElementById("startSoloButton").addEventListener("click",async()=>{
   await network.close(true);
   clearNetworkSession();
   uiContext.localSeat=0;
   uiContext.networkMode="offline";
   state=createInitialState();
+  setPlayerCharacter(state,0,selectedCharacterIndex);
   resetToastTracker(state);
   engine.replaceState(state);
   setEntryVisible(false);
@@ -715,9 +750,10 @@ document.getElementById("createRoomButton").addEventListener("click",async()=>{
   const code=createRoomCode();
   setNetworkStatus("正在建立房間…");
   try{
-    await network.host({roomCode:code,playerName:name});
+    await network.host({roomCode:code,playerName:name,characterIndex:selectedCharacterIndex});
     uiContext.localSeat=0;
     const next=createLobbyState(name,getOrCreateClientId());
+    setPlayerCharacter(next,0,selectedCharacterIndex);
     next.network.roomCode=code;
     state=next;
     resetToastTracker(state);
@@ -739,7 +775,11 @@ document.getElementById("joinRoomButton").addEventListener("click",async()=>{
   setNetworkStatus("正在加入房間 "+code+"…");
   try{
     initialGuestStatePending=true;
-    const result=await network.join({roomCode:code,playerName:name});
+    const result=await network.join({
+      roomCode:code,
+      playerName:name,
+      characterIndex:selectedCharacterIndex
+    });
     uiContext.localSeat=result.seat;
     uiContext.networkMode="guest";
     setEntryVisible(false);
@@ -786,7 +826,8 @@ async function restorePreviousSession(){
     if(saved.mode==="host"){
       await network.host({
         roomCode:saved.roomCode,
-        playerName:saved.playerName
+        playerName:saved.playerName,
+        characterIndex:saved.characterIndex
       });
       const snapshot=loadHostSnapshot(saved.roomCode);
       state=hydrateState(snapshot??createLobbyState(saved.playerName,saved.clientId));
@@ -794,7 +835,8 @@ async function restorePreviousSession(){
       setHumanSeat(state,0,{
         name:saved.playerName,
         clientId:saved.clientId,
-        connected:true
+        connected:true,
+        characterIndex:saved.characterIndex
       });
       uiContext.localSeat=0;
       uiContext.networkMode="host";
@@ -808,7 +850,8 @@ async function restorePreviousSession(){
       initialGuestStatePending=true;
       const result=await network.join({
         roomCode:saved.roomCode,
-        playerName:saved.playerName
+        playerName:saved.playerName,
+        characterIndex:saved.characterIndex
       });
       uiContext.localSeat=result.seat;
       uiContext.networkMode="guest";
@@ -837,6 +880,7 @@ async function initializeEntryFlow(){
   resetToastTracker(state);
 
   const saved=loadNetworkSession();
+  if(saved)selectEntryCharacter(saved.characterIndex);
   const resumeButton=document.getElementById("resumeRoomButton");
   if(saved){
     resumeButton.hidden=false;
