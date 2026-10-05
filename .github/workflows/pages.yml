@@ -80,6 +80,22 @@ jobs:
             exit 1
           fi
 
+          for legacy in \
+            v20/assets/ui/PAWN_BLUE.webp \
+            v20/assets/ui/PAWN_RED.webp \
+            v20/assets/ui/PAWN_GREEN.webp \
+            v20/assets/ui/PAWN_PURPLE.webp \
+            v20/assets/ui/QUICK_STOCK.webp \
+            v20/assets/ui/QUICK_PROPERTY.webp \
+            v20/assets/ui/QUICK_ITEM.webp \
+            v20/assets/ui/QUICK_INFO.webp
+          do
+            if [ -e "$legacy" ]; then
+              echo "Legacy V20 render source still exists: $legacy"
+              exit 1
+            fi
+          done
+
           echo "V20 Alpha18 V5 visual assets PASS: 44 tiles + houses + 16 character states + badges + modal + notification UI"
 
       - name: Validate V20 module syntax
