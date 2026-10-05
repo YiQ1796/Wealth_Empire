@@ -4,6 +4,7 @@ import assert from"node:assert/strict";
 const html=fs.readFileSync(new URL("../index.html",import.meta.url),"utf8");
 const css=fs.readFileSync(new URL("../styles/app.css",import.meta.url),"utf8");
 const main=fs.readFileSync(new URL("../js/main.js",import.meta.url),"utf8");
+const render=fs.readFileSync(new URL("../js/ui/render.js",import.meta.url),"utf8");
 
 assert.match(html,/class="mobile-primary-actions"/);
 assert.match(html,/id="mobileRollButton"/);
@@ -23,5 +24,6 @@ assert.match(css,/\.entry-gate\{[\s\S]*?overflow:auto/);
 assert.match(main,/stockMarketMobileGrid/);
 assert.match(main,/market:\["市場操作"/);
 assert.match(main,/mobileRollButton/);
+assert.match(render,/mobileRollButton\.disabled=rollDisabled/);
 
 console.log("V20 Alpha19 mobile responsive static regression PASS");
