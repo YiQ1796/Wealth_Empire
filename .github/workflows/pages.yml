@@ -101,6 +101,11 @@ jobs:
             exit 1
           fi
 
+          if grep -n 'grid-template-columns:42px minmax(0,1fr)' v20/styles/app.css; then
+            echo "Legacy Alpha17 toast layout must not coexist with Alpha18 notification cards"
+            exit 1
+          fi
+
           echo "V20 Alpha18 V5 visual assets PASS: 44 tiles + houses + 16 character states + badges + modal + notification UI"
 
       - name: Validate V20 module syntax
