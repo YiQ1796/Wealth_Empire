@@ -117,8 +117,8 @@ jobs:
           grep -q 'stock-pair-row' v20/js/ui/stock-render.js
           grep -q '.stock-pair-row{' v20/styles/app.css
           grep -q 'grid-template-columns:repeat(2,minmax(0,1fr))' v20/styles/app.css
-          grep -q 'app.css?v=alpha18-178' v20/index.html
-          grep -q 'main.js?v=alpha18-178' v20/index.html
+          grep -q 'app.css?v=alpha18-184' v20/index.html
+          grep -q 'main.js?v=alpha18-184' v20/index.html
 
           if grep -q 'data-feature="stock"' v20/index.html; then
             echo "Desktop stock market must not return as a shortcut"
@@ -213,6 +213,31 @@ jobs:
           fi
 
           echo "V20 notification detail cards PASS"
+
+      - name: Validate V20 luck-first minigames
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'name:"幸運快遞"' v20/js/data/minigames.js
+          grep -q 'name:"黃金金庫"' v20/js/data/minigames.js
+          grep -q 'name:"幸運樓層"' v20/js/data/minigames.js
+          grep -q 'name:"命運翻牌"' v20/js/data/minigames.js
+          grep -q 'name:"城市岔路"' v20/js/data/minigames.js
+          grep -q 'name:"商圈開盤"' v20/js/data/minigames.js
+          grep -q 'class="luck-choice"' v20/js/ui/minigame-ui.js
+          grep -q 'class="vault-pick"' v20/js/ui/minigame-ui.js
+          grep -q 'class="floor-pick"' v20/js/ui/minigame-ui.js
+          grep -q 'class="fate-card ' v20/js/ui/minigame-ui.js
+          grep -q 'Luck is the dominant factor now' v20/js/core/minigames.js
+          grep -q '.luck-game{' v20/styles/app.css
+          grep -q 'min-height:172px' v20/styles/app.css
+
+          if grep -qE 'performance\.now|requestAnimationFrame|courier-prompt|vault-needle|tower-moving|memory-sequence|route-grid|district-options' v20/js/ui/minigame-ui.js; then
+            echo "Legacy reflex/speed minigame mechanics must not remain in the active minigame UI"
+            exit 1
+          fi
+
+          echo "V20 luck-first minigames PASS"
 
       - name: Validate V20 module syntax
         shell: bash
