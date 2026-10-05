@@ -127,6 +127,23 @@ jobs:
 
           echo "V20 persistent stock HUD PASS"
 
+      - name: Validate V20 board-center visual layout
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'board.appendChild(actionToastStack)' v20/js/main.js
+          grep -q 'tile.edge-top' v20/styles/app.css
+          grep -q 'tile.edge-right' v20/styles/app.css
+          grep -q 'position:absolute' v20/styles/app.css
+          grep -q 'width:min(760px,calc(100% - 48px))' v20/styles/app.css
+
+          if grep -q 'Reduce central notifications so they no longer dominate the map' v20/styles/app.css; then
+            echo "Notification size must not be reduced; only its board-relative position may change"
+            exit 1
+          fi
+
+          echo "V20 board-center visual layout PASS"
+
       - name: Validate V20 module syntax
         shell: bash
         run: |
