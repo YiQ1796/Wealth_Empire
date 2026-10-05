@@ -20,49 +20,57 @@ const event=(number,name,type)=>({number,name,type});
 
 export const BOARD_TILES=Object.freeze([
   event(1,"起點","start"),
+
   property(2,"星港住宅",0),
-  event(3,"機會","chance"),
-  property(4,"海灣公寓",1),
-  event(5,"稅務局","tax"),
-  property(6,"水岸別墅",2),
-  event(7,"中央車站","station"),
-  property(8,"翡翠商圈",3),
-  event(9,"命運","fate"),
-  property(10,"黃金商圈",4),
-  event(11,"高低骰對決","highlow"),
-  property(12,"百貨商場",5),
-  event(13,"國際機場","station"),
-  property(14,"科技園區",6),
-  event(15,"機會","chance"),
-  property(16,"創新園區",7),
-  event(17,"收購中心","acquisition"),
-  property(18,"雲端科技城",8),
-  property(19,"北城豪宅",9),
-  event(20,"財富賽馬場","horse"),
-  property(21,"綠能園區",10),
-  property(22,"湖畔豪宅",11),
-  event(23,"股市事件","market"),
-  property(24,"金融大道",12),
-  event(25,"法院","court"),
-  property(26,"商務中心",13),
-  event(27,"命運","fate"),
-  property(28,"晶鑽商業區",14),
-  event(29,"國際港口","station"),
-  property(30,"影城",15),
+  property(3,"海灣公寓",1),
+  property(4,"水岸別墅",2),
+  event(5,"機會","chance"),
+  event(6,"稅務局","tax"),
+
+  property(7,"翡翠商圈",3),
+  property(8,"黃金商圈",4),
+  property(9,"百貨商場",5),
+  event(10,"中央車站","station"),
+  event(11,"機會","chance"),
+
+  property(12,"科技園區",6),
+  property(13,"創新園區",7),
+  property(14,"雲端科技城",8),
+  event(15,"國際機場","station"),
+  event(16,"高低骰對決","highlow"),
+
+  property(17,"北城豪宅",9),
+  property(18,"綠能園區",10),
+  property(19,"湖畔豪宅",11),
+  event(20,"收購中心","acquisition"),
+  event(21,"財富賽馬場","horse"),
+
+  property(22,"金融大道",12),
+  property(23,"商務中心",13),
+  property(24,"晶鑽商業區",14),
+  event(25,"股市事件","market"),
+  event(26,"法院","court"),
+
+  property(27,"影城",15),
+  property(28,"國際飯店",16),
+  property(29,"頂級飯店",17),
+  event(30,"國際港口","station"),
   event(31,"醫療中心","hospital"),
-  property(32,"國際飯店",16),
-  event(33,"機會","chance"),
-  property(34,"頂級飯店",17),
-  event(35,"跨海大橋","station"),
-  property(36,"山景莊園",18),
-  event(37,"命運","fate"),
-  property(38,"天空豪宅",19),
-  event(39,"地產拍賣行","auction"),
-  property(40,"奢華莊園",20),
-  property(41,"皇后大道",21),
+
+  property(32,"山景莊園",18),
+  property(33,"天空豪宅",19),
+  property(34,"奢華莊園",20),
+  event(35,"機會","chance"),
+  event(36,"跨海大橋","station"),
+
+  property(37,"皇后大道",21),
+  property(38,"帝王商圈",22),
+  property(39,"世界中心",23),
+  event(40,"命運","fate"),
+  event(41,"地產拍賣行","auction"),
   event(42,"城市更新局","urban"),
-  property(43,"帝王商圈",22),
-  property(44,"世界中心",23)
+  event(43,"命運","fate"),
+  event(44,"命運","fate")
 ]);
 
 export const CORNER_INDEXES=Object.freeze([0,12,22,34]);
@@ -72,4 +80,18 @@ export function boardPlacement(index){
   if(index<=21)return{row:index-11,col:13,orientation:"vertical"};
   if(index<=34)return{row:11,col:35-index,orientation:"horizontal"};
   return{row:45-index,col:1,orientation:"vertical"};
+}
+
+export function groupTileIndexes(group){
+  return BOARD_TILES
+    .map((tile,index)=>({tile,index}))
+    .filter(entry=>entry.tile.type==="property"&&entry.tile.group===group)
+    .map(entry=>entry.index);
+}
+
+export function groupsAreContiguous(){
+  return GROUP_ORDER.every(group=>{
+    const indexes=groupTileIndexes(group);
+    return indexes.length===3&&indexes[1]===indexes[0]+1&&indexes[2]===indexes[1]+1;
+  });
 }
