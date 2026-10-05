@@ -72,19 +72,28 @@ export function createAiMinigameResult(state,seat){
   const player=state.players[seat];
   const random=rng(hash(session.seed+":"+seat+":"+session.id));
   const skill=aiSkill(player);
-  const variation=(random()-0.5)*0.26;
+
+  // Luck is the dominant factor now. AI profile only nudges the result slightly,
+  // so minigames feel like Monopoly-style chance events instead of a hidden skill check.
+  const luck=random();
+  const swing=(random()-0.5)*900;
+  const skillBonus=(skill-0.70)*1500;
   const gameBias={
-    courier:0.02,
-    vault:-0.01,
-    tower:0,
-    memory:0.01,
-    route:0.015,
-    district:0.025
+    courier:80,
+    vault:0,
+    tower:40,
+    memory:-20,
+    route:60,
+    district:100
   }[session.id]??0;
-  const normalized=Math.max(0.35,Math.min(0.96,skill+variation+gameBias));
+  const score=Math.max(
+    1800,
+    Math.min(9800,Math.round(2600+luck*6400+swing+skillBonus+gameBias))
+  );
+
   return{
-    score:Math.round(4200+normalized*5000),
-    detail:{ai:true,profile:player.aiProfile??"balanced"}
+    score,
+    detail:{ai:true,profile:player.aiProfile??"balanced",luck:Math.round(luck*100)}
   };
 }
 
