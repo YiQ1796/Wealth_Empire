@@ -185,11 +185,14 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
     const statusBadge=player.kind==="ai"
       ? '<img class="player-type-badge" src="'+kindAsset+'" alt="AI">'
       : '<img class="player-type-badge" src="'+kindAsset+'" alt="真人">';
+    const thinkingBadge=player.kind==="ai"&&index===state.currentPlayer&&state.gameStatus==="playing"
+      ? '<img class="player-thinking-badge" src="'+UI_ASSETS.badges.thinking+'" alt="AI思考中" title="AI思考中">'
+      : "";
     const offlineLabel=player.connected===false?'<span class="player-offline-label">離線</span>':"";
     return '<article class="player-card '+(index===state.currentPlayer?"active":"")+'">'+
       '<img class="player-pawn" data-player-avatar="'+index+'" src="'+playerCharacter(index,"idle")+'" alt="">'+
       '<div class="player-card__body">'+
-        '<h3>'+player.name+(index===state.currentPlayer?" 👑":"")+statusBadge+offlineLabel+'</h3>'+
+        '<h3>'+player.name+(index===state.currentPlayer?" 👑":"")+statusBadge+thinkingBadge+offlineLabel+'</h3>'+
         '<div class="player-stats">'+
           '<span>現金 <b>'+money(player.cash)+'</b></span>'+
           '<span>地產 <b>'+player.properties.length+'</b></span>'+
