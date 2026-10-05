@@ -1024,10 +1024,13 @@ function openPropertyInfo(tileIndex){
     acquisitionValue.textContent="自己的地產";
     acquisitionNote.textContent="不需要收購。";
   }else{
+    const courtProtected=Number(owner?.courtShieldUntilRound)>=Number(state.round);
     acquisitionValue.textContent=noticeMoney(estimatedOffer);
     acquisitionNote.textContent=forceEligible
       ?"預估報價＝目前資產估值 ×1.25；LV."+tile.level+" 可強制收購。實際交易仍依收購/協商流程。"
-      :"預估報價＝目前資產估值 ×1.25；LV."+tile.level+" 已受滿級保護，不可強制收購，仍可一般協商。";
+      :courtProtected
+        ?"法院財產保全生效中（至 ROUND "+owner.courtShieldUntilRound+"），目前不可強制收購。"
+        :"預估報價＝目前資產估值 ×1.25；LV."+tile.level+" 已受滿級保護，不可強制收購，仍可一般協商。";
   }
 
   if(!propertyInfoDialog.open)propertyInfoDialog.showModal();
