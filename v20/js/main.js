@@ -585,15 +585,22 @@ function dispatchAction(action){
 }
 
 function renderStocks(){
-  renderStockMarket(
+  const containers=[
     document.getElementById("stockMarketGrid"),
-    state,
-    currentLocalSeat(),
-    {
-      onBuy:(stockId,shares)=>dispatchAction({type:"buy_stock",stockId,shares}),
-      onSell:(stockId,shares)=>dispatchAction({type:"sell_stock",stockId,shares})
-    }
-  );
+    document.getElementById("stockMarketMobileGrid")
+  ].filter(Boolean);
+
+  containers.forEach(container=>{
+    renderStockMarket(
+      container,
+      state,
+      currentLocalSeat(),
+      {
+        onBuy:(stockId,shares)=>dispatchAction({type:"buy_stock",stockId,shares}),
+        onSell:(stockId,shares)=>dispatchAction({type:"sell_stock",stockId,shares})
+      }
+    );
+  });
 }
 
 function renderNetworkUi(){
@@ -668,6 +675,7 @@ function openFeature(name){
   const meta={
     property:["我的房產","查看地產、區域完成度、收租與升級。"],
     item:["策略道具","符合使用條件時會主動提示。"],
+    market:["市場操作","查看即時行情、持股損益並進行買賣。"],
     info:["遊戲資訊","目前格子與事件紀錄。"]
   }[name];
   if(!meta)return;
@@ -675,7 +683,7 @@ function openFeature(name){
   document.getElementById("featureDialogTitle").textContent=meta[0];
   document.getElementById("featureDialogSubtitle").textContent=meta[1];
   const headerArt=document.getElementById("featureDialogHeaderArt");
-  if(headerArt)headerArt.src=UI_ASSETS.headers[name]??UI_ASSETS.headers.info;
+  if(headerArt)headerArt.src=(name==="market"?UI_ASSETS.headers.stock:UI_ASSETS.headers[name])??UI_ASSETS.headers.info;
   document.querySelectorAll("[data-feature-panel]").forEach(panel=>{
     panel.classList.toggle("active",panel.dataset.featurePanel===name);
   });
@@ -684,6 +692,10 @@ function openFeature(name){
 }
 
 document.getElementById("rollButton").addEventListener("click",()=>dispatchAction({type:"roll"}));
+const mobileRollButton=document.getElementById("mobileRollButton");
+if(mobileRollButton){
+  mobileRollButton.addEventListener("click",()=>dispatchAction({type:"roll"}));
+}
 document.getElementById("confirmPurchaseButton").addEventListener("click",()=>dispatchAction({type:"buy_property"}));
 document.getElementById("declinePurchaseButton").addEventListener("click",()=>dispatchAction({type:"decline_property"}));
 document.getElementById("endTurnButton").addEventListener("click",()=>dispatchAction({type:"end_turn"}));
