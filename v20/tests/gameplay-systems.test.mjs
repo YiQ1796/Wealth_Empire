@@ -158,6 +158,12 @@ import{TRANSPORT_NODE_INDEXES}from"../js/data/transport.js";
   );
   assert.equal(normalizeRemoteAction({type:"transport_travel",destinationIndex:44}),null);
   assert.deepEqual(normalizeRemoteAction({type:"transport_skip"}),{type:"transport_skip"});
+  assert.deepEqual(
+    normalizeRemoteAction({type:"acquisition_buy",tileIndex:2}),
+    {type:"acquisition_buy",tileIndex:2}
+  );
+  assert.equal(normalizeRemoteAction({type:"acquisition_buy",tileIndex:44}),null);
+  assert.deepEqual(normalizeRemoteAction({type:"acquisition_skip"}),{type:"acquisition_skip"});
 }
 
 {
@@ -212,6 +218,50 @@ import{TRANSPORT_NODE_INDEXES}from"../js/data/transport.js";
 {
   const state=createInitialState();
   const engine=new GameEngine(state,()=>{});
+  const acquisitionIndex=state.tiles.findIndex(tile=>tile.type==="acquisition");
+  const targetIndex=state.tiles.findIndex(tile=>tile.type==="property");
+  assert.ok(acquisitionIndex>0&&targetIndex>0);
+
+  state.tiles[targetIndex].owner=1;
+  state.players[1].properties.push(targetIndex);
+  state.players[0].cash=50000;
+  state.players[0].position=(acquisitionIndex-2+state.tiles.length)%state.tiles.length;
+
+  const sellerCashBefore=state.players[1].cash;
+  assert.equal(engine.roll(0,{d1:1,d2:1}),true);
+  assert.equal(state.players[0].position,acquisitionIndex);
+  assert.equal(state.phase,"acquisition","acquisition center must open a real decision phase");
+  const option=state.pendingAcquisition.options.find(entry=>entry.tileIndex===targetIndex);
+  assert.ok(option);
+  assert.equal(option.offer,Math.round((state.tiles[targetIndex].price)*1.25));
+  assert.equal(engine.endTurn(0),false,"acquisition decision cannot be skipped by ending turn");
+
+  const buyerCashBefore=state.players[0].cash;
+  assert.equal(engine.acquireFromCenter(targetIndex,0),true);
+  assert.equal(state.phase,"landed");
+  assert.equal(state.pendingAcquisition,null);
+  assert.equal(state.tiles[targetIndex].owner,0);
+  assert.equal(state.players[0].cash,buyerCashBefore-option.offer);
+  assert.equal(state.players[1].cash,sellerCashBefore+option.offer);
+  assert.ok(state.players[0].properties.includes(targetIndex));
+  assert.equal(state.players[1].properties.includes(targetIndex),false);
+  assert.equal(state.events[0].kind,"property_acquisition");
+}
+
+{
+  const state=createInitialState();
+  const engine=new GameEngine(state,()=>{});
+  const acquisitionIndex=state.tiles.findIndex(tile=>tile.type==="acquisition");
+  state.players[0].position=(acquisitionIndex-2+state.tiles.length)%state.tiles.length;
+  assert.equal(engine.roll(0,{d1:1,d2:1}),true);
+  assert.equal(state.phase,"landed","acquisition center without eligible opponent property must not deadlock");
+  assert.equal(state.pendingAcquisition,null);
+  assert.equal(state.events[0].kind,"acquisition_empty");
+}
+
+{
+  const state=createInitialState();
+  const engine=new GameEngine(state,()=>{});
   const stationIndex=TRANSPORT_NODE_INDEXES[0];
   state.players[0].position=(stationIndex-2+state.tiles.length)%state.tiles.length;
 
@@ -254,6 +304,21 @@ import{TRANSPORT_NODE_INDEXES}from"../js/data/transport.js";
 {
   const state=createInitialState();
   const engine=new GameEngine(state,()=>{});
+  const bridgeIndex=43;
+  assert.equal(state.tiles[bridgeIndex].name,"跨海大橋");
+  assert.equal(state.tiles[bridgeIndex].type,"station");
+  state.players[0].position=41;
+  assert.equal(engine.roll(0,{d1:1,d2:1}),true);
+  assert.equal(state.players[0].position,bridgeIndex);
+  assert.equal(state.phase,"transport","cross-sea bridge must trigger the transport system");
+  assert.equal(state.pendingTransport.sourceIndex,bridgeIndex);
+  assert.equal(state.pendingTransport.destinationIndexes.includes(bridgeIndex),false);
+  assert.equal(state.pendingTransport.destinationIndexes.length,3);
+}
+
+{
+  const state=createInitialState();
+  const engine=new GameEngine(state,()=>{});
   state.currentPlayer=1;
   const stationIndex=TRANSPORT_NODE_INDEXES[2];
   state.players[1].position=(stationIndex-2+state.tiles.length)%state.tiles.length;
@@ -290,6 +355,16 @@ import{TRANSPORT_NODE_INDEXES}from"../js/data/transport.js";
   assert.equal(state.minigame.id,"horse","horse tile must always open the horse race");
 }
 
+{
+  const state=createInitialState();
+  const engine=new GameEngine(state,()=>{});
+  const auctionIndex=state.tiles.findIndex(tile=>tile.type==="auction");
+  state.players[0].position=(auctionIndex-2+state.tiles.length)%state.tiles.length;
+  assert.equal(engine.roll(0,{d1:1,d2:1}),true);
+  assert.equal(state.phase,"minigame");
+  assert.equal(state.minigame.id,"auction","auction tile must open the auction minigame");
+}
+
 assert.deepEqual(
   MINIGAME_DEFINITIONS.map(game=>game.id),
   ["horse","treasure","rps","blackjack","plinko","auction","snail"]
@@ -308,4 +383,4 @@ assert.deepEqual(
   assert.ok(session.results["0"].score>0,"auction score must be host-resolved after all bids arrive");
 }
 
-console.log("V20 Alpha 25 gameplay systems test PASS");
+console.log("V20 Alpha 26 gameplay systems test PASS");
