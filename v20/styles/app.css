@@ -3657,6 +3657,9 @@ body.entry-pending .app-shell{
   line-height:1.3;
   font-weight:900
 }
+.transport-destination__copy .transport-destination__strategy{
+  color:#3c7396
+}
 .transport-skip{
   width:100%;
   min-height:44px;
