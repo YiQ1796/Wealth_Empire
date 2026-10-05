@@ -77,10 +77,41 @@ function currentLocalSeat(){
   return Number.isInteger(uiContext.localSeat)?uiContext.localSeat:0;
 }
 
+const phoneLandscapeQuery=window.matchMedia("(orientation: landscape) and (max-height: 650px) and (max-width: 1180px)");
+let phoneLayoutSettleTimer=null;
+
+function settlePhoneLandscapeLayout(){
+  if(!phoneLandscapeQuery.matches)return;
+  if(phoneLayoutSettleTimer){
+    clearTimeout(phoneLayoutSettleTimer);
+    phoneLayoutSettleTimer=null;
+  }
+
+  const settle=()=>{
+    // Reading layout after the entry overlay changes forces WebKit to commit
+    // the new 100lvh composition instead of keeping the first short 100dvh frame.
+    document.querySelector(".app-shell")?.getBoundingClientRect();
+    window.scrollTo(0,0);
+  };
+
+  requestAnimationFrame(()=>{
+    settle();
+    requestAnimationFrame(settle);
+  });
+  phoneLayoutSettleTimer=setTimeout(()=>{
+    settle();
+    phoneLayoutSettleTimer=null;
+  },220);
+}
+
 function setEntryVisible(visible){
   document.body.classList.toggle("entry-pending",visible);
   entryGate.hidden=!visible;
+  if(!visible)settlePhoneLandscapeLayout();
 }
+window.visualViewport?.addEventListener("resize",settlePhoneLandscapeLayout);
+window.addEventListener("orientationchange",settlePhoneLandscapeLayout);
+
 function selectEntryCharacter(index){
   const next=Math.max(0,Math.min(3,Math.floor(Number(index)||0)));
   selectedCharacterIndex=next;
