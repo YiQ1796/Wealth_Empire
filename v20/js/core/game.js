@@ -4,6 +4,7 @@ import{canUpgradeProperty,ownsCompleteGroup,rentFor,upgradeCost}from"./property-
 import{GROUP_SIZES,groupRentMultiplier}from"../data/board.js";
 import{advanceStockMarket,buyStock as executeBuyStock,getMarketStock,sellStock as executeSellStock}from"./stock-market.js";
 import{resolveSpecialEvent}from"./special-events.js";
+import{canUseTransport,chooseAiTransportDestination,createPendingTransport,transportNode}from"./transport.js";
 
 export class GameEngine{
   constructor(state,onChange){
@@ -85,6 +86,7 @@ export class GameEngine{
 
   resolveLanding(player,{specialChainDepth=0}={}){
     this.state.pendingPurchase=null;
+    this.state.pendingTransport=null;
     const tile=this.state.tiles[player.position];
 
     if(tile.type==="property"){
@@ -131,6 +133,29 @@ export class GameEngine{
       }
 
       this.state.phase="landed";
+      return;
+    }
+
+    if(tile.type==="station"){
+      const pending=createPendingTransport(this.state,player);
+      if(!pending){
+        this.state.phase="landed";
+        this.log(player.name+" 抵達「"+tile.name+"」，但交通節點資料不完整。","warning",{seat:player.seat,tile:player.position});
+        return;
+      }
+      this.state.pendingTransport=pending;
+      this.state.phase="transport";
+      this.log(
+        player.name+" 抵達「"+tile.name+"」，可免費轉乘至其他交通節點，或留在原地。",
+        "transport_offer",
+        {
+          seat:player.seat,
+          playerName:player.name,
+          sourceIndex:pending.sourceIndex,
+          sourceName:tile.name,
+          destinationIndexes:pending.destinationIndexes
+        }
+      );
       return;
     }
 
@@ -211,6 +236,73 @@ export class GameEngine{
       urban:"抵達城市更新局。"
     }[tile.type]||"觸發特殊事件。";
     this.log(player.name+" 抵達「"+tile.name+"」："+eventText,"event",{seat:player.seat,tile:player.position,type:tile.type});
+  }
+
+  useTransport(destinationIndex,seat=this.state.currentPlayer){
+    const player=this.currentPlayer;
+    if(!this.isCurrentSeat(seat)||!canUseTransport(this.state,seat,destinationIndex)){
+      this.log("目前無法使用這條交通路線。","warning",{seat,destinationIndex:Number(destinationIndex)});
+      this.notify();
+      return false;
+    }
+
+    const pending=this.state.pendingTransport;
+    const sourceIndex=pending.sourceIndex;
+    const destination=Number(destinationIndex);
+    const sourceNode=transportNode(sourceIndex);
+    const destinationNode=transportNode(destination);
+
+    player.position=destination;
+    this.state.pendingTransport=null;
+    this.state.phase="landed";
+
+    this.log(
+      player.name+" 從「"+(sourceNode?.name??("第 "+(sourceIndex+1)+" 格"))+"」轉乘至「"+
+        (destinationNode?.name??("第 "+(destination+1)+" 格"))+"」。",
+      "move",
+      {
+        seat:player.seat,
+        from:sourceIndex,
+        to:destination,
+        path:[destination],
+        transport:true
+      }
+    );
+    this.log(
+      player.name+" 完成免費轉乘，本次抵達交通節點不再連續觸發第二次交通。",
+      "transport_complete",
+      {
+        seat:player.seat,
+        playerName:player.name,
+        sourceIndex,
+        sourceName:sourceNode?.name??"",
+        destinationIndex:destination,
+        destinationName:destinationNode?.name??""
+      }
+    );
+    this.notify();
+    return true;
+  }
+
+  skipTransport(seat=this.state.currentPlayer){
+    const pending=this.state.pendingTransport;
+    if(
+      !this.isCurrentSeat(seat)||
+      this.state.phase!=="transport"||
+      !pending||
+      pending.seat!==Number(seat)
+    )return false;
+
+    const sourceNode=transportNode(pending.sourceIndex);
+    this.state.pendingTransport=null;
+    this.state.phase="landed";
+    this.log(
+      this.currentPlayer.name+" 選擇留在「"+(sourceNode?.name??"交通設施")+"」，不進行轉乘。",
+      "transport_skip",
+      {seat:this.currentPlayer.seat,sourceIndex:pending.sourceIndex,sourceName:sourceNode?.name??""}
+    );
+    this.notify();
+    return true;
   }
 
   buyCurrentProperty(seat=this.state.currentPlayer){
@@ -446,6 +538,12 @@ export class GameEngine{
     if(this.state.phase==="await-roll"){
       this.prepareAiTurn();
       return this.roll(player.seat);
+    }
+
+    if(this.state.phase==="transport"){
+      const destinationIndex=chooseAiTransportDestination(this.state,player.seat);
+      if(destinationIndex!=null)return this.useTransport(destinationIndex,player.seat);
+      return this.skipTransport(player.seat);
     }
 
     if(this.state.phase==="landed"&&this.state.pendingPurchase!=null){
