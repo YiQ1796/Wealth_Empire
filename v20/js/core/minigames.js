@@ -30,7 +30,20 @@ function clampScore(value){
 
 function scoreByPlacement(place,random){
   const base=[9000,7200,5400,3600][Math.max(0,Math.min(3,place-1))]??3000;
-  return clampScore(base+Math.floor(random()*500));
+  return clampScore(base+Math.floor(random()*350));
+}
+
+function sharedRaceOrder(seed,gameId){
+  const random=rng(hash(seed+":"+gameId+":shared-ranking"));
+  return[0,1,2,3]
+    .map(index=>({index,value:random()}))
+    .sort((a,b)=>b.value-a.value)
+    .map(entry=>entry.index);
+}
+
+function auctionValue(seed){
+  const random=rng(hash(seed+":auction:shared-item"));
+  return 1800+Math.floor(random()*4201);
 }
 
 export function chooseMinigame(state){
@@ -77,9 +90,11 @@ function aiSkill(player){
   return 0.75;
 }
 
-function aiHorseResult(random){
-  const place=1+Math.floor(random()*4);
-  return{score:scoreByPlacement(place,random),detail:{game:"horse",place,pick:1+Math.floor(random()*4)}};
+function aiRaceResult(session,seat,gameId,random){
+  const order=sharedRaceOrder(session.seed,gameId);
+  const pick=Math.floor(random()*4);
+  const place=order.indexOf(pick)+1;
+  return{score:scoreByPlacement(place,random),detail:{game:gameId,place,pick,sharedRace:true}};
 }
 
 function aiTreasureResult(random,skill){
@@ -129,38 +144,27 @@ function aiPlinkoResult(random){
   return{score:clampScore(1200+multiplier*850),detail:{game:"plinko",slot,multiplier}};
 }
 
-function aiAuctionResult(random,skill){
-  const value=1800+Math.floor(random()*4201);
-  const bid=Math.round(value*(0.55+random()*0.6));
-  const rivalTop=Math.round(value*(0.6+random()*0.55));
-  const won=bid>=rivalTop;
-  const profit=won?value-bid:0;
-  const score=won
-    ? 5200+profit*0.8+Math.max(0,(skill-0.7)*1500)
-    : 2600+Math.max(0,value-bid)*0.15;
-  return{score:clampScore(score),detail:{game:"auction",value,bid,rivalTop,won}};
-}
-
-function aiSnailResult(random){
-  const place=1+Math.floor(random()*4);
-  const eventCount=2+Math.floor(random()*5);
-  return{score:scoreByPlacement(place,random),detail:{game:"snail",place,pick:1+Math.floor(random()*4),eventCount}};
+function aiAuctionResult(session,random,skill){
+  const value=auctionValue(session.seed);
+  const attitude=0.58+random()*0.58+(skill-0.74)*0.35;
+  const bid=Math.max(1000,Math.min(6000,Math.round(value*attitude/250)*250));
+  return{score:0,detail:{game:"auction",bid}};
 }
 
 export function createAiMinigameResult(state,seat){
   const session=state.minigame;
   const player=state.players[seat];
-  const random=rng(hash(session.seed+":"+seat+":"+session.id));
+  const random=rng(hash(session.seed+":"+seat+":"+session.id+":seat"));
   const skill=aiSkill(player);
 
   const resolvers={
-    horse:()=>aiHorseResult(random),
+    horse:()=>aiRaceResult(session,seat,"horse",random),
     treasure:()=>aiTreasureResult(random,skill),
     rps:()=>aiRpsResult(random),
     blackjack:()=>aiBlackjackResult(random,skill),
     plinko:()=>aiPlinkoResult(random),
-    auction:()=>aiAuctionResult(random,skill),
-    snail:()=>aiSnailResult(random)
+    auction:()=>aiAuctionResult(session,random,skill),
+    snail:()=>aiRaceResult(session,seat,"snail",random)
   };
   return(resolvers[session.id]??(()=>({score:5000,detail:{game:session.id}})))();
 }
@@ -189,6 +193,43 @@ export function canFinalizeMinigame(state,now=Date.now()){
   return pendingHumanSeats(state).length===0||now>=session.deadline;
 }
 
+function resolveAuctionScores(state,session){
+  const value=auctionValue(session.seed);
+  const bids=state.players
+    .filter(player=>!player.bankrupt)
+    .map(player=>{
+      const raw=Number(session.results[String(player.seat)]?.detail?.bid)||0;
+      return{seat:player.seat,bid:Math.max(0,Math.min(6000,Math.round(raw)))};
+    })
+    .sort((a,b)=>b.bid-a.bid||a.seat-b.seat);
+  const winner=bids[0]??null;
+
+  for(const entry of bids){
+    const result=session.results[String(entry.seat)];
+    if(!result)continue;
+    const won=Boolean(winner&&winner.seat===entry.seat&&entry.bid>0);
+    const profit=won?value-entry.bid:0;
+    result.score=won
+      ? clampScore(5200+profit*0.8)
+      : clampScore(2200+Math.max(0,value-entry.bid)*0.18);
+    result.detail={
+      ...result.detail,
+      value,
+      won,
+      profit,
+      topBid:winner?.bid??0,
+      winnerSeat:winner?.seat??null
+    };
+  }
+
+  session.auction={
+    value,
+    winnerSeat:winner?.seat??null,
+    winningBid:winner?.bid??0,
+    bids
+  };
+}
+
 export function finalizeMinigame(state,now=Date.now()){
   const session=state.minigame;
   if(!session||session.status!=="playing")return null;
@@ -196,10 +237,12 @@ export function finalizeMinigame(state,now=Date.now()){
   fillAiMinigameResults(state);
   if(now>=session.deadline){
     for(const seat of pendingHumanSeats(state)){
-      submitMinigameResult(state,seat,{score:2500,detail:{timeout:true,game:session.id}});
+      submitMinigameResult(state,seat,{score:2500,detail:{timeout:true,game:session.id,bid:0}});
     }
   }
   if(!canFinalizeMinigame(state,now))return null;
+
+  if(session.id==="auction")resolveAuctionScores(state,session);
 
   const entries=state.players
     .filter(player=>!player.bankrupt)
