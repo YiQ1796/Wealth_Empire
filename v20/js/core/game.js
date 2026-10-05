@@ -5,6 +5,7 @@ import{GROUP_SIZES,groupRentMultiplier}from"../data/board.js";
 import{advanceStockMarket,buyStock as executeBuyStock,getMarketStock,sellStock as executeSellStock}from"./stock-market.js";
 import{resolveSpecialEvent}from"./special-events.js";
 import{canUseTransport,chooseAiTransportDestination,createPendingTransport,transportNode}from"./transport.js";
+import{chooseAiAcquisition,createPendingAcquisition,executeAcquisition}from"./acquisition-center.js";
 
 export class GameEngine{
   constructor(state,onChange){
@@ -87,6 +88,7 @@ export class GameEngine{
   resolveLanding(player,{specialChainDepth=0}={}){
     this.state.pendingPurchase=null;
     this.state.pendingTransport=null;
+    this.state.pendingAcquisition=null;
     const tile=this.state.tiles[player.position];
 
     if(tile.type==="property"){
@@ -136,6 +138,33 @@ export class GameEngine{
       return;
     }
 
+    if(tile.type==="acquisition"){
+      const pending=createPendingAcquisition(this.state,player.seat,player.position);
+      if(!pending.options.length){
+        this.state.phase="landed";
+        this.log(
+          player.name+" 抵達「收購中心」，目前沒有符合既有收購條件的其他玩家地產。",
+          "acquisition_empty",
+          {seat:player.seat,tile:player.position}
+        );
+        return;
+      }
+
+      this.state.pendingAcquisition=pending;
+      this.state.phase="acquisition";
+      this.log(
+        player.name+" 抵達「收購中心」，可依既有 125% 資產估值規則選擇一塊符合條件的對手地產收購。",
+        "acquisition_offer",
+        {
+          seat:player.seat,
+          playerName:player.name,
+          tile:player.position,
+          optionCount:pending.options.length
+        }
+      );
+      return;
+    }
+
     if(tile.type==="station"){
       const pending=createPendingTransport(this.state,player);
       if(!pending){
@@ -159,8 +188,12 @@ export class GameEngine{
       return;
     }
 
-    if(tile.type==="highlow"||tile.type==="horse"){
-      const forcedGameId=tile.type==="horse"?"horse":null;
+    if(tile.type==="highlow"||tile.type==="horse"||tile.type==="auction"){
+      const forcedGameId=tile.type==="horse"
+        ?"horse"
+        : tile.type==="auction"
+          ?"auction"
+          : null;
       const session=startMinigame(this.state,player.seat,Date.now(),forcedGameId);
       fillAiMinigameResults(this.state);
       this.log(
@@ -227,7 +260,6 @@ export class GameEngine{
     const eventText={
       start:"回到起點。",
       tax:"抵達稅務局。",
-      acquisition:"抵達收購中心。",
       market:"抵達股市事件格。本回合仍可自由買賣股票。",
       court:"抵達法院。",
       hospital:"抵達醫療中心。",
@@ -235,6 +267,66 @@ export class GameEngine{
       urban:"抵達城市更新局。"
     }[tile.type]||"觸發特殊事件。";
     this.log(player.name+" 抵達「"+tile.name+"」："+eventText,"event",{seat:player.seat,tile:player.position,type:tile.type});
+  }
+
+  acquireFromCenter(tileIndex,seat=this.state.currentPlayer){
+    if(!this.isCurrentSeat(seat)){
+      return false;
+    }
+
+    const result=executeAcquisition(this.state,seat,tileIndex);
+    if(!result.ok){
+      this.log("目前無法收購這塊地產。","warning",{seat,tileIndex:Number(tileIndex)});
+      this.notify();
+      return false;
+    }
+
+    const buyer=this.state.players[seat];
+    const seller=this.state.players[result.previousOwnerSeat];
+    this.state.pendingAcquisition=null;
+    this.state.phase="landed";
+
+    this.log(
+      buyer.name+" 透過收購中心以 "+this.formatMoney(result.offer)+" 收購「"+result.tileName+
+        "」，原持有人 "+(seller?.name??result.previousOwnerName)+"。",
+      "property_acquisition",
+      {
+        seat,
+        buyerSeat:seat,
+        buyerName:buyer.name,
+        sellerSeat:result.previousOwnerSeat,
+        sellerName:seller?.name??result.previousOwnerName,
+        tile:Number(tileIndex),
+        tileName:result.tileName,
+        group:result.group,
+        level:result.level,
+        amount:result.offer,
+        buyerCashAfter:result.buyerCashAfter,
+        sellerCashAfter:result.sellerCashAfter
+      }
+    );
+    this.notify();
+    return true;
+  }
+
+  skipAcquisition(seat=this.state.currentPlayer){
+    const pending=this.state.pendingAcquisition;
+    if(
+      !this.isCurrentSeat(seat)||
+      this.state.phase!=="acquisition"||
+      !pending||
+      pending.seat!==Number(seat)
+    )return false;
+
+    this.state.pendingAcquisition=null;
+    this.state.phase="landed";
+    this.log(
+      this.currentPlayer.name+" 選擇不使用收購中心。",
+      "acquisition_skip",
+      {seat:this.currentPlayer.seat}
+    );
+    this.notify();
+    return true;
   }
 
   useTransport(destinationIndex,seat=this.state.currentPlayer){
@@ -545,6 +637,12 @@ export class GameEngine{
       return this.skipTransport(player.seat);
     }
 
+    if(this.state.phase==="acquisition"){
+      const tileIndex=chooseAiAcquisition(this.state,player.seat);
+      if(tileIndex!=null)return this.acquireFromCenter(tileIndex,player.seat);
+      return this.skipAcquisition(player.seat);
+    }
+
     if(this.state.phase==="landed"&&this.state.pendingPurchase!=null){
       const tile=this.state.tiles[this.state.pendingPurchase];
       if(shouldBuyProperty(this.state,player.seat,tile)){
@@ -575,7 +673,8 @@ export class GameEngine{
       !this.isCurrentSeat(seat)||
       this.state.phase!=="landed"||
       this.state.pendingPurchase!=null||
-      this.state.pendingTransport!=null
+      this.state.pendingTransport!=null||
+      this.state.pendingAcquisition!=null
     )return false;
 
     const previousSeat=this.state.currentPlayer;
