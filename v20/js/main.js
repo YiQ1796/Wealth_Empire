@@ -378,7 +378,7 @@ async function animateMoveEvent(event){
 
   const moving=document.createElement("img");
   moving.className="moving-character";
-  moving.src=characterAsset(seat,"idle");
+  moving.src=characterAsset(state.players[seat]??seat,"idle");
   moving.alt="";
   moving.style.left=start.left+"px";
   moving.style.top=start.top+"px";
@@ -392,7 +392,7 @@ async function animateMoveEvent(event){
     for(let i=0;i<path.length;i++){
       const point=tileCenter(path[i]);
       if(!point)continue;
-      moving.src=characterAsset(seat,i%2===0?"walkA":"walkB");
+      moving.src=characterAsset(state.players[seat]??seat,i%2===0?"walkA":"walkB");
       moving.classList.add("walking");
       moving.style.left=point.left+"px";
       moving.style.top=point.top+"px";
@@ -401,9 +401,9 @@ async function animateMoveEvent(event){
 
     moving.classList.remove("walking");
     moving.classList.add("jumping");
-    moving.src=characterAsset(seat,"jump");
+    moving.src=characterAsset(state.players[seat]??seat,"jump");
     await sleep(180);
-    moving.src=characterAsset(seat,"idle");
+    moving.src=characterAsset(state.players[seat]??seat,"idle");
     await sleep(70);
   }finally{
     moving.remove();
