@@ -102,13 +102,13 @@ function noticeConfig(event){
     bankruptcy:{title:"玩家破產",icon:N.icons.bankruptcy,effect:N.effects.red,tone:"red",major:true},
     minigame_complete:{title:"都會挑戰結算",icon:N.icons.minigameResult,effect:N.effects.gold,tone:"gold",major:true},
     game_complete:{title:"遊戲結束",icon:N.icons.victory,effect:N.effects.gold,tone:"gold",major:true},
-    stock_buy:{title:"股票買進",icon:N.icons.stockBuy,effect:N.effects.blue,tone:"blue"},
-    stock_sell:{title:"股票賣出",icon:N.icons.stockSell,effect:N.effects.blue,tone:"blue"},
+    stock_buy:{title:"股票買進",icon:N.icons.stockBuy,effect:N.effects.blue,tone:"blue",metric:true},
+    stock_sell:{title:"股票賣出",icon:N.icons.stockSell,effect:N.effects.blue,tone:"blue",metric:true},
     market_tick:{title:"市場更新",icon:N.icons.marketTick,effect:N.effects.blue,tone:"blue",market:true},
     network_join:{title:"好友加入",icon:N.icons.network,effect:N.effects.blue,tone:"blue"},
     network_reconnect:{title:"重新連線",icon:N.icons.network,effect:N.effects.green,tone:"green"},
     network_ai_takeover:{title:"AI 接手",icon:N.icons.aiTakeover,effect:N.effects.purple,tone:"purple"},
-    cash:{title:"現金變動",icon:N.icons.rent,effect:N.effects.green,tone:"green"}
+    cash:{title:"現金變動",icon:N.icons.rent,effect:N.effects.green,tone:"green",metric:true}
   };
   return map[event.kind]??{title:"遊戲動態",icon:N.icons.marketTick,effect:N.effects.blue,tone:"blue"};
 }
@@ -119,10 +119,120 @@ function noticeCardSources(config){
   if(config.market){
     return{desktop:market.desktop,mobile:market.mobile};
   }
-  if(config.major){
+  if(config.major||config.metric){
     return{desktop:cards.majorDesktop,mobile:cards.majorMobile};
   }
   return{desktop:cards.standardDesktop,mobile:cards.standardMobile};
+}
+
+function noticeMoney(value){
+  const number=Number(value);
+  if(!Number.isFinite(number))return"—";
+  return"$"+Math.round(number).toLocaleString();
+}
+
+function noticeSignedMoney(value){
+  const number=Number(value);
+  if(!Number.isFinite(number))return"—";
+  const rounded=Math.round(number);
+  return(rounded>=0?"+":"-")+"$"+Math.abs(rounded).toLocaleString();
+}
+
+function noticeView(event){
+  const data=event.data??{};
+  const tile=Number.isInteger(Number(data.tile))?state.tiles?.[Number(data.tile)]:null;
+  const player=Number.isInteger(Number(data.seat))?state.players?.[Number(data.seat)]:null;
+  const playerName=data.playerName??player?.name??"玩家";
+  const tileName=data.tileName??tile?.name??"地產";
+  const group=data.group??tile?.group??"";
+  const details=[];
+
+  switch(event.kind){
+    case"property_buy":
+      details.push("成交 "+noticeMoney(data.amount));
+      if(group)details.push("區域 "+group);
+      details.push("剩餘現金 "+noticeMoney(data.cashAfter));
+      return{
+        message:playerName+" 購入「"+tileName+"」",
+        metric:noticeMoney(data.amount),
+        details
+      };
+
+    case"property_upgrade":
+      details.push("升級費 "+noticeMoney(data.amount));
+      details.push("目前過路費 "+noticeMoney(data.rentAfter));
+      details.push("剩餘現金 "+noticeMoney(data.cashAfter));
+      return{
+        message:playerName+" 將「"+tileName+"」升級至 LV."+data.level,
+        metric:"LV."+data.level,
+        details
+      };
+
+    case"rent":
+      details.push("支付 "+noticeMoney(data.amount));
+      if(Number(data.requested)!==Number(data.amount))details.push("原應付 "+noticeMoney(data.requested));
+      if(group)details.push("區域 "+group);
+      return{
+        message:(data.payerName??"玩家")+" → "+(data.ownerName??"地主")+"｜「"+tileName+"」",
+        metric:noticeMoney(data.amount),
+        details
+      };
+
+    case"group_complete":
+      return{
+        message:(player?.name??"玩家")+" 完成「"+(data.group??"區域")+"」3/3 地產",
+        metric:"+25%",
+        details:["該區過路費永久提高 25%"]
+      };
+
+    case"stock_buy":
+      details.push("成交價 "+noticeMoney(data.price));
+      details.push("總額 "+noticeMoney(data.total));
+      details.push("持股 "+(data.holdingShares??data.shares)+" 股");
+      details.push("剩餘現金 "+noticeMoney(data.cashAfter));
+      return{
+        message:playerName+" 買進「"+(data.stockName??data.stockId??"股票")+"」"+data.shares+" 股",
+        metric:noticeMoney(data.total),
+        details
+      };
+
+    case"stock_sell":
+      details.push("成交價 "+noticeMoney(data.price));
+      details.push("總額 "+noticeMoney(data.total));
+      details.push("剩餘持股 "+(data.holdingShares??0)+" 股");
+      details.push("已實現 "+noticeSignedMoney(data.realized));
+      return{
+        message:playerName+" 賣出「"+(data.stockName??data.stockId??"股票")+"」"+data.shares+" 股",
+        metric:noticeSignedMoney(data.realized),
+        details
+      };
+
+    case"cash":
+      return{
+        message:event.text,
+        metric:noticeSignedMoney(data.amount),
+        details:[]
+      };
+
+    case"market_tick":{
+      const movers=Array.isArray(data.movers)?data.movers:[];
+      return{
+        message:"輪到 "+(data.playerName??"下一位玩家")+"｜全市場重新漲跌",
+        metric:null,
+        details:movers.map(stock=>stock.name+" "+(stock.changePercent>0?"+":"")+Number(stock.changePercent).toFixed(1)+"%")
+      };
+    }
+
+    case"game_complete":
+      return{
+        message:event.text,
+        metric:"ROUND "+(data.round??state.round),
+        details:[]
+      };
+
+    default:
+      return{message:event.text,metric:null,details:[]};
+  }
 }
 
 function enqueueActionNotice(event){
@@ -137,23 +247,45 @@ function pumpActionNotice(){
   const event=noticeQueue.shift();
   const config=noticeConfig(event);
   const source=noticeCardSources(config);
+  const view=noticeView(event);
   const node=document.createElement("div");
-  node.className="action-toast action-toast--"+event.kind+" action-toast--"+config.tone+(config.major?" action-toast--major":"")+(config.market?" action-toast--market":"");
+  node.className=
+    "action-toast action-toast--"+event.kind+
+    " action-toast--"+config.tone+
+    (config.major?" action-toast--major":"")+
+    (config.market?" action-toast--market":"")+
+    (view.metric?" action-toast--has-metric":"");
+
   node.innerHTML=
     '<picture class="action-toast__card-bg">'+
       '<source media="(max-width:760px)" srcset="'+source.mobile+'">'+
       '<img src="'+source.desktop+'" alt="">'+
     '</picture>'+
     '<img class="action-toast__fx" src="'+config.effect+'" alt="">'+
-    '<img class="action-toast__shine" src="'+UI_ASSETS.notification.effects.edgeShine+'" alt="">'+
     (config.major&&config.tone==="gold"?'<img class="action-toast__sparkle" src="'+UI_ASSETS.notification.effects.sparkleGold+'" alt="">':"")+
     '<div class="action-toast__content">'+
       '<img class="action-toast__icon" src="'+config.icon+'" alt="">'+
-      '<div class="action-toast__copy"><strong></strong><p></p></div>'+
+      '<div class="action-toast__copy">'+
+        '<strong></strong>'+
+        '<p></p>'+
+        '<div class="action-toast__details"></div>'+
+      '</div>'+
+      (view.metric?'<div class="action-toast__metric"></div>':"")+
     '</div>';
 
   node.querySelector("strong").textContent=config.title;
-  node.querySelector("p").textContent=event.text;
+  node.querySelector("p").textContent=view.message;
+
+  const details=node.querySelector(".action-toast__details");
+  for(const detail of view.details){
+    const chip=document.createElement("span");
+    chip.textContent=detail;
+    details.appendChild(chip);
+  }
+
+  const metric=node.querySelector(".action-toast__metric");
+  if(metric)metric.textContent=view.metric;
+
   actionToastStack.replaceChildren(node);
 
   requestAnimationFrame(()=>node.classList.add("show"));
