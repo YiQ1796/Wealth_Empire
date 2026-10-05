@@ -1325,3 +1325,274 @@ body.entry-pending .app-shell{
     top:8px;
   }
 }
+
+
+/* V20 Alpha 18 — V5 Batch01-09 complete replacement */
+.tile.has-art .tile__fallback-name{display:none}
+.tile.art-error .tile__fallback-name{display:grid}
+.tile img.tile-art{
+  object-fit:fill;
+}
+.tile__dynamic{
+  left:2px;
+  right:2px;
+  bottom:2px;
+  min-height:22%;
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  align-items:end;
+  gap:2px;
+}
+.tile__price{
+  align-self:end;
+  margin:0;
+  padding:2px 4px;
+  font-size:clamp(6px,.51vw,9px);
+  background:rgba(255,255,255,.94);
+}
+.tile__houses{
+  min-width:0;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  gap:0;
+  overflow:visible;
+}
+.tile__houses img{
+  width:clamp(12px,1.2vw,19px);
+  height:clamp(12px,1.2vw,19px);
+  object-fit:contain;
+  margin-left:-2px;
+  filter:drop-shadow(0 1px 1px rgba(0,0,0,.23));
+}
+.tile__houses img:first-child{margin-left:0}
+.tile__property-status{
+  min-width:13px;
+  display:flex;
+  align-items:flex-end;
+  justify-content:flex-end;
+}
+.tile__max-badge{
+  width:clamp(13px,1.15vw,18px);
+  height:clamp(13px,1.15vw,18px);
+  object-fit:contain;
+  filter:drop-shadow(0 1px 1px rgba(0,0,0,.22));
+}
+.tile.vertical .tile__dynamic{
+  left:1px;
+  right:1px;
+  bottom:1px;
+}
+.tile.vertical .tile__houses img{
+  width:clamp(11px,1.05vw,17px);
+  height:clamp(11px,1.05vw,17px);
+}
+.tile__tokens{
+  right:1px;
+  top:1px;
+  gap:0;
+  max-width:58px;
+}
+.pawn-token{
+  width:30px;
+  height:30px;
+  object-fit:contain;
+  transform-origin:50% 100%;
+  filter:drop-shadow(0 2px 2px rgba(0,0,0,.34));
+}
+.pawn-token.is-moving{
+  animation:v5-character-step .145s ease-in-out infinite alternate;
+}
+.pawn-token.is-jumping{
+  animation:v5-character-jump .22s ease-out;
+}
+@keyframes v5-character-step{
+  from{transform:translateY(0) rotate(-2deg)}
+  to{transform:translateY(-3px) rotate(2deg)}
+}
+@keyframes v5-character-jump{
+  0%{transform:translateY(0) scale(1)}
+  45%{transform:translateY(-8px) scale(1.08)}
+  100%{transform:translateY(0) scale(1)}
+}
+
+.player-card{
+  position:relative;
+  grid-template-columns:48px minmax(0,1fr) auto;
+}
+.player-character{
+  width:48px;
+  height:48px;
+  object-fit:contain;
+  filter:drop-shadow(0 2px 3px rgba(0,0,0,.2));
+}
+.player-type-badge{
+  width:52px;
+  max-height:28px;
+  object-fit:contain;
+  align-self:center;
+}
+.player-card.active .player-character{
+  animation:v5-active-player 1.25s ease-in-out infinite;
+}
+@keyframes v5-active-player{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-3px)}
+}
+
+.region-card{
+  display:grid;
+  grid-template-columns:42px minmax(0,1fr) auto;
+  align-items:center;
+  gap:7px;
+}
+.region-card__badge{
+  width:42px;
+  height:42px;
+  object-fit:contain;
+}
+.region-card__body{
+  min-width:0;
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:center;
+  gap:2px 6px;
+}
+.region-card__body small{grid-column:1/-1}
+.region-card__bonus{
+  width:34px;
+  height:34px;
+  object-fit:contain;
+}
+
+.property-row{
+  grid-template-columns:46px minmax(0,1fr) auto;
+}
+.property-row__region{
+  display:grid;
+  place-items:center;
+}
+.property-row__region-badge{
+  width:42px;
+  height:42px;
+  object-fit:contain;
+}
+.property-row__badges{
+  display:flex;
+  gap:4px;
+  margin-top:5px;
+  min-height:24px;
+}
+.property-row__badges .status-badge{
+  width:24px;
+  height:24px;
+  object-fit:contain;
+}
+
+.feature-modal__identity{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.feature-modal__header-art{
+  width:min(210px,35vw);
+  max-height:74px;
+  object-fit:contain;
+  object-position:left center;
+}
+.sr-only{
+  position:absolute!important;
+  width:1px!important;
+  height:1px!important;
+  padding:0!important;
+  margin:-1px!important;
+  overflow:hidden!important;
+  clip:rect(0,0,0,0)!important;
+  white-space:nowrap!important;
+  border:0!important;
+}
+.modal-close{
+  display:grid;
+  place-items:center;
+  padding:6px;
+  overflow:hidden;
+}
+.modal-close img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+
+.empty-state--art{
+  min-height:118px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  flex-direction:column;
+}
+.empty-state--art img{
+  width:92px;
+  height:72px;
+  object-fit:contain;
+}
+.empty-state--art span{
+  color:#718497;
+  font-size:11px;
+  font-weight:900;
+}
+.stock-position--empty{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  min-height:46px;
+}
+.stock-position--empty img{
+  width:40px;
+  height:36px;
+  object-fit:contain;
+}
+.stock-position--empty span{
+  padding:0;
+  background:transparent;
+  color:#8795a3;
+}
+
+.network-heading{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.network-auto-fill-icon{
+  width:50px;
+  height:50px;
+  object-fit:contain;
+}
+
+.feature-tab img{
+  width:30px;
+  height:30px;
+  object-fit:contain;
+}
+.purchase-card__icon{
+  object-fit:contain;
+}
+
+@media(max-width:760px){
+  .pawn-token{width:25px;height:25px}
+  .player-character{width:42px;height:42px}
+  .player-type-badge{width:44px}
+  .tile__houses img{
+    width:clamp(10px,1.4vw,15px);
+    height:clamp(10px,1.4vw,15px);
+  }
+  .feature-modal__header-art{
+    width:min(165px,38vw);
+    max-height:58px;
+  }
+  .region-card__badge{width:34px;height:34px}
+  .property-row__region-badge{width:34px;height:34px}
+}
