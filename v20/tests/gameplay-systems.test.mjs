@@ -85,18 +85,19 @@ import{createRoomCode,normalizeRemoteAction,sanitizePlayerName,sanitizeRoomCode}
   const state=createInitialState();
   const groupTiles=state.tiles
     .map((tile,index)=>({tile,index}))
-    .filter(entry=>entry.tile.type==="property"&&entry.tile.group==="海港區");
+    .filter(entry=>entry.tile.type==="property"&&entry.tile.group==="商業區");
 
-  for(const entry of groupTiles.slice(0,2)){
+  assert.equal(groupTiles.length,4,"AI completion test uses a 4-tile region");
+  for(const entry of groupTiles.slice(0,3)){
     entry.tile.owner=0;
     state.players[0].properties.push(entry.index);
   }
-  const target=groupTiles[2].tile;
+  const target=groupTiles[3].tile;
   state.players[0].cash=50000;
   assert.equal(shouldBuyProperty(state,0,target),true);
 
   target.owner=0;
-  state.players[0].properties.push(groupTiles[2].index);
+  state.players[0].properties.push(groupTiles[3].index);
   assert.notEqual(chooseUpgrade(state,0),null);
 }
 
