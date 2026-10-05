@@ -41,7 +41,10 @@ import{createRoomCode,normalizeRemoteAction,sanitizePlayerName,sanitizeRoomCode}
   assert.equal(getHolding(player,stock.id).shares,6);
 
   state.currentPlayer=1;
-  assert.equal(buyStock(state,0,stock.id,1).reason,"not_turn");
+  assert.equal(buyStock(state,0,stock.id,1).ok,true,"stock trading must remain available outside the player's own turn");
+
+  state.phase="minigame";
+  assert.equal(buyStock(state,0,stock.id,1).reason,"trade_locked");
 }
 
 {
@@ -98,16 +101,39 @@ import{createRoomCode,normalizeRemoteAction,sanitizePlayerName,sanitizeRoomCode}
 
 {
   const state=createInitialState();
-  state.currentPlayer=3;
-  state.phase="landed";
   const engine=new GameEngine(state,()=>{});
-  const before=state.market.stocks.map(stock=>stock.price);
+
+  const beforeFirstTurn=state.market.stocks.map(stock=>stock.price);
+  state.currentPlayer=0;
+  state.phase="landed";
+  assert.equal(engine.endTurn(0),true);
+  assert.equal(state.currentPlayer,1);
+  assert.equal(state.round,1);
+  assert.equal(state.market.tick,1);
+  state.market.stocks.forEach((stock,index)=>assert.notEqual(stock.price,beforeFirstTurn[index]));
+
+  const beforeSecondTurn=state.market.stocks.map(stock=>stock.price);
+  state.phase="landed";
+  assert.equal(engine.endTurn(1),true);
+  assert.equal(state.currentPlayer,2);
+  assert.equal(state.round,1);
+  assert.equal(state.market.tick,2);
+  state.market.stocks.forEach((stock,index)=>assert.notEqual(stock.price,beforeSecondTurn[index]));
+
+  state.phase="landed";
+  assert.equal(engine.endTurn(2),true);
+  assert.equal(state.market.tick,3);
+
+  state.phase="landed";
   assert.equal(engine.endTurn(3),true);
+  assert.equal(state.currentPlayer,0);
   assert.equal(state.round,2);
   assert.equal(state.market.round,2);
-  state.market.stocks.forEach((stock,index)=>assert.notEqual(stock.price,before[index]));
-  assert.equal(engine.endTurn(0),false,"market must not advance twice without completing the next turn");
-  assert.equal(state.market.round,2);
+  assert.equal(state.market.tick,4);
+
+  const tickAfterValidTransition=state.market.tick;
+  assert.equal(engine.endTurn(0),false,"invalid end-turn call must not move the stock market");
+  assert.equal(state.market.tick,tickAfterValidTransition);
 }
 
 {
@@ -131,4 +157,4 @@ import{createRoomCode,normalizeRemoteAction,sanitizePlayerName,sanitizeRoomCode}
   assert.ok(["courier","vault","tower","memory","route","district"].includes(state.minigame.id));
 }
 
-console.log("V20 Alpha 16 gameplay systems test PASS");
+console.log("V20 Alpha 17 gameplay systems test PASS");
