@@ -87,6 +87,17 @@ button:focus-visible{outline:3px solid rgba(47,114,196,.28);outline-offset:2px}
   object-fit:fill;
   display:block
 }
+.tile.tile--owned::after{
+  content:"";
+  position:absolute;
+  inset:1px;
+  z-index:9;
+  pointer-events:none;
+  border:5px solid var(--owner-color,#377bd1);
+  border-radius:7px;
+  box-sizing:border-box;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.82)
+}
 .tile__fallback-name{
   position:absolute;
   inset:0;
@@ -1115,6 +1126,63 @@ body.entry-pending .app-shell{
   font-size:13px;
   font-weight:800;
 }
+
+.character-picker{
+  margin-top:18px;
+  padding:14px;
+  border:1px solid #dfe7ee;
+  border-radius:16px;
+  background:#f9fbfd
+}
+.character-picker__heading{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:10px
+}
+.character-picker__heading strong{
+  color:#244765;
+  font-size:15px
+}
+.character-picker__heading span{
+  color:#71869a;
+  font-size:10px;
+  font-weight:800
+}
+.character-picker__grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px
+}
+.character-choice{
+  min-width:0;
+  min-height:92px;
+  display:grid;
+  place-items:center;
+  align-content:center;
+  gap:5px;
+  padding:8px;
+  border:2px solid #dce5ed;
+  border-radius:14px;
+  background:#fff;
+  color:#36536b;
+  cursor:pointer
+}
+.character-choice img{
+  width:42px;
+  height:54px;
+  object-fit:contain
+}
+.character-choice strong{
+  font-size:11px
+}
+.character-choice.selected{
+  border-color:#d7a72f;
+  background:#fff8e7;
+  box-shadow:0 0 0 3px rgba(215,167,47,.14)
+}
+
 .entry-mode-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -1838,20 +1906,20 @@ body.entry-pending .app-shell{
 }
 .desktop-stock-panel .stock-trade-card__head strong{
   overflow:hidden;
-  font-size:11px;
+  font-size:13px;
   line-height:1.15;
   text-overflow:ellipsis;
   white-space:nowrap
 }
 .desktop-stock-panel .stock-trade-card__head small{
-  font-size:7px
+  font-size:9px
 }
 .desktop-stock-panel .stock-price b{
-  font-size:16px;
+  font-size:19px;
   line-height:1
 }
 .desktop-stock-panel .stock-price em{
-  font-size:8px
+  font-size:10px
 }
 .desktop-stock-panel .stock-position{
   grid-template-columns:repeat(2,minmax(0,1fr));
@@ -1867,11 +1935,11 @@ body.entry-pending .app-shell{
   height:28px
 }
 .desktop-stock-panel .stock-position span{
-  padding:4px;
-  font-size:8px
+  padding:5px;
+  font-size:10px
 }
 .desktop-stock-panel .stock-position b{
-  font-size:9px
+  font-size:11px
 }
 .desktop-stock-panel .stock-trade-controls{
   margin-top:5px;
@@ -1882,14 +1950,14 @@ body.entry-pending .app-shell{
   grid-column:1/-1
 }
 .desktop-stock-panel .stock-trade-controls input{
-  min-height:28px;
-  padding:4px 5px;
-  font-size:12px
+  min-height:31px;
+  padding:5px 6px;
+  font-size:14px
 }
 .desktop-stock-panel .stock-trade-controls button{
-  min-height:28px;
-  padding:4px 6px;
-  font-size:9px
+  min-height:31px;
+  padding:5px 7px;
+  font-size:11px
 }
 
 /* V20 Alpha 18 — notification keeps its original size; only its anchor moves to the board center. */
