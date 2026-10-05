@@ -137,20 +137,25 @@ button:focus-visible{outline:3px solid rgba(47,114,196,.28);outline-offset:2px}
 .tile.vertical .tile__price{padding:2px 3px;font-size:clamp(7px,.52vw,9px)}
 .tile__tokens{
   position:absolute;
-  right:2px;
-  top:2px;
-  z-index:4;
+  left:50%;
+  top:50%;
+  right:auto;
+  z-index:12;
+  width:min(92%,78px);
+  transform:translate(-50%,-50%);
   display:flex;
   flex-wrap:wrap;
-  justify-content:flex-end;
-  gap:1px;
-  max-width:48px
+  align-items:center;
+  justify-content:center;
+  gap:2px;
+  pointer-events:none
 }
 .pawn-token{
-  width:21px;
-  height:21px;
+  width:clamp(30px,2.05vw,38px);
+  height:clamp(30px,2.05vw,38px);
+  flex:0 0 auto;
   object-fit:contain;
-  filter:drop-shadow(0 2px 2px rgba(0,0,0,.3))
+  filter:drop-shadow(0 3px 3px rgba(0,0,0,.38))
 }
 .center-stage{
   grid-column:2 / 13;
@@ -427,7 +432,15 @@ button:focus-visible{outline:3px solid rgba(47,114,196,.28);outline-offset:2px}
     grid-template-columns:repeat(13,minmax(0,1fr));
     grid-template-rows:repeat(11,minmax(0,1fr))
   }
-  .pawn-token{width:18px;height:18px}
+  .tile__tokens{width:min(94%,82px)}
+  .pawn-token{
+    width:clamp(32px,3.6vw,40px);
+    height:clamp(32px,3.6vw,40px)
+  }
+  .property-house{
+    width:clamp(24px,3vw,32px);
+    height:clamp(24px,3vw,32px)
+  }
 }
 
 
@@ -1436,32 +1449,23 @@ body.entry-pending .app-shell{
 /* V20 Alpha 18 — V5 complete visual replacement */
 .tile__houses{
   position:absolute;
-  left:4px;
-  right:4px;
-  bottom:18px;
-  z-index:5;
-  min-height:18px;
+  left:5px;
+  right:5px;
+  bottom:16px;
+  z-index:6;
+  min-height:28px;
   display:flex;
   align-items:flex-end;
-  justify-content:center;
-  gap:1px;
+  justify-content:space-evenly;
+  gap:2px;
   pointer-events:none
 }
-.tile.vertical .tile__houses{
-  left:1px;
-  right:1px;
-  bottom:17px;
-  gap:0
-}
 .property-house{
-  width:clamp(13px,1.15vw,21px);
-  height:clamp(13px,1.15vw,21px);
+  width:clamp(22px,1.75vw,30px);
+  height:clamp(22px,1.75vw,30px);
+  flex:0 1 30%;
   object-fit:contain;
-  filter:drop-shadow(0 1px 2px rgba(0,0,0,.34))
-}
-.tile.vertical .property-house{
-  width:clamp(11px,1vw,18px);
-  height:clamp(11px,1vw,18px)
+  filter:drop-shadow(0 2px 2px rgba(0,0,0,.38))
 }
 .tile__badges{
   position:absolute;
