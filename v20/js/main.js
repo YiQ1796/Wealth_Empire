@@ -65,6 +65,7 @@ const featureDialog=document.getElementById("featureDialog");
 const networkDialog=document.getElementById("networkDialog");
 const purchaseDialog=document.getElementById("purchaseDialog");
 const propertyInfoDialog=document.getElementById("propertyInfoDialog");
+const acquisitionDialog=document.getElementById("acquisitionDialog");
 const transportDialog=document.getElementById("transportDialog");
 const entryGate=document.getElementById("entryGate");
 const actionToastStack=document.getElementById("actionToastStack");
@@ -660,6 +661,10 @@ function executeAction(action,seat=currentLocalSeat()){
       return engine.useTransport(action.destinationIndex,seat);
     case"transport_skip":
       return engine.skipTransport(seat);
+    case"acquisition_buy":
+      return engine.acquireFromCenter(action.tileIndex,seat);
+    case"acquisition_skip":
+      return engine.skipAcquisition(seat);
     case"end_turn":
       return engine.endTurn(seat);
     case"start_game":
@@ -733,6 +738,66 @@ function renderNetworkUi(){
   }
 }
 
+function renderAcquisitionDialog(){
+  const pending=state.pendingAcquisition;
+  const localSeat=currentLocalSeat();
+  const player=state.players?.[localSeat];
+  const shouldShow=Boolean(
+    acquisitionDialog&&
+    state.phase==="acquisition"&&
+    pending&&
+    pending.seat===localSeat&&
+    player?.kind==="human"&&
+    player.connected!==false
+  );
+
+  if(!shouldShow){
+    if(acquisitionDialog?.open)acquisitionDialog.close();
+    return;
+  }
+
+  document.getElementById("acquisitionCash").textContent=noticeMoney(player.cash);
+  const list=document.getElementById("acquisitionOptionList");
+  list.replaceChildren();
+
+  for(const option of pending.options??[]){
+    const button=document.createElement("button");
+    button.type="button";
+    button.className="acquisition-option";
+    button.disabled=!option.affordable;
+    button.dataset.tileIndex=String(option.tileIndex);
+
+    const heading=document.createElement("span");
+    heading.className="acquisition-option__heading";
+    const title=document.createElement("strong");
+    title.textContent=option.tileName;
+    const badge=document.createElement("b");
+    badge.textContent="LV."+option.level;
+    heading.append(title,badge);
+
+    const meta=document.createElement("span");
+    meta.className="acquisition-option__meta";
+    meta.textContent=option.group+"｜持有人 "+option.ownerName;
+
+    const offer=document.createElement("span");
+    offer.className="acquisition-option__offer";
+    offer.textContent="收購價 "+noticeMoney(option.offer);
+
+    const status=document.createElement("small");
+    status.textContent=option.affordable?"可收購":"現金不足";
+
+    button.append(heading,meta,offer,status);
+    if(option.affordable){
+      button.addEventListener("click",()=>{
+        dispatchAction({type:"acquisition_buy",tileIndex:option.tileIndex});
+      },{once:true});
+    }
+    list.appendChild(button);
+  }
+
+  if(!acquisitionDialog.open)acquisitionDialog.showModal();
+}
+
 function renderTransportDialog(){
   const pending=state.pendingTransport;
   const localSeat=currentLocalSeat();
@@ -801,6 +866,7 @@ function renderAll(){
   });
   renderStocks();
   renderNetworkUi();
+  renderAcquisitionDialog();
   renderTransportDialog();
   minigameUi.sync(state,currentLocalSeat());
   processMoveAnimations();
@@ -952,6 +1018,11 @@ featureDialog.addEventListener("click",event=>{
 });
 
 purchaseDialog.addEventListener("cancel",event=>event.preventDefault());
+
+const skipAcquisition=()=>dispatchAction({type:"acquisition_skip"});
+document.getElementById("skipAcquisitionButton").addEventListener("click",skipAcquisition);
+document.getElementById("skipAcquisitionIconButton").addEventListener("click",skipAcquisition);
+acquisitionDialog.addEventListener("cancel",event=>event.preventDefault());
 
 const skipTransport=()=>dispatchAction({type:"transport_skip"});
 document.getElementById("skipTransportButton").addEventListener("click",skipTransport);
