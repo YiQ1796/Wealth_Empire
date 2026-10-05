@@ -282,26 +282,6 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
         : "特殊事件格");
   }
 
-  const statusText=document.getElementById("statusText");
-  if(statusText){
-    statusText.textContent=
-      state.gameStatus==="lobby"
-        ? "多人房間等待中，房主開始後未滿座位由 AI 補位。"
-        : state.phase==="minigame"
-          ? "都會挑戰進行中，等待所有玩家完成。"
-          : state.phase==="transport"
-            ? current.name+" 正在選擇交通轉乘目的地。"
-          : state.phase==="acquisition"
-            ? current.name+" 正在收購中心選擇目標地產。"
-          : state.phase==="urban"
-            ? current.name+" 正在城市更新局選擇重新部署位置。"
-          : state.phase==="await-roll"
-            ? current.name+" 的回合，請擲骰。"
-            : state.pendingPurchase!=null
-              ? current.name+" 正在決定是否購買「"+state.tiles[state.pendingPurchase].name+"」。"
-              : current.name+" 已完成移動。";
-  }
-
   const eventLog=document.getElementById("eventLog");
   if(eventLog){
     eventLog.innerHTML=state.events
