@@ -3,7 +3,8 @@ import{
   CORNER_INDEXES,
   GROUP_ORDER,
   MAX_PROPERTY_LEVEL,
-  boardPlacement
+  boardPlacement,
+  groupRentMultiplier
 }from"../data/board.js";
 import{CENTER_BACKGROUND,TILE_ART_BY_INDEX}from"../data/assets.js";
 import{UI_ASSETS}from"../data/ui-assets.js";
@@ -99,12 +100,16 @@ function renderRegionSummary(state,currentPlayer){
 
   container.innerHTML=GROUP_ORDER.map(group=>{
     const progress=groupProgress(state,currentPlayer.seat,group);
+    const multiplier=groupRentMultiplier(group);
+    const multiplierLabel="×"+multiplier.toFixed(multiplier%1===0?0:2).replace(/0$/,"");
     return '<article class="region-card '+(progress.complete?"complete":"")+'">'+
       regionBadge(group)+
       '<div class="region-card__copy"><strong>'+group+'</strong>'+
-      '<small>'+(progress.complete?"過路費 +25%":"集滿 3 塊啟動加成")+'</small></div>'+
+      '<small>'+(progress.complete
+        ?"完成連區｜過路費 "+multiplierLabel
+        :"集滿 "+progress.total+" 塊｜過路費 "+multiplierLabel)+'</small></div>'+
       '<span>'+progress.owned+' / '+progress.total+'</span>'+
-      (progress.complete?badge(UI_ASSETS.badges.regionBonus,"區域完成 +25%","region-bonus-badge"):"")+
+      (progress.complete?badge(UI_ASSETS.badges.regionBonus,"連區完成 "+multiplierLabel,"region-bonus-badge"):"")+
     '</article>';
   }).join("");
 }
@@ -165,7 +170,12 @@ function renderProperties(state,viewerPlayer,canControl){
         '<span>'+tile.group+'｜區域 '+progress.owned+'/'+progress.total+'</span>'+
         '<small>資產 '+money(value)+'｜目前過路費 '+money(rent)+'</small>'+
         '<div class="property-row__badges">'+
-          (progress.complete?badge(UI_ASSETS.badges.regionBonus,"區域完成 +25%"):"")+
+          (progress.complete?badge(
+            UI_ASSETS.badges.regionBonus,
+            "連區完成 ×"+groupRentMultiplier(tile.group).toFixed(
+              groupRentMultiplier(tile.group)%1===0?0:2
+            ).replace(/0$/,"")
+          ):"")+
           (maxLevel?badge(UI_ASSETS.badges.propertyMax,"房產滿級")+badge(UI_ASSETS.badges.noAcquisition,"不可強制收購"):"")+
         '</div>'+
       '</div>'+
@@ -259,7 +269,14 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
       '<strong>#'+tile.number+" "+tile.name+"</strong><br>"+
       (tile.type==="property"
         ? tile.group+"<br>售價 "+money(tile.price)+"｜目前過路費 "+money(rentFor(state,tile))+
-          (owner?"<br>持有者 "+owner.name+(groupBonus?"｜區域完成 +25%":""):"")
+          (owner
+            ? "<br>持有者 "+owner.name+
+              (groupBonus
+                ? "｜連區 ×"+groupRentMultiplier(tile.group).toFixed(
+                    groupRentMultiplier(tile.group)%1===0?0:2
+                  ).replace(/0$/,"")
+                : "")
+            : "")
         : "特殊事件格");
   }
 
