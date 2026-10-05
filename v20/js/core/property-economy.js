@@ -44,6 +44,15 @@ export function canUpgradeProperty(playerSeat,tile){
   );
 }
 
+export function canForceAcquireProperty(tile){
+  return Boolean(
+    tile&&
+    tile.type==="property"&&
+    tile.owner!=null&&
+    Math.max(0,Number(tile.level)||0)<MAX_PROPERTY_LEVEL
+  );
+}
+
 export function propertyValue(tile){
   if(!tile||tile.type!=="property")return 0;
   return tile.price+upgradeCost(tile)*Math.max(0,tile.level||0);
