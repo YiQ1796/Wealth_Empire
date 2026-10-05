@@ -1706,3 +1706,23 @@ body.entry-pending .app-shell{
   font-size:10px;
   font-weight:900
 }
+
+
+.player-thinking-badge{
+  width:22px;
+  height:22px;
+  object-fit:contain;
+  animation:thinkingPulse 1.05s ease-in-out infinite
+}
+@keyframes thinkingPulse{
+  0%,100%{transform:scale(.95);opacity:.76}
+  50%{transform:scale(1.12);opacity:1}
+}
+.network-seat-row{
+  grid-template-columns:12px 28px minmax(0,1fr) auto
+}
+.network-seat-badge{
+  width:28px;
+  height:28px;
+  object-fit:contain
+}
