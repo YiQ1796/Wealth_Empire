@@ -1,19 +1,38 @@
 import{TRANSPORT_NODE_BY_INDEX,isTransportNodeIndex,transportDestinations}from"../data/transport.js";
 
-function countForwardOpportunities(state,startIndex,steps=6){
+export function transportDestinationPreview(state,startIndex,steps=6){
   const size=state.tiles?.length??44;
-  let score=0;
+  const preview={
+    unownedProperties:0,
+    ownedProperties:0,
+    chanceOrFate:0,
+    otherSpecial:0
+  };
+
   for(let offset=1;offset<=steps;offset++){
-    const tile=state.tiles?.[(startIndex+offset)%size];
+    const tile=state.tiles?.[(Number(startIndex)+offset)%size];
     if(!tile)continue;
     if(tile.type==="property"){
-      if(tile.owner==null)score+=4;
-      else score-=1;
-    }else if(["chance","fate"].includes(tile.type)){
-      score+=1;
+      if(tile.owner==null)preview.unownedProperties++;
+      else preview.ownedProperties++;
+      continue;
     }
+    if(["chance","fate"].includes(tile.type)){
+      preview.chanceOrFate++;
+      continue;
+    }
+    if(tile.type!=="start")preview.otherSpecial++;
   }
-  return score;
+  return preview;
+}
+
+function destinationScore(state,startIndex){
+  const preview=transportDestinationPreview(state,startIndex);
+  return(
+    preview.unownedProperties*4+
+    preview.chanceOrFate-
+    preview.ownedProperties
+  );
 }
 
 export function createPendingTransport(state,player){
@@ -28,8 +47,9 @@ export function createPendingTransport(state,player){
 
 export function canUseTransport(state,seat,destinationIndex){
   const pending=state.pendingTransport;
-  if(!pending||state.phase!=="transport")return false;
-  if(Number(seat)!==pending.seat)return false;
+  const player=state.players?.[Number(seat)];
+  if(!pending||state.phase!=="transport"||!player)return false;
+  if(Number(seat)!==pending.seat||player.position!==pending.sourceIndex)return false;
   const destination=Number(destinationIndex);
   return(
     destination!==pending.sourceIndex&&
@@ -47,7 +67,7 @@ export function chooseAiTransportDestination(state,seat){
   return destinations
     .map(node=>({
       index:node.index,
-      score:countForwardOpportunities(state,node.index)
+      score:destinationScore(state,node.index)
     }))
     .sort((a,b)=>b.score-a.score||a.index-b.index)[0]?.index??null;
 }
