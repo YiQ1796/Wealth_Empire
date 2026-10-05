@@ -7,6 +7,8 @@ import{chooseUpgrade,shouldBuyProperty}from"../js/core/ai.js";
 import{advanceStockMarket,buyStock,getHolding,sellStock}from"../js/core/stock-market.js";
 import{fillAiMinigameResults,finalizeMinigame,startMinigame,submitMinigameResult}from"../js/core/minigames.js";
 import{createRoomCode,normalizeRemoteAction,sanitizePlayerName,sanitizeRoomCode}from"../js/core/network.js";
+import{resolveSpecialEvent}from"../js/core/special-events.js";
+import{MINIGAME_DEFINITIONS}from"../js/data/minigames.js";
 
 {
   assert.equal(TILE_ART_BY_INDEX.length,44);
@@ -104,7 +106,8 @@ import{createRoomCode,normalizeRemoteAction,sanitizePlayerName,sanitizeRoomCode}
 {
   const state=createInitialState();
   const humanCash=state.players[0].cash;
-  const session=startMinigame(state,0,1000);
+  const session=startMinigame(state,0,1000,"snail");
+  assert.equal(session.id,"snail");
   assert.equal(state.phase,"minigame");
   fillAiMinigameResults(state);
   assert.equal(Object.keys(session.results).length,3);
@@ -114,6 +117,22 @@ import{createRoomCode,normalizeRemoteAction,sanitizePlayerName,sanitizeRoomCode}
   assert.equal(result.rankings.length,4);
   assert.equal(state.phase,"landed");
   assert.ok(state.players[0].cash>humanCash);
+}
+
+{
+  const state=createInitialState();
+  const player=state.players[0];
+  const cashBefore=player.cash;
+  const chance=resolveSpecialEvent(state,player,"chance",()=>0);
+  assert.equal(chance.event.id,"chance_bonus");
+  assert.equal(chance.amount,1200);
+  assert.equal(player.cash,cashBefore+1200);
+  assert.equal(state.specialEventHistory.at(-1).type,"chance");
+
+  const fate=resolveSpecialEvent(state,player,"fate",()=>0);
+  assert.equal(fate.event.id,"fate_patron");
+  assert.equal(fate.amount,1500);
+  assert.equal(state.specialEventHistory.at(-1).type,"fate");
 }
 
 {
@@ -192,7 +211,24 @@ import{createRoomCode,normalizeRemoteAction,sanitizePlayerName,sanitizeRoomCode}
   assert.equal(engine.roll(0,{d1:1,d2:1}),true);
   assert.equal(state.players[0].position,highLowIndex);
   assert.equal(state.phase,"minigame","high-low tile must route into the replacement minigame system");
-  assert.ok(["courier","vault","tower","memory","route","district"].includes(state.minigame.id));
+  assert.ok(MINIGAME_DEFINITIONS.some(game=>game.id===state.minigame.id));
 }
 
-console.log("V20 Alpha 18 gameplay systems test PASS");
+{
+  const state=createInitialState();
+  const engine=new GameEngine(state,()=>{});
+  const horseIndex=state.tiles.findIndex(tile=>tile.type==="horse");
+  assert.ok(horseIndex>0,"horse tile must exist");
+  state.players[0].position=(horseIndex-2+state.tiles.length)%state.tiles.length;
+  assert.equal(engine.roll(0,{d1:1,d2:1}),true);
+  assert.equal(state.players[0].position,horseIndex);
+  assert.equal(state.phase,"minigame");
+  assert.equal(state.minigame.id,"horse","horse tile must always open the horse race");
+}
+
+assert.deepEqual(
+  MINIGAME_DEFINITIONS.map(game=>game.id),
+  ["horse","treasure","rps","blackjack","plinko","auction","snail"]
+);
+
+console.log("V20 Alpha 24 gameplay systems test PASS");
