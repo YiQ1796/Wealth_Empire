@@ -50,6 +50,12 @@ export function mountStaticBoard(boardElement){
     node.dataset.index=String(index);
     node.style.gridRow=String(placement.row);
     node.style.gridColumn=String(placement.col);
+    if(tile.type==="property"){
+      node.classList.add("tile--property");
+      node.tabIndex=0;
+      node.setAttribute("role","button");
+      node.setAttribute("aria-label","查看地產資訊："+tile.name);
+    }
 
     const img=document.createElement("img");
     img.className="tile-art";
@@ -74,11 +80,6 @@ export function mountStaticBoard(boardElement){
     const badges=document.createElement("div");
     badges.className="tile__badges";
     node.appendChild(badges);
-
-    const dynamic=document.createElement("div");
-    dynamic.className="tile__dynamic";
-    dynamic.innerHTML='<span class="tile__price"></span>';
-    node.appendChild(dynamic);
 
     const tokens=document.createElement("div");
     tokens.className="tile__tokens";
@@ -224,14 +225,9 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
 
   document.querySelectorAll(".tile").forEach((node,index)=>{
     const tile=state.tiles[index];
-    const price=node.querySelector(".tile__price");
     const houses=node.querySelector(".tile__houses");
     const badges=node.querySelector(".tile__badges");
     const tokens=node.querySelector(".tile__tokens");
-
-    price.textContent=tile.type==="property"
-      ? (tile.owner==null?money(tile.price):"租 "+money(rentFor(state,tile)))
-      : "";
 
     if(tile.owner==null){
       node.classList.remove("tile--owned");
