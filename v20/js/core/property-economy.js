@@ -48,3 +48,37 @@ export function propertyValue(tile){
   if(!tile||tile.type!=="property")return 0;
   return tile.price+upgradeCost(tile)*Math.max(0,tile.level||0);
 }
+
+
+export function canForceAcquireProperty(state,tileIndex,buyerSeat){
+  const tile=state?.tiles?.[Number(tileIndex)];
+  return Boolean(
+    tile&&
+    tile.type==="property"&&
+    tile.owner!=null&&
+    tile.owner!==buyerSeat&&
+    tile.level<MAX_PROPERTY_LEVEL
+  );
+}
+
+export function transferPropertyOwnership(state,tileIndex,buyerSeat){
+  if(!canForceAcquireProperty(state,tileIndex,buyerSeat)){
+    return{ok:false,reason:"protected_or_invalid"};
+  }
+
+  const tile=state.tiles[Number(tileIndex)];
+  const previousOwnerSeat=tile.owner;
+  const previousOwner=state.players?.[previousOwnerSeat];
+  const buyer=state.players?.[buyerSeat];
+  if(!buyer)return{ok:false,reason:"buyer"};
+
+  if(previousOwner){
+    previousOwner.properties=previousOwner.properties.filter(index=>index!==Number(tileIndex));
+  }
+  if(!buyer.properties.includes(Number(tileIndex))){
+    buyer.properties.push(Number(tileIndex));
+  }
+  tile.owner=buyerSeat;
+
+  return{ok:true,previousOwnerSeat,buyerSeat,tileIndex:Number(tileIndex)};
+}
