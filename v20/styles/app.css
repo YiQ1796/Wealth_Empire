@@ -3387,7 +3387,8 @@ body.entry-pending .app-shell{
   z-index:2;
   transform:translateY(-50%);
   font-size:27px;
-  transition:left .45s ease
+  transition:none;
+  will-change:left,transform,filter
 }
 .race-runner--snail{
   font-size:25px
@@ -3705,4 +3706,283 @@ body.entry-pending .app-shell{
   .transport-destination__copy strong{font-size:11px}
   .transport-destination__copy small{font-size:7px}
   .transport-skip{min-height:34px;margin-top:6px;font-size:10px}
+}
+
+
+/* V20 Alpha 26 — acquisition center + continuous race presentation */
+.acquisition-dialog{
+  width:min(760px,calc(100vw - 24px));
+  max-height:calc(100dvh - 24px);
+  padding:0;
+  border:0;
+  background:transparent;
+  overflow:visible
+}
+.acquisition-dialog::backdrop{
+  background:rgba(18,34,49,.56);
+  backdrop-filter:blur(3px)
+}
+.acquisition-modal{
+  max-height:calc(100dvh - 32px);
+  overflow:auto;
+  padding:16px;
+  border:1px solid #dbe5ed;
+  border-radius:20px;
+  background:#fff;
+  box-shadow:0 24px 70px rgba(18,36,56,.34)
+}
+.acquisition-modal__header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px
+}
+.acquisition-modal__eyebrow{
+  display:block;
+  margin-bottom:4px;
+  color:#755119;
+  font-size:10px;
+  font-weight:1000;
+  letter-spacing:.1em
+}
+.acquisition-modal__header h2{
+  margin:0;
+  color:#4f390e;
+  font-size:25px
+}
+.acquisition-modal__header p{
+  margin:4px 0 0;
+  color:#76684e;
+  font-size:11px;
+  font-weight:800
+}
+.acquisition-summary{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  align-items:end;
+  gap:3px 10px;
+  margin-top:12px;
+  padding:11px 13px;
+  border:1px solid #eadfbe;
+  border-radius:14px;
+  background:#fffaf0
+}
+.acquisition-summary span{
+  color:#8a7449;
+  font-size:10px;
+  font-weight:1000
+}
+.acquisition-summary strong{
+  color:#6a4a12;
+  font-size:22px
+}
+.acquisition-summary small{
+  grid-column:1/-1;
+  color:#887756;
+  font-size:9px;
+  font-weight:800
+}
+.acquisition-options{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px;
+  margin-top:12px
+}
+.acquisition-option{
+  display:grid;
+  gap:6px;
+  min-height:112px;
+  padding:11px 12px;
+  border:1px solid #d9dfe5;
+  border-radius:14px;
+  background:#fff;
+  color:#293c4d;
+  text-align:left;
+  cursor:pointer
+}
+.acquisition-option:not(:disabled):hover,
+.acquisition-option:not(:disabled):focus-visible{
+  border-color:#c18b31;
+  background:#fffaf1;
+  outline:none
+}
+.acquisition-option:disabled{
+  opacity:.52;
+  cursor:not-allowed
+}
+.acquisition-option__heading{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px
+}
+.acquisition-option__heading strong{
+  font-size:15px
+}
+.acquisition-option__heading b{
+  padding:3px 6px;
+  border-radius:999px;
+  background:#eef2f5;
+  font-size:9px
+}
+.acquisition-option__meta{
+  color:#667b8d;
+  font-size:10px;
+  font-weight:900
+}
+.acquisition-option__offer{
+  color:#9a6815;
+  font-size:15px;
+  font-weight:1000
+}
+.acquisition-option small{
+  color:#718497;
+  font-size:9px;
+  font-weight:900
+}
+.acquisition-skip{
+  width:100%;
+  min-height:42px;
+  margin-top:10px;
+  border:1px solid #d6e0e8;
+  border-radius:12px;
+  background:#f5f7f9;
+  color:#536b80;
+  font-weight:1000;
+  cursor:pointer
+}
+
+.race-track--horse{
+  background:
+    repeating-linear-gradient(90deg,rgba(255,255,255,.15) 0 18px,rgba(0,0,0,.025) 18px 36px),
+    linear-gradient(90deg,#dfe8d2 0 92%,#fff0b3 92% 100%)
+}
+.race-track--snail{
+  background:
+    repeating-linear-gradient(90deg,rgba(255,255,255,.16) 0 16px,rgba(0,0,0,.025) 16px 32px),
+    linear-gradient(90deg,#e8f1db 0 92%,#fff0b3 92% 100%)
+}
+.race-track__speed-lines{
+  position:absolute;
+  inset:0;
+  opacity:.34;
+  background:repeating-linear-gradient(90deg,transparent 0 26px,rgba(255,255,255,.75) 26px 28px);
+  animation:race-track-flow .55s linear infinite
+}
+@keyframes race-track-flow{
+  from{transform:translateX(0)}
+  to{transform:translateX(28px)}
+}
+.race-runner--horse{
+  font-size:29px;
+  filter:drop-shadow(0 3px 4px rgba(44,53,34,.22))
+}
+.race-event-fx{
+  position:absolute;
+  top:2px;
+  left:8px;
+  z-index:4;
+  max-width:42%;
+  padding:2px 6px;
+  border-radius:999px;
+  background:rgba(255,255,255,.9);
+  color:#32485b;
+  font-size:9px;
+  font-weight:1000;
+  opacity:0;
+  transform:translateY(-3px) scale(.9);
+  transition:opacity .15s ease,transform .15s ease;
+  pointer-events:none
+}
+.race-event-fx.show{
+  opacity:1;
+  transform:translateY(0) scale(1)
+}
+.race-event-fx[data-effect="rocket"],
+.race-event-fx[data-effect="sprint"],
+.race-event-fx[data-effect="kick"],
+.race-event-fx[data-effect="fart"]{
+  background:#fff3c6;
+  color:#7a4a00
+}
+.race-event-fx[data-effect="fall"],
+.race-event-fx[data-effect="stumble"],
+.race-event-fx[data-effect="slip"],
+.race-event-fx[data-effect="mud"]{
+  background:#eef2f6;
+  color:#5f6470
+}
+.race-runner--fx-sprint,
+.race-runner--fx-kick,
+.race-runner--fx-rocket,
+.race-runner--fx-fart{
+  animation:race-boost-pulse .16s linear infinite alternate;
+  filter:drop-shadow(-10px 0 7px rgba(255,167,38,.65))
+}
+.race-runner--fx-cheer{
+  animation:race-cheer .36s ease-in-out infinite alternate;
+  filter:drop-shadow(0 0 8px rgba(255,211,79,.9))
+}
+.race-runner--fx-stumble,
+.race-runner--fx-fall,
+.race-runner--fx-slip{
+  animation:race-stumble .12s linear infinite alternate
+}
+.race-runner--fx-heart{
+  animation:race-distracted .55s ease-in-out infinite alternate;
+  filter:drop-shadow(0 0 7px rgba(239,83,120,.6))
+}
+.race-runner--fx-treasure{
+  filter:drop-shadow(0 0 8px rgba(255,193,7,.8))
+}
+.race-runner--fx-oil{
+  filter:drop-shadow(-8px 0 5px rgba(80,120,180,.5))
+}
+.race-runner--fx-cheat{
+  animation:race-cheat .18s ease-in-out 2 alternate
+}
+.race-runner--fx-mud{
+  filter:grayscale(.3) brightness(.88)
+}
+@keyframes race-boost-pulse{
+  from{transform:translateY(-50%) scale(1)}
+  to{transform:translateY(-50%) scale(1.13)}
+}
+@keyframes race-cheer{
+  from{transform:translateY(-53%) rotate(-3deg)}
+  to{transform:translateY(-47%) rotate(3deg)}
+}
+@keyframes race-stumble{
+  from{transform:translate(-2px,-50%) rotate(-8deg)}
+  to{transform:translate(2px,-50%) rotate(8deg)}
+}
+@keyframes race-distracted{
+  from{transform:translateY(-50%) rotate(-5deg)}
+  to{transform:translateY(-54%) rotate(5deg)}
+}
+@keyframes race-cheat{
+  from{transform:translateY(-50%) scale(.96)}
+  to{transform:translateY(-50%) scale(1.18)}
+}
+
+@media (orientation:landscape) and (max-height:650px) and (max-width:1180px){
+  .acquisition-dialog{
+    width:min(720px,calc(100vw - max(14px,env(safe-area-inset-left)) - max(14px,env(safe-area-inset-right))))
+  }
+  .acquisition-modal{
+    max-height:calc(var(--phone-app-height,100dvh) - 18px);
+    padding:9px;
+    border-radius:14px
+  }
+  .acquisition-modal__header h2{font-size:17px}
+  .acquisition-modal__header p{font-size:8px}
+  .acquisition-summary{margin-top:7px;padding:7px 9px}
+  .acquisition-summary strong{font-size:15px}
+  .acquisition-options{gap:6px;margin-top:7px}
+  .acquisition-option{min-height:72px;padding:7px 8px;gap:3px}
+  .acquisition-option__heading strong{font-size:11px}
+  .acquisition-option__offer{font-size:11px}
+  .acquisition-skip{min-height:32px;margin-top:6px;font-size:9px}
+  .race-event-fx{font-size:7px}
+  .race-runner--horse{font-size:21px}
 }
