@@ -217,8 +217,9 @@ async function animateMoveEvent(event){
   moving.style.top=start.top+"px";
   layer.appendChild(moving);
 
+  document.body.classList.add("board-motion-active");
   board.classList.add("moving-seat-"+seat);
-  await sleep(45);
+  await sleep(35);
 
   for(let i=0;i<path.length;i++){
     const point=tileCenter(path[i]);
@@ -227,7 +228,7 @@ async function animateMoveEvent(event){
     moving.classList.add("walking");
     moving.style.left=point.left+"px";
     moving.style.top=point.top+"px";
-    await sleep(105);
+    await sleep(65);
   }
 
   moving.classList.remove("walking");
@@ -238,6 +239,7 @@ async function animateMoveEvent(event){
   await sleep(70);
   moving.remove();
   board.classList.remove("moving-seat-"+seat);
+  document.body.classList.remove("board-motion-active");
 }
 
 function processMoveAnimations(){
@@ -474,7 +476,7 @@ function scheduleAi(){
   aiTimer=setTimeout(()=>{
     aiTimer=null;
     engine.runAiStep();
-  },650);
+  },1100);
 }
 
 function openFeature(name){
