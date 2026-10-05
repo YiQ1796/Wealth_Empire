@@ -58,6 +58,11 @@ export function sanitizePlayerName(value){
   const name=String(value??"").trim().replace(/[<>]/g,"").slice(0,20);
   return name||"玩家";
 }
+export function sanitizeCharacterIndex(value){
+  const index=Math.floor(Number(value));
+  return Number.isInteger(index)&&index>=0&&index<4?index:0;
+}
+
 
 export function normalizeRemoteAction(raw){
   if(!raw||typeof raw!=="object"||!NETWORK_ACTION_TYPES.includes(raw.type))return null;
@@ -100,6 +105,7 @@ export function loadNetworkSession(){
     mode:session.mode,
     roomCode,
     playerName:sanitizePlayerName(session.playerName),
+    characterIndex:sanitizeCharacterIndex(session.characterIndex),
     clientId:String(session.clientId||getOrCreateClientId()),
     seat:Number.isInteger(session.seat)?session.seat:null
   };
@@ -196,6 +202,7 @@ export class PeerNetwork{
     this.roomCode=null;
     this.localSeat=0;
     this.playerName="玩家1";
+    this.characterIndex=0;
     this.clientId=getOrCreateClientId();
     this.hostConnection=null;
     this.connections=new Map();
@@ -260,7 +267,7 @@ export class PeerNetwork{
     throw new Error("peer_unavailable");
   }
 
-  async host({roomCode=createRoomCode(),playerName="玩家1"}={}){
+  async host({roomCode=createRoomCode(),playerName="玩家1",characterIndex=0}={}){
     await this.close(false);
     const code=sanitizeRoomCode(roomCode);
     if(!code)throw new Error("invalid_room_code");
@@ -269,6 +276,7 @@ export class PeerNetwork{
     this.roomCode=code;
     this.localSeat=0;
     this.playerName=sanitizePlayerName(playerName);
+    this.characterIndex=sanitizeCharacterIndex(characterIndex);
 
     try{
       await this.startHostRelay();
@@ -287,6 +295,7 @@ export class PeerNetwork{
       mode:"host",
       roomCode:code,
       playerName:this.playerName,
+      characterIndex:this.characterIndex,
       clientId:this.clientId,
       seat:0
     });
@@ -431,6 +440,7 @@ export class PeerNetwork{
     if(message.type==="join_request"){
       const clientId=String(message.clientId??connection.clientId??"").slice(0,80);
       const playerName=sanitizePlayerName(message.playerName);
+      const characterIndex=sanitizeCharacterIndex(message.characterIndex);
       if(!clientId){
         connection.send({type:"join_reject",error:"invalid_client"});
         return;
@@ -447,7 +457,7 @@ export class PeerNetwork{
         return;
       }
 
-      const response=this.onJoin({clientId,playerName});
+      const response=this.onJoin({clientId,playerName,characterIndex});
       if(!response?.ok){
         connection.send({type:"join_reject",error:response?.error??"room_unavailable"});
         return;
@@ -493,7 +503,7 @@ export class PeerNetwork{
     }
   }
 
-  async join({roomCode,playerName="玩家"}={}){
+  async join({roomCode,playerName="玩家",characterIndex=0}={}){
     await this.close(false);
     const code=sanitizeRoomCode(roomCode);
     if(!code)throw new Error("invalid_room_code");
@@ -501,6 +511,7 @@ export class PeerNetwork{
     this.mode="guest";
     this.roomCode=code;
     this.playerName=sanitizePlayerName(playerName);
+    this.characterIndex=sanitizeCharacterIndex(characterIndex);
 
     try{
       const result=await this.joinViaRelay();
@@ -556,7 +567,8 @@ export class PeerNetwork{
         connection.send({
           type:"join_request",
           clientId:this.clientId,
-          playerName:this.playerName
+          playerName:this.playerName,
+          characterIndex:this.characterIndex
         });
       }catch{}
     };
@@ -595,6 +607,7 @@ export class PeerNetwork{
               mode:"guest",
               roomCode:this.roomCode,
               playerName:this.playerName,
+              characterIndex:this.characterIndex,
               clientId:this.clientId,
               seat:this.localSeat
             });
@@ -655,7 +668,8 @@ export class PeerNetwork{
         connection.send({
           type:"join_request",
           clientId:this.clientId,
-          playerName:this.playerName
+          playerName:this.playerName,
+          characterIndex:this.characterIndex
         });
       });
       connection.on("data",message=>{
