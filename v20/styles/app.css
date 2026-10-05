@@ -1444,7 +1444,7 @@ body.entry-pending .app-shell{
 .action-toast{
   position:relative;
   width:100%;
-  min-height:126px;
+  min-height:138px;
   display:grid;
   align-items:center;
   border:0;
@@ -1472,7 +1472,7 @@ body.entry-pending .app-shell{
 .action-toast__card-bg img{
   width:100%;
   height:100%;
-  min-height:126px;
+  min-height:138px;
   display:block;
   object-fit:fill;
   filter:drop-shadow(0 18px 38px rgba(15,37,56,.34))
@@ -1487,24 +1487,15 @@ body.entry-pending .app-shell{
   opacity:.72;
   mix-blend-mode:screen
 }
-.action-toast__shine{
-  position:absolute;
-  inset:4px;
-  z-index:2;
-  width:calc(100% - 8px);
-  height:calc(100% - 8px);
-  object-fit:fill;
-  opacity:.72
-}
 .action-toast__content{
   position:relative;
   z-index:4;
-  min-height:126px;
+  min-height:138px;
   display:grid;
   grid-template-columns:82px minmax(0,1fr);
   align-items:center;
   gap:17px;
-  padding:20px 34px 20px 38px
+  padding:24px 34px 24px 38px
 }
 .action-toast__icon{
   width:78px;
@@ -1517,6 +1508,40 @@ body.entry-pending .app-shell{
 }
 .action-toast__copy{
   min-width:0
+}
+.action-toast--has-metric .action-toast__content{
+  grid-template-columns:82px minmax(0,1fr) 132px;
+  padding-right:30px
+}
+.action-toast__metric{
+  min-width:0;
+  display:grid;
+  place-items:center;
+  align-self:center;
+  min-height:58px;
+  padding:6px 8px;
+  color:#7b5b21;
+  font-size:clamp(18px,1.55vw,25px);
+  line-height:1;
+  font-weight:1000;
+  text-align:center;
+  white-space:nowrap
+}
+.action-toast__details{
+  display:flex;
+  flex-wrap:wrap;
+  gap:4px 6px;
+  margin-top:7px
+}
+.action-toast__details span{
+  padding:3px 7px;
+  border-radius:999px;
+  background:rgba(255,255,255,.72);
+  color:#51697e;
+  font-size:10px;
+  line-height:1.15;
+  font-weight:900;
+  white-space:nowrap
 }
 .action-toast strong{
   display:block;
@@ -1536,23 +1561,23 @@ body.entry-pending .app-shell{
 }
 .action-toast--major{
   width:min(760px,calc(100vw - 30px));
-  min-height:144px
+  min-height:158px
 }
-.action-toast--major .action-toast__card-bg img{min-height:144px}
-.action-toast--major .action-toast__content{min-height:144px}
+.action-toast--major .action-toast__card-bg img{min-height:158px}
+.action-toast--major .action-toast__content{min-height:158px}
 .action-toast--major .action-toast__icon{
   width:88px;
   height:88px
 }
 .action-toast--market{
   width:min(720px,calc(100vw - 30px));
-  min-height:100px
+  min-height:112px
 }
-.action-toast--market .action-toast__card-bg img{min-height:100px}
+.action-toast--market .action-toast__card-bg img{min-height:112px}
 .action-toast--market .action-toast__content{
-  min-height:100px;
+  min-height:112px;
   grid-template-columns:62px minmax(0,1fr);
-  padding:14px 28px
+  padding:18px 28px
 }
 .action-toast--market .action-toast__icon{
   width:58px;
@@ -1575,18 +1600,34 @@ body.entry-pending .app-shell{
   }
   .action-toast,
   .action-toast--major{
-    min-height:104px
+    min-height:114px
   }
   .action-toast__card-bg img,
   .action-toast--major .action-toast__card-bg img{
-    min-height:104px
+    min-height:114px
   }
   .action-toast__content,
   .action-toast--major .action-toast__content{
-    min-height:104px;
+    min-height:114px;
     grid-template-columns:62px minmax(0,1fr);
     gap:10px;
-    padding:15px 20px
+    padding:18px 20px
+  }
+  .action-toast--has-metric .action-toast__content{
+    grid-template-columns:62px minmax(0,1fr) 92px;
+    padding-right:16px
+  }
+  .action-toast__metric{
+    min-height:46px;
+    font-size:16px
+  }
+  .action-toast__details{
+    margin-top:5px;
+    gap:3px 4px
+  }
+  .action-toast__details span{
+    padding:2px 5px;
+    font-size:9px
   }
   .action-toast__icon,
   .action-toast--major .action-toast__icon{
