@@ -2000,85 +2000,37 @@ body.entry-pending .app-shell{
 }
 .stock-market-grid--persistent{
   min-height:0;
-  display:block;
   overflow:auto;
   overscroll-behavior:contain;
   padding-right:2px
 }
-.stock-pair-row{
-  min-width:0;
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:6px;
-  margin-bottom:6px
+.desktop-stock-panel .stock-summary{
+  position:sticky;
+  top:0;
+  z-index:3;
+  padding-bottom:5px;
+  background:#fbfdff
 }
-.stock-pair-row:last-child{margin-bottom:0}
-.stock-pair-row__spacer{min-width:0}
-.desktop-stock-panel .stock-trade-card{
-  min-width:0;
-  padding:7px;
-  border-radius:11px
+.desktop-stock-panel .stock-card-list{
+  min-height:0
 }
-.desktop-stock-panel .stock-trade-card__head{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) auto;
-  align-items:start;
-  gap:4px
+
+/* Desktop reference: compact two-column cards in the persistent right HUD. */
+@media(min-width:761px){
+  .desktop-stock-panel .stock-pair-row{
+    grid-template-columns:repeat(2,minmax(0,1fr))
+  }
 }
-.desktop-stock-panel .stock-trade-card__head strong{
-  overflow:hidden;
-  font-size:13px;
-  line-height:1.15;
-  text-overflow:ellipsis;
-  white-space:nowrap
-}
-.desktop-stock-panel .stock-trade-card__head small{
-  font-size:9px
-}
-.desktop-stock-panel .stock-price b{
-  font-size:19px;
-  line-height:1
-}
-.desktop-stock-panel .stock-price em{
-  font-size:10px
-}
-.desktop-stock-panel .stock-position{
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  margin-top:5px;
-  gap:3px
-}
-.desktop-stock-panel .stock-position--empty{
-  grid-column:1/-1;
-  min-height:42px
-}
-.desktop-stock-panel .stock-position--empty-visual img{
-  width:34px;
-  height:28px
-}
-.desktop-stock-panel .stock-position span{
-  padding:5px;
-  font-size:10px
-}
-.desktop-stock-panel .stock-position b{
-  font-size:11px
-}
-.desktop-stock-panel .stock-trade-controls{
-  margin-top:5px;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:4px
-}
-.desktop-stock-panel .stock-trade-controls label{
-  grid-column:1/-1
-}
-.desktop-stock-panel .stock-trade-controls input{
-  min-height:31px;
-  padding:5px 6px;
-  font-size:14px
-}
-.desktop-stock-panel .stock-trade-controls button{
-  min-height:31px;
-  padding:5px 7px;
-  font-size:11px
+
+/* Mobile reference authority stays separate so the later phone redesign
+   can enlarge cards without rewriting stock data/rendering logic. */
+@media(max-width:760px){
+  .desktop-stock-panel .stock-summary strong{font-size:13px}
+  .desktop-stock-panel .stock-title strong{font-size:13px}
+  .desktop-stock-panel .stock-quote>b{font-size:19px}
+  .desktop-stock-panel .stock-trade-controls{
+    grid-template-columns:50px minmax(0,1fr) minmax(0,1fr)
+  }
 }
 
 /* V20 Alpha 18 — notification keeps its original size; only its anchor moves to the board center. */
