@@ -37,6 +37,7 @@ export function createInitialState(){
     dice:null,
     pendingPurchase:null,
     pendingTransport:null,
+    pendingAcquisition:null,
     minigame:null,
     minigameHistory:[],
     lastMinigame:null,
@@ -56,7 +57,7 @@ export function createInitialState(){
     events:[{
       id:1,
       kind:"system",
-      text:"V20 Alpha 25：交通轉乘、特殊事件、小遊戲與動態市場系統已啟動。",
+      text:"V20 Alpha 26：收購中心、交通特殊格與連續賽跑動畫已啟動。",
       data:{},
       round:1
     }],
@@ -103,6 +104,7 @@ export function hydrateState(raw){
   state.minigameHistory=Array.isArray(raw.minigameHistory)?raw.minigameHistory:[];
   state.specialEventHistory=Array.isArray(raw.specialEventHistory)?raw.specialEventHistory:[];
   state.pendingTransport=raw.pendingTransport&&typeof raw.pendingTransport==="object"?raw.pendingTransport:null;
+  state.pendingAcquisition=raw.pendingAcquisition&&typeof raw.pendingAcquisition==="object"?raw.pendingAcquisition:null;
   state.turnToken=Math.max(1,Number(raw.turnToken)||1);
   state.version=BOARD_VERSION;
   return state;
