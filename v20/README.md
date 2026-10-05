@@ -204,3 +204,78 @@ These notices are driven from host-authoritative event state, so multiplayer cli
 - Player 1 → 2, 2 → 3, 3 → 4 and 4 → 1 each create a new market tick.
 - ROUND only increments when seat order wraps back to the first active player.
 - An invalid End Turn call does not create an extra market movement.
+
+
+## Alpha 18 — V5 batches 01–09 complete visual replacement
+
+Alpha 18 replaces the remaining V20 legacy board/player/shortcut render sources with the delivered V5 asset system. This is a replacement, not an overlay.
+
+### Board tiles
+
+- TILE_01 through TILE_44 are the only V20 board-tile art source.
+- Numeric V5 tile mapping is now authoritative because the complete 44-tile set has been delivered.
+- The old partial tile packs and old tiles-v2 deploy directory are removed from the active source/deploy path.
+- Tile fallback text appears only if a V5 asset genuinely fails to load.
+
+### Property houses
+
+- Purchased property: 1 house.
+- LV.1: 2 houses.
+- LV.2: 3 houses.
+- House color always follows the current owner seat, so ownership transfer automatically changes house color.
+- LV.2 is protected from forced acquisition in the property-economy core.
+- LV.2 properties display the V5 no-acquisition badge.
+
+### Player characters
+
+- Old pawn render sources are retired.
+- Four V5 characters each provide IDLE / WALK_A / WALK_B / JUMP.
+- Standing player markers use IDLE.
+- Dice movement is replayed visually along the confirmed movement path using alternating WALK_A / WALK_B and JUMP on arrival.
+- Player cards also use the V5 character art.
+
+### Player, AI and region badges
+
+- BADGE_PLAYER and BADGE_AI identify player type.
+- BADGE_THINKING marks the active AI.
+- ICON_AUTO_FILL is used for AI-filled multiplayer seats.
+- All eight region badges are rendered in My Properties.
+- BADGE_REGION_BONUS_25, BADGE_PROPERTY_MAX and BADGE_NO_ACQUISITION are connected to their real game states.
+
+### Shortcut and modal replacement
+
+- The old QUICK_* render sources are retired.
+- Stock / Property / Items / Info shortcuts use the V5 MODAL_* icons.
+- Modal headers use the matching V5 header art.
+- MODAL_CLOSE replaces the text X source.
+- Empty property/item/rent states use MODAL_EMPTY_DATA.
+- Empty stock holding state uses MODAL_EMPTY_HOLDINGS.
+
+### Notification UI batches 01–03
+
+The three new notification batches are integrated into the host-authoritative event system:
+
+- Major desktop/mobile card backgrounds.
+- Standard desktop/mobile card backgrounds.
+- Market pulse desktop/mobile backgrounds.
+- 13 event icons.
+- Blue / green / purple / red / gold glows.
+- Edge shine.
+- Gold sparkle.
+
+Notifications now use one central focus card at a time with a queue. They no longer stack multiple small cards at the top of the screen.
+
+### Alpha 18 visual deployment gate
+
+GitHub Pages deployment verifies:
+
+- 44 V5 tile assets.
+- 4 player-colored house assets.
+- 16 player animation assets.
+- 15 player/property/region badge assets.
+- 11 modal/shortcut assets.
+- 4 notification cards.
+- 13 notification icons.
+- 7 notification effects.
+- 2 market pulse assets.
+- No active legacy tiles-v2 directory.
