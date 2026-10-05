@@ -378,17 +378,23 @@ export class GameEngine{
         this.notify();
         return true;
       }
-
-      const nextRound=this.state.round+1;
-      this.state.round=nextRound;
-      advanceStockMarket(this.state,nextRound);
-      const movers=[...this.state.market.stocks]
-        .sort((a,b)=>Math.abs(b.changePercent)-Math.abs(a.changePercent))
-        .slice(0,3)
-        .map(stock=>stock.name+" "+(stock.changePercent>0?"+":"")+stock.changePercent.toFixed(1)+"%")
-        .join("、");
-      this.log("ROUND "+nextRound+" 開始，所有股票已完成本回合漲跌更新："+movers+"。","market_round",{round:nextRound});
+      this.state.round+=1;
     }
+
+    advanceStockMarket(this.state,{
+      round:this.state.round,
+      nextSeat
+    });
+    const movers=[...this.state.market.stocks]
+      .sort((a,b)=>Math.abs(b.changePercent)-Math.abs(a.changePercent))
+      .slice(0,3)
+      .map(stock=>stock.name+" "+(stock.changePercent>0?"+":"")+stock.changePercent.toFixed(1)+"%")
+      .join("、");
+    this.log(
+      "市場更新｜輪到 "+this.state.players[nextSeat].name+"：全市場重新漲跌，"+movers+"。",
+      "market_tick",
+      {round:this.state.round,seat:nextSeat,tick:this.state.market.tick}
+    );
 
     this.state.turnToken+=1;
     this.state.aiPreparedTurnToken=null;
