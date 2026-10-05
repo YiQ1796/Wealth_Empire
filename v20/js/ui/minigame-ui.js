@@ -182,7 +182,15 @@ export class MinigameUI{
 
   renderCompleted(state,definition){
     this.title.textContent=definition.name+"｜結算";
-    this.subtitle.textContent="依這款遊戲自己的規則計分，再統一排名發放獎金。";
+    if(definition.id==="auction"&&state.minigame?.auction){
+      const auction=state.minigame.auction;
+      const winner=state.players?.[auction.winnerSeat];
+      this.subtitle.textContent="商品實際價值 $"+auction.value.toLocaleString()+
+        "｜最高標 $"+auction.winningBid.toLocaleString()+
+        (winner?"｜得標："+winner.name:"");
+    }else{
+      this.subtitle.textContent="依這款遊戲自己的規則計分，再統一排名發放獎金。";
+    }
     this.timer.textContent="已結算";
     const rankings=state.minigame?.rankings??[];
     this.arena.innerHTML='<div class="minigame-ranking">'+rankings.map(item=>{
@@ -224,6 +232,18 @@ export class MinigameUI{
     return rng(hash(session.seed+":"+this.localSeat+":"+salt));
   }
 
+  sharedRandomFor(session,salt){
+    return rng(hash(session.seed+":"+salt));
+  }
+
+  sharedRaceOrder(session,gameId){
+    const random=this.sharedRandomFor(session,gameId+":shared-ranking");
+    return[0,1,2,3]
+      .map(index=>({index,value:random()}))
+      .sort((a,b)=>b.value-a.value)
+      .map(entry=>entry.index);
+  }
+
   bindChoiceButtons(selector,handler){
     this.arena.querySelectorAll(selector).forEach(button=>{
       const listener=()=>handler(button);
@@ -233,7 +253,8 @@ export class MinigameUI{
   }
 
   startHorse(session){
-    const random=this.randomFor(session,"horse");
+    const random=this.sharedRandomFor(session,"horse-events");
+    const order=this.sharedRaceOrder(session,"horse");
     const horses=[
       {name:"閃電",icon:"🐎"},
       {name:"烈焰",icon:"🏇"},
@@ -248,11 +269,11 @@ export class MinigameUI{
 
     this.bindChoiceButtons("[data-horse]",button=>{
       const pick=Number(button.dataset.horse);
-      this.runHorseRace(random,horses,pick);
+      this.runHorseRace(random,horses,pick,order);
     });
   }
 
-  runHorseRace(random,horses,pick){
+  runHorseRace(random,horses,pick,order){
     const progress=[0,0,0,0];
     let tick=0;
     this.arena.innerHTML=
@@ -283,13 +304,15 @@ export class MinigameUI{
 
       if(tick>=9||progress.some(value=>value>=100)){
         clearInterval(interval);
-        const ranking=progress
-          .map((value,index)=>({index,value:value+random()*3}))
-          .sort((a,b)=>b.value-a.value);
-        const place=ranking.findIndex(item=>item.index===pick)+1;
+        order.forEach((runnerIndex,rank)=>{
+          progress[runnerIndex]=100-rank*6;
+          const runner=this.arena.querySelector('[data-runner="'+runnerIndex+'"]');
+          if(runner)runner.style.left=Math.min(92,progress[runnerIndex]*0.92)+"%";
+        });
+        const place=order.indexOf(pick)+1;
         const score=[9500,7600,5600,3600][place-1];
         const timer=this.registerTimer(setTimeout(()=>{
-          this.finish({game:"horse",pick,place,ranking:ranking.map(item=>item.index)},score);
+          this.finish({game:"horse",pick,place,ranking:order,sharedRace:true},score);
         },900));
         void timer;
       }
@@ -297,7 +320,8 @@ export class MinigameUI{
   }
 
   startSnail(session){
-    const random=this.randomFor(session,"snail");
+    const random=this.sharedRandomFor(session,"snail-events");
+    const order=this.sharedRaceOrder(session,"snail");
     const snails=[
       {name:"阿慢",icon:"🐌"},
       {name:"黏黏",icon:"🐌"},
@@ -312,11 +336,11 @@ export class MinigameUI{
 
     this.bindChoiceButtons("[data-snail]",button=>{
       const pick=Number(button.dataset.snail);
-      this.runSnailRace(random,snails,pick);
+      this.runSnailRace(random,snails,pick,order);
     });
   }
 
-  runSnailRace(random,snails,pick){
+  runSnailRace(random,snails,pick,order){
     const progress=[0,0,0,0];
     const stunned=[0,0,0,0];
     let tick=0;
@@ -386,10 +410,12 @@ export class MinigameUI{
 
       if(tick>=12||progress.some(value=>value>=100)){
         clearInterval(interval);
-        const ranking=progress
-          .map((value,index)=>({index,value:value+random()*2}))
-          .sort((a,b)=>b.value-a.value);
-        const place=ranking.findIndex(item=>item.index===pick)+1;
+        order.forEach((runnerIndex,rank)=>{
+          progress[runnerIndex]=100-rank*7;
+          const runner=this.arena.querySelector('[data-runner="'+runnerIndex+'"]');
+          if(runner)runner.style.left=Math.min(92,progress[runnerIndex]*0.92)+"%";
+        });
+        const place=order.indexOf(pick)+1;
         const score=[9600,7600,5400,3400][place-1];
         this.registerTimer(setTimeout(()=>{
           this.finish({
@@ -397,7 +423,8 @@ export class MinigameUI{
             pick,
             place,
             events:eventLog,
-            ranking:ranking.map(item=>item.index)
+            ranking:order,
+            sharedRace:true
           },score);
         },1000));
       }
@@ -567,7 +594,7 @@ export class MinigameUI{
   }
 
   startAuction(session){
-    const random=this.randomFor(session,"auction");
+    const random=this.sharedRandomFor(session,"auction-item");
     const items=[
       {name:"神秘古董",icon:"🏺"},
       {name:"限量名錶",icon:"⌚"},
@@ -575,9 +602,6 @@ export class MinigameUI{
       {name:"城市金庫券",icon:"🎫"}
     ];
     const item=items[Math.floor(random()*items.length)];
-    const value=1800+Math.floor(random()*4201);
-    const rivalBids=[0,1,2].map(()=>1000+Math.floor(random()*4201));
-    const topRival=Math.max(...rivalBids);
     const bids=[1000,2000,3000,4000,5000,6000];
 
     this.arena.innerHTML=
@@ -587,12 +611,7 @@ export class MinigameUI{
 
     this.bindChoiceButtons("[data-bid]",button=>{
       const bid=Number(button.dataset.bid);
-      const won=bid>topRival;
-      const profit=won?value-bid:0;
-      const score=won
-        ? clamp(Math.round(5200+profit*0.8),1800,9800)
-        : clamp(Math.round(2600+Math.max(0,value-bid)*0.2),1800,5200);
-      this.finish({game:"auction",item:item.name,value,bid,topRival,won,profit},score);
+      this.finish({game:"auction",item:item.name,bid,sharedAuction:true},0);
     });
   }
 }
