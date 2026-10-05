@@ -1,4 +1,4 @@
-export const BOARD_VERSION="20.0.0-alpha.27";
+export const BOARD_VERSION="20.0.0-alpha.28";
 export const MAX_ROUNDS=30;
 export const MAX_PROPERTY_LEVEL=2;
 export const PROPERTY_LEVEL_RENT_BONUS=0.65;
