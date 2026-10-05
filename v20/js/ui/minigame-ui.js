@@ -67,6 +67,13 @@ export class MinigameUI{
     }
   }
 
+  resetScrollPosition(){
+    const modal=this.dialog?.querySelector(".minigame-modal");
+    if(!modal)return;
+    modal.scrollTop=0;
+    requestAnimationFrame(()=>{modal.scrollTop=0});
+  }
+
   close(){
     this.cleanup();
     this.sessionKey=null;
@@ -90,6 +97,7 @@ export class MinigameUI{
         this.sessionKey=key;
         this.renderCompleted(state,definition);
         if(!this.dialog.open)this.dialog.showModal();
+        this.resetScrollPosition();
       }
       return;
     }
@@ -111,6 +119,7 @@ export class MinigameUI{
       this.startDeadlineTimer(session);
       this.startGame(definition,session);
       if(!this.dialog.open)this.dialog.showModal();
+      this.resetScrollPosition();
     }
   }
 
