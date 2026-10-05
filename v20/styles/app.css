@@ -2626,3 +2626,126 @@ body.entry-pending .app-shell{
   .player-card{padding:2px 4px}
   .mobile-primary-action{min-height:41px}
 }
+
+
+/* V20 Alpha 19 mobile notification correction.
+   Phone notifications must use a compact board overlay and never consume half the playfield. */
+@media (orientation:landscape) and (max-height:650px) and (max-width:1180px){
+  .action-toast-stack{
+    top:18%;
+    width:min(68%,560px)
+  }
+  .action-toast{
+    min-height:96px;
+    border-radius:16px
+  }
+  .action-toast--major{
+    width:100%;
+    min-height:106px
+  }
+  .action-toast--market{
+    width:100%;
+    min-height:86px
+  }
+  .action-toast__card-bg img{
+    min-height:96px;
+    filter:drop-shadow(0 9px 20px rgba(15,37,56,.28))
+  }
+  .action-toast--major .action-toast__card-bg img{min-height:106px}
+  .action-toast--market .action-toast__card-bg img{min-height:86px}
+  .action-toast__content{
+    min-height:96px;
+    grid-template-columns:48px minmax(0,1fr);
+    gap:8px;
+    padding:13px 16px
+  }
+  .action-toast--major .action-toast__content{
+    min-height:106px;
+    grid-template-columns:52px minmax(0,1fr);
+    gap:9px;
+    padding:14px 18px
+  }
+  .action-toast--has-metric .action-toast__content{
+    grid-template-columns:48px minmax(0,1fr) 78px;
+    gap:8px;
+    padding-right:13px
+  }
+  .action-toast__copy{
+    min-width:0;
+    overflow:hidden
+  }
+  .action-toast__icon{width:46px;height:46px}
+  .action-toast--major .action-toast__icon{width:50px;height:50px}
+  .action-toast strong{
+    margin-bottom:3px;
+    font-size:15px;
+    line-height:1.05;
+    white-space:nowrap
+  }
+  .action-toast p{
+    font-size:10px;
+    line-height:1.25;
+    overflow-wrap:anywhere
+  }
+  .action-toast__details{
+    margin-top:4px;
+    gap:2px 4px
+  }
+  .action-toast__details span{
+    padding:2px 5px;
+    font-size:8px
+  }
+  .action-toast__metric{
+    min-height:38px;
+    padding:4px 5px;
+    font-size:14px;
+    line-height:1
+  }
+  .action-toast--market .action-toast__content{
+    min-height:86px;
+    grid-template-columns:42px minmax(0,1fr);
+    gap:7px;
+    padding:11px 14px
+  }
+  .action-toast--market .action-toast__icon{width:40px;height:40px}
+  .action-toast__fx{
+    inset:-14%;
+    width:128%;
+    height:128%
+  }
+  .action-toast__sparkle{
+    inset:-10%;
+    width:120%;
+    height:120%
+  }
+  .mobile-primary-action{
+    min-height:58px;
+    font-size:12px
+  }
+  .mobile-primary-action img{
+    width:32px;
+    height:32px;
+    flex-basis:32px
+  }
+}
+@media (orientation:landscape) and (max-height:430px) and (max-width:1180px){
+  .action-toast-stack{
+    top:17%;
+    width:min(66%,520px)
+  }
+  .action-toast,
+  .action-toast__content{min-height:88px}
+  .action-toast--major,
+  .action-toast--major .action-toast__content,
+  .action-toast--major .action-toast__card-bg img{min-height:96px}
+  .action-toast__card-bg img{min-height:88px}
+  .action-toast__content{padding:10px 14px}
+  .action-toast--has-metric .action-toast__content{
+    grid-template-columns:44px minmax(0,1fr) 72px
+  }
+  .action-toast__icon{width:42px;height:42px}
+  .action-toast--major .action-toast__icon{width:46px;height:46px}
+  .action-toast strong{font-size:14px}
+  .action-toast p{font-size:9px}
+  .mobile-primary-action{min-height:48px}
+}
