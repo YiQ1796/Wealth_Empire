@@ -5,11 +5,30 @@ import{
   MAX_PROPERTY_LEVEL,
   boardPlacement
 }from"../data/board.js";
-import{CENTER_BACKGROUND,TILE_ART_BY_NAME}from"../data/assets.js";
-import{UI_ASSETS}from"../data/ui-assets.js";
+import{CENTER_BACKGROUND,TILE_ART_BY_NUMBER}from"../data/assets.js";
+import{
+  REGION_BADGES,
+  UI_ASSETS,
+  characterAsset,
+  houseAsset,
+  propertyHouseCount
+}from"../data/ui-assets.js";
 import{groupProgress,propertyValue,rentFor,upgradeCost}from"../core/property-economy.js";
 
 function money(value){return"$"+Math.round(value).toLocaleString()}
+
+function escapeHtml(value){
+  return String(value??"")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;");
+}
+
+function badgeImage(src,label,className="status-badge"){
+  if(!src)return"";
+  return '<img class="'+className+'" src="'+src+'" alt="'+escapeHtml(label)+'" title="'+escapeHtml(label)+'">';
+}
 
 export function mountStaticBoard(boardElement){
   BOARD_TILES.forEach((tile,index)=>{
@@ -20,16 +39,13 @@ export function mountStaticBoard(boardElement){
     node.style.gridRow=String(placement.row);
     node.style.gridColumn=String(placement.col);
 
-    const art=TILE_ART_BY_NAME[tile.name];
-    if(art?.path&&art.orientation===placement.orientation){
-      const img=document.createElement("img");
-      img.className="tile-art";
-      img.alt="";
-      img.src=art.path;
-      img.onload=()=>node.classList.add("has-art");
-      img.onerror=()=>img.remove();
-      node.appendChild(img);
-    }
+    const img=document.createElement("img");
+    img.className="tile-art";
+    img.alt=tile.name;
+    img.src=TILE_ART_BY_NUMBER[tile.number];
+    img.onload=()=>node.classList.add("has-art");
+    img.onerror=()=>node.classList.add("art-error");
+    node.appendChild(img);
 
     const fallback=document.createElement("div");
     fallback.className="tile__fallback-name";
@@ -38,7 +54,10 @@ export function mountStaticBoard(boardElement){
 
     const dynamic=document.createElement("div");
     dynamic.className="tile__dynamic";
-    dynamic.innerHTML='<span class="tile__price"></span><span class="tile__level"></span><span class="tile__owner"></span>';
+    dynamic.innerHTML=
+      '<span class="tile__price"></span>'+
+      '<span class="tile__houses"></span>'+
+      '<span class="tile__property-status"></span>';
     node.appendChild(dynamic);
 
     const tokens=document.createElement("div");
@@ -60,10 +79,15 @@ function renderRegionSummary(state,currentPlayer){
 
   container.innerHTML=GROUP_ORDER.map(group=>{
     const progress=groupProgress(state,currentPlayer.seat,group);
+    const regionBadge=REGION_BADGES[group];
     return '<article class="region-card '+(progress.complete?"complete":"")+'">'+
-      '<strong>'+group+'</strong>'+
-      '<span>'+progress.owned+' / '+progress.total+'</span>'+
-      '<small>'+(progress.complete?"過路費 +25%":"集滿 3 塊啟動加成")+'</small>'+
+      badgeImage(regionBadge,group,"region-card__badge")+
+      '<div class="region-card__body">'+
+        '<strong>'+group+'</strong>'+
+        '<span>'+progress.owned+' / '+progress.total+'</span>'+
+        '<small>'+(progress.complete?"過路費 +25%":"集滿 3 塊啟動加成")+'</small>'+
+      '</div>'+
+      (progress.complete?badgeImage(UI_ASSETS.badges.regionBonus25,"區域過路費 +25%","region-card__bonus"):"")+
     '</article>';
   }).join("");
 }
@@ -82,8 +106,11 @@ function renderRentHistory(state,currentPlayer){
   '</div>';
 
   const history=related.length
-    ? related.map(event=>'<div class="rent-history-row">'+event.text+'</div>').join("")
-    : '<div class="empty-state empty-state--compact">目前尚無過路費紀錄。</div>';
+    ? related.map(event=>'<div class="rent-history-row">'+escapeHtml(event.text)+'</div>').join("")
+    : '<div class="empty-state empty-state--art">'+
+        '<img src="'+UI_ASSETS.modal.emptyData+'" alt="">'+
+        '<span>目前尚無過路費紀錄。</span>'+
+      '</div>';
 
   container.innerHTML=summary+history;
 }
@@ -96,7 +123,11 @@ function renderProperties(state,viewerPlayer,canControl){
   if(!container)return;
 
   if(viewerPlayer.properties.length===0){
-    container.innerHTML='<div class="empty-state">目前尚未持有地產。</div>';
+    container.innerHTML=
+      '<div class="empty-state empty-state--art">'+
+        '<img src="'+UI_ASSETS.modal.emptyHoldings+'" alt="">'+
+        '<span>目前尚未持有地產。</span>'+
+      '</div>';
     return;
   }
 
@@ -116,16 +147,77 @@ function renderProperties(state,viewerPlayer,canControl){
       ["await-roll","landed"].includes(state.phase);
     const disabled=maxLevel||!canAfford||!canUse;
     const buttonText=maxLevel?"已滿級":canAfford?"升級 "+money(cost):"現金不足";
+    const statusBadges=[
+      progress.complete?badgeImage(UI_ASSETS.badges.regionBonus25,"區域完成 +25%"):"",
+      maxLevel?badgeImage(UI_ASSETS.badges.propertyMax,"地產滿級"):"",
+      maxLevel?badgeImage(UI_ASSETS.badges.noAcquisition,"LV.2 禁止強制收購"):""
+    ].join("");
 
     return '<article class="property-row">'+
+      '<div class="property-row__region">'+badgeImage(REGION_BADGES[tile.group],tile.group,"property-row__region-badge")+'</div>'+
       '<div class="property-row__main">'+
-        '<div class="property-row__title"><strong>'+tile.name+'</strong><em>LV.'+tile.level+'</em></div>'+
-        '<span>'+tile.group+'｜區域 '+progress.owned+'/'+progress.total+(progress.complete?'｜<b class="region-bonus">+25%</b>':'')+'</span>'+
+        '<div class="property-row__title"><strong>'+escapeHtml(tile.name)+'</strong><em>LV.'+tile.level+'</em></div>'+
+        '<span>'+tile.group+'｜區域 '+progress.owned+'/'+progress.total+'</span>'+
         '<small>資產 '+money(value)+'｜目前過路費 '+money(rent)+'</small>'+
+        '<div class="property-row__badges">'+statusBadges+'</div>'+
       '</div>'+
       '<button class="property-upgrade" data-upgrade-property="'+tileIndex+'" '+(disabled?'disabled':'')+'>'+buttonText+'</button>'+
     '</article>';
   }).join("");
+}
+
+function renderPlayerCards(state){
+  const players=document.getElementById("players");
+  players.innerHTML=state.players.map((player,index)=>{
+    const badgeSource=player.kind==="ai"
+      ? (index===state.currentPlayer&&state.gameStatus==="playing"
+        ? UI_ASSETS.badges.thinking
+        : UI_ASSETS.badges.ai)
+      : UI_ASSETS.badges.player;
+
+    return '<article class="player-card '+(index===state.currentPlayer?"active":"")+'">'+
+      '<img class="player-character" src="'+characterAsset(index,"idle")+'" alt="">'+
+      '<div class="player-card__body">'+
+        '<h3>'+escapeHtml(player.name)+(index===state.currentPlayer?" 👑":"")+'</h3>'+
+        '<div class="player-stats">'+
+          '<span>現金 <b>'+money(player.cash)+'</b></span>'+
+          '<span>地產 <b>'+player.properties.length+'</b></span>'+
+          '<span>位置 <b>#'+(player.position+1)+'</b></span>'+
+        '</div>'+
+      '</div>'+
+      '<img class="player-type-badge" src="'+badgeSource+'" alt="'+(player.kind==="ai"?"AI":"真人")+'">'+
+    '</article>';
+  }).join("");
+}
+
+function renderTileState(state,node,index){
+  const tile=state.tiles[index];
+  const price=node.querySelector(".tile__price");
+  const houses=node.querySelector(".tile__houses");
+  const status=node.querySelector(".tile__property-status");
+  const tokens=node.querySelector(".tile__tokens");
+
+  if(tile.type==="property"){
+    price.textContent=tile.owner==null?money(tile.price):"租 "+money(rentFor(state,tile));
+    const houseCount=propertyHouseCount(tile);
+    houses.innerHTML=houseCount
+      ? Array.from({length:houseCount},()=>'<img src="'+houseAsset(tile.owner)+'" alt="">').join("")
+      : "";
+    status.innerHTML=tile.level>=MAX_PROPERTY_LEVEL
+      ? badgeImage(UI_ASSETS.badges.propertyMax,"LV.2 滿級","tile__max-badge")
+      : "";
+  }else{
+    price.textContent="";
+    houses.innerHTML="";
+    status.innerHTML="";
+  }
+
+  tokens.innerHTML=state.players
+    .filter(player=>!player.bankrupt&&player.position===index)
+    .map(player=>
+      '<img class="pawn-token" data-player-seat="'+player.seat+'" src="'+characterAsset(player.seat,"idle")+'" alt="" title="'+escapeHtml(player.name)+'">'
+    )
+    .join("");
 }
 
 export function render(state,{localSeat=0,networkMode="offline"}={}){
@@ -137,50 +229,9 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
   const localPlayer=state.players[localSeat]??state.players[0];
   const canControl=networkMode!=="guest"||localPlayer.kind==="human";
 
-  const players=document.getElementById("players");
-  players.innerHTML=state.players.map((player,index)=>{
-    const kindLabel=player.kind==="ai"
-      ? '<span class="player-kind player-kind--ai">AI</span>'
-      : '<span class="player-kind '+(player.connected===false?"player-kind--offline":"player-kind--human")+'">'+(player.connected===false?"離線":"真人")+'</span>';
-    return '<article class="player-card '+(index===state.currentPlayer?"active":"")+'">'+
-      '<img class="player-pawn" src="'+UI_ASSETS.pawns[index]+'" alt="">'+
-      '<div class="player-card__body">'+
-        '<h3>'+player.name+(index===state.currentPlayer?" 👑":"")+kindLabel+'</h3>'+
-        '<div class="player-stats">'+
-          '<span>現金 <b>'+money(player.cash)+'</b></span>'+
-          '<span>地產 <b>'+player.properties.length+'</b></span>'+
-          '<span>位置 <b>#'+(player.position+1)+'</b></span>'+
-        '</div>'+
-      '</div>'+
-    '</article>';
-  }).join("");
+  renderPlayerCards(state);
 
-  document.querySelectorAll(".tile").forEach((node,index)=>{
-    const tile=state.tiles[index];
-    const price=node.querySelector(".tile__price");
-    const level=node.querySelector(".tile__level");
-    const owner=node.querySelector(".tile__owner");
-    const tokens=node.querySelector(".tile__tokens");
-
-    price.textContent=tile.type==="property"
-      ? (tile.owner==null?money(tile.price):"租 "+money(rentFor(state,tile)))
-      : "";
-
-    level.textContent=tile.type==="property"&&tile.level>0?"LV."+tile.level:"";
-    level.style.display=level.textContent?"inline-flex":"none";
-
-    if(tile.owner==null){
-      owner.style.display="none";
-    }else{
-      owner.style.display="block";
-      owner.style.background=state.players[tile.owner].color;
-    }
-
-    tokens.innerHTML=state.players
-      .filter(player=>!player.bankrupt&&player.position===index)
-      .map(player=>'<img class="pawn-token" src="'+UI_ASSETS.pawns[player.seat]+'" alt="" title="'+player.name+'">')
-      .join("");
-  });
+  document.querySelectorAll(".tile").forEach((node,index)=>renderTileState(state,node,index));
 
   const current=state.players[state.currentPlayer];
   const tile=state.tiles[current.position];
@@ -192,10 +243,10 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
   const currentTileInfo=document.getElementById("currentTileInfo");
   if(currentTileInfo){
     currentTileInfo.innerHTML=
-      '<strong>#'+tile.number+" "+tile.name+"</strong><br>"+
+      '<strong>#'+tile.number+" "+escapeHtml(tile.name)+"</strong><br>"+
       (tile.type==="property"
         ? tile.group+"<br>售價 "+money(tile.price)+"｜目前過路費 "+money(rentFor(state,tile))+
-          (owner?"<br>持有者 "+owner.name+(groupBonus?"｜區域完成 +25%":""):"")
+          (owner?"<br>持有者 "+escapeHtml(owner.name)+(groupBonus?"｜區域完成 +25%":""):"")
         : "特殊事件格");
   }
 
@@ -216,7 +267,7 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
   const eventLog=document.getElementById("eventLog");
   if(eventLog){
     eventLog.innerHTML=state.events
-      .map(event=>'<div class="event-entry event-entry--'+event.kind+'">'+event.text+"</div>")
+      .map(event=>'<div class="event-entry event-entry--'+event.kind+'">'+escapeHtml(event.text)+"</div>")
       .join("");
   }
 
