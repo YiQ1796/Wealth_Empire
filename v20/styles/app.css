@@ -1726,3 +1726,20 @@ body.entry-pending .app-shell{
   height:28px;
   object-fit:contain
 }
+
+
+.action-toast__sparkle{
+  position:absolute;
+  inset:-18%;
+  z-index:3;
+  width:136%;
+  height:136%;
+  object-fit:contain;
+  opacity:.9;
+  animation:notifySparkle 1.25s ease-out both
+}
+@keyframes notifySparkle{
+  0%{opacity:0;transform:scale(.86) rotate(-2deg)}
+  28%{opacity:.95;transform:scale(1.04) rotate(1deg)}
+  100%{opacity:.18;transform:scale(1.08) rotate(0)}
+}
