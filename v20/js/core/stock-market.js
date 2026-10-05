@@ -82,9 +82,14 @@ export function advanceStockMarket(state,nextRound){
     const previousPrice=stock.price;
     const nextPrice=roundPrice(previousPrice*(1+move));
     stock.previousPrice=previousPrice;
-    stock.price=nextPrice===previousPrice
-      ? roundPrice(previousPrice+(move>0?1:-1))
-      : nextPrice;
+    if(nextPrice===previousPrice){
+      let direction=move>0?1:-1;
+      if(previousPrice<=MIN_PRICE&&direction<0)direction=1;
+      if(previousPrice>=MAX_PRICE&&direction>0)direction=-1;
+      stock.price=roundPrice(previousPrice+direction);
+    }else{
+      stock.price=nextPrice;
+    }
     stock.changePercent=roundPercent(((stock.price-previousPrice)/previousPrice)*100);
     stock.history=[...(stock.history??[]),stock.price].slice(-HISTORY_LIMIT);
   }
