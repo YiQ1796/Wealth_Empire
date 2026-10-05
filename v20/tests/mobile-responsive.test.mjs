@@ -10,8 +10,8 @@ assert.match(html,/class="mobile-primary-actions"/);
 assert.match(html,/id="mobileRollButton"/);
 assert.match(html,/data-feature="market"/);
 assert.match(html,/id="stockMarketMobileGrid"/);
-assert.match(html,/app\.css\?v=alpha20-198/);
-assert.match(html,/main\.js\?v=alpha20-198/);
+assert.match(html,/app\.css\?v=alpha21-199/);
+assert.match(html,/main\.js\?v=alpha21-199/);
 
 assert.match(css,/V20 Alpha 19 — phone landscape authority/);
 assert.match(css,/@media \(orientation:landscape\) and \(max-height:650px\) and \(max-width:1180px\)/);
@@ -37,3 +37,10 @@ assert.match(css,/V20 Alpha 19 mobile pass 2/);
 assert.match(css,/grid-template-rows:auto auto auto/);
 assert.match(css,/width:min\(58%,460px\)/);
 assert.match(css,/grid-template-columns:42px minmax\(0,1fr\) 68px/);
+
+assert.match(css,/V20 Alpha 21 — first-entry iPhone landscape stabilization/);
+assert.match(css,/height:100lvh/);
+assert.match(css,/\.tile__tokens:has\(\.pawn-token:nth-child\(3\)\)/);
+assert.match(main,/function settlePhoneLandscapeLayout/);
+assert.match(main,/visualViewport\?\.addEventListener\("resize",settlePhoneLandscapeLayout\)/);
+assert.match(main,/if\(!visible\)settlePhoneLandscapeLayout\(\)/);
