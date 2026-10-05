@@ -9,6 +9,7 @@ import{fillAiMinigameResults,finalizeMinigame,startMinigame,submitMinigameResult
 import{createRoomCode,normalizeRemoteAction,sanitizePlayerName,sanitizeRoomCode}from"../js/core/network.js";
 import{resolveSpecialEvent}from"../js/core/special-events.js";
 import{MINIGAME_DEFINITIONS}from"../js/data/minigames.js";
+import{TRANSPORT_NODE_INDEXES}from"../js/data/transport.js";
 
 {
   assert.equal(TILE_ART_BY_INDEX.length,44);
@@ -151,6 +152,12 @@ import{MINIGAME_DEFINITIONS}from"../js/data/minigames.js";
     {type:"upgrade_property",tileIndex:43}
   );
   assert.equal(normalizeRemoteAction({type:"upgrade_property",tileIndex:44}),null);
+  assert.deepEqual(
+    normalizeRemoteAction({type:"transport_travel",destinationIndex:32}),
+    {type:"transport_travel",destinationIndex:32}
+  );
+  assert.equal(normalizeRemoteAction({type:"transport_travel",destinationIndex:44}),null);
+  assert.deepEqual(normalizeRemoteAction({type:"transport_skip"}),{type:"transport_skip"});
 }
 
 {
@@ -205,6 +212,63 @@ import{MINIGAME_DEFINITIONS}from"../js/data/minigames.js";
 {
   const state=createInitialState();
   const engine=new GameEngine(state,()=>{});
+  const stationIndex=TRANSPORT_NODE_INDEXES[0];
+  state.players[0].position=(stationIndex-2+state.tiles.length)%state.tiles.length;
+
+  assert.equal(engine.roll(0,{d1:1,d2:1}),true);
+  assert.equal(state.players[0].position,stationIndex);
+  assert.equal(state.phase,"transport","station tile must enter the transport decision phase");
+  assert.equal(state.pendingTransport?.sourceIndex,stationIndex);
+  assert.deepEqual(
+    state.pendingTransport?.destinationIndexes,
+    TRANSPORT_NODE_INDEXES.filter(index=>index!==stationIndex)
+  );
+  assert.equal(engine.endTurn(0),false,"transport decision cannot be skipped by ending the turn");
+
+  const destinationIndex=state.pendingTransport.destinationIndexes[0];
+  assert.equal(engine.useTransport(destinationIndex,0),true);
+  assert.equal(state.players[0].position,destinationIndex);
+  assert.equal(state.phase,"landed");
+  assert.equal(state.pendingTransport,null);
+  assert.equal(state.events[0].kind,"transport_complete");
+  assert.equal(
+    state.events.some(event=>event.kind==="transport_offer"),
+    true,
+    "station landing must log a transport offer"
+  );
+}
+
+{
+  const state=createInitialState();
+  const engine=new GameEngine(state,()=>{});
+  const stationIndex=TRANSPORT_NODE_INDEXES[1];
+  state.players[0].position=(stationIndex-2+state.tiles.length)%state.tiles.length;
+  assert.equal(engine.roll(0,{d1:1,d2:1}),true);
+  assert.equal(state.phase,"transport");
+  assert.equal(engine.skipTransport(0),true);
+  assert.equal(state.players[0].position,stationIndex);
+  assert.equal(state.phase,"landed");
+  assert.equal(state.pendingTransport,null);
+}
+
+{
+  const state=createInitialState();
+  const engine=new GameEngine(state,()=>{});
+  state.currentPlayer=1;
+  const stationIndex=TRANSPORT_NODE_INDEXES[2];
+  state.players[1].position=(stationIndex-2+state.tiles.length)%state.tiles.length;
+  assert.equal(engine.roll(1,{d1:1,d2:1}),true);
+  assert.equal(state.phase,"transport");
+  assert.equal(engine.runAiStep(),true,"AI must resolve its own transport decision");
+  assert.equal(state.phase,"landed");
+  assert.equal(state.pendingTransport,null);
+  assert.ok(TRANSPORT_NODE_INDEXES.includes(state.players[1].position));
+  assert.notEqual(state.players[1].position,stationIndex);
+}
+
+{
+  const state=createInitialState();
+  const engine=new GameEngine(state,()=>{});
   const highLowIndex=state.tiles.findIndex(tile=>tile.type==="highlow");
   assert.ok(highLowIndex>0,"high-low tile must exist");
   state.players[0].position=(highLowIndex-2+state.tiles.length)%state.tiles.length;
@@ -244,4 +308,4 @@ assert.deepEqual(
   assert.ok(session.results["0"].score>0,"auction score must be host-resolved after all bids arrive");
 }
 
-console.log("V20 Alpha 24 gameplay systems test PASS");
+console.log("V20 Alpha 25 gameplay systems test PASS");
