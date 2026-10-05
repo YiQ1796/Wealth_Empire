@@ -114,6 +114,7 @@ jobs:
           set -euo pipefail
           grep -q 'class="desktop-stock-panel"' v20/index.html
           grep -q 'id="stockMarketGrid"' v20/index.html
+          grep -q 'grid-template-columns:repeat(2,minmax(0,1fr))' v20/styles/app.css
 
           if grep -q 'data-feature="stock"' v20/index.html; then
             echo "Desktop stock market must not return as a shortcut"
@@ -132,8 +133,6 @@ jobs:
         run: |
           set -euo pipefail
           grep -q 'board.appendChild(actionToastStack)' v20/js/main.js
-          grep -q 'tile.edge-top' v20/styles/app.css
-          grep -q 'tile.edge-right' v20/styles/app.css
           grep -q 'position:absolute' v20/styles/app.css
           grep -q 'width:min(760px,calc(100% - 48px))' v20/styles/app.css
 
@@ -144,18 +143,22 @@ jobs:
 
           echo "V20 board-center visual layout PASS"
 
-      - name: Validate V20 tight board ring
+      - name: Validate V20 aligned board ring
         shell: bash
         run: |
           set -euo pipefail
-          grep -q 'edgeClasses.push("edge-top")' v20/js/ui/render.js
-          grep -q 'edgeClasses.push("edge-left")' v20/js/ui/render.js
           grep -q 'grid-template-columns:10.6% repeat(11,minmax(0,1fr)) 10.6%' v20/styles/app.css
           grep -q 'grid-template-rows:12.5% repeat(9,minmax(0,1fr)) 12.5%' v20/styles/app.css
           grep -q '.tile.horizontal img.tile-art' v20/styles/app.css
           grep -q '.tile.vertical img.tile-art' v20/styles/app.css
           grep -q '.tile.corner img.tile-art' v20/styles/app.css
-          echo "V20 tight board ring PASS"
+
+          if grep -qE 'tile\.edge-(top|bottom|left|right)|edgeClasses\.push' v20/styles/app.css v20/js/ui/render.js; then
+            echo "Per-edge tile transforms are forbidden because they make the board uneven"
+            exit 1
+          fi
+
+          echo "V20 aligned board ring PASS"
 
       - name: Validate V20 module syntax
         shell: bash
