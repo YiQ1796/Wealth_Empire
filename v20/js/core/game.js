@@ -3,6 +3,7 @@ import{fillAiMinigameResults,finalizeMinigame,startMinigame,submitMinigameResult
 import{canUpgradeProperty,ownsCompleteGroup,rentFor,upgradeCost}from"./property-economy.js";
 import{GROUP_SIZES,groupRentMultiplier}from"../data/board.js";
 import{advanceStockMarket,buyStock as executeBuyStock,getMarketStock,sellStock as executeSellStock}from"./stock-market.js";
+import{resolveSpecialEvent}from"./special-events.js";
 
 export class GameEngine{
   constructor(state,onChange){
@@ -82,7 +83,7 @@ export class GameEngine{
     return true;
   }
 
-  resolveLanding(player){
+  resolveLanding(player,{specialChainDepth=0}={}){
     this.state.pendingPurchase=null;
     const tile=this.state.tiles[player.position];
 
@@ -134,10 +135,66 @@ export class GameEngine{
     }
 
     if(tile.type==="highlow"||tile.type==="horse"){
-      const session=startMinigame(this.state,player.seat);
+      const forcedGameId=tile.type==="horse"?"horse":null;
+      const session=startMinigame(this.state,player.seat,Date.now(),forcedGameId);
       fillAiMinigameResults(this.state);
-      this.log(player.name+" 觸發新的都會挑戰："+session.id+"。","minigame_start",{seat:player.seat,gameId:session.id});
+      this.log(
+        player.name+" 觸發都會挑戰："+session.id+"。",
+        "minigame_start",
+        {seat:player.seat,gameId:session.id,tileType:tile.type}
+      );
       this.tryFinalizeMinigame();
+      return;
+    }
+
+    if(tile.type==="chance"||tile.type==="fate"){
+      this.state.phase="landed";
+      if(specialChainDepth>0){
+        this.log(
+          player.name+" 因事件移動抵達「"+tile.name+"」，本次不連續抽第二張事件。",
+          "event",
+          {seat:player.seat,tile:player.position,type:tile.type,chainStopped:true}
+        );
+        return;
+      }
+
+      const resolved=resolveSpecialEvent(this.state,player,tile.type);
+      if(!resolved){
+        this.log(player.name+" 抵達「"+tile.name+"」，但事件池目前無可用事件。","warning",{seat:player.seat,type:tile.type});
+        return;
+      }
+
+      const isChance=tile.type==="chance";
+      const label=isChance?"機會":"命運";
+      const effectText=resolved.kind==="cash"
+        ? (resolved.amount>=0
+          ?"獲得 "+this.formatMoney(resolved.amount)
+          :"支付 "+this.formatMoney(Math.abs(resolved.amount)))
+        : resolved.kind==="move"
+          ? ((resolved.delta>=0?"前進 ":"後退 ")+Math.abs(resolved.delta)+" 格")
+          : "沒有額外效果";
+
+      this.log(
+        player.name+"｜"+label+"「"+resolved.event.name+"」："+resolved.event.description+"（"+effectText+"）",
+        "special_event",
+        {
+          seat:player.seat,
+          playerName:player.name,
+          type:tile.type,
+          eventId:resolved.event.id,
+          eventName:resolved.event.name,
+          effectKind:resolved.kind,
+          amount:resolved.amount,
+          delta:resolved.delta,
+          from:resolved.from,
+          to:resolved.to,
+          cashAfter:resolved.cashAfter
+        }
+      );
+
+      if(resolved.moved){
+        this.resolveLanding(player,{specialChainDepth:specialChainDepth+1});
+      }
       return;
     }
 
@@ -146,8 +203,6 @@ export class GameEngine{
       start:"回到起點。",
       tax:"抵達稅務局。",
       station:"抵達交通設施。",
-      chance:"觸發機會事件池。",
-      fate:"觸發命運事件池。",
       acquisition:"抵達收購中心。",
       market:"抵達股市事件格。本回合仍可自由買賣股票。",
       court:"抵達法院。",
