@@ -273,8 +273,10 @@ export class PeerNetwork{
     try{
       await this.startHostRelay();
       this.transport="relay";
-      this.status("房間已建立，房號 "+code+"。目前使用 WSS 中繼，可跨不同網路與手機 NAT。","success");
+      this.startHostPeer().catch(()=>{});
+      this.status("房間已建立，房號 "+code+"。目前使用 WSS 中繼，可跨不同網路與手機 NAT；P2P 同步作為備援。","success");
     }catch(relayError){
+      this.cleanupRelayTransport();
       this.status("WSS 中繼暫時不可用，正在切換 P2P 備援。","warning");
       await this.startHostPeer();
       this.transport="peer";
@@ -505,6 +507,7 @@ export class PeerNetwork{
       this.transport="relay";
       return result;
     }catch(relayError){
+      this.cleanupRelayTransport();
       this.status("WSS 中繼暫時不可用，正在切換 P2P 備援。","warning");
       const result=await this.joinViaPeer();
       this.transport="peer";
@@ -709,6 +712,24 @@ export class PeerNetwork{
     if(!normalized)return false;
     this.hostConnection.send({type:"action",action:normalized});
     return true;
+  }
+
+  cleanupRelayTransport(){
+    clearInterval(this.relayHeartbeatTimer);
+    clearInterval(this.relayWatchdogTimer);
+    this.relayHeartbeatTimer=null;
+    this.relayWatchdogTimer=null;
+
+    if(this.relayClient){
+      try{this.relayClient.end(true)}catch{}
+      this.relayClient=null;
+    }
+
+    this.relayConnectionsByClient.clear();
+    if(this.hostConnection?.relay){
+      try{this.hostConnection.close()}catch{}
+      this.hostConnection=null;
+    }
   }
 
   async close(clearSession=true){
