@@ -44,11 +44,11 @@ button:focus-visible{outline:3px solid rgba(47,114,196,.28);outline-offset:2px}
   min-width:0;
   min-height:0;
   height:100%;
-  padding:6px;
-  border:1px solid var(--line);
-  border-radius:var(--radius);
-  background:var(--panel);
-  box-shadow:var(--shadow);
+  padding:0;
+  border:0;
+  border-radius:12px;
+  background:transparent;
+  box-shadow:none;
   overflow:hidden;
   display:flex
 }
@@ -59,27 +59,27 @@ button:focus-visible{outline:3px solid rgba(47,114,196,.28);outline-offset:2px}
   height:100%;
   min-width:0;
   min-height:0;
-  grid-template-columns:7.4% repeat(11,minmax(0,1fr)) 7.4%;
-  grid-template-rows:9.1% repeat(9,minmax(0,1fr)) 9.1%;
+  grid-template-columns:8.6% repeat(11,minmax(0,1fr)) 8.6%;
+  grid-template-rows:10.5% repeat(9,minmax(0,1fr)) 10.5%;
   overflow:hidden;
   border-radius:12px;
-  background:#dfe8ef
+  background:transparent
 }
 .tile{
   position:relative;
   min-width:0;
   min-height:0;
   overflow:hidden;
-  border:1px solid rgba(75,96,119,.36);
-  background:#f8fbfd
+  border:0;
+  background:transparent
 }
-.tile.corner{background:#f8eed0}
-.tile.has-art{border-color:rgba(75,96,119,.22);background:transparent}
+.tile.corner{background:transparent}
+.tile.has-art{border:0;background:transparent}
 .tile img.tile-art{
   position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
+  inset:-1px;
+  width:calc(100% + 2px);
+  height:calc(100% + 2px);
   object-fit:fill;
   display:block
 }
@@ -142,7 +142,7 @@ button:focus-visible{outline:3px solid rgba(47,114,196,.28);outline-offset:2px}
   grid-row:2 / 11;
   position:relative;
   overflow:hidden;
-  background:#dfe8ef
+  background:transparent
 }
 .center-stage img{
   position:absolute;
@@ -264,7 +264,7 @@ button:focus-visible{outline:3px solid rgba(47,114,196,.28);outline-offset:2px}
 .action-button--primary{background:var(--blue);color:#fff}
 .action-button img{width:34px;height:34px;object-fit:contain}
 .action-button:disabled{opacity:.42;cursor:not-allowed}
-.feature-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+.feature-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
 .feature-tab{
   min-width:0;
   border:1px solid #e0e7ee;
@@ -407,15 +407,18 @@ button:focus-visible{outline:3px solid rgba(47,114,196,.28);outline-offset:2px}
 @media(max-width:760px){
   body{min-width:920px}
   .game-layout{grid-template-columns:minmax(0,1fr) 310px}
-  .board{grid-template-columns:7.6% repeat(11,minmax(0,1fr)) 7.6%}
+  .board{
+    grid-template-columns:8.6% repeat(11,minmax(0,1fr)) 8.6%;
+    grid-template-rows:10.5% repeat(9,minmax(0,1fr)) 10.5%
+  }
   .pawn-token{width:18px;height:18px}
 }
 
 
 /* V20 Alpha 16 — modal shortcuts / multiplayer / stock trading / minigames */
 .hud-panel{
-  grid-template-rows:auto auto auto auto auto;
-  align-content:start
+  grid-template-rows:auto auto auto auto minmax(0,1fr);
+  align-content:stretch
 }
 .control-actions--three{
   grid-template-columns:1fr 1fr 1fr
@@ -528,8 +531,8 @@ button:focus-visible{outline:3px solid rgba(47,114,196,.28);outline-offset:2px}
 
 .stock-market-grid{
   display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:10px
+  grid-template-columns:1fr;
+  gap:7px
 }
 .stock-trade-card{
   min-width:0;
@@ -1659,4 +1662,239 @@ body.entry-pending .app-shell{
 .board-motion-active .property-upgrade{
   pointer-events:none;
   opacity:.58
+}
+
+
+/* V20 Alpha 18 — desktop HUD consolidation and persistent stock market */
+.hud-header{
+  align-items:stretch
+}
+.hud-heading{
+  min-width:88px;
+  align-self:center
+}
+.hud-turn-tools{
+  min-width:0;
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  align-items:center;
+  gap:6px;
+  flex:1
+}
+.control-actions--turn{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:6px
+}
+.control-actions--turn .action-button{
+  min-height:44px;
+  padding:5px 7px;
+  font-size:13px
+}
+.control-actions--turn .action-button img{
+  width:28px;
+  height:28px
+}
+.network-strip{
+  min-width:0;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:stretch;
+  gap:6px
+}
+.network-strip .network-status-bar{
+  min-width:0;
+  display:grid;
+  place-items:center;
+  padding:6px 8px
+}
+.network-compact-button{
+  min-width:70px;
+  border:1px solid #dce6ee;
+  border-radius:10px;
+  padding:6px 9px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  background:#edf3f8;
+  color:#244765;
+  font-size:11px;
+  font-weight:1000;
+  cursor:pointer
+}
+.feature-tabs--secondary{
+  grid-template-columns:repeat(3,minmax(0,1fr))
+}
+.desktop-stock-panel{
+  min-width:0;
+  min-height:0;
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr);
+  gap:6px;
+  padding:8px;
+  border:1px solid #dfe7ee;
+  border-radius:13px;
+  background:#fbfdff;
+  overflow:hidden
+}
+.desktop-stock-panel__header{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px
+}
+.desktop-stock-panel__header h2{
+  margin:0;
+  font-size:17px;
+  line-height:1
+}
+.desktop-stock-panel__header p{
+  margin:3px 0 0;
+  color:var(--muted);
+  font-size:9px;
+  font-weight:800
+}
+.stock-market-grid--persistent{
+  min-height:0;
+  overflow:auto;
+  overscroll-behavior:contain;
+  padding-right:2px
+}
+.desktop-stock-panel .stock-trade-card{
+  padding:8px;
+  border-radius:11px
+}
+.desktop-stock-panel .stock-trade-card__head strong{
+  font-size:13px
+}
+.desktop-stock-panel .stock-price b{
+  font-size:18px
+}
+.desktop-stock-panel .stock-position{
+  margin-top:5px;
+  gap:3px
+}
+.desktop-stock-panel .stock-position span{
+  padding:4px;
+  font-size:8px
+}
+.desktop-stock-panel .stock-position b{
+  font-size:9px
+}
+.desktop-stock-panel .stock-trade-controls{
+  margin-top:5px;
+  grid-template-columns:minmax(76px,1fr) auto auto;
+  gap:4px
+}
+.desktop-stock-panel .stock-trade-controls input{
+  min-height:30px;
+  padding:4px 6px;
+  font-size:13px
+}
+.desktop-stock-panel .stock-trade-controls button{
+  min-height:30px;
+  padding:5px 8px;
+  font-size:10px
+}
+
+/* Reduce central notifications so they no longer dominate the map. */
+.action-toast-stack{
+  top:23%;
+  width:min(540px,calc(100vw - 28px))
+}
+.action-toast{
+  min-height:88px
+}
+.action-toast__card-bg img{
+  min-height:88px
+}
+.action-toast__content{
+  min-height:88px;
+  grid-template-columns:54px minmax(0,1fr);
+  gap:11px;
+  padding:12px 22px
+}
+.action-toast__icon{
+  width:50px;
+  height:50px
+}
+.action-toast strong{
+  margin-bottom:3px;
+  font-size:clamp(17px,1.3vw,22px)
+}
+.action-toast p{
+  font-size:clamp(11px,.85vw,14px);
+  line-height:1.35
+}
+.action-toast--major{
+  width:min(560px,calc(100vw - 28px));
+  min-height:102px
+}
+.action-toast--major .action-toast__card-bg img,
+.action-toast--major .action-toast__content{
+  min-height:102px
+}
+.action-toast--major .action-toast__icon{
+  width:58px;
+  height:58px
+}
+.action-toast--market{
+  width:min(520px,calc(100vw - 28px));
+  min-height:76px
+}
+.action-toast--market .action-toast__card-bg img{
+  min-height:76px
+}
+.action-toast--market .action-toast__content{
+  min-height:76px;
+  grid-template-columns:44px minmax(0,1fr);
+  padding:10px 18px
+}
+.action-toast--market .action-toast__icon{
+  width:40px;
+  height:40px
+}
+
+@media(max-height:760px){
+  .desktop-stock-panel{padding:6px;gap:4px}
+  .desktop-stock-panel__header p{display:none}
+  .desktop-stock-panel .stock-trade-card{padding:6px}
+  .desktop-stock-panel .stock-position{display:none}
+  .desktop-stock-panel .stock-trade-controls{margin-top:4px}
+  .control-actions--turn .action-button{min-height:36px;font-size:11px}
+  .control-actions--turn .action-button img{width:23px;height:23px}
+}
+
+@media(max-width:760px){
+  .hud-turn-tools{
+    grid-template-columns:auto minmax(0,1fr)
+  }
+  .desktop-stock-panel__header h2{font-size:15px}
+  .action-toast-stack{
+    top:22%;
+    width:min(520px,76vw)
+  }
+  .action-toast,
+  .action-toast--major{
+    min-height:88px
+  }
+  .action-toast__card-bg img,
+  .action-toast--major .action-toast__card-bg img{
+    min-height:88px
+  }
+  .action-toast__content,
+  .action-toast--major .action-toast__content{
+    min-height:88px;
+    grid-template-columns:50px minmax(0,1fr);
+    gap:8px;
+    padding:11px 16px
+  }
+  .action-toast__icon,
+  .action-toast--major .action-toast__icon{
+    width:46px;
+    height:46px
+  }
+  .action-toast strong{font-size:16px}
+  .action-toast p{font-size:10px}
 }
