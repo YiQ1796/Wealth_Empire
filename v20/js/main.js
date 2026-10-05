@@ -15,6 +15,7 @@ import{characterAsset,mountStaticBoard,render}from"./ui/render.js";
 import{renderStockMarket}from"./ui/stock-render.js";
 import{UI_ASSETS}from"./data/ui-assets.js";
 import{MinigameUI}from"./ui/minigame-ui.js";
+import{GROUP_SIZES,groupRentMultiplier}from"./data/board.js";
 
 const board=document.getElementById("board");
 mountStaticBoard(board);
@@ -189,12 +190,16 @@ function noticeView(event){
         details
       };
 
-    case"group_complete":
+    case"group_complete":{
+      const groupName=data.group??"區域";
+      const total=Number(data.total)||(GROUP_SIZES[groupName]??0);
+      const multiplier=Number(data.multiplier)||groupRentMultiplier(groupName);
       return{
-        message:(player?.name??"玩家")+" 完成「"+(data.group??"區域")+"」3/3 地產",
-        metric:"+25%",
-        details:["該區過路費永久提高 25%"]
+        message:(player?.name??"玩家")+" 完成「"+groupName+"」"+total+"/"+total+" 地產",
+        metric:"×"+multiplier,
+        details:["完成連區後，該區過路費提升至 ×"+multiplier]
       };
+    }
 
     case"stock_buy":
       details.push("成交價 "+noticeMoney(data.price));
