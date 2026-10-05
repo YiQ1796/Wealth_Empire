@@ -108,6 +108,25 @@ jobs:
 
           echo "V20 Alpha18 V5 visual assets PASS: 44 tiles + houses + 16 character states + badges + modal + notification UI"
 
+      - name: Validate V20 persistent stock HUD
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'class="desktop-stock-panel"' v20/index.html
+          grep -q 'id="stockMarketGrid"' v20/index.html
+
+          if grep -q 'data-feature="stock"' v20/index.html; then
+            echo "Desktop stock market must not return as a shortcut"
+            exit 1
+          fi
+
+          if grep -q 'data-feature-panel="stock"' v20/index.html; then
+            echo "Desktop stock market must remain persistent instead of modal-only"
+            exit 1
+          fi
+
+          echo "V20 persistent stock HUD PASS"
+
       - name: Validate V20 module syntax
         shell: bash
         run: |
