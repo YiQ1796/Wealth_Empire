@@ -1,4 +1,5 @@
 import{stockPosition}from"../core/stock-market.js";
+import{UI_ASSETS}from"../data/ui-assets.js";
 
 function trendClass(change){
   if(change>0)return"up";
@@ -43,7 +44,7 @@ export function renderStockMarket(container,state,localSeat,{onBuy=()=>{},onSell
           '<span>現值 <b>'+money(position.marketValue)+'</b></span>'+
           '<span class="'+pnlClass+'">損益 <b>'+signedMoney(position.unrealized)+'</b></span>'+
         '</div>'
-      : '<div class="stock-position stock-position--empty">尚未持有</div>';
+      : '<div class="stock-position stock-position--empty stock-position--empty-visual"><img src="'+UI_ASSETS.modal.emptyHoldings+'" alt=""><span>尚未持有</span></div>';
 
     return '<article class="stock-trade-card" data-stock-id="'+stock.id+'">'+
       '<div class="stock-trade-card__head">'+
