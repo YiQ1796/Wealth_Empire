@@ -207,6 +207,29 @@ function noticeView(event){
         details
       };
 
+    case"property_acquisition":
+      return{
+        message:event.text,
+        metric:Number.isFinite(Number(data.amount))?noticeMoney(data.amount):"收購",
+        details:[]
+      };
+
+    case"bankruptcy":
+      return{
+        message:event.text,
+        metric:"破產",
+        details:[]
+      };
+
+    case"minigame_complete":{
+      const winner=Array.isArray(data.rankings)?data.rankings.find(item=>item.rank===1):null;
+      return{
+        message:event.text,
+        metric:winner?"#1":"結算",
+        details:winner?["冠軍獎勵 "+noticeMoney(winner.reward)]:[]
+      };
+    }
+
     case"cash":
       return{
         message:event.text,
