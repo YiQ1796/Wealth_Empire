@@ -270,6 +270,28 @@
   </div>
 </dialog>
 
+<dialog id="acquisitionDialog" class="acquisition-dialog">
+  <div class="acquisition-modal">
+    <header class="acquisition-modal__header">
+      <div>
+        <span class="acquisition-modal__eyebrow">收購中心</span>
+        <h2>強制收購</h2>
+        <p>使用既有規則：符合條件的對手地產，以目前資產估值的 125% 報價收購。</p>
+      </div>
+      <button id="skipAcquisitionIconButton" type="button" class="modal-close" aria-label="放棄收購">
+        <img src="./assets/v5/ui/modal/MODAL_CLOSE.webp" alt="">
+      </button>
+    </header>
+    <div class="acquisition-summary">
+      <span>目前現金</span>
+      <strong id="acquisitionCash">—</strong>
+      <small>滿級 LV.2 地產依既有保護規則不可強制收購。</small>
+    </div>
+    <div id="acquisitionOptionList" class="acquisition-options" aria-label="可收購地產"></div>
+    <button id="skipAcquisitionButton" type="button" class="acquisition-skip">這次不收購</button>
+  </div>
+</dialog>
+
 <dialog id="transportDialog" class="transport-dialog">
   <div class="transport-modal">
     <header class="transport-modal__header">
