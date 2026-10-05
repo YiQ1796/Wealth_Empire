@@ -19,7 +19,8 @@ import{
   groupProgress,
   rentFor,
   transferPropertyOwnership,
-  upgradeCost
+  upgradeCost,
+  suggestedAcquisitionOffer
 }from"../js/core/property-economy.js";
 
 assert.equal(BOARD_TILES.length,44,"board must contain exactly 44 tiles");
@@ -120,6 +121,11 @@ state.pendingPurchase=null;
 buyer.cash=100000;
 const expectedUpgradeCost=Math.round(upgradedTile.price*0.5);
 assert.equal(upgradeCost(upgradedTile),expectedUpgradeCost,"upgrade cost must equal 50% of property price");
+assert.equal(
+  suggestedAcquisitionOffer(upgradedTile),
+  Math.round((upgradedTile.price+expectedUpgradeCost*Math.max(0,upgradedTile.level||0))*1.25),
+  "suggested acquisition offer must equal 125% of current property asset value"
+);
 
 assert.equal(engine.upgradeProperty(testIndexes[0]),true,"LV0 -> LV1 upgrade should succeed");
 assert.equal(upgradedTile.level,1);
