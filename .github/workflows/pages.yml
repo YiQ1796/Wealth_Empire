@@ -203,7 +203,7 @@ jobs:
           grep -q 'action-toast__details' v20/js/main.js
           grep -q 'property_buy:{title:"地產購入"' v20/js/main.js
           grep -q 'stock_sell:{title:"股票賣出"' v20/js/main.js
-          grep -q 'min-height:158px' v20/styles/app.css
+          grep -q 'min-height:172px' v20/styles/app.css
           grep -q '.action-toast__metric{' v20/styles/app.css
           grep -q '.action-toast__details{' v20/styles/app.css
 
