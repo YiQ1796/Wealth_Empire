@@ -1,45 +1,45 @@
 export const MINIGAME_DEFINITIONS=Object.freeze([
   {
     id:"courier",
-    name:"都會快遞戰",
-    category:"反應",
-    durationMs:26000,
-    description:"判斷路況並快速切換正確行動，連續成功可累積 Combo。"
+    name:"幸運快遞",
+    category:"運氣＋風險",
+    durationMs:45000,
+    description:"每輪選安全大道、快速道路或神秘捷徑；風險越高，可能拿到的分數越高。"
   },
   {
     id:"vault",
-    name:"金庫解鎖",
-    category:"精準",
-    durationMs:24000,
-    description:"在黃金區域通過時精準解鎖，連續五層會越來越困難。"
+    name:"黃金金庫",
+    category:"純運氣",
+    durationMs:42000,
+    description:"每輪從 6 個金庫中選 1 個；大獎、小獎與空箱位置每次都不同。"
   },
   {
     id:"tower",
-    name:"摩天樓疊樓戰",
-    category:"空間",
-    durationMs:30000,
-    description:"精準堆疊樓層，偏移越大可用的平台越窄。"
+    name:"幸運樓層",
+    category:"猜骰",
+    durationMs:42000,
+    description:"先猜 1～6 樓，再擲骰；猜中最高分，差一格也有獎勵。"
   },
   {
     id:"memory",
-    name:"商業記憶戰",
-    category:"記憶",
-    durationMs:30000,
-    description:"記住商業圖示的順序與位置，依指定順序找回目標。"
+    name:"命運翻牌",
+    category:"抽卡",
+    durationMs:42000,
+    description:"每輪翻一張命運卡，共翻 3 張；有普通獎勵，也可能翻到大獎或空卡。"
   },
   {
     id:"route",
-    name:"城市路線規劃",
-    category:"邏輯",
-    durationMs:35000,
-    description:"在道路成本不同的城市網路中規劃最低成本有效路線。"
+    name:"城市岔路",
+    category:"運氣＋選擇",
+    durationMs:46000,
+    description:"連續 4 站選安全、均衡或冒險路線；每條路的報酬與風險不同。"
   },
   {
     id:"district",
-    name:"商圈選址戰",
-    category:"策略",
-    durationMs:32000,
-    description:"依人流、成本、交通與成長條件挑出最有價值的投資位置。"
+    name:"商圈開盤",
+    category:"運氣＋策略",
+    durationMs:46000,
+    description:"每輪選保守、均衡或高風險投資，再看隨機市場走勢決定報酬。"
   }
 ]);
 
