@@ -18,6 +18,7 @@ import{MinigameUI}from"./ui/minigame-ui.js";
 import{GROUP_SIZES,MAX_PROPERTY_LEVEL,groupRentMultiplier}from"./data/board.js";
 import{canForceAcquireProperty,groupProgress,propertyValue,rentFor,suggestedAcquisitionOffer,upgradeCost}from"./core/property-economy.js";
 import{TRANSPORT_NODE_BY_INDEX}from"./data/transport.js";
+import{transportDestinationPreview}from"./core/transport.js";
 
 const board=document.getElementById("board");
 mountStaticBoard(board);
@@ -776,7 +777,11 @@ function renderTransportDialog(){
     title.textContent=node.name;
     const meta=document.createElement("small");
     meta.textContent=node.mode+"｜第 "+(destinationIndex+1)+" 格";
-    copy.append(title,meta);
+    const preview=transportDestinationPreview(state,destinationIndex);
+    const strategy=document.createElement("small");
+    strategy.className="transport-destination__strategy";
+    strategy.textContent="前方6格｜可買地產 "+preview.unownedProperties+"｜機會命運 "+preview.chanceOrFate;
+    copy.append(title,meta,strategy);
 
     button.append(icon,copy);
     button.addEventListener("click",()=>{
