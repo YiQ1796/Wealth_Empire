@@ -78,30 +78,38 @@ function currentLocalSeat(){
 }
 
 const phoneLandscapeQuery=window.matchMedia("(orientation: landscape) and (max-height: 650px) and (max-width: 1180px)");
-let phoneLayoutSettleTimer=null;
+let phoneLayoutSettleTimers=[];
+
+function syncPhoneViewportHeight(){
+  if(!phoneLandscapeQuery.matches){
+    document.documentElement.style.removeProperty("--phone-app-height");
+    return;
+  }
+  const visualHeight=Math.round(window.visualViewport?.height||0);
+  const innerHeight=Math.round(window.innerHeight||0);
+  const height=Math.max(1,visualHeight||innerHeight);
+  document.documentElement.style.setProperty("--phone-app-height",height+"px");
+}
 
 function settlePhoneLandscapeLayout(){
   if(!phoneLandscapeQuery.matches)return;
-  if(phoneLayoutSettleTimer){
-    clearTimeout(phoneLayoutSettleTimer);
-    phoneLayoutSettleTimer=null;
-  }
-
+  phoneLayoutSettleTimers.forEach(clearTimeout);
+  phoneLayoutSettleTimers=[];
   const settle=()=>{
-    // Reading layout after the entry overlay changes forces WebKit to commit
-    // the new 100lvh composition instead of keeping the first short 100dvh frame.
+    syncPhoneViewportHeight();
     document.querySelector(".app-shell")?.getBoundingClientRect();
     window.scrollTo(0,0);
   };
 
+  settle();
   requestAnimationFrame(()=>{
     settle();
     requestAnimationFrame(settle);
   });
-  phoneLayoutSettleTimer=setTimeout(()=>{
-    settle();
-    phoneLayoutSettleTimer=null;
-  },220);
+
+  [80,180,350,650,1000].forEach(delay=>{
+    phoneLayoutSettleTimers.push(setTimeout(settle,delay));
+  });
 }
 
 function setEntryVisible(visible){
@@ -110,7 +118,10 @@ function setEntryVisible(visible){
   if(!visible)settlePhoneLandscapeLayout();
 }
 window.visualViewport?.addEventListener("resize",settlePhoneLandscapeLayout);
+window.visualViewport?.addEventListener("scroll",syncPhoneViewportHeight);
+window.addEventListener("resize",settlePhoneLandscapeLayout);
 window.addEventListener("orientationchange",settlePhoneLandscapeLayout);
+syncPhoneViewportHeight();
 
 function selectEntryCharacter(index){
   const next=Math.max(0,Math.min(3,Math.floor(Number(index)||0)));
