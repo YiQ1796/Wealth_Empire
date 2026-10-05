@@ -53,7 +53,9 @@ const ACTION_TOAST_KINDS=new Set([
   "bankruptcy",
   "cash",
   "special_event",
+  "special_grid",
   "transport_complete",
+  "urban_complete",
   "game_complete"
 ]);
 const uiContext={
@@ -65,6 +67,7 @@ const featureDialog=document.getElementById("featureDialog");
 const networkDialog=document.getElementById("networkDialog");
 const purchaseDialog=document.getElementById("purchaseDialog");
 const propertyInfoDialog=document.getElementById("propertyInfoDialog");
+const urbanDialog=document.getElementById("urbanDialog");
 const acquisitionDialog=document.getElementById("acquisitionDialog");
 const transportDialog=document.getElementById("transportDialog");
 const entryGate=document.getElementById("entryGate");
@@ -183,6 +186,8 @@ function noticeConfig(event){
     network_reconnect:{title:"重新連線",icon:N.icons.network,effect:N.effects.green,tone:"green"},
     network_ai_takeover:{title:"AI 接手",icon:N.icons.aiTakeover,effect:N.effects.purple,tone:"purple"},
     transport_complete:{title:"快速通車",icon:N.icons.network,effect:N.effects.blue,tone:"blue",major:true},
+    urban_complete:{title:"城市更新",icon:N.icons.propertyUpgrade,effect:N.effects.green,tone:"green",major:true},
+    special_grid:{title:"特殊設施",icon:N.icons.minigameResult,effect:N.effects.purple,tone:"purple",major:true},
     cash:{title:"現金變動",icon:N.icons.rent,effect:N.effects.green,tone:"green",metric:true}
   };
   return map[event.kind]??{title:"遊戲動態",icon:N.icons.marketTick,effect:N.effects.blue,tone:"blue"};
@@ -334,6 +339,26 @@ function noticeView(event){
       }
       return{message:event.text,metric,details};
     }
+
+    case"special_grid":{
+      const labels={
+        tax:"稅務抵免",
+        court:"財產保全",
+        hospital:"醫療保護"
+      };
+      return{
+        message:event.text,
+        metric:labels[data.type]??"特殊效果",
+        details:data.untilRound?["保護至 ROUND "+data.untilRound]:[]
+      };
+    }
+
+    case"urban_complete":
+      return{
+        message:(data.playerName??"玩家")+" 完成城市更新重新部署",
+        metric:"#"+(Number(data.to)+1),
+        details:[data.tileName?"移動至 "+data.tileName:""]
+      };
 
     case"transport_complete":
       return{
@@ -668,6 +693,10 @@ function executeAction(action,seat=currentLocalSeat()){
       return engine.acquireFromCenter(action.tileIndex,seat);
     case"acquisition_skip":
       return engine.skipAcquisition(seat);
+    case"urban_move":
+      return engine.useUrban(action.destinationIndex,seat);
+    case"urban_skip":
+      return engine.skipUrban(seat);
     case"end_turn":
       return engine.endTurn(seat);
     case"start_game":
@@ -739,6 +768,48 @@ function renderNetworkUi(){
     roomDisplay.textContent="------";
     roomHero.hidden=true;
   }
+}
+
+function renderUrbanDialog(){
+  const pending=state.pendingUrban;
+  const localSeat=currentLocalSeat();
+  const player=state.players?.[localSeat];
+  const shouldShow=Boolean(
+    urbanDialog&&
+    state.phase==="urban"&&
+    pending&&
+    pending.seat===localSeat&&
+    player?.kind==="human"&&
+    player.connected!==false
+  );
+
+  if(!shouldShow){
+    if(urbanDialog?.open)urbanDialog.close();
+    return;
+  }
+
+  const list=document.getElementById("urbanDestinationList");
+  list.replaceChildren();
+  for(const destinationIndex of pending.destinationIndexes??[]){
+    const tile=state.tiles?.[destinationIndex];
+    if(!tile)continue;
+    const button=document.createElement("button");
+    button.type="button";
+    button.className="urban-destination";
+    button.dataset.destinationIndex=String(destinationIndex);
+
+    const title=document.createElement("strong");
+    title.textContent=tile.name;
+    const meta=document.createElement("span");
+    meta.textContent=tile.group+"｜LV."+tile.level+"｜第 "+(destinationIndex+1)+" 格";
+    button.append(title,meta);
+    button.addEventListener("click",()=>{
+      dispatchAction({type:"urban_move",destinationIndex});
+    },{once:true});
+    list.appendChild(button);
+  }
+
+  if(!urbanDialog.open)urbanDialog.showModal();
 }
 
 function renderAcquisitionDialog(){
@@ -869,6 +940,7 @@ function renderAll(){
   });
   renderStocks();
   renderNetworkUi();
+  renderUrbanDialog();
   renderAcquisitionDialog();
   renderTransportDialog();
   minigameUi.sync(state,currentLocalSeat());
@@ -1021,6 +1093,11 @@ featureDialog.addEventListener("click",event=>{
 });
 
 purchaseDialog.addEventListener("cancel",event=>event.preventDefault());
+
+const skipUrban=()=>dispatchAction({type:"urban_skip"});
+document.getElementById("skipUrbanButton").addEventListener("click",skipUrban);
+document.getElementById("skipUrbanIconButton").addEventListener("click",skipUrban);
+urbanDialog.addEventListener("cancel",event=>event.preventDefault());
 
 const skipAcquisition=()=>dispatchAction({type:"acquisition_skip"});
 document.getElementById("skipAcquisitionButton").addEventListener("click",skipAcquisition);
