@@ -1,10 +1,27 @@
 import assert from"node:assert/strict";
 import{createInitialState}from"../js/core/state.js";
+import{TILE_ART_BY_INDEX}from"../js/data/assets.js";
+import{UI_ASSETS}from"../js/data/ui-assets.js";
 import{GameEngine}from"../js/core/game.js";
 import{chooseUpgrade,shouldBuyProperty}from"../js/core/ai.js";
 import{advanceStockMarket,buyStock,getHolding,sellStock}from"../js/core/stock-market.js";
 import{fillAiMinigameResults,finalizeMinigame,startMinigame,submitMinigameResult}from"../js/core/minigames.js";
 import{createRoomCode,normalizeRemoteAction,sanitizePlayerName,sanitizeRoomCode}from"../js/core/network.js";
+
+{
+  assert.equal(TILE_ART_BY_INDEX.length,44);
+  assert.ok(TILE_ART_BY_INDEX.every(path=>path.includes("/assets/v5/tiles/TILE_")));
+  assert.equal(UI_ASSETS.characters.length,4);
+  for(const character of UI_ASSETS.characters){
+    assert.ok(character.idle.includes("/assets/v5/"));
+    assert.ok(character.walkA.includes("/assets/v5/"));
+    assert.ok(character.walkB.includes("/assets/v5/"));
+    assert.ok(character.jump.includes("/assets/v5/"));
+  }
+  assert.equal(UI_ASSETS.houses.length,4);
+  assert.ok(UI_ASSETS.modal.close.includes("MODAL_CLOSE"));
+  assert.ok(UI_ASSETS.notification.cards.majorDesktop.includes("NOTIFY_CARD_MAJOR_DESKTOP"));
+}
 
 {
   const state=createInitialState();
@@ -166,4 +183,4 @@ import{createRoomCode,normalizeRemoteAction,sanitizePlayerName,sanitizeRoomCode}
   assert.ok(["courier","vault","tower","memory","route","district"].includes(state.minigame.id));
 }
 
-console.log("V20 Alpha 17 gameplay systems test PASS");
+console.log("V20 Alpha 18 gameplay systems test PASS");
