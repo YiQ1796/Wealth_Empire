@@ -36,6 +36,7 @@ export function createInitialState(){
     aiPreparedTurnToken:null,
     dice:null,
     pendingPurchase:null,
+    pendingTransport:null,
     minigame:null,
     minigameHistory:[],
     lastMinigame:null,
@@ -101,6 +102,7 @@ export function hydrateState(raw){
   state.events=Array.isArray(raw.events)?raw.events:fallback.events;
   state.minigameHistory=Array.isArray(raw.minigameHistory)?raw.minigameHistory:[];
   state.specialEventHistory=Array.isArray(raw.specialEventHistory)?raw.specialEventHistory:[];
+  state.pendingTransport=raw.pendingTransport&&typeof raw.pendingTransport==="object"?raw.pendingTransport:null;
   state.turnToken=Math.max(1,Number(raw.turnToken)||1);
   state.version=BOARD_VERSION;
   return state;
