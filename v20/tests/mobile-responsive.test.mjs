@@ -32,3 +32,8 @@ assert.match(main,/orientation:landscape.*max-height:650px.*max-width:1180px.*ma
 assert.match(css,/Alpha 19 mobile notification correction/);
 assert.match(css,/width:min\(68%,560px\)/);
 assert.match(css,/grid-template-columns:48px minmax\(0,1fr\) 78px/);
+
+assert.match(css,/V20 Alpha 19 mobile pass 2/);
+assert.match(css,/grid-template-rows:auto auto auto/);
+assert.match(css,/width:min\(58%,460px\)/);
+assert.match(css,/grid-template-columns:42px minmax\(0,1fr\) 68px/);
