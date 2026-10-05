@@ -19,6 +19,14 @@ import{GROUP_SIZES,MAX_PROPERTY_LEVEL,groupRentMultiplier}from"./data/board.js";
 import{canForceAcquireProperty,groupProgress,propertyValue,rentFor,suggestedAcquisitionOffer,upgradeCost}from"./core/property-economy.js";
 import{TRANSPORT_NODE_BY_INDEX}from"./data/transport.js";
 import{transportDestinationPreview}from"./core/transport.js";
+import{
+  CENTRAL_FEATURE_BY_ID,
+  CENTRAL_MISSIONS,
+  CENTRAL_MISSION_BY_ID,
+  CENTRAL_STATUS_ASSETS,
+  CENTRAL_TEST_TUNING
+}from"./data/central-features.js";
+import{centralDevelopmentOptions,centralFacilityStatus}from"./core/central-features.js";
 
 const board=document.getElementById("board");
 mountStaticBoard(board);
@@ -56,6 +64,12 @@ const ACTION_TOAST_KINDS=new Set([
   "special_grid",
   "transport_complete",
   "urban_complete",
+  "central_bank_active",
+  "central_bank_matured",
+  "central_mission_complete",
+  "central_insurance_active",
+  "central_insurance_used",
+  "central_development",
   "game_complete"
 ]);
 const uiContext={
@@ -64,6 +78,7 @@ const uiContext={
 };
 
 const featureDialog=document.getElementById("featureDialog");
+const centralFacilityDialog=document.getElementById("centralFacilityDialog");
 const networkDialog=document.getElementById("networkDialog");
 const purchaseDialog=document.getElementById("purchaseDialog");
 const propertyInfoDialog=document.getElementById("propertyInfoDialog");
@@ -188,6 +203,12 @@ function noticeConfig(event){
     transport_complete:{title:"快速通車",icon:N.icons.network,effect:N.effects.blue,tone:"blue",major:true},
     urban_complete:{title:"城市更新",icon:N.icons.propertyUpgrade,effect:N.effects.green,tone:"green",major:true},
     special_grid:{title:"特殊設施",icon:N.icons.minigameResult,effect:N.effects.purple,tone:"purple",major:true},
+    central_bank_active:{title:"都會銀行",icon:N.icons.marketTick,effect:N.effects.gold,tone:"gold",major:true},
+    central_bank_matured:{title:"定存到期",icon:N.icons.marketTick,effect:N.effects.green,tone:"green",major:true},
+    central_mission_complete:{title:"委託完成",icon:N.icons.minigameResult,effect:N.effects.gold,tone:"gold",major:true},
+    central_insurance_active:{title:"租金保險",icon:N.icons.rent,effect:N.effects.blue,tone:"blue",major:true},
+    central_insurance_used:{title:"租金保險生效",icon:N.icons.rent,effect:N.effects.green,tone:"green",major:true},
+    central_development:{title:"城市建案",icon:N.icons.propertyUpgrade,effect:N.effects.purple,tone:"purple",major:true},
     cash:{title:"現金變動",icon:N.icons.rent,effect:N.effects.green,tone:"green",metric:true}
   };
   return map[event.kind]??{title:"遊戲動態",icon:N.icons.marketTick,effect:N.effects.blue,tone:"blue"};
@@ -384,6 +405,54 @@ function noticeView(event){
         details:movers.map(stock=>stock.name+" "+(stock.changePercent>0?"+":"")+Number(stock.changePercent).toFixed(1)+"%")
       };
     }
+
+    case"central_bank_active":
+      return{
+        message:event.text,
+        metric:"定存中",
+        details:[
+          "本金 "+noticeMoney(data.principal),
+          "到期 ROUND "+data.maturesRound+"｜返還 "+noticeMoney(data.returnAmount)
+        ]
+      };
+
+    case"central_bank_matured":
+      return{
+        message:event.text,
+        metric:noticeMoney(data.amount),
+        details:["入帳後現金 "+noticeMoney(data.cashAfter)]
+      };
+
+    case"central_mission_complete":
+      return{
+        message:event.text,
+        metric:"+"+noticeMoney(data.reward),
+        details:["完成城市委託"]
+      };
+
+    case"central_insurance_active":
+      return{
+        message:event.text,
+        metric:"已啟動",
+        details:["下一次他人地產租金降低 50%"]
+      };
+
+    case"central_insurance_used":
+      return{
+        message:event.text,
+        metric:"-"+noticeMoney(data.discount),
+        details:[
+          "原租金 "+noticeMoney(data.requested),
+          "保險後 "+noticeMoney(data.amount)
+        ]
+      };
+
+    case"central_development":
+      return{
+        message:event.text,
+        metric:"LV."+data.level,
+        details:[data.tileName??"地產"]
+      };
 
     case"game_complete":
       return{
@@ -703,6 +772,16 @@ function executeAction(action,seat=currentLocalSeat()){
       return engine.useUrban(action.destinationIndex,seat);
     case"urban_skip":
       return engine.skipUrban(seat);
+    case"central_bank_deposit":
+      return engine.centralBankDeposit(seat);
+    case"central_mission_accept":
+      return engine.centralAcceptMission(action.missionId,seat);
+    case"central_transit":
+      return engine.centralTransit(action.distance,seat);
+    case"central_insurance":
+      return engine.centralActivateInsurance(seat);
+    case"central_development":
+      return engine.centralDevelopmentUpgrade(action.tileIndex,seat);
     case"end_turn":
       return engine.endTurn(seat);
     case"start_game":
@@ -774,6 +853,236 @@ function renderNetworkUi(){
     roomDisplay.textContent="------";
     roomHero.hidden=true;
   }
+}
+
+let openCentralFacilityId=null;
+
+function localCanUseCentral(){
+  const seat=currentLocalSeat();
+  const player=state.players?.[seat];
+  return Boolean(
+    player&&
+    player.kind==="human"&&
+    player.connected!==false&&
+    state.gameStatus==="playing"&&
+    state.currentPlayer===seat&&
+    state.phase==="await-roll"
+  );
+}
+
+function centralButton(label,detail,disabled,action){
+  const button=document.createElement("button");
+  button.type="button";
+  button.className="central-feature-action";
+  button.disabled=Boolean(disabled);
+  const strong=document.createElement("strong");
+  strong.textContent=label;
+  const small=document.createElement("small");
+  small.textContent=detail;
+  button.append(strong,small);
+  if(!disabled)button.addEventListener("click",action,{once:true});
+  return button;
+}
+
+function renderCentralFacilityBody(id){
+  const feature=CENTRAL_FEATURE_BY_ID[id];
+  const body=document.getElementById("centralFacilityBody");
+  if(!feature||!body)return;
+
+  const seat=currentLocalSeat();
+  const player=state.players?.[seat];
+  const usable=localCanUseCentral();
+  const status=centralFacilityStatus(state,seat,id);
+
+  document.getElementById("centralFacilityTitleArt").src=feature.title;
+  document.getElementById("centralFacilityTitleArt").alt=feature.name;
+  document.getElementById("centralFacilityDescription").textContent=feature.description;
+  body.replaceChildren();
+
+  const summary=document.createElement("div");
+  summary.className="central-feature-summary";
+  const summaryRows=[
+    ["狀態",status==="active"?"已啟動":status==="ready"?"可使用":"冷卻／不可用"],
+    ["目前現金",noticeMoney(player?.cash??0)],
+    ["ROUND",String(state.round)]
+  ];
+  for(const [label,value] of summaryRows){
+    const cell=document.createElement("div");
+    const span=document.createElement("span");
+    span.textContent=label;
+    const strong=document.createElement("strong");
+    strong.textContent=value;
+    cell.append(span,strong);
+    summary.appendChild(cell);
+  }
+  body.appendChild(summary);
+
+  if(id==="bank"){
+    const deposit=player?.centralBankDeposit;
+    if(deposit){
+      const active=document.createElement("div");
+      active.className="central-feature-active";
+      active.innerHTML="<strong>2 ROUND 定存進行中</strong><p>本金 "+
+        noticeMoney(deposit.principal)+"｜ROUND "+deposit.maturesRound+
+        " 到期自動返還 "+noticeMoney(deposit.returnAmount)+"。</p>";
+      body.appendChild(active);
+    }else{
+      const note=document.createElement("p");
+      note.className="central-feature-note";
+      note.textContent="Alpha 28 測試值：存入 "+noticeMoney(CENTRAL_TEST_TUNING.bankPrincipal)+
+        "，2 ROUND 後自動返還 "+noticeMoney(CENTRAL_TEST_TUNING.bankReturn)+"。";
+      body.appendChild(note);
+      const actions=document.createElement("div");
+      actions.className="central-feature-actions";
+      actions.appendChild(centralButton(
+        "開始 2 ROUND 定存",
+        "立即存入 "+noticeMoney(CENTRAL_TEST_TUNING.bankPrincipal),
+        !usable||player.cash<CENTRAL_TEST_TUNING.bankPrincipal,
+        ()=>dispatchAction({type:"central_bank_deposit"})
+      ));
+      body.appendChild(actions);
+    }
+    return;
+  }
+
+  if(id==="mission"){
+    const mission=player?.centralMission;
+    if(mission){
+      const definition=CENTRAL_MISSION_BY_ID[mission.id];
+      const active=document.createElement("div");
+      active.className="central-feature-active";
+      active.innerHTML="<strong>"+(definition?.name??mission.id)+"</strong><p>"+
+        (definition?.description??"城市委託進行中")+
+        "｜進度 "+mission.progress+"/"+mission.target+
+        "｜獎勵 "+noticeMoney(mission.reward)+"</p>";
+      body.appendChild(active);
+    }else{
+      const grid=document.createElement("div");
+      grid.className="central-mission-grid";
+      for(const missionDef of CENTRAL_MISSIONS){
+        const button=document.createElement("button");
+        button.type="button";
+        button.className="central-mission-card";
+        button.disabled=!usable||Number(player?.centralMissionUsedRound)===Number(state.round);
+        button.innerHTML="<strong>"+missionDef.name+"</strong><small>"+missionDef.description+
+          "<br>完成獎勵 "+noticeMoney(CENTRAL_TEST_TUNING.missionReward)+"</small>";
+        if(!button.disabled){
+          button.addEventListener("click",()=>dispatchAction({
+            type:"central_mission_accept",
+            missionId:missionDef.id
+          }),{once:true});
+        }
+        grid.appendChild(button);
+      }
+      body.appendChild(grid);
+    }
+    return;
+  }
+
+  if(id==="transit"){
+    const note=document.createElement("p");
+    note.className="central-feature-note";
+    note.textContent="快捷通車會取代本回合正常擲骰；抵達目的格後照正常落地規則處理。";
+    body.appendChild(note);
+    const actions=document.createElement("div");
+    actions.className="central-feature-actions";
+    const names=new Map([[3,"短線"],[6,"中線"],[9,"長線"]]);
+    for(const distance of CENTRAL_TEST_TUNING.transitDistances){
+      actions.appendChild(centralButton(
+        names.get(distance)+"｜前進 "+distance+" 格",
+        "使用後本回合不能再正常擲骰",
+        !usable||Number(player?.centralTransitUsedRound)===Number(state.round),
+        ()=>{
+          const sent=dispatchAction({type:"central_transit",distance});
+          if(sent!==false)centralFacilityDialog.close();
+        }
+      ));
+    }
+    body.appendChild(actions);
+    return;
+  }
+
+  if(id==="insurance"){
+    if(player?.rentInsuranceActive){
+      const active=document.createElement("div");
+      active.className="central-feature-active";
+      active.innerHTML="<strong>租金保險已啟動</strong><p>下一次踩到其他玩家地產時，應付租金降低 50%；生效後自動解除。</p>";
+      body.appendChild(active);
+    }else{
+      const note=document.createElement("p");
+      note.className="central-feature-note";
+      note.textContent="Alpha 28 測試值：下一次他人地產租金降低 50%，每 ROUND 最多啟動一次。";
+      body.appendChild(note);
+      const actions=document.createElement("div");
+      actions.className="central-feature-actions";
+      actions.appendChild(centralButton(
+        "啟動租金保險",
+        "下一次租金 ×0.5",
+        !usable||Number(player?.rentInsuranceUsedRound)===Number(state.round),
+        ()=>dispatchAction({type:"central_insurance"})
+      ));
+      body.appendChild(actions);
+    }
+    return;
+  }
+
+  if(id==="development"){
+    const options=centralDevelopmentOptions(state,seat);
+    if(!options.length){
+      const empty=document.createElement("p");
+      empty.className="central-feature-note";
+      empty.textContent="目前沒有可升級的持有地產。建案沿用既有最高 LV.2 與升級價格規則。";
+      body.appendChild(empty);
+      return;
+    }
+    const grid=document.createElement("div");
+    grid.className="central-development-grid";
+    for(const option of options){
+      const button=document.createElement("button");
+      button.type="button";
+      button.className="central-development-card";
+      button.disabled=!usable||!option.affordable||Number(player?.centralDevelopmentUsedRound)===Number(state.round);
+      button.innerHTML="<strong>"+option.tileName+"｜LV."+option.level+" → LV."+(option.level+1)+"</strong>"+
+        "<small>"+option.group+"｜建案費 "+noticeMoney(option.cost)+
+        (option.affordable?"":"｜現金不足")+"</small>";
+      if(!button.disabled){
+        button.addEventListener("click",()=>dispatchAction({
+          type:"central_development",
+          tileIndex:option.tileIndex
+        }),{once:true});
+      }
+      grid.appendChild(button);
+    }
+    body.appendChild(grid);
+  }
+}
+
+function renderCentralFacilities(){
+  const seat=currentLocalSeat();
+  document.querySelectorAll("[data-central-facility]").forEach(button=>{
+    const id=button.dataset.centralFacility;
+    const status=centralFacilityStatus(state,seat,id);
+    button.dataset.status=status;
+    button.classList.toggle("is-selected",centralFacilityDialog.open&&openCentralFacilityId===id);
+    const badge=button.querySelector("[data-central-status]");
+    if(badge){
+      badge.src=CENTRAL_STATUS_ASSETS[status]??CENTRAL_STATUS_ASSETS.cooldown;
+      badge.alt=status==="active"?"已啟動":status==="ready"?"可使用":"冷卻中";
+    }
+  });
+
+  if(centralFacilityDialog.open&&openCentralFacilityId){
+    renderCentralFacilityBody(openCentralFacilityId);
+  }
+}
+
+function openCentralFacility(id){
+  const feature=CENTRAL_FEATURE_BY_ID[id];
+  if(!feature)return;
+  openCentralFacilityId=id;
+  renderCentralFacilityBody(id);
+  renderCentralFacilities();
+  if(!centralFacilityDialog.open)centralFacilityDialog.showModal();
 }
 
 function renderUrbanDialog(){
@@ -946,6 +1255,7 @@ function renderAll(){
   });
   renderStocks();
   renderNetworkUi();
+  renderCentralFacilities();
   renderUrbanDialog();
   renderAcquisitionDialog();
   renderTransportDialog();
@@ -1055,6 +1365,18 @@ function openFeature(name){
   renderAll();
   if(!featureDialog.open)featureDialog.showModal();
 }
+
+document.querySelectorAll("[data-central-facility]").forEach(button=>{
+  button.addEventListener("click",()=>openCentralFacility(button.dataset.centralFacility));
+});
+document.getElementById("closeCentralFacilityDialog").addEventListener("click",()=>centralFacilityDialog.close());
+centralFacilityDialog.addEventListener("close",()=>{
+  openCentralFacilityId=null;
+  renderCentralFacilities();
+});
+centralFacilityDialog.addEventListener("click",event=>{
+  if(event.target===centralFacilityDialog)centralFacilityDialog.close();
+});
 
 document.getElementById("rollButton").addEventListener("click",()=>dispatchAction({type:"roll"}));
 const mobileRollButton=document.getElementById("mobileRollButton");
