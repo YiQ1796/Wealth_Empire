@@ -231,4 +231,17 @@ assert.deepEqual(
   ["horse","treasure","rps","blackjack","plinko","auction","snail"]
 );
 
+{
+  const state=createInitialState();
+  const session=startMinigame(state,0,2000,"auction");
+  fillAiMinigameResults(state);
+  assert.equal(submitMinigameResult(state,0,{score:0,detail:{bid:6000}}).ok,true);
+  const result=finalizeMinigame(state,2100);
+  assert.ok(result);
+  assert.equal(session.auction.bids.length,4);
+  assert.equal(session.auction.winnerSeat,0,"seat 0 must win ties at the maximum legal bid");
+  assert.ok(session.auction.value>=1800&&session.auction.value<=6000);
+  assert.ok(session.results["0"].score>0,"auction score must be host-resolved after all bids arrive");
+}
+
 console.log("V20 Alpha 24 gameplay systems test PASS");
