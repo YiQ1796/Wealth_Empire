@@ -1,6 +1,6 @@
 import{
-  COMPLETE_GROUP_RENT_BONUS,
   GROUP_SIZES,
+  GROUP_RENT_MULTIPLIERS,
   MAX_PROPERTY_LEVEL,
   PROPERTY_LEVEL_RENT_BONUS,
   PROPERTY_UPGRADE_COST_RATE
@@ -25,7 +25,7 @@ export function rentFor(state,tile){
   if(!tile||tile.type!=="property")return 0;
   const levelMultiplier=1+Math.max(0,tile.level||0)*PROPERTY_LEVEL_RENT_BONUS;
   const groupMultiplier=tile.owner!=null&&ownsCompleteGroup(state,tile.owner,tile.group)
-    ? 1+COMPLETE_GROUP_RENT_BONUS
+    ? (GROUP_RENT_MULTIPLIERS[tile.group]??1)
     : 1;
   return Math.round(tile.rent*levelMultiplier*groupMultiplier);
 }
