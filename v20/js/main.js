@@ -11,17 +11,26 @@ import{
   sanitizeRoomCode,
   saveHostSnapshot
 }from"./core/network.js";
-import{mountStaticBoard,render}from"./ui/render.js";
+import{characterAsset,mountStaticBoard,render}from"./ui/render.js";
 import{renderStockMarket}from"./ui/stock-render.js";
+import{UI_ASSETS}from"./data/ui-assets.js";
 import{MinigameUI}from"./ui/minigame-ui.js";
 
 const board=document.getElementById("board");
 mountStaticBoard(board);
+const boardCharacterLayer=document.createElement("div");
+boardCharacterLayer.id="boardCharacterLayer";
+boardCharacterLayer.className="board-character-layer";
+board.appendChild(boardCharacterLayer);
 
 let state=createInitialState();
 let aiTimer=null;
 let lastToastEventId=0;
+let lastMoveEventId=0;
 let initialGuestStatePending=false;
+let noticeQueue=[];
+let noticeActive=false;
+let movementQueue=Promise.resolve();
 const disconnectTimers=new Map();
 const ACTION_TOAST_KINDS=new Set([
   "property_buy",
@@ -35,6 +44,8 @@ const ACTION_TOAST_KINDS=new Set([
   "network_join",
   "network_reconnect",
   "network_ai_takeover",
+  "property_acquisition",
+  "bankruptcy",
   "cash",
   "game_complete"
 ]);
@@ -71,46 +82,89 @@ function maxEventId(targetState=state){
 }
 
 function resetToastTracker(targetState=state){
-  lastToastEventId=maxEventId(targetState);
+  const maxId=maxEventId(targetState);
+  lastToastEventId=maxId;
+  lastMoveEventId=maxId;
+  noticeQueue=[];
+  noticeActive=false;
   actionToastStack.replaceChildren();
 }
 
-function toastIcon(kind){
-  return{
-    property_buy:"🏠",
-    property_upgrade:"🏗️",
-    group_complete:"👑",
-    rent:"💰",
-    stock_buy:"📈",
-    stock_sell:"📉",
-    market_tick:"📊",
-    minigame_complete:"🏆",
-    network_join:"🤝",
-    network_reconnect:"🔄",
-    network_ai_takeover:"🤖",
-    cash:"💵",
-    game_complete:"🏁"
-  }[kind]??"🔔";
+function noticeConfig(event){
+  const N=UI_ASSETS.notification;
+  const map={
+    property_buy:{title:"地產購入",icon:N.icons.propertyBuy,effect:N.effects.gold,tone:"gold",major:true},
+    property_upgrade:{title:"地產升級",icon:N.icons.propertyUpgrade,effect:N.effects.purple,tone:"purple",major:true},
+    group_complete:{title:"區域完成",icon:N.icons.regionComplete,effect:N.effects.gold,tone:"gold",major:true},
+    rent:{title:"過路費結算",icon:N.icons.rent,effect:N.effects.green,tone:"green",major:true},
+    property_acquisition:{title:"強制收購",icon:N.icons.acquisition,effect:N.effects.red,tone:"red",major:true},
+    bankruptcy:{title:"玩家破產",icon:N.icons.bankruptcy,effect:N.effects.red,tone:"red",major:true},
+    minigame_complete:{title:"都會挑戰結算",icon:N.icons.minigameResult,effect:N.effects.gold,tone:"gold",major:true},
+    game_complete:{title:"遊戲結束",icon:N.icons.victory,effect:N.effects.gold,tone:"gold",major:true},
+    stock_buy:{title:"股票買進",icon:N.icons.stockBuy,effect:N.effects.blue,tone:"blue"},
+    stock_sell:{title:"股票賣出",icon:N.icons.stockSell,effect:N.effects.blue,tone:"blue"},
+    market_tick:{title:"市場更新",icon:N.icons.marketTick,effect:N.effects.blue,tone:"blue",market:true},
+    network_join:{title:"好友加入",icon:N.icons.network,effect:N.effects.blue,tone:"blue"},
+    network_reconnect:{title:"重新連線",icon:N.icons.network,effect:N.effects.green,tone:"green"},
+    network_ai_takeover:{title:"AI 接手",icon:N.icons.aiTakeover,effect:N.effects.purple,tone:"purple"},
+    cash:{title:"現金變動",icon:N.icons.rent,effect:N.effects.green,tone:"green"}
+  };
+  return map[event.kind]??{title:"遊戲動態",icon:N.icons.marketTick,effect:N.effects.blue,tone:"blue"};
 }
 
-function showActionToast(event){
-  const node=document.createElement("div");
-  node.className="action-toast action-toast--"+event.kind;
-  node.innerHTML=
-    '<span class="action-toast__icon">'+toastIcon(event.kind)+'</span>'+
-    '<div><strong>遊戲動態</strong><p></p></div>';
-  node.querySelector("p").textContent=event.text;
-  actionToastStack.appendChild(node);
-
-  while(actionToastStack.children.length>4){
-    actionToastStack.firstElementChild?.remove();
+function noticeCardSources(config){
+  const cards=UI_ASSETS.notification.cards;
+  const market=UI_ASSETS.notification.market;
+  if(config.market){
+    return{desktop:market.desktop,mobile:market.mobile};
   }
+  if(config.major){
+    return{desktop:cards.majorDesktop,mobile:cards.majorMobile};
+  }
+  return{desktop:cards.standardDesktop,mobile:cards.standardMobile};
+}
+
+function enqueueActionNotice(event){
+  noticeQueue.push(event);
+  pumpActionNotice();
+}
+
+function pumpActionNotice(){
+  if(noticeActive||noticeQueue.length===0)return;
+  noticeActive=true;
+
+  const event=noticeQueue.shift();
+  const config=noticeConfig(event);
+  const source=noticeCardSources(config);
+  const node=document.createElement("div");
+  node.className="action-toast action-toast--"+event.kind+" action-toast--"+config.tone+(config.major?" action-toast--major":"")+(config.market?" action-toast--market":"");
+  node.innerHTML=
+    '<picture class="action-toast__card-bg">'+
+      '<source media="(max-width:760px)" srcset="'+source.mobile+'">'+
+      '<img src="'+source.desktop+'" alt="">'+
+    '</picture>'+
+    '<img class="action-toast__fx" src="'+config.effect+'" alt="">'+
+    '<img class="action-toast__shine" src="'+UI_ASSETS.notification.effects.edgeShine+'" alt="">'+
+    '<div class="action-toast__content">'+
+      '<img class="action-toast__icon" src="'+config.icon+'" alt="">'+
+      '<div class="action-toast__copy"><strong></strong><p></p></div>'+
+    '</div>';
+
+  node.querySelector("strong").textContent=config.title;
+  node.querySelector("p").textContent=event.text;
+  actionToastStack.replaceChildren(node);
 
   requestAnimationFrame(()=>node.classList.add("show"));
+
+  const hold=config.major?2350:config.market?1350:1750;
   setTimeout(()=>{
     node.classList.remove("show");
-    setTimeout(()=>node.remove(),240);
-  },4200);
+    setTimeout(()=>{
+      node.remove();
+      noticeActive=false;
+      pumpActionNotice();
+    },260);
+  },hold);
 }
 
 function processActionToasts(){
@@ -123,7 +177,79 @@ function processActionToasts(){
   }
 
   for(const event of events){
-    if(ACTION_TOAST_KINDS.has(event.kind))showActionToast(event);
+    if(ACTION_TOAST_KINDS.has(event.kind))enqueueActionNotice(event);
+  }
+}
+
+function sleep(ms){
+  return new Promise(resolve=>setTimeout(resolve,ms));
+}
+
+function tileCenter(index){
+  const tile=document.querySelector('.tile[data-index="'+index+'"]');
+  if(!tile)return null;
+  const boardRect=board.getBoundingClientRect();
+  const rect=tile.getBoundingClientRect();
+  return{
+    left:rect.left-boardRect.left+rect.width/2,
+    top:rect.top-boardRect.top+rect.height/2
+  };
+}
+
+async function animateMoveEvent(event){
+  const seat=Number(event.data?.seat);
+  const path=Array.isArray(event.data?.path)?event.data.path:[];
+  const from=Number(event.data?.from);
+  if(!Number.isInteger(seat)||!Number.isInteger(from)||path.length===0)return;
+
+  const start=tileCenter(from);
+  if(!start)return;
+
+  const layer=document.getElementById("boardCharacterLayer");
+  if(!layer)return;
+
+  const moving=document.createElement("img");
+  moving.className="moving-character";
+  moving.src=characterAsset(seat,"idle");
+  moving.alt="";
+  moving.style.left=start.left+"px";
+  moving.style.top=start.top+"px";
+  layer.appendChild(moving);
+
+  board.classList.add("moving-seat-"+seat);
+  await sleep(45);
+
+  for(let i=0;i<path.length;i++){
+    const point=tileCenter(path[i]);
+    if(!point)continue;
+    moving.src=characterAsset(seat,i%2===0?"walkA":"walkB");
+    moving.classList.add("walking");
+    moving.style.left=point.left+"px";
+    moving.style.top=point.top+"px";
+    await sleep(105);
+  }
+
+  moving.classList.remove("walking");
+  moving.classList.add("jumping");
+  moving.src=characterAsset(seat,"jump");
+  await sleep(180);
+  moving.src=characterAsset(seat,"idle");
+  await sleep(70);
+  moving.remove();
+  board.classList.remove("moving-seat-"+seat);
+}
+
+function processMoveAnimations(){
+  const moves=(state.events??[])
+    .filter(event=>event.kind==="move"&&(Number(event.id)||0)>lastMoveEventId)
+    .sort((a,b)=>a.id-b.id);
+
+  if(moves.length){
+    lastMoveEventId=Math.max(lastMoveEventId,...moves.map(event=>Number(event.id)||0));
+  }
+
+  for(const event of moves){
+    movementQueue=movementQueue.then(()=>animateMoveEvent(event)).catch(()=>{});
   }
 }
 
@@ -325,6 +451,7 @@ function renderAll(){
   renderStocks();
   renderNetworkUi();
   minigameUi.sync(state,currentLocalSeat());
+  processMoveAnimations();
   processActionToasts();
 }
 
@@ -356,6 +483,8 @@ function openFeature(name){
 
   document.getElementById("featureDialogTitle").textContent=meta[0];
   document.getElementById("featureDialogSubtitle").textContent=meta[1];
+  const headerArt=document.getElementById("featureDialogHeaderArt");
+  if(headerArt)headerArt.src=UI_ASSETS.headers[name]??UI_ASSETS.headers.info;
   document.querySelectorAll("[data-feature-panel]").forEach(panel=>{
     panel.classList.toggle("active",panel.dataset.featurePanel===name);
   });
