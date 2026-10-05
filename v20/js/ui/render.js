@@ -72,7 +72,7 @@ export function mountStaticBoard(boardElement){
 
     const dynamic=document.createElement("div");
     dynamic.className="tile__dynamic";
-    dynamic.innerHTML='<span class="tile__price"></span><span class="tile__level"></span><span class="tile__owner"></span>';
+    dynamic.innerHTML='<span class="tile__price"></span>';
     node.appendChild(dynamic);
 
     const tokens=document.createElement("div");
@@ -205,8 +205,6 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
   document.querySelectorAll(".tile").forEach((node,index)=>{
     const tile=state.tiles[index];
     const price=node.querySelector(".tile__price");
-    const level=node.querySelector(".tile__level");
-    const owner=node.querySelector(".tile__owner");
     const houses=node.querySelector(".tile__houses");
     const badges=node.querySelector(".tile__badges");
     const tokens=node.querySelector(".tile__tokens");
@@ -215,16 +213,10 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
       ? (tile.owner==null?money(tile.price):"租 "+money(rentFor(state,tile)))
       : "";
 
-    level.textContent=tile.type==="property"&&tile.owner!=null?"LV."+tile.level:"";
-    level.style.display=level.textContent?"inline-flex":"none";
-
     if(tile.owner==null){
-      owner.style.display="none";
       houses.innerHTML="";
       badges.innerHTML="";
     }else{
-      owner.style.display="block";
-      owner.style.background=state.players[tile.owner].color;
       houses.innerHTML=houseMarkup(tile.owner,tile.level);
       badges.innerHTML=tile.level>=MAX_PROPERTY_LEVEL
         ? badge(UI_ASSETS.badges.noAcquisition,"不可強制收購","tile-no-acquisition")
