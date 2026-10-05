@@ -61,6 +61,7 @@ button:focus-visible{outline:3px solid rgba(47,114,196,.28);outline-offset:2px}
   min-height:0;
   grid-template-columns:10.6% repeat(11,minmax(0,1fr)) 10.6%;
   grid-template-rows:12.5% repeat(9,minmax(0,1fr)) 12.5%;
+  gap:0;
   overflow:hidden;
   border-radius:12px;
   background:transparent
@@ -71,21 +72,10 @@ button:focus-visible{outline:3px solid rgba(47,114,196,.28);outline-offset:2px}
   min-height:0;
   overflow:hidden;
   border:0;
-  background:transparent
+  background:#fff7df
 }
-.tile.corner{background:transparent}
-.tile.has-art{border:0;background:transparent}
-.tile{z-index:2}
-.tile.edge-top{height:calc(100% + 22px)}
-.tile.edge-bottom{
-  height:calc(100% + 22px);
-  transform:translateY(-22px)
-}
-.tile.edge-left{width:calc(100% + 22px)}
-.tile.edge-right{
-  width:calc(100% + 22px);
-  transform:translateX(-22px)
-}
+.tile.corner{background:#fff7df}
+.tile.has-art{border:0;background:#fff7df}
 .tile img.tile-art{
   position:absolute;
   inset:0;
@@ -1789,6 +1779,10 @@ body.entry-pending .app-shell{
 }
 .stock-market-grid--persistent{
   min-height:0;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  align-content:start;
+  gap:6px;
   overflow:auto;
   overscroll-behavior:contain;
   padding-right:2px
@@ -1804,6 +1798,7 @@ body.entry-pending .app-shell{
   font-size:18px
 }
 .desktop-stock-panel .stock-position{
+  grid-template-columns:repeat(2,minmax(0,1fr));
   margin-top:5px;
   gap:3px
 }
@@ -1816,8 +1811,11 @@ body.entry-pending .app-shell{
 }
 .desktop-stock-panel .stock-trade-controls{
   margin-top:5px;
-  grid-template-columns:minmax(76px,1fr) auto auto;
+  grid-template-columns:repeat(2,minmax(0,1fr));
   gap:4px
+}
+.desktop-stock-panel .stock-trade-controls label{
+  grid-column:1/-1
 }
 .desktop-stock-panel .stock-trade-controls input{
   min-height:30px;
@@ -1843,7 +1841,6 @@ body.entry-pending .app-shell{
   .desktop-stock-panel{padding:6px;gap:4px}
   .desktop-stock-panel__header p{display:none}
   .desktop-stock-panel .stock-trade-card{padding:6px}
-  .desktop-stock-panel .stock-position{display:none}
   .desktop-stock-panel .stock-trade-controls{margin-top:4px}
   .control-actions--turn .action-button{min-height:36px;font-size:11px}
   .control-actions--turn .action-button img{width:23px;height:23px}
