@@ -31,13 +31,24 @@ function escapeHtml(value){
     .replaceAll(">","&gt;");
 }
 
-function shuffle(values,random){
-  const result=[...values];
-  for(let i=result.length-1;i>0;i--){
-    const j=Math.floor(random()*(i+1));
-    [result[i],result[j]]=[result[j],result[i]];
+function handValue(cards){
+  let total=0;
+  let aces=0;
+  for(const card of cards){
+    if(card.rank==="A"){
+      total+=11;
+      aces++;
+    }else if(["K","Q","J"].includes(card.rank)){
+      total+=10;
+    }else{
+      total+=Number(card.rank);
+    }
   }
-  return result;
+  while(total>21&&aces>0){
+    total-=10;
+    aces--;
+  }
+  return total;
 }
 
 export class MinigameUI{
@@ -65,6 +76,14 @@ export class MinigameUI{
       clearInterval(this.tickTimer);
       this.tickTimer=null;
     }
+  }
+
+  registerTimer(timer,type="timeout"){
+    this.cleanupFns.push(()=>{
+      if(type==="interval")clearInterval(timer);
+      else clearTimeout(timer);
+    });
+    return timer;
   }
 
   resetScrollPosition(){
@@ -135,7 +154,7 @@ export class MinigameUI{
         : result
           ? result.score+" 分 ✓"
           : player.kind==="ai"
-            ? "AI 已選擇"
+            ? "AI 已完成"
             : "進行中";
       return '<div class="minigame-score-row">'+
         '<span style="--player-color:'+player.color+'"></span>'+
@@ -149,7 +168,7 @@ export class MinigameUI{
     const update=()=>{
       const remaining=Math.max(0,session.deadline-Date.now());
       this.timer.textContent=(remaining/1000).toFixed(1)+" 秒";
-      if(remaining<=0&&!this.finished)this.finish({timeout:true});
+      if(remaining<=0&&!this.finished)this.finish({timeout:true,game:session.id},2500);
     };
     update();
     this.tickTimer=setInterval(update,100);
@@ -158,12 +177,12 @@ export class MinigameUI{
   renderWaiting(definition){
     this.title.textContent=definition.name;
     this.subtitle.textContent="結果已送出，等待其他玩家完成。";
-    this.arena.innerHTML='<div class="minigame-waiting"><strong>已完成</strong><span>你的結果已送出，等待其他玩家。</span></div>';
+    this.arena.innerHTML='<div class="minigame-waiting"><strong>已完成</strong><span>等待其他玩家。</span></div>';
   }
 
   renderCompleted(state,definition){
     this.title.textContent=definition.name+"｜結算";
-    this.subtitle.textContent="這輪以運氣為主，名次越高獎金越多。";
+    this.subtitle.textContent="依這款遊戲自己的規則計分，再統一排名發放獎金。";
     this.timer.textContent="已結算";
     const rankings=state.minigame?.rankings??[];
     this.arena.innerHTML='<div class="minigame-ranking">'+rankings.map(item=>{
@@ -181,21 +200,22 @@ export class MinigameUI{
 
   startGame(definition,session){
     const starters={
-      courier:()=>this.startCourier(session),
-      vault:()=>this.startVault(session),
-      tower:()=>this.startTower(session),
-      memory:()=>this.startMemory(session),
-      route:()=>this.startRoute(session),
-      district:()=>this.startDistrict(session)
+      horse:()=>this.startHorse(session),
+      treasure:()=>this.startTreasure(session),
+      rps:()=>this.startRps(session),
+      blackjack:()=>this.startBlackjack(session),
+      plinko:()=>this.startPlinko(session),
+      auction:()=>this.startAuction(session),
+      snail:()=>this.startSnail(session)
     };
     starters[definition.id]?.();
   }
 
-  finish(detail={}){
+  finish(detail={},score=this.score){
     if(this.finished)return;
     this.finished=true;
     this.cleanup();
-    const finalScore=clamp(Math.round(this.score),0,10000);
+    const finalScore=clamp(Math.round(Number(score)||0),0,10000);
     this.onSubmit?.({score:finalScore,detail});
     this.arena.innerHTML='<div class="minigame-waiting"><strong>'+finalScore.toLocaleString()+' 分</strong><span>結果已送出，等待其他玩家。</span></div>';
   }
@@ -212,272 +232,367 @@ export class MinigameUI{
     });
   }
 
-  showRoundResult({message,nextLabel="下一輪",onNext}){
-    const result=this.arena.querySelector("[data-luck-result]");
-    const actions=this.arena.querySelector("[data-luck-next]");
-    if(result)result.innerHTML=message;
-    if(actions){
-      actions.innerHTML='<button type="button" class="luck-next-button">'+nextLabel+'</button>';
-      const button=actions.querySelector("button");
-      button.addEventListener("click",onNext,{once:true});
-    }
-    this.arena.querySelectorAll("[data-choice]").forEach(button=>button.disabled=true);
+  startHorse(session){
+    const random=this.randomFor(session,"horse");
+    const horses=[
+      {name:"閃電",icon:"🐎"},
+      {name:"烈焰",icon:"🏇"},
+      {name:"黑曜",icon:"🐴"},
+      {name:"金星",icon:"🎠"}
+    ];
+    this.arena.innerHTML=
+      '<div class="race-game"><div class="race-intro"><strong>先下注一匹馬</strong><span>比賽開始後會實際跑完整段賽程。</span></div>'+
+      '<div class="race-pick-grid">'+horses.map((horse,index)=>
+        '<button type="button" class="race-pick" data-horse="'+index+'"><span>'+horse.icon+'</span><strong>'+(index+1)+' 號 '+horse.name+'</strong></button>'
+      ).join("")+'</div></div>';
+
+    this.bindChoiceButtons("[data-horse]",button=>{
+      const pick=Number(button.dataset.horse);
+      this.runHorseRace(random,horses,pick);
+    });
   }
 
-  startCourier(session){
-    const random=this.randomFor(session,"courier");
-    let round=1;
-    const totalRounds=4;
-    const routes={
-      safe:{label:"安全大道",icon:"🚦",note:"穩定報酬",resolve:()=>850+Math.floor(random()*551)},
-      fast:{label:"快速道路",icon:"🏎️",note:"70% 高報酬",resolve:()=>random()<0.70?1800+Math.floor(random()*501):350+Math.floor(random()*301)},
-      secret:{label:"神秘捷徑",icon:"🎁",note:"42% 大獎",resolve:()=>random()<0.42?2600+Math.floor(random()*601):100+Math.floor(random()*301)}
-    };
+  runHorseRace(random,horses,pick){
+    const progress=[0,0,0,0];
+    let tick=0;
+    this.arena.innerHTML=
+      '<div class="race-game"><div class="race-status"><strong>你下注 '+(pick+1)+' 號 '+horses[pick].name+'</strong><span data-race-message>準備起跑！</span></div>'+
+      '<div class="race-lanes">'+horses.map((horse,index)=>
+        '<div class="race-lane"><div class="race-lane__label">'+(index+1)+' '+horse.name+'</div><div class="race-track"><span class="race-runner" data-runner="'+index+'" style="left:0%">'+horse.icon+'</span><i></i></div></div>'
+      ).join("")+'</div></div>';
 
-    const renderRound=()=>{
-      this.arena.innerHTML=
-        '<div class="luck-game">'+
-          '<div class="luck-round"><strong>第 '+round+' / '+totalRounds+' 趟</strong><span>累計 '+Math.round(this.score).toLocaleString()+' 分</span></div>'+
-          '<div class="luck-hint">選一條路。安全路穩定，捷徑可能暴賺，也可能只拿到小獎。</div>'+
-          '<div class="luck-choice-grid luck-choice-grid--3">'+
-            Object.entries(routes).map(([id,route])=>
-              '<button type="button" class="luck-choice" data-choice="'+id+'">'+
-                '<span class="luck-choice__icon">'+route.icon+'</span>'+
-                '<strong>'+route.label+'</strong><small>'+route.note+'</small>'+
-              '</button>'
-            ).join("")+
-          '</div>'+
-          '<div class="luck-result" data-luck-result></div>'+
-          '<div class="luck-next" data-luck-next></div>'+
-        '</div>';
+    const interval=this.registerTimer(setInterval(()=>{
+      tick++;
+      let message="全馬群持續推進";
+      for(let index=0;index<horses.length;index++){
+        let gain=7+Math.floor(random()*10);
+        const eventRoll=random();
+        if(eventRoll<0.12){
+          gain+=9;
+          message=(index+1)+" 號突然爆發衝刺！";
+        }else if(eventRoll<0.20){
+          gain=Math.max(2,gain-7);
+          message=(index+1)+" 號步伐亂掉，速度下降。";
+        }
+        progress[index]=Math.min(100,progress[index]+gain);
+        const runner=this.arena.querySelector('[data-runner="'+index+'"]');
+        if(runner)runner.style.left=Math.min(92,progress[index]*0.92)+"%";
+      }
+      const messageNode=this.arena.querySelector("[data-race-message]");
+      if(messageNode)messageNode.textContent=message;
 
-      this.bindChoiceButtons("[data-choice]",button=>{
-        const route=routes[button.dataset.choice];
-        const gained=route.resolve();
-        this.score+=gained;
-        const isLast=round>=totalRounds;
-        this.showRoundResult({
-          message:'<b>'+route.icon+' '+route.label+'</b><span>本趟獲得 '+gained.toLocaleString()+' 分</span>',
-          nextLabel:isLast?"送出結果":"下一趟",
-          onNext:()=>{
-            if(isLast)this.finish({game:"courier",rounds:totalRounds});
-            else{round++;renderRound()}
-          }
-        });
-      });
-    };
-    renderRound();
+      if(tick>=9||progress.some(value=>value>=100)){
+        clearInterval(interval);
+        const ranking=progress
+          .map((value,index)=>({index,value:value+random()*3}))
+          .sort((a,b)=>b.value-a.value);
+        const place=ranking.findIndex(item=>item.index===pick)+1;
+        const score=[9500,7600,5600,3600][place-1];
+        const timer=this.registerTimer(setTimeout(()=>{
+          this.finish({game:"horse",pick,place,ranking:ranking.map(item=>item.index)},score);
+        },900));
+        void timer;
+      }
+    },560),"interval");
   }
 
-  startVault(session){
-    const random=this.randomFor(session,"vault");
-    let round=1;
-    const totalRounds=3;
+  startSnail(session){
+    const random=this.randomFor(session,"snail");
+    const snails=[
+      {name:"阿慢",icon:"🐌"},
+      {name:"黏黏",icon:"🐌"},
+      {name:"衝衝",icon:"🐌"},
+      {name:"寶仔",icon:"🐌"}
+    ];
+    this.arena.innerHTML=
+      '<div class="race-game snail-game"><div class="race-intro"><strong>下注一隻瘋狂蝸牛</strong><span>牠們會在途中遇到各種荒謬突發狀況。</span></div>'+
+      '<div class="race-pick-grid">'+snails.map((snail,index)=>
+        '<button type="button" class="race-pick" data-snail="'+index+'"><span>'+snail.icon+'</span><strong>'+(index+1)+' 號 '+snail.name+'</strong></button>'
+      ).join("")+'</div></div>';
 
-    const renderRound=()=>{
-      const rewards=shuffle([2800,2000,1500,1000,500,0],random);
-      this.arena.innerHTML=
-        '<div class="luck-game">'+
-          '<div class="luck-round"><strong>第 '+round+' / '+totalRounds+' 輪</strong><span>累計 '+Math.round(this.score).toLocaleString()+' 分</span></div>'+
-          '<div class="luck-hint">6 個金庫只有打開後才知道獎勵，完全靠手氣。</div>'+
-          '<div class="vault-pick-grid">'+
-            rewards.map((_,index)=>'<button type="button" class="vault-pick" data-choice="'+index+'">🔒<strong>金庫 '+(index+1)+'</strong><small>?</small></button>').join("")+
-          '</div>'+
-          '<div class="luck-result" data-luck-result></div>'+
-          '<div class="luck-next" data-luck-next></div>'+
-        '</div>';
-
-      this.bindChoiceButtons("[data-choice]",button=>{
-        const picked=Number(button.dataset.choice);
-        const gained=rewards[picked];
-        this.score+=gained;
-        this.arena.querySelectorAll(".vault-pick").forEach((node,index)=>{
-          node.querySelector("small").textContent=rewards[index].toLocaleString()+" 分";
-          if(index===picked)node.classList.add("selected");
-        });
-        const isLast=round>=totalRounds;
-        this.showRoundResult({
-          message:'<b>🔓 金庫 '+(picked+1)+'</b><span>抽到 '+gained.toLocaleString()+' 分</span>',
-          nextLabel:isLast?"送出結果":"下一輪",
-          onNext:()=>{
-            if(isLast)this.finish({game:"vault",rounds:totalRounds});
-            else{round++;renderRound()}
-          }
-        });
-      });
-    };
-    renderRound();
+    this.bindChoiceButtons("[data-snail]",button=>{
+      const pick=Number(button.dataset.snail);
+      this.runSnailRace(random,snails,pick);
+    });
   }
 
-  startTower(session){
-    const random=this.randomFor(session,"tower");
-    let round=1;
-    const totalRounds=4;
+  runSnailRace(random,snails,pick){
+    const progress=[0,0,0,0];
+    const stunned=[0,0,0,0];
+    let tick=0;
+    const eventLog=[];
+    this.arena.innerHTML=
+      '<div class="race-game snail-game"><div class="race-status"><strong>你下注 '+(pick+1)+' 號 '+snails[pick].name+'</strong><span data-snail-message>蝸牛們開始蠕動！</span></div>'+
+      '<div class="race-lanes">'+snails.map((snail,index)=>
+        '<div class="race-lane"><div class="race-lane__label">'+(index+1)+' '+snail.name+'</div><div class="race-track race-track--snail"><span class="race-runner race-runner--snail" data-runner="'+index+'" style="left:0%">'+snail.icon+'</span><i></i></div></div>'
+      ).join("")+'</div><div class="snail-event-feed" data-snail-feed></div></div>';
 
-    const renderRound=()=>{
-      this.arena.innerHTML=
-        '<div class="luck-game">'+
-          '<div class="luck-round"><strong>第 '+round+' / '+totalRounds+' 輪</strong><span>累計 '+Math.round(this.score).toLocaleString()+' 分</span></div>'+
-          '<div class="luck-hint">先猜 1～6 樓，再擲幸運骰。猜中最高分，差一格也有高分。</div>'+
-          '<div class="floor-pick-grid">'+
-            [1,2,3,4,5,6].map(value=>'<button type="button" class="floor-pick" data-choice="'+value+'">'+value+' 樓</button>').join("")+
-          '</div>'+
-          '<div class="luck-result" data-luck-result></div>'+
-          '<div class="luck-next" data-luck-next></div>'+
-        '</div>';
-
-      this.bindChoiceButtons("[data-choice]",button=>{
-        const guess=Number(button.dataset.choice);
-        const die=1+Math.floor(random()*6);
-        const distance=Math.abs(guess-die);
-        const gained=distance===0?2400:distance===1?1650:distance===2?1050:500;
-        this.score+=gained;
-        const isLast=round>=totalRounds;
-        this.showRoundResult({
-          message:'<b>🎲 骰出 '+die+' 樓</b><span>你猜 '+guess+' 樓，本輪 '+gained.toLocaleString()+' 分</span>',
-          nextLabel:isLast?"送出結果":"再猜一次",
-          onNext:()=>{
-            if(isLast)this.finish({game:"tower",rounds:totalRounds});
-            else{round++;renderRound()}
-          }
-        });
-      });
+    const pushEvent=text=>{
+      eventLog.unshift(text);
+      eventLog.splice(4);
+      const feed=this.arena.querySelector("[data-snail-feed]");
+      if(feed)feed.innerHTML=eventLog.map(item=>'<span>'+escapeHtml(item)+'</span>').join("");
+      const message=this.arena.querySelector("[data-snail-message]");
+      if(message)message.textContent=text;
     };
-    renderRound();
+
+    const interval=this.registerTimer(setInterval(()=>{
+      tick++;
+      for(let index=0;index<snails.length;index++){
+        if(stunned[index]>0){
+          stunned[index]--;
+          continue;
+        }
+        progress[index]=Math.min(100,progress[index]+3+Math.floor(random()*5));
+      }
+
+      const target=Math.floor(random()*snails.length);
+      const roll=random();
+      if(roll<0.11){
+        stunned[target]=1;
+        pushEvent((target+1)+" 號跌倒了！原地休息一下。");
+      }else if(roll<0.22){
+        progress[target]=Math.min(100,progress[target]+22);
+        pushEvent((target+1)+" 號偷偷坐上火箭，瞬間暴衝！");
+      }else if(roll<0.33){
+        stunned[target]=1;
+        pushEvent((target+1)+" 號看到帥哥分心，完全忘記在比賽。");
+      }else if(roll<0.44){
+        progress[target]=Math.min(100,progress[target]+14);
+        pushEvent((target+1)+" 號放屁衝鋒，莫名其妙加速！");
+      }else if(roll<0.56){
+        if(random()<0.5){
+          progress[target]=Math.min(100,progress[target]+12);
+          pushEvent((target+1)+" 號踩到油一路滑行，意外加速！");
+        }else{
+          progress[target]=Math.max(0,progress[target]-5);
+          stunned[target]=1;
+          pushEvent((target+1)+" 號踩油打滑，倒退還停一回合！");
+        }
+      }else if(roll<0.68){
+        stunned[target]=1;
+        pushEvent((target+1)+" 號看到地上有寶物，停下來研究半天。");
+      }else if(roll<0.80){
+        progress[target]=Math.min(100,progress[target]+16);
+        pushEvent((target+1)+" 號趁裁判不注意作弊偷跑！");
+      }else{
+        pushEvent("這一段沒有怪事，所有蝸牛努力蠕動。");
+      }
+
+      for(let index=0;index<snails.length;index++){
+        const runner=this.arena.querySelector('[data-runner="'+index+'"]');
+        if(runner)runner.style.left=Math.min(92,progress[index]*0.92)+"%";
+      }
+
+      if(tick>=12||progress.some(value=>value>=100)){
+        clearInterval(interval);
+        const ranking=progress
+          .map((value,index)=>({index,value:value+random()*2}))
+          .sort((a,b)=>b.value-a.value);
+        const place=ranking.findIndex(item=>item.index===pick)+1;
+        const score=[9600,7600,5400,3400][place-1];
+        this.registerTimer(setTimeout(()=>{
+          this.finish({
+            game:"snail",
+            pick,
+            place,
+            events:eventLog,
+            ranking:ranking.map(item=>item.index)
+          },score);
+        },1000));
+      }
+    },620),"interval");
   }
 
-  startMemory(session){
-    const random=this.randomFor(session,"memory");
-    const rewards=shuffle([3200,2600,2200,1800,1400,900,500,0],random);
-    const picked=new Set();
+  startTreasure(session){
+    const random=this.randomFor(session,"treasure");
+    let opened=0;
+    let bank=0;
 
     const render=()=>{
+      const trapChance=Math.min(0.48,0.06+opened*0.09);
       this.arena.innerHTML=
-        '<div class="luck-game">'+
-          '<div class="luck-round"><strong>命運翻牌 '+picked.size+' / 3</strong><span>累計 '+Math.round(this.score).toLocaleString()+' 分</span></div>'+
-          '<div class="luck-hint">8 張命運卡挑 3 張。可能抽到大獎，也可能抽到空卡。</div>'+
-          '<div class="fate-card-grid">'+
-            rewards.map((reward,index)=>{
-              const chosen=picked.has(index);
-              return '<button type="button" class="fate-card '+(chosen?"selected":"")+'" data-choice="'+index+'" '+(chosen?"disabled":"")+'>'+
-                (chosen?'<strong>'+reward.toLocaleString()+'</strong><small>分</small>':'<strong>?</strong><small>命運卡</small>')+
-              '</button>';
-            }).join("")+
-          '</div>'+
-          '<div class="luck-result" data-luck-result></div>'+
-          '<div class="luck-next" data-luck-next></div>'+
-        '</div>';
+        '<div class="decision-game"><div class="decision-summary"><strong>目前保住 '+bank.toLocaleString()+' 分</strong><span>已開 '+opened+' 箱｜下一箱陷阱風險約 '+Math.round(trapChance*100)+'%</span></div>'+
+        '<div class="treasure-chest">🎁</div><div class="decision-actions">'+
+        '<button type="button" data-open-chest>繼續開下一箱</button>'+
+        '<button type="button" data-cash-out '+(opened===0?"disabled":"")+'>收手保住分數</button></div></div>';
 
-      this.bindChoiceButtons("[data-choice]",button=>{
-        const index=Number(button.dataset.choice);
-        if(picked.has(index))return;
-        picked.add(index);
-        const gained=rewards[index];
-        this.score+=gained;
-        const done=picked.size>=3;
-        this.showRoundResult({
-          message:'<b>🃏 翻出 '+gained.toLocaleString()+' 分</b><span>目前累計 '+Math.round(this.score).toLocaleString()+' 分</span>',
-          nextLabel:done?"送出結果":"再翻一張",
-          onNext:()=>{
-            if(done)this.finish({game:"memory",picked:[...picked]});
-            else render();
-          }
-        });
+      const openButton=this.arena.querySelector("[data-open-chest]");
+      const cashButton=this.arena.querySelector("[data-cash-out]");
+      openButton?.addEventListener("click",()=>{
+        opened++;
+        if(random()<trapChance){
+          const kept=Math.max(800,Math.round(bank*0.3));
+          this.finish({game:"treasure",opened,trapped:true,bankBeforeTrap:bank},kept);
+          return;
+        }
+        bank+=1100+Math.floor(random()*1300);
+        if(opened>=5){
+          this.finish({game:"treasure",opened,trapped:false,forcedCashout:true},Math.min(9800,bank));
+          return;
+        }
+        render();
+      },{once:true});
+      cashButton?.addEventListener("click",()=>{
+        this.finish({game:"treasure",opened,trapped:false,cashout:true},Math.min(9800,bank+1000));
+      },{once:true});
+    };
+    render();
+  }
+
+  startRps(session){
+    const random=this.randomFor(session,"rps");
+    const choices=[
+      {id:"rock",label:"石頭",icon:"✊"},
+      {id:"paper",label:"布",icon:"✋"},
+      {id:"scissors",label:"剪刀",icon:"✌️"}
+    ];
+    let round=1;
+    let wins=0;
+    let losses=0;
+    let ties=0;
+    const beats={rock:"scissors",scissors:"paper",paper:"rock"};
+
+    const render=message=>{
+      this.arena.innerHTML=
+        '<div class="decision-game"><div class="decision-summary"><strong>第 '+round+' 局｜你 '+wins+' : '+losses+' 對手</strong><span>'+(message||"出拳！")+'</span></div>'+
+        '<div class="rps-grid">'+choices.map(choice=>
+          '<button type="button" data-rps="'+choice.id+'"><span>'+choice.icon+'</span><strong>'+choice.label+'</strong></button>'
+        ).join("")+'</div></div>';
+
+      this.bindChoiceButtons("[data-rps]",button=>{
+        const mine=button.dataset.rps;
+        const opponent=choices[Math.floor(random()*choices.length)].id;
+        if(mine===opponent)ties++;
+        else if(beats[mine]===opponent)wins++;
+        else losses++;
+        const mineLabel=choices.find(choice=>choice.id===mine);
+        const oppLabel=choices.find(choice=>choice.id===opponent);
+        const resultText=mine===opponent?"平手":beats[mine]===opponent?"你贏了":"你輸了";
+        if(round>=3||wins>=2||losses>=2){
+          const score=clamp(1800+wins*3000+ties*1400-losses*150,0,9800);
+          this.finish({game:"rps",wins,losses,ties},score);
+          return;
+        }
+        round++;
+        render(mineLabel.icon+" 對 "+oppLabel.icon+"｜"+resultText);
       });
     };
     render();
   }
 
-  startRoute(session){
-    const random=this.randomFor(session,"route");
-    let round=1;
-    const totalRounds=4;
-    const paths={
-      safe:{label:"安全路線",icon:"🚌",note:"穩定、小波動",resolve:()=>900+Math.floor(random()*501)},
-      balanced:{label:"均衡路線",icon:"🚕",note:"65% 高報酬",resolve:()=>random()<0.65?1700+Math.floor(random()*601):500+Math.floor(random()*301)},
-      risky:{label:"冒險路線",icon:"🚀",note:"38% 超高報酬",resolve:()=>random()<0.38?2800+Math.floor(random()*701):100+Math.floor(random()*301)}
+  startBlackjack(session){
+    const random=this.randomFor(session,"blackjack");
+    const ranks=["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
+    const suits=["♠","♥","♦","♣"];
+    const draw=()=>({rank:ranks[Math.floor(random()*ranks.length)],suit:suits[Math.floor(random()*suits.length)]});
+    const player=[draw(),draw()];
+    const dealer=[draw(),draw()];
+    let dealerRevealed=false;
+
+    const cardText=card=>card.rank+card.suit;
+    const finishHand=()=>{
+      dealerRevealed=true;
+      while(handValue(dealer)<17)dealer.push(draw());
+      const playerValue=handValue(player);
+      const dealerValue=handValue(dealer);
+      const bust=playerValue>21;
+      const dealerBust=dealerValue>21;
+      const win=!bust&&(dealerBust||playerValue>dealerValue);
+      const tie=!bust&&!dealerBust&&playerValue===dealerValue;
+      const score=win?9400:tie?5900:bust?1600:3000;
+      this.finish({game:"blackjack",playerValue,dealerValue,bust,dealerBust,win,tie},score);
     };
 
-    const renderRound=()=>{
+    const render=()=>{
+      const value=handValue(player);
       this.arena.innerHTML=
-        '<div class="luck-game">'+
-          '<div class="luck-round"><strong>第 '+round+' / '+totalRounds+' 站</strong><span>累計 '+Math.round(this.score).toLocaleString()+' 分</span></div>'+
-          '<div class="luck-hint">城市道路充滿隨機事件。自己選風險，但結果交給運氣。</div>'+
-          '<div class="luck-choice-grid luck-choice-grid--3">'+
-            Object.entries(paths).map(([id,path])=>
-              '<button type="button" class="luck-choice" data-choice="'+id+'">'+
-                '<span class="luck-choice__icon">'+path.icon+'</span>'+
-                '<strong>'+path.label+'</strong><small>'+path.note+'</small>'+
-              '</button>'
-            ).join("")+
-          '</div>'+
-          '<div class="luck-result" data-luck-result></div>'+
-          '<div class="luck-next" data-luck-next></div>'+
-        '</div>';
+        '<div class="decision-game blackjack-game">'+
+        '<div class="card-hand"><span>莊家</span><strong>'+cardText(dealer[0])+' '+(dealerRevealed?cardText(dealer[1]):"🂠")+'</strong></div>'+
+        '<div class="card-hand card-hand--player"><span>你的牌｜'+value+' 點</span><strong>'+player.map(cardText).join("　")+'</strong></div>'+
+        '<div class="decision-actions"><button type="button" data-hit>要牌</button><button type="button" data-stand>停牌</button></div></div>';
 
-      this.bindChoiceButtons("[data-choice]",button=>{
-        const path=paths[button.dataset.choice];
-        const gained=path.resolve();
-        this.score+=gained;
-        const isLast=round>=totalRounds;
-        this.showRoundResult({
-          message:'<b>'+path.icon+' '+path.label+'</b><span>城市事件結算：+'+gained.toLocaleString()+' 分</span>',
-          nextLabel:isLast?"送出結果":"前往下一站",
-          onNext:()=>{
-            if(isLast)this.finish({game:"route",rounds:totalRounds});
-            else{round++;renderRound()}
-          }
-        });
-      });
+      this.arena.querySelector("[data-hit]")?.addEventListener("click",()=>{
+        player.push(draw());
+        if(handValue(player)>21){
+          finishHand();
+          return;
+        }
+        render();
+      },{once:true});
+      this.arena.querySelector("[data-stand]")?.addEventListener("click",finishHand,{once:true});
     };
-    renderRound();
+    render();
   }
 
-  startDistrict(session){
-    const random=this.randomFor(session,"district");
-    let round=1;
-    const totalRounds=3;
-    const plans={
-      safe:{label:"保守投資",icon:"🏦",note:"跌幅小、上漲也有限",base:1500,factor:220,floor:850},
-      balanced:{label:"均衡投資",icon:"🏙️",note:"風險與報酬平均",base:1750,factor:430,floor:350},
-      aggressive:{label:"高風險投資",icon:"📈",note:"大漲大賺，大跌也很痛",base:1950,factor:820,floor:0}
-    };
-    const marketLabels={[-2]:"重挫",[-1]:"下跌",[0]:"盤整",[1]:"上漲",[2]:"大漲"};
+  startPlinko(session){
+    const random=this.randomFor(session,"plinko");
+    const lanes=[1,2,3,4,5];
+    this.arena.innerHTML=
+      '<div class="plinko-game"><div class="race-intro"><strong>選擇彈珠落點</strong><span>落下後會一路撞擊釘子，最後進入倍率槽。</span></div>'+
+      '<div class="plinko-drop-grid">'+lanes.map(lane=>'<button type="button" data-plinko="'+lane+'">落點 '+lane+'</button>').join("")+'</div></div>';
 
-    const renderRound=()=>{
-      this.arena.innerHTML=
-        '<div class="luck-game">'+
-          '<div class="luck-round"><strong>第 '+round+' / '+totalRounds+' 次開盤</strong><span>累計 '+Math.round(this.score).toLocaleString()+' 分</span></div>'+
-          '<div class="luck-hint">先選投資風格，再隨機開出市場走勢。高風險可能一口氣拉開差距。</div>'+
-          '<div class="luck-choice-grid luck-choice-grid--3">'+
-            Object.entries(plans).map(([id,plan])=>
-              '<button type="button" class="luck-choice" data-choice="'+id+'">'+
-                '<span class="luck-choice__icon">'+plan.icon+'</span>'+
-                '<strong>'+plan.label+'</strong><small>'+plan.note+'</small>'+
-              '</button>'
-            ).join("")+
-          '</div>'+
-          '<div class="luck-result" data-luck-result></div>'+
-          '<div class="luck-next" data-luck-next></div>'+
-        '</div>';
+    this.bindChoiceButtons("[data-plinko]",button=>{
+      const lane=Number(button.dataset.plinko);
+      this.runPlinko(random,lane);
+    });
+  }
 
-      this.bindChoiceButtons("[data-choice]",button=>{
-        const plan=plans[button.dataset.choice];
-        const shift=Math.floor(random()*5)-2;
-        const noise=Math.floor((random()-0.5)*240);
-        const gained=Math.max(plan.floor,Math.round(plan.base+shift*plan.factor+noise));
-        this.score+=gained;
-        const isLast=round>=totalRounds;
-        this.showRoundResult({
-          message:'<b>'+plan.icon+' 市場'+marketLabels[shift]+'</b><span>'+plan.label+' 本輪獲得 '+gained.toLocaleString()+' 分</span>',
-          nextLabel:isLast?"送出結果":"下一次開盤",
-          onNext:()=>{
-            if(isLast)this.finish({game:"district",rounds:totalRounds});
-            else{round++;renderRound()}
-          }
-        });
-      });
-    };
-    renderRound();
+  runPlinko(random,lane){
+    const multipliers=[0.5,1,2,5,10,5,2,1,0.5];
+    let slot=(lane-1)*2;
+    let row=0;
+    this.arena.innerHTML=
+      '<div class="plinko-game"><div class="plinko-board"><span class="plinko-ball" data-plinko-ball style="left:'+((slot/8)*92+4)+'%">●</span>'+
+      Array.from({length:7},(_,index)=>'<div class="plinko-row">•　•　•　•　•　•</div>').join("")+
+      '<div class="plinko-slots">'+multipliers.map(value=>'<b>×'+value+'</b>').join("")+'</div></div><div class="plinko-status" data-plinko-status>彈珠開始掉落…</div></div>';
+
+    const interval=this.registerTimer(setInterval(()=>{
+      row++;
+      slot=clamp(slot+(random()<0.5?-1:1),0,8);
+      const ball=this.arena.querySelector("[data-plinko-ball]");
+      if(ball){
+        ball.style.left=((slot/8)*92+4)+"%";
+        ball.style.top=Math.min(76,8+row*9)+"%";
+      }
+      if(row>=7){
+        clearInterval(interval);
+        const multiplier=multipliers[slot];
+        const score=clamp(Math.round(1200+multiplier*850),0,9800);
+        const status=this.arena.querySelector("[data-plinko-status]");
+        if(status)status.textContent="落入 ×"+multiplier+" 倍率槽！";
+        this.registerTimer(setTimeout(()=>this.finish({game:"plinko",lane,slot,multiplier},score),800));
+      }
+    },420),"interval");
+  }
+
+  startAuction(session){
+    const random=this.randomFor(session,"auction");
+    const items=[
+      {name:"神秘古董",icon:"🏺"},
+      {name:"限量名錶",icon:"⌚"},
+      {name:"稀有藝術品",icon:"🖼️"},
+      {name:"城市金庫券",icon:"🎫"}
+    ];
+    const item=items[Math.floor(random()*items.length)];
+    const value=1800+Math.floor(random()*4201);
+    const rivalBids=[0,1,2].map(()=>1000+Math.floor(random()*4201));
+    const topRival=Math.max(...rivalBids);
+    const bids=[1000,2000,3000,4000,5000,6000];
+
+    this.arena.innerHTML=
+      '<div class="decision-game auction-game"><div class="auction-item"><span>'+item.icon+'</span><strong>'+item.name+'</strong><small>真實價值未知</small></div>'+
+      '<div class="luck-hint">三名對手也正在暗標。出太低搶不到，出太高即使得標也可能虧。</div>'+
+      '<div class="auction-bids">'+bids.map(bid=>'<button type="button" data-bid="'+bid+'">$'+bid.toLocaleString()+'</button>').join("")+'</div></div>';
+
+    this.bindChoiceButtons("[data-bid]",button=>{
+      const bid=Number(button.dataset.bid);
+      const won=bid>topRival;
+      const profit=won?value-bid:0;
+      const score=won
+        ? clamp(Math.round(5200+profit*0.8),1800,9800)
+        : clamp(Math.round(2600+Math.max(0,value-bid)*0.2),1800,5200);
+      this.finish({game:"auction",item:item.name,value,bid,topRival,won,profit},score);
+    });
   }
 }
