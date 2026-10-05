@@ -39,6 +39,7 @@ export function createInitialState(){
     minigame:null,
     minigameHistory:[],
     lastMinigame:null,
+    specialEventHistory:[],
     market:createInitialMarket(),
     network:{
       roomCode:null,
@@ -99,6 +100,7 @@ export function hydrateState(raw){
   state.market=raw.market??createInitialMarket();
   state.events=Array.isArray(raw.events)?raw.events:fallback.events;
   state.minigameHistory=Array.isArray(raw.minigameHistory)?raw.minigameHistory:[];
+  state.specialEventHistory=Array.isArray(raw.specialEventHistory)?raw.specialEventHistory:[];
   state.turnToken=Math.max(1,Number(raw.turnToken)||1);
   state.version=BOARD_VERSION;
   return state;
