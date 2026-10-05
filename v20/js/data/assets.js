@@ -2,18 +2,17 @@ export const CENTER_BACKGROUND="./assets/board/center-bg.webp";
 
 const V5_ROOT="./assets/v5";
 
-// The visual order follows the gameplay board order. Each number points to the
-// original delivered TILE_XX artwork so names/icons still match after regrouping.
+// Visual order is kept aligned with BOARD_TILES after the mixed-region redesign.
+// Every delivered TILE_XX artwork is still used exactly once.
 const TILE_ART_ORDER=Object.freeze([
   1,
-  2,4,6,3,5,
-  8,10,12,7,15,
-  14,16,18,13,11,
-  19,21,22,17,20,
-  24,26,28,23,25,
-  30,32,34,29,31,
-  36,38,40,33,35,
-  41,43,44,9,39,42,27,37
+  3,2,4,5,9,8,10,12,26,7,15,
+  11,
+  13,14,16,18,17,6,19,21,20,
+  23,
+  27,24,28,44,25,33,30,32,34,29,39,
+  42,
+  37,22,36,38,40,31,41,43,35
 ]);
 
 export const TILE_ART_BY_INDEX=Object.freeze(
