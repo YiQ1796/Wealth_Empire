@@ -10,8 +10,8 @@ assert.match(html,/class="mobile-primary-actions"/);
 assert.match(html,/id="mobileRollButton"/);
 assert.match(html,/data-feature="market"/);
 assert.match(html,/id="stockMarketMobileGrid"/);
-assert.match(html,/app\.css\?v=alpha19-197/);
-assert.match(html,/main\.js\?v=alpha19-197/);
+assert.match(html,/app\.css\?v=alpha20-198/);
+assert.match(html,/main\.js\?v=alpha20-198/);
 
 assert.match(css,/V20 Alpha 19 — phone landscape authority/);
 assert.match(css,/@media \(orientation:landscape\) and \(max-height:650px\) and \(max-width:1180px\)/);
