@@ -2,7 +2,13 @@ const SESSION_KEY="wealth_empire_v20_network_session";
 const CLIENT_KEY="wealth_empire_v20_client_id";
 const HOST_STATE_PREFIX="wealth_empire_v20_host_state_";
 const PEER_PREFIX="wealth-empire-v20-";
+const RELAY_BROKER_URL="wss://broker.emqx.io:8084/mqtt";
+const RELAY_PROTOCOL="v20";
+const RELAY_HEARTBEAT_MS=7000;
+const RELAY_STALE_MS=35000;
 const ROOM_RE=/^\d{6}$/;
+
+let mqttLibraryPromise=null;
 
 export const NETWORK_ACTION_TYPES=Object.freeze([
   "roll",
@@ -124,6 +130,53 @@ function peerIdForRoom(roomCode){
   return PEER_PREFIX+roomCode;
 }
 
+function relayBase(roomCode){
+  return"wealth-empire/"+RELAY_PROTOCOL+"/"+roomCode;
+}
+
+function relayRandomId(prefix){
+  try{
+    const bytes=new Uint8Array(8);
+    crypto.getRandomValues(bytes);
+    return prefix+"-"+Array.from(bytes,b=>b.toString(16).padStart(2,"0")).join("");
+  }catch{
+    return prefix+"-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,10);
+  }
+}
+
+async function loadMqttLibrary(){
+  if(typeof window!=="undefined"&&window.mqtt)return window.mqtt;
+  if(mqttLibraryPromise)return mqttLibraryPromise;
+
+  const sources=[
+    "https://cdn.jsdelivr.net/npm/mqtt@5.14.1/dist/mqtt.min.js",
+    "https://unpkg.com/mqtt@5.14.1/dist/mqtt.min.js"
+  ];
+
+  mqttLibraryPromise=new Promise((resolve,reject)=>{
+    let index=0;
+    const tryNext=()=>{
+      if(window.mqtt){
+        resolve(window.mqtt);
+        return;
+      }
+      if(index>=sources.length){
+        mqttLibraryPromise=null;
+        reject(new Error("relay_library_failed"));
+        return;
+      }
+      const script=document.createElement("script");
+      script.src=sources[index++];
+      script.async=true;
+      script.onload=()=>window.mqtt?resolve(window.mqtt):tryNext();
+      script.onerror=tryNext;
+      document.head.appendChild(script);
+    };
+    tryNext();
+  });
+  return mqttLibraryPromise;
+}
+
 export class PeerNetwork{
   constructor({
     onStatus=()=>{},
@@ -138,6 +191,7 @@ export class PeerNetwork{
     this.onAction=onAction;
     this.onDisconnect=onDisconnect;
     this.mode="offline";
+    this.transport="offline";
     this.peer=null;
     this.roomCode=null;
     this.localSeat=0;
@@ -145,10 +199,23 @@ export class PeerNetwork{
     this.clientId=getOrCreateClientId();
     this.hostConnection=null;
     this.connections=new Map();
+
+    this.relayClient=null;
+    this.relayConnectionsByClient=new Map();
+    this.relayHeartbeatTimer=null;
+    this.relayWatchdogTimer=null;
+    this.relayLastHostActivity=0;
   }
 
   status(text,kind="info"){
-    this.onStatus({text,kind,mode:this.mode,roomCode:this.roomCode,seat:this.localSeat});
+    this.onStatus({
+      text,
+      kind,
+      mode:this.mode,
+      transport:this.transport,
+      roomCode:this.roomCode,
+      seat:this.localSeat
+    });
   }
 
   async loadPeer(){
@@ -156,7 +223,7 @@ export class PeerNetwork{
     return module.Peer??module.default;
   }
 
-  async openPeer(id=null,retries=5){
+  async openPeer(id=null,retries=3){
     const Peer=await this.loadPeer();
     let attempt=0;
     while(attempt<=retries){
@@ -170,7 +237,7 @@ export class PeerNetwork{
           debug:1
         });
         await new Promise((resolve,reject)=>{
-          const timer=setTimeout(()=>reject(new Error("peer_timeout")),10000);
+          const timer=setTimeout(()=>reject(new Error("peer_timeout")),9000);
           peer.once("open",()=>{
             clearTimeout(timer);
             resolve();
@@ -202,10 +269,17 @@ export class PeerNetwork{
     this.roomCode=code;
     this.localSeat=0;
     this.playerName=sanitizePlayerName(playerName);
-    this.peer=await this.openPeer(peerIdForRoom(code),6);
-    this.peer.on("connection",connection=>this.handleIncomingConnection(connection));
-    this.peer.on("disconnected",()=>this.status("連線服務暫時中斷，正在嘗試恢復。","warning"));
-    this.peer.on("error",error=>this.status("房間連線錯誤："+(error?.type??"unknown"),"error"));
+
+    try{
+      await this.startHostRelay();
+      this.transport="relay";
+      this.status("房間已建立，房號 "+code+"。目前使用 WSS 中繼，可跨不同網路與手機 NAT。","success");
+    }catch(relayError){
+      this.status("WSS 中繼暫時不可用，正在切換 P2P 備援。","warning");
+      await this.startHostPeer();
+      this.transport="peer";
+      this.status("房間已建立，房號 "+code+"。目前使用 P2P 備援。","success");
+    }
 
     saveNetworkSession({
       mode:"host",
@@ -214,8 +288,134 @@ export class PeerNetwork{
       clientId:this.clientId,
       seat:0
     });
-    this.status("房間已建立，房號 "+code+"。","success");
-    return{roomCode:code,seat:0};
+    return{roomCode:code,seat:0,transport:this.transport};
+  }
+
+  async startHostRelay(){
+    const mqtt=await loadMqttLibrary();
+    const base=relayBase(this.roomCode);
+    const client=mqtt.connect(RELAY_BROKER_URL,{
+      clientId:relayRandomId("we-host-"+this.roomCode),
+      clean:true,
+      connectTimeout:8000,
+      reconnectPeriod:1800,
+      keepalive:15,
+      protocolVersion:4
+    });
+    this.relayClient=client;
+
+    await new Promise((resolve,reject)=>{
+      const timer=setTimeout(()=>reject(new Error("relay_timeout")),10000);
+      let settled=false;
+
+      client.on("connect",()=>{
+        if(this.relayClient!==client)return;
+        client.subscribe(base+"/guest/+",{qos:0},error=>{
+          if(error){
+            if(!settled){
+              settled=true;
+              clearTimeout(timer);
+              reject(error);
+            }
+            return;
+          }
+          if(!settled){
+            settled=true;
+            clearTimeout(timer);
+            resolve();
+          }
+        });
+      });
+      client.on("error",error=>{
+        if(!settled){
+          settled=true;
+          clearTimeout(timer);
+          reject(error);
+        }
+      });
+    });
+
+    client.on("message",(topic,raw)=>{
+      if(this.relayClient!==client||this.mode!=="host")return;
+      try{
+        const clientId=String(topic).split("/").pop();
+        const envelope=JSON.parse(raw.toString());
+        const message=envelope?.payload??envelope;
+        if(!clientId||!message||typeof message!=="object")return;
+        const connection=this.getRelayHostConnection(clientId,base);
+        connection.lastSeen=Date.now();
+        if(message.type==="relay_disconnect"){
+          this.disconnectRelayConnection(connection);
+          return;
+        }
+        this.handleHostMessage(connection,message);
+      }catch{}
+    });
+
+    client.on("offline",()=>this.status("WSS 中繼暫時離線，系統正在自動重連。","warning"));
+    client.on("reconnect",()=>this.status("WSS 中繼正在重新連線…","warning"));
+    client.on("connect",()=>{
+      if(this.mode==="host"){
+        client.subscribe(base+"/guest/+",{qos:0},()=>{});
+      }
+    });
+
+    clearInterval(this.relayWatchdogTimer);
+    this.relayWatchdogTimer=setInterval(()=>{
+      if(this.mode!=="host")return;
+      const now=Date.now();
+      for(const connection of this.relayConnectionsByClient.values()){
+        if(connection.open&&now-connection.lastSeen>RELAY_STALE_MS){
+          this.disconnectRelayConnection(connection);
+        }
+      }
+    },7000);
+  }
+
+  getRelayHostConnection(clientId,base){
+    let connection=this.relayConnectionsByClient.get(clientId);
+    if(connection){
+      connection.open=true;
+      return connection;
+    }
+
+    connection={
+      relay:true,
+      open:true,
+      clientId,
+      metadata:null,
+      lastSeen:Date.now(),
+      send:message=>{
+        if(!this.relayClient?.connected)throw new Error("relay_not_connected");
+        this.relayClient.publish(
+          base+"/host/"+clientId,
+          JSON.stringify({payload:message,ts:Date.now()}),
+          {qos:0,retain:false}
+        );
+      },
+      close:()=>this.disconnectRelayConnection(connection)
+    };
+    this.relayConnectionsByClient.set(clientId,connection);
+    return connection;
+  }
+
+  disconnectRelayConnection(connection){
+    if(!connection?.open)return;
+    connection.open=false;
+    this.relayConnectionsByClient.delete(connection.clientId);
+    const seat=connection.metadata?.seat;
+    const clientId=connection.metadata?.clientId;
+    if(Number.isInteger(seat)&&this.connections.get(seat)===connection){
+      this.connections.delete(seat);
+      this.onDisconnect({seat,clientId});
+    }
+  }
+
+  async startHostPeer(){
+    this.peer=await this.openPeer(peerIdForRoom(this.roomCode),5);
+    this.peer.on("connection",connection=>this.handleIncomingConnection(connection));
+    this.peer.on("disconnected",()=>this.status("P2P signaling 暫時中斷。","warning"));
+    this.peer.on("error",error=>this.status("P2P 連線錯誤："+(error?.type??"unknown"),"error"));
   }
 
   handleIncomingConnection(connection){
@@ -227,10 +427,21 @@ export class PeerNetwork{
     if(!message||typeof message!=="object")return;
 
     if(message.type==="join_request"){
-      const clientId=String(message.clientId??"").slice(0,80);
+      const clientId=String(message.clientId??connection.clientId??"").slice(0,80);
       const playerName=sanitizePlayerName(message.playerName);
       if(!clientId){
         connection.send({type:"join_reject",error:"invalid_client"});
+        return;
+      }
+
+      if(connection.metadata?.seat!=null&&connection.metadata.clientId===clientId){
+        const seat=connection.metadata.seat;
+        connection.send({
+          type:"join_ack",
+          seat,
+          roomCode:this.roomCode,
+          state:cloneForWire(this.lastBroadcastState??{})
+        });
         return;
       }
 
@@ -255,10 +466,12 @@ export class PeerNetwork{
         state:cloneForWire(response.state)
       });
 
-      connection.on("close",()=>{
-        if(this.connections.get(seat)===connection)this.connections.delete(seat);
-        this.onDisconnect({seat,clientId});
-      });
+      if(!connection.relay){
+        connection.on("close",()=>{
+          if(this.connections.get(seat)===connection)this.connections.delete(seat);
+          this.onDisconnect({seat,clientId});
+        });
+      }
       this.status(playerName+" 已加入座位 "+(seat+1)+"。","success");
       return;
     }
@@ -286,9 +499,148 @@ export class PeerNetwork{
     this.mode="guest";
     this.roomCode=code;
     this.playerName=sanitizePlayerName(playerName);
-    this.peer=await this.openPeer(null,2);
 
-    const connection=this.peer.connect(peerIdForRoom(code),{
+    try{
+      const result=await this.joinViaRelay();
+      this.transport="relay";
+      return result;
+    }catch(relayError){
+      this.status("WSS 中繼暫時不可用，正在切換 P2P 備援。","warning");
+      const result=await this.joinViaPeer();
+      this.transport="peer";
+      return result;
+    }
+  }
+
+  async joinViaRelay(){
+    const mqtt=await loadMqttLibrary();
+    const base=relayBase(this.roomCode);
+    const relayId=relayRandomId("we-guest-"+this.roomCode);
+    const client=mqtt.connect(RELAY_BROKER_URL,{
+      clientId:relayId,
+      clean:true,
+      connectTimeout:8000,
+      reconnectPeriod:1800,
+      keepalive:15,
+      protocolVersion:4,
+      will:{
+        topic:base+"/guest/"+this.clientId,
+        payload:JSON.stringify({payload:{type:"relay_disconnect"},ts:Date.now()}),
+        qos:0,
+        retain:false
+      }
+    });
+    this.relayClient=client;
+
+    const connection={
+      relay:true,
+      open:false,
+      send:message=>{
+        if(!client.connected)throw new Error("relay_not_connected");
+        client.publish(
+          base+"/guest/"+this.clientId,
+          JSON.stringify({payload:message,ts:Date.now()}),
+          {qos:0,retain:false}
+        );
+      },
+      close:()=>{connection.open=false}
+    };
+    this.hostConnection=connection;
+
+    const sendPresence=()=>{
+      if(!connection.open)return;
+      try{
+        connection.send({
+          type:"join_request",
+          clientId:this.clientId,
+          playerName:this.playerName
+        });
+      }catch{}
+    };
+
+    const result=await new Promise((resolve,reject)=>{
+      const timer=setTimeout(()=>reject(new Error("relay_join_timeout")),12000);
+      let settled=false;
+
+      client.on("connect",()=>{
+        if(this.relayClient!==client)return;
+        client.subscribe(base+"/host/"+this.clientId,{qos:0},error=>{
+          if(error){
+            if(!settled){
+              settled=true;
+              clearTimeout(timer);
+              reject(error);
+            }
+            return;
+          }
+          connection.open=true;
+          sendPresence();
+        });
+      });
+
+      client.on("message",(topic,raw)=>{
+        if(this.relayClient!==client||this.mode!=="guest")return;
+        try{
+          const envelope=JSON.parse(raw.toString());
+          const message=envelope?.payload??envelope;
+          if(!message||typeof message!=="object")return;
+          this.relayLastHostActivity=Date.now();
+
+          if(message.type==="join_ack"){
+            this.localSeat=Number(message.seat);
+            saveNetworkSession({
+              mode:"guest",
+              roomCode:this.roomCode,
+              playerName:this.playerName,
+              clientId:this.clientId,
+              seat:this.localSeat
+            });
+            this.onState(message.state);
+            this.status("已加入房間 "+this.roomCode+"，座位 "+(this.localSeat+1)+"，使用 WSS 中繼。","success");
+            if(!settled){
+              settled=true;
+              clearTimeout(timer);
+              resolve({seat:this.localSeat,state:message.state,transport:"relay"});
+            }
+            return;
+          }
+
+          if(message.type==="join_reject"){
+            if(!settled){
+              settled=true;
+              clearTimeout(timer);
+              reject(new Error(message.error??"join_rejected"));
+            }
+            return;
+          }
+
+          if(message.type==="state"){
+            this.onState(message.state);
+          }
+        }catch{}
+      });
+
+      client.on("error",error=>{
+        if(!settled){
+          settled=true;
+          clearTimeout(timer);
+          reject(error);
+        }
+      });
+    });
+
+    clearInterval(this.relayHeartbeatTimer);
+    this.relayHeartbeatTimer=setInterval(()=>{
+      if(this.mode!=="guest"||!connection.open)return;
+      sendPresence();
+    },RELAY_HEARTBEAT_MS);
+
+    return result;
+  }
+
+  async joinViaPeer(){
+    this.peer=await this.openPeer(null,2);
+    const connection=this.peer.connect(peerIdForRoom(this.roomCode),{
       reliable:true,
       serialization:"json"
     });
@@ -309,14 +661,14 @@ export class PeerNetwork{
           this.localSeat=Number(message.seat);
           saveNetworkSession({
             mode:"guest",
-            roomCode:code,
+            roomCode:this.roomCode,
             playerName:this.playerName,
             clientId:this.clientId,
             seat:this.localSeat
           });
           this.onState(message.state);
-          this.status("已加入房間 "+code+"，座位 "+(this.localSeat+1)+"。","success");
-          resolve({seat:this.localSeat,state:message.state});
+          this.status("已加入房間 "+this.roomCode+"，座位 "+(this.localSeat+1)+"，使用 P2P。","success");
+          resolve({seat:this.localSeat,state:message.state,transport:"peer"});
           return;
         }
         if(message?.type==="join_reject"){
@@ -329,7 +681,7 @@ export class PeerNetwork{
         }
       });
       connection.on("close",()=>{
-        this.status("與房主連線中斷，可重新整理或重新連線。","warning");
+        this.status("與房主 P2P 連線中斷，可重新整理自動恢復。","warning");
       });
       connection.on("error",error=>{
         clearTimeout(timer);
@@ -342,7 +694,8 @@ export class PeerNetwork{
 
   broadcastState(state){
     if(this.mode!=="host")return;
-    const message={type:"state",state:cloneForWire(state)};
+    this.lastBroadcastState=cloneForWire(state);
+    const message={type:"state",state:this.lastBroadcastState};
     for(const connection of this.connections.values()){
       if(connection?.open){
         try{connection.send(message)}catch{}
@@ -359,19 +712,38 @@ export class PeerNetwork{
   }
 
   async close(clearSession=true){
+    clearInterval(this.relayHeartbeatTimer);
+    clearInterval(this.relayWatchdogTimer);
+    this.relayHeartbeatTimer=null;
+    this.relayWatchdogTimer=null;
+
+    if(this.mode==="guest"&&this.hostConnection?.relay&&this.hostConnection.open){
+      try{this.hostConnection.send({type:"relay_disconnect"})}catch{}
+    }
+
     for(const connection of this.connections.values()){
       try{connection.close()}catch{}
     }
     this.connections.clear();
+    this.relayConnectionsByClient.clear();
+
     if(this.hostConnection){
       try{this.hostConnection.close()}catch{}
       this.hostConnection=null;
     }
+
+    if(this.relayClient){
+      try{this.relayClient.end(true)}catch{}
+      this.relayClient=null;
+    }
+
     if(this.peer){
       try{this.peer.destroy()}catch{}
       this.peer=null;
     }
+
     this.mode="offline";
+    this.transport="offline";
     this.roomCode=null;
     this.localSeat=0;
     if(clearSession)clearNetworkSession();
