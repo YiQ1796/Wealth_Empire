@@ -3532,3 +3532,174 @@ body.entry-pending .app-shell{
   .auction-item span{font-size:34px}
   .auction-item strong{font-size:15px}
 }
+
+
+/* V20 Alpha 25 — functional transport system.
+   Station landing opens one transport decision owner; destination arrival never chains another station prompt. */
+.transport-dialog{
+  width:min(680px,calc(100vw - 24px));
+  max-height:calc(100dvh - 24px);
+  padding:0;
+  border:0;
+  background:transparent;
+  overflow:visible
+}
+.transport-dialog::backdrop{
+  background:rgba(18,34,49,.52);
+  backdrop-filter:blur(3px)
+}
+.transport-modal{
+  max-height:calc(100dvh - 32px);
+  overflow:auto;
+  padding:16px;
+  border:1px solid rgba(217,226,236,.98);
+  border-radius:20px;
+  background:#fff;
+  box-shadow:0 24px 70px rgba(18,36,56,.34)
+}
+.transport-modal__header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:12px
+}
+.transport-modal__eyebrow{
+  display:block;
+  margin-bottom:3px;
+  color:#48718f;
+  font-size:10px;
+  font-weight:1000;
+  letter-spacing:.1em
+}
+.transport-modal__header h2{
+  margin:0;
+  color:#183953;
+  font-size:25px
+}
+.transport-modal__header p{
+  margin:4px 0 0;
+  color:#64798c;
+  font-size:12px;
+  font-weight:800
+}
+.transport-current{
+  display:grid;
+  gap:4px;
+  padding:12px 14px;
+  border:1px solid #dbe5ed;
+  border-radius:14px;
+  background:#f7fafc
+}
+.transport-current span{
+  color:#71869a;
+  font-size:10px;
+  font-weight:1000
+}
+.transport-current strong{
+  color:#173b58;
+  font-size:21px
+}
+.transport-current small{
+  color:#64798c;
+  font-size:10px;
+  line-height:1.45;
+  font-weight:800
+}
+.transport-destinations{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:9px;
+  margin-top:12px
+}
+.transport-destination{
+  min-width:0;
+  min-height:112px;
+  display:grid;
+  grid-template-columns:46px minmax(0,1fr);
+  align-items:center;
+  gap:8px;
+  padding:11px;
+  border:1px solid #cedbe6;
+  border-radius:15px;
+  background:#fff;
+  color:#173b58;
+  text-align:left;
+  cursor:pointer
+}
+.transport-destination:hover,
+.transport-destination:focus-visible{
+  border-color:#5b94bd;
+  background:#f2f8fc;
+  outline:none
+}
+.transport-destination__icon{
+  display:grid;
+  place-items:center;
+  width:44px;
+  height:44px;
+  border-radius:12px;
+  background:#eaf4fa;
+  font-size:25px
+}
+.transport-destination__copy{
+  min-width:0;
+  display:grid;
+  gap:4px
+}
+.transport-destination__copy strong{
+  font-size:14px;
+  line-height:1.2
+}
+.transport-destination__copy small{
+  color:#71869a;
+  font-size:9px;
+  line-height:1.3;
+  font-weight:900
+}
+.transport-skip{
+  width:100%;
+  min-height:44px;
+  margin-top:10px;
+  border:1px solid #d6e0e8;
+  border-radius:12px;
+  background:#f5f7f9;
+  color:#536b80;
+  font-weight:1000;
+  cursor:pointer
+}
+
+@media (orientation:landscape) and (max-height:650px) and (max-width:1180px){
+  .transport-dialog{
+    width:min(650px,calc(100vw - max(16px,env(safe-area-inset-left)) - max(16px,env(safe-area-inset-right))));
+    max-height:calc(var(--phone-app-height,100dvh) - max(8px,env(safe-area-inset-top)) - max(8px,env(safe-area-inset-bottom)))
+  }
+  .transport-modal{
+    max-height:calc(var(--phone-app-height,100dvh) - max(12px,env(safe-area-inset-top)) - max(12px,env(safe-area-inset-bottom)));
+    padding:10px;
+    border-radius:14px
+  }
+  .transport-modal__header{margin-bottom:7px}
+  .transport-modal__header h2{font-size:18px}
+  .transport-modal__header p{font-size:9px}
+  .transport-current{padding:7px 9px}
+  .transport-current strong{font-size:15px}
+  .transport-current small{font-size:8px}
+  .transport-destinations{gap:6px;margin-top:7px}
+  .transport-destination{
+    min-height:72px;
+    grid-template-columns:34px minmax(0,1fr);
+    gap:5px;
+    padding:7px;
+    border-radius:10px
+  }
+  .transport-destination__icon{
+    width:32px;
+    height:32px;
+    border-radius:9px;
+    font-size:19px
+  }
+  .transport-destination__copy strong{font-size:11px}
+  .transport-destination__copy small{font-size:7px}
+  .transport-skip{min-height:34px;margin-top:6px;font-size:10px}
+}
