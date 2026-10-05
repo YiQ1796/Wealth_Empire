@@ -14,6 +14,7 @@ import{
 import{mountStaticBoard,render}from"./ui/render.js";
 import{renderStockMarket}from"./ui/stock-render.js";
 import{MinigameUI}from"./ui/minigame-ui.js";
+import{UI_ASSETS,characterAsset}from"./data/ui-assets.js";
 
 const board=document.getElementById("board");
 mountStaticBoard(board);
@@ -21,6 +22,8 @@ mountStaticBoard(board);
 let state=createInitialState();
 let aiTimer=null;
 let lastToastEventId=0;
+let lastAnimatedMoveEventId=0;
+let moveAnimationQueue=Promise.resolve();
 let initialGuestStatePending=false;
 const disconnectTimers=new Map();
 const ACTION_TOAST_KINDS=new Set([
@@ -49,6 +52,25 @@ const purchaseDialog=document.getElementById("purchaseDialog");
 const entryGate=document.getElementById("entryGate");
 const actionToastStack=document.getElementById("actionToastStack");
 
+function applyV5StaticUiAssets(){
+  const sources={
+    quickStockIcon:UI_ASSETS.quick.stock,
+    quickPropertyIcon:UI_ASSETS.quick.property,
+    quickItemIcon:UI_ASSETS.quick.item,
+    quickInfoIcon:UI_ASSETS.quick.info,
+    purchasePropertyIcon:UI_ASSETS.quick.property,
+    closeFeatureDialogIcon:UI_ASSETS.modal.close,
+    closeNetworkDialogIcon:UI_ASSETS.modal.close,
+    itemEmptyStateArt:UI_ASSETS.modal.emptyData,
+    networkAutoFillIcon:UI_ASSETS.badges.autoFill
+  };
+
+  for(const [id,src] of Object.entries(sources)){
+    const node=document.getElementById(id);
+    if(node&&src)node.src=src;
+  }
+}
+
 function setNetworkStatus(text,kind="info"){
   const node=document.getElementById("networkStatus");
   if(node){
@@ -73,6 +95,64 @@ function maxEventId(targetState=state){
 function resetToastTracker(targetState=state){
   lastToastEventId=maxEventId(targetState);
   actionToastStack.replaceChildren();
+}
+
+function resetMovementTracker(targetState=state){
+  lastAnimatedMoveEventId=Math.max(
+    0,
+    ...(targetState.events??[])
+      .filter(event=>event.kind==="move")
+      .map(event=>Number(event.id)||0)
+  );
+}
+
+function wait(ms){
+  return new Promise(resolve=>setTimeout(resolve,ms));
+}
+
+async function animateMoveEvent(event){
+  const seat=Number(event.data?.seat);
+  const path=Array.isArray(event.data?.path)?event.data.path:[];
+  if(!Number.isInteger(seat)||path.length===0)return;
+
+  for(let step=0;step<path.length;step++){
+    const tileIndex=Number(path[step]);
+    const target=document.querySelector('.tile[data-index="'+tileIndex+'"] .tile__tokens');
+    let token=document.querySelector('.pawn-token[data-player-seat="'+seat+'"]');
+    if(!target||!token)continue;
+
+    target.appendChild(token);
+    token.classList.add("is-moving");
+    token.src=characterAsset(seat,step%2===0?"walkA":"walkB");
+    await wait(145);
+  }
+
+  const token=document.querySelector('.pawn-token[data-player-seat="'+seat+'"]');
+  if(token){
+    token.src=characterAsset(seat,"jump");
+    token.classList.add("is-jumping");
+    await wait(220);
+    token.classList.remove("is-moving","is-jumping");
+    token.src=characterAsset(seat,"idle");
+  }
+}
+
+function processMoveAnimations(){
+  const pending=(state.events??[])
+    .filter(event=>event.kind==="move"&&(Number(event.id)||0)>lastAnimatedMoveEventId)
+    .sort((a,b)=>a.id-b.id);
+
+  if(!pending.length)return;
+  lastAnimatedMoveEventId=Math.max(
+    lastAnimatedMoveEventId,
+    ...pending.map(event=>Number(event.id)||0)
+  );
+
+  for(const event of pending){
+    moveAnimationQueue=moveAnimationQueue
+      .then(()=>animateMoveEvent(event))
+      .catch(()=>{});
+  }
 }
 
 function toastIcon(kind){
@@ -155,6 +235,7 @@ const network=new PeerNetwork({
     uiContext.networkMode="guest";
     if(initialGuestStatePending){
       resetToastTracker(state);
+      resetMovementTracker(state);
       initialGuestStatePending=false;
     }
     renderAll();
@@ -326,6 +407,7 @@ function renderAll(){
   renderNetworkUi();
   minigameUi.sync(state,currentLocalSeat());
   processActionToasts();
+  processMoveAnimations();
 }
 
 function scheduleAi(){
@@ -339,10 +421,17 @@ function scheduleAi(){
   const current=state.players[state.currentPlayer];
   if(current?.kind!=="ai")return;
 
+  let delay=650;
+  if(state.phase==="landed"){
+    const latestMove=(state.events??[]).find(event=>event.kind==="move"&&event.data?.seat===current.seat);
+    const stepCount=Array.isArray(latestMove?.data?.path)?latestMove.data.path.length:0;
+    if(stepCount>0)delay=Math.min(2600,500+stepCount*150);
+  }
+
   aiTimer=setTimeout(()=>{
     aiTimer=null;
     engine.runAiStep();
-  },650);
+  },delay);
 }
 
 function openFeature(name){
@@ -356,6 +445,14 @@ function openFeature(name){
 
   document.getElementById("featureDialogTitle").textContent=meta[0];
   document.getElementById("featureDialogSubtitle").textContent=meta[1];
+  const headerArt=document.getElementById("featureDialogHeaderArt");
+  const headerByFeature={
+    stock:UI_ASSETS.modal.stockHeader,
+    property:UI_ASSETS.modal.propertyHeader,
+    item:UI_ASSETS.modal.itemHeader,
+    info:UI_ASSETS.modal.infoHeader
+  };
+  if(headerArt)headerArt.src=headerByFeature[name]??UI_ASSETS.modal.infoHeader;
   document.querySelectorAll("[data-feature-panel]").forEach(panel=>{
     panel.classList.toggle("active",panel.dataset.featurePanel===name);
   });
@@ -404,6 +501,7 @@ document.getElementById("startSoloButton").addEventListener("click",async()=>{
   uiContext.networkMode="offline";
   state=createInitialState();
   resetToastTracker(state);
+  resetMovementTracker(state);
   engine.replaceState(state);
   setEntryVisible(false);
   scheduleAi();
@@ -440,6 +538,7 @@ document.getElementById("createRoomButton").addEventListener("click",async()=>{
     next.network.roomCode=code;
     state=next;
     resetToastTracker(state);
+    resetMovementTracker(state);
     engine.replaceState(state);
     document.getElementById("networkRoomCode").value=code;
     setEntryVisible(false);
@@ -482,6 +581,7 @@ document.getElementById("leaveRoomButton").addEventListener("click",async()=>{
   uiContext.networkMode="offline";
   state=createInitialState();
   resetToastTracker(state);
+  resetMovementTracker(state);
   engine.replaceState(state);
   setNetworkStatus("已離開連線，請重新選擇遊玩模式。","info");
   setEntryVisible(true);
@@ -518,6 +618,7 @@ async function restorePreviousSession(){
       uiContext.localSeat=0;
       uiContext.networkMode="host";
       resetToastTracker(state);
+      resetMovementTracker(state);
       engine.replaceState(state);
       setNetworkStatus("房主狀態已恢復，房號 "+saved.roomCode+"。","success");
       return true;
@@ -552,8 +653,10 @@ function navigationIsReload(){
 }
 
 async function initializeEntryFlow(){
+  applyV5StaticUiAssets();
   renderAll();
   resetToastTracker(state);
+  resetMovementTracker(state);
 
   const saved=loadNetworkSession();
   const resumeButton=document.getElementById("resumeRoomButton");
