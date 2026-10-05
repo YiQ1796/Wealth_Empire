@@ -3282,3 +3282,253 @@ body.entry-pending .app-shell{
     height:max(18px,env(safe-area-inset-bottom))
   }
 }
+
+
+/* V20 Alpha 24 — gameplay minigames.
+   Each minigame owns a distinct interaction model; these styles are shared presentation only. */
+.race-game,
+.decision-game,
+.plinko-game{
+  display:grid;
+  gap:12px
+}
+.race-intro,
+.race-status,
+.decision-summary{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border:1px solid #d8e2ec;
+  border-radius:14px;
+  background:#f8fbfd
+}
+.race-intro strong,
+.race-status strong,
+.decision-summary strong{
+  color:#17324d;
+  font-size:18px
+}
+.race-intro span,
+.race-status span,
+.decision-summary span{
+  color:#60768a;
+  font-size:12px;
+  font-weight:800
+}
+.race-pick-grid,
+.rps-grid,
+.plinko-drop-grid,
+.auction-bids{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px
+}
+.race-pick,
+.rps-grid button,
+.plinko-drop-grid button,
+.auction-bids button,
+.decision-actions button{
+  min-height:58px;
+  border:1px solid #cdd9e5;
+  border-radius:14px;
+  background:#fff;
+  color:#17324d;
+  font-weight:1000;
+  cursor:pointer
+}
+.race-pick span,
+.rps-grid button span{
+  display:block;
+  font-size:28px;
+  line-height:1
+}
+.race-pick strong,
+.rps-grid button strong{
+  display:block;
+  margin-top:5px;
+  font-size:12px
+}
+.race-lanes{
+  display:grid;
+  gap:8px
+}
+.race-lane{
+  display:grid;
+  grid-template-columns:76px minmax(0,1fr);
+  align-items:center;
+  gap:8px
+}
+.race-lane__label{
+  color:#3b5369;
+  font-size:11px;
+  font-weight:1000
+}
+.race-track{
+  position:relative;
+  height:40px;
+  overflow:hidden;
+  border:1px solid #d9e1e8;
+  border-radius:12px;
+  background:linear-gradient(90deg,#f4f7fa 0 92%,#fff3c6 92% 100%)
+}
+.race-track i{
+  position:absolute;
+  top:0;
+  right:8%;
+  bottom:0;
+  border-left:2px dashed #b8871d
+}
+.race-runner{
+  position:absolute;
+  top:50%;
+  left:0;
+  z-index:2;
+  transform:translateY(-50%);
+  font-size:27px;
+  transition:left .45s ease
+}
+.race-runner--snail{
+  font-size:25px
+}
+.snail-event-feed{
+  display:grid;
+  gap:4px;
+  min-height:68px;
+  padding:9px 11px;
+  border-radius:12px;
+  background:#f3f7fb
+}
+.snail-event-feed span{
+  color:#4d657b;
+  font-size:11px;
+  font-weight:800
+}
+.decision-actions{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px
+}
+.treasure-chest{
+  display:grid;
+  place-items:center;
+  min-height:120px;
+  font-size:72px
+}
+.card-hand{
+  display:grid;
+  gap:6px;
+  padding:12px;
+  border:1px solid #d8e2ec;
+  border-radius:14px;
+  background:#fff
+}
+.card-hand span{
+  color:#667c90;
+  font-size:11px;
+  font-weight:900
+}
+.card-hand strong{
+  color:#17324d;
+  font-size:28px;
+  letter-spacing:3px
+}
+.plinko-board{
+  position:relative;
+  min-height:270px;
+  padding:34px 12px 46px;
+  overflow:hidden;
+  border:1px solid #d8e2ec;
+  border-radius:16px;
+  background:#f8fbfd
+}
+.plinko-ball{
+  position:absolute;
+  top:8%;
+  z-index:3;
+  font-size:24px;
+  transition:left .3s ease,top .3s ease
+}
+.plinko-row{
+  height:29px;
+  text-align:center;
+  color:#74899c;
+  letter-spacing:16px
+}
+.plinko-slots{
+  position:absolute;
+  left:8px;
+  right:8px;
+  bottom:8px;
+  display:grid;
+  grid-template-columns:repeat(9,minmax(0,1fr));
+  gap:2px
+}
+.plinko-slots b{
+  padding:5px 2px;
+  border-radius:7px;
+  background:#eef3f7;
+  text-align:center;
+  font-size:9px
+}
+.plinko-status{
+  text-align:center;
+  color:#435d73;
+  font-weight:1000
+}
+.auction-item{
+  display:grid;
+  justify-items:center;
+  gap:6px;
+  padding:14px;
+  border:1px solid #e1d3a7;
+  border-radius:16px;
+  background:#fff9e8
+}
+.auction-item span{font-size:54px}
+.auction-item strong{color:#704f14;font-size:20px}
+.auction-item small{color:#897044;font-weight:900}
+.auction-bids{
+  grid-template-columns:repeat(3,minmax(0,1fr))
+}
+
+@media (orientation:landscape) and (max-height:650px) and (max-width:1180px){
+  .race-game,
+  .decision-game,
+  .plinko-game{gap:7px}
+  .race-intro,
+  .race-status,
+  .decision-summary{padding:7px 9px}
+  .race-intro strong,
+  .race-status strong,
+  .decision-summary strong{font-size:14px}
+  .race-intro span,
+  .race-status span,
+  .decision-summary span{font-size:9px}
+  .race-pick-grid,
+  .rps-grid,
+  .plinko-drop-grid,
+  .auction-bids{gap:5px}
+  .race-pick,
+  .rps-grid button,
+  .plinko-drop-grid button,
+  .auction-bids button,
+  .decision-actions button{min-height:42px;border-radius:10px}
+  .race-pick span,
+  .rps-grid button span{font-size:20px}
+  .race-lane{grid-template-columns:58px minmax(0,1fr);gap:5px}
+  .race-track{height:28px}
+  .race-runner{font-size:20px}
+  .race-runner--snail{font-size:18px}
+  .snail-event-feed{min-height:48px;padding:5px 7px}
+  .snail-event-feed span{font-size:8px}
+  .treasure-chest{min-height:70px;font-size:46px}
+  .card-hand{padding:7px}
+  .card-hand strong{font-size:19px}
+  .plinko-board{min-height:205px;padding-top:24px}
+  .plinko-row{height:21px;font-size:10px}
+  .auction-item{padding:8px}
+  .auction-item span{font-size:34px}
+  .auction-item strong{font-size:15px}
+}
