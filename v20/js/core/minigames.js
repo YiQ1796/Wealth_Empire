@@ -48,8 +48,9 @@ function auctionValue(seed){
 
 export function chooseMinigame(state){
   const recent=new Set((state.minigameHistory??[]).slice(-RECENT_LIMIT));
-  const available=MINIGAME_DEFINITIONS.filter(game=>!recent.has(game.id));
-  const pool=available.length?available:MINIGAME_DEFINITIONS;
+  const randomPool=MINIGAME_DEFINITIONS.filter(game=>game.randomEligible!==false);
+  const available=randomPool.filter(game=>!recent.has(game.id));
+  const pool=available.length?available:randomPool;
   const random=rng(hash((state.round??1)+":"+(state.nextEventId??1)+":"+(state.turnToken??0)));
   return pool[Math.floor(random()*pool.length)];
 }
@@ -144,6 +145,17 @@ function aiPlinkoResult(random){
   return{score:clampScore(1200+multiplier*850),detail:{game:"plinko",slot,multiplier}};
 }
 
+function aiHighLowResult(random){
+  const pick=random()<0.5?"low":"high";
+  const d1=1+Math.floor(random()*6);
+  const d2=1+Math.floor(random()*6);
+  const total=d1+d2;
+  const outcome=total===7?"tie":total<=6?"low":"high";
+  const won=outcome===pick;
+  const score=outcome==="tie"?5600:won?9000:2600;
+  return{score,detail:{game:"highlow",pick,d1,d2,total,outcome,won}};
+}
+
 function aiAuctionResult(session,random,skill){
   const value=auctionValue(session.seed);
   const attitude=0.58+random()*0.58+(skill-0.74)*0.35;
@@ -164,7 +176,8 @@ export function createAiMinigameResult(state,seat){
     blackjack:()=>aiBlackjackResult(random,skill),
     plinko:()=>aiPlinkoResult(random),
     auction:()=>aiAuctionResult(session,random,skill),
-    snail:()=>aiRaceResult(session,seat,"snail",random)
+    snail:()=>aiRaceResult(session,seat,"snail",random),
+    highlow:()=>aiHighLowResult(random)
   };
   return(resolvers[session.id]??(()=>({score:5000,detail:{game:session.id}})))();
 }
