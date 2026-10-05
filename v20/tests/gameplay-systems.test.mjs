@@ -4,8 +4,9 @@ import{TILE_ART_BY_INDEX}from"../js/data/assets.js";
 import{UI_ASSETS}from"../js/data/ui-assets.js";
 import{GameEngine}from"../js/core/game.js";
 import{chooseUpgrade,shouldBuyProperty}from"../js/core/ai.js";
+import{canForceAcquireProperty}from"../js/core/property-economy.js";
 import{advanceStockMarket,buyStock,getHolding,sellStock}from"../js/core/stock-market.js";
-import{fillAiMinigameResults,finalizeMinigame,startMinigame,submitMinigameResult}from"../js/core/minigames.js";
+import{chooseMinigame,fillAiMinigameResults,finalizeMinigame,startMinigame,submitMinigameResult}from"../js/core/minigames.js";
 import{createRoomCode,normalizeRemoteAction,sanitizePlayerName,sanitizeRoomCode}from"../js/core/network.js";
 import{resolveSpecialEvent}from"../js/core/special-events.js";
 import{MINIGAME_DEFINITIONS}from"../js/data/minigames.js";
@@ -164,6 +165,12 @@ import{TRANSPORT_NODE_INDEXES}from"../js/data/transport.js";
   );
   assert.equal(normalizeRemoteAction({type:"acquisition_buy",tileIndex:44}),null);
   assert.deepEqual(normalizeRemoteAction({type:"acquisition_skip"}),{type:"acquisition_skip"});
+  assert.deepEqual(
+    normalizeRemoteAction({type:"urban_move",destinationIndex:18}),
+    {type:"urban_move",destinationIndex:18}
+  );
+  assert.equal(normalizeRemoteAction({type:"urban_move",destinationIndex:44}),null);
+  assert.deepEqual(normalizeRemoteAction({type:"urban_skip"}),{type:"urban_skip"});
 }
 
 {
@@ -339,8 +346,8 @@ import{TRANSPORT_NODE_INDEXES}from"../js/data/transport.js";
   state.players[0].position=(highLowIndex-2+state.tiles.length)%state.tiles.length;
   assert.equal(engine.roll(0,{d1:1,d2:1}),true);
   assert.equal(state.players[0].position,highLowIndex);
-  assert.equal(state.phase,"minigame","high-low tile must route into the replacement minigame system");
-  assert.ok(MINIGAME_DEFINITIONS.some(game=>game.id===state.minigame.id));
+  assert.equal(state.phase,"minigame","high-low tile must route into the dedicated minigame system");
+  assert.equal(state.minigame.id,"highlow","high-low tile must always open the dedicated high-low dice game");
 }
 
 {
@@ -367,8 +374,98 @@ import{TRANSPORT_NODE_INDEXES}from"../js/data/transport.js";
 
 assert.deepEqual(
   MINIGAME_DEFINITIONS.map(game=>game.id),
-  ["horse","treasure","rps","blackjack","plinko","auction","snail"]
+  ["horse","treasure","rps","blackjack","plinko","auction","snail","highlow"]
 );
+
+{
+  const state=createInitialState();
+  for(let i=0;i<24;i++){
+    state.round=1+(i%30);
+    state.nextEventId=10+i;
+    state.turnToken=20+i;
+    assert.notEqual(chooseMinigame(state).id,"highlow","high-low must stay dedicated to its board tile");
+  }
+}
+
+{
+  const state=createInitialState();
+  const engine=new GameEngine(state,()=>{});
+  const taxIndex=state.tiles.findIndex(tile=>tile.type==="tax");
+  state.players[0].position=(taxIndex-2+state.tiles.length)%state.tiles.length;
+  assert.equal(engine.roll(0,{d1:1,d2:1}),true);
+  assert.equal(state.phase,"landed");
+  assert.equal(state.players[0].taxEventShield,true);
+
+  const cashBefore=state.players[0].cash;
+  const blocked=resolveSpecialEvent(state,state.players[0],"chance",()=>0.34);
+  assert.equal(blocked.event.id,"chance_repair");
+  assert.equal(blocked.blockedBy,"tax");
+  assert.equal(blocked.amount,0);
+  assert.equal(state.players[0].cash,cashBefore);
+  assert.equal(state.players[0].taxEventShield,false);
+}
+
+{
+  const state=createInitialState();
+  const engine=new GameEngine(state,()=>{});
+  const hospitalIndex=state.tiles.findIndex(tile=>tile.type==="hospital");
+  state.players[0].position=(hospitalIndex-2+state.tiles.length)%state.tiles.length;
+  assert.equal(engine.roll(0,{d1:1,d2:1}),true);
+  assert.equal(state.players[0].medicalMoveShield,true);
+
+  const positionBefore=state.players[0].position;
+  const blocked=resolveSpecialEvent(state,state.players[0],"fate",()=>0.34);
+  assert.equal(blocked.event.id,"fate_blocked");
+  assert.equal(blocked.blockedBy,"hospital");
+  assert.equal(blocked.moved,false);
+  assert.equal(state.players[0].position,positionBefore);
+  assert.equal(state.players[0].medicalMoveShield,false);
+}
+
+{
+  const state=createInitialState();
+  const engine=new GameEngine(state,()=>{});
+  const courtIndex=state.tiles.findIndex(tile=>tile.type==="court");
+  const protectedProperty=state.tiles.findIndex(tile=>tile.type==="property");
+  state.tiles[protectedProperty].owner=0;
+  state.players[0].properties.push(protectedProperty);
+  state.players[0].position=(courtIndex-2+state.tiles.length)%state.tiles.length;
+  assert.equal(engine.roll(0,{d1:1,d2:1}),true);
+  assert.ok(state.players[0].courtShieldUntilRound>=state.round+1);
+  assert.equal(canForceAcquireProperty(state,protectedProperty,1),false,"court protection must block acquisition center eligibility");
+}
+
+{
+  const state=createInitialState();
+  const engine=new GameEngine(state,()=>{});
+  const marketIndex=state.tiles.findIndex(tile=>tile.type==="market");
+  const tickBefore=state.market.tick;
+  state.players[0].position=(marketIndex-2+state.tiles.length)%state.tiles.length;
+  assert.equal(engine.roll(0,{d1:1,d2:1}),true);
+  assert.equal(state.phase,"landed");
+  assert.equal(state.market.tick,tickBefore+1,"market tile must immediately refresh the existing stock market");
+  assert.equal(state.events[0].kind,"market_tick");
+}
+
+{
+  const state=createInitialState();
+  const engine=new GameEngine(state,()=>{});
+  const urbanIndex=state.tiles.findIndex(tile=>tile.type==="urban");
+  const ownedIndex=state.tiles.findIndex(tile=>tile.type==="property");
+  state.tiles[ownedIndex].owner=0;
+  state.players[0].properties.push(ownedIndex);
+  state.players[0].position=(urbanIndex-2+state.tiles.length)%state.tiles.length;
+
+  assert.equal(engine.roll(0,{d1:1,d2:1}),true);
+  assert.equal(state.phase,"urban");
+  assert.ok(state.pendingUrban.destinationIndexes.includes(ownedIndex));
+  assert.equal(engine.endTurn(0),false);
+  assert.equal(engine.useUrban(ownedIndex,0),true);
+  assert.equal(state.players[0].position,ownedIndex);
+  assert.equal(state.phase,"landed");
+  assert.equal(state.pendingUrban,null);
+  assert.equal(state.events[0].kind,"urban_complete");
+}
 
 {
   const state=createInitialState();
@@ -383,4 +480,4 @@ assert.deepEqual(
   assert.ok(session.results["0"].score>0,"auction score must be host-resolved after all bids arrive");
 }
 
-console.log("V20 Alpha 26 gameplay systems test PASS");
+console.log("V20 Alpha 27 gameplay systems test PASS");
