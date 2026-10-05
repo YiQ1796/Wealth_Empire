@@ -11,8 +11,8 @@ assert.match(html,/class="mobile-primary-actions"/);
 assert.match(html,/id="mobileRollButton"/);
 assert.match(html,/data-feature="market"/);
 assert.match(html,/id="stockMarketMobileGrid"/);
-assert.match(html,/app\.css\?v=alpha25-203/);
-assert.match(html,/main\.js\?v=alpha25-203/);
+assert.match(html,/app\.css\?v=alpha26-204/);
+assert.match(html,/main\.js\?v=alpha26-204/);
 
 assert.match(css,/V20 Alpha 19 — phone landscape authority/);
 assert.match(css,/@media \(orientation:landscape\) and \(max-height:650px\) and \(max-width:1180px\)/);
@@ -67,5 +67,8 @@ assert.match(main,/visualViewport\?\.addEventListener\("scroll",syncPhoneViewpor
 assert.match(ui,/resetScrollPosition\(\)/);
 assert.match(ui,/modal\.scrollTop=0/);
 assert.match(html,/id="transportDialog"/);
+assert.match(html,/id="acquisitionDialog"/);
 assert.match(css,/V20 Alpha 25 — functional transport system/);
 assert.match(css,/\.transport-destinations\{/);
+assert.match(css,/\.acquisition-options\{/);
+assert.match(css,/V20 Alpha 26 — acquisition center \+ continuous race presentation/);
