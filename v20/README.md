@@ -149,3 +149,58 @@ The following are intentionally separate requested systems, not partial Alpha 16
 - Final V5 art replacement, houses, character animation assets and central five-function artwork, which will be integrated only after the user supplies the complete asset batches.
 
 The V5 visual replacement must remove the old render source first. New art must never be stacked over old tile or icon sources.
+
+
+## Alpha 17 — mode entry, visible room code, free stock trading and action notices
+
+Alpha 17 changes the player flow and market timing based on playtest feedback.
+
+### Entry flow
+
+- A fresh visit no longer drops the player directly onto the board.
+- Players first choose **單機遊玩** or **好友遊玩**.
+- Single-player creates one human plus three AI players.
+- Friend mode opens the room setup flow.
+- If a multiplayer session is saved, the entry screen exposes a reconnect option.
+- A browser reload during an active saved multiplayer session still attempts automatic seat recovery.
+
+### Room-code visibility
+
+- The six-digit room code is shown in a dedicated high-contrast large-number card.
+- The room card includes a copy button.
+- The smaller form field remains for joining a room, but is no longer the primary host-room display.
+
+### Stock market timing and trading
+
+- The market updates **every time control passes to the next player**, not only once per ROUND.
+- With four active seats, the market normally moves four times during one full ROUND.
+- Market direction is system-controlled by the existing volatility, macro movement, momentum and mean-reversion model.
+- All 10 stocks move on each valid turn transition.
+- Human players may buy or sell stocks at any time while the main game is active, even when another player owns the current turn.
+- Trading is temporarily locked only while a minigame / settlement state makes concurrent market interaction unsafe.
+- AI continues making its own stock decisions through the same market and cash rules.
+
+### Global player-action notices
+
+Important synchronized events now produce temporary on-screen notices for all clients, including:
+
+- Property purchase.
+- Property upgrade.
+- Completed property region.
+- Rent payment.
+- Stock buy / sell.
+- Market movement when the next player's turn begins.
+- Minigame results.
+- Player join / reconnect / AI takeover.
+- Major cash and game-completion events.
+
+These notices are driven from host-authoritative event state, so multiplayer clients see the same confirmed actions instead of guessing from local UI state.
+
+### Alpha 17 regression checks
+
+- Off-turn stock purchase is accepted by both stock-core and GameEngine paths.
+- Minigames still lock stock trading.
+- Every valid next-player transition advances the market exactly once.
+- Player 1 → 2, 2 → 3, 3 → 4 and 4 → 1 each create a new market tick.
+- ROUND only increments when seat order wraps back to the first active player.
+- An invalid End Turn call does not create an extra market movement.
