@@ -2500,6 +2500,10 @@ body.entry-pending .app-shell{
     font-weight:1000;
     cursor:pointer
   }
+  .mobile-primary-action:disabled{
+    opacity:.45;
+    cursor:not-allowed
+  }
   .mobile-primary-action img{
     width:29px;
     height:29px;
