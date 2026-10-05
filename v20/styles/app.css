@@ -1687,3 +1687,22 @@ body.entry-pending .app-shell{
     height:44px
   }
 }
+
+
+.stock-position--empty-visual{
+  min-height:54px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px
+}
+.stock-position--empty-visual img{
+  width:48px;
+  height:38px;
+  object-fit:contain
+}
+.stock-position--empty-visual span{
+  color:#8795a3;
+  font-size:10px;
+  font-weight:900
+}
