@@ -102,14 +102,12 @@ button:focus-visible{outline:3px solid rgba(47,114,196,.28);outline-offset:2px}
   right:3px;
   bottom:3px;
   display:flex;
-  justify-content:flex-end;
+  justify-content:flex-start;
   align-items:center;
-  gap:2px;
   z-index:3;
   pointer-events:none
 }
 .tile__price{
-  margin-right:auto;
   padding:2px 4px;
   border-radius:7px;
   background:rgba(255,255,255,.94);
@@ -119,24 +117,6 @@ button:focus-visible{outline:3px solid rgba(47,114,196,.28);outline-offset:2px}
   font-weight:1000;
   color:#243c55;
   box-shadow:0 1px 4px rgba(0,0,0,.1)
-}
-.tile__level{
-  padding:2px 4px;
-  border-radius:6px;
-  background:rgba(30,74,119,.9);
-  color:#fff;
-  font-size:clamp(7px,.52vw,9px);
-  line-height:1;
-  font-weight:1000;
-  white-space:nowrap
-}
-.tile__owner{
-  width:10px;
-  height:10px;
-  flex:0 0 10px;
-  border-radius:50%;
-  border:2px solid #fff;
-  box-shadow:0 1px 4px rgba(0,0,0,.28)
 }
 .tile.vertical .tile__dynamic{left:2px;right:2px}
 .tile.vertical .tile__price{padding:2px 3px;font-size:clamp(7px,.52vw,9px)}
