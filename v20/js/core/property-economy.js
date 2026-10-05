@@ -49,6 +49,15 @@ export function propertyValue(tile){
   return tile.price+upgradeCost(tile)*Math.max(0,tile.level||0);
 }
 
+/*
+  Acquisition remains a negotiated system. This helper is informational only:
+  the previously approved suggested-offer example is 125% of current asset value.
+*/
+export function suggestedAcquisitionOffer(tile){
+  if(!tile||tile.type!=="property")return 0;
+  return Math.round(propertyValue(tile)*1.25);
+}
+
 
 export function canForceAcquireProperty(state,tileIndex,buyerSeat){
   const tile=state?.tiles?.[Number(tileIndex)];
