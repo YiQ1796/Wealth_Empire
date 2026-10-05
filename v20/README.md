@@ -63,14 +63,89 @@ Automated V20 checks cover:
 - Rent transfer and cumulative paid/received accounting.
 - JavaScript module syntax.
 
-## Not yet claimed complete in V20
 
-The following systems are intentionally **not** marked complete by Alpha 15:
+## Alpha 16 — gameplay systems complete checkpoint
 
-- Full special-event behavior for all non-property tiles.
-- Strategy-item inventory and proactive-use prompts.
-- Live stock buying/selling and player stock positions.
-- Multiplayer room synchronization, reload recovery and reconnect.
-- Final mobile landscape visual acceptance.
+Alpha 16 completes the current requested gameplay systems as end-to-end features instead of temporary prototypes.
 
-Alpha 15 completes the single-player 44-grid property economy foundation first. Those systems must be completed and tested as separate end-to-end features rather than patched into this checkpoint.
+### Replacement minigames
+
+All legacy minigame execution is retired. The former high-low and horse triggers now enter one shared six-game challenge pool:
+
+1. 都會快遞戰 — reaction / lane decision.
+2. 金庫解鎖 — timing / precision.
+3. 摩天樓疊樓戰 — spatial precision.
+4. 商業記憶戰 — memory sequence.
+5. 城市路線規劃 — route-cost planning.
+6. 商圈選址戰 — multi-factor investment judgment.
+
+Rules:
+
+- Every active player participates.
+- AI players submit results through the same minigame lifecycle.
+- Human players play locally and submit a score to the host.
+- The last three minigames are excluded from the next random draw when possible.
+- Every rank receives a reward; higher ranks receive more.
+- Minigame state is host-authoritative and is included in room snapshots.
+
+### AI players
+
+- Single-player starts with one human and three AI players.
+- Multiplayer rooms keep empty seats as AI and replace those seats when friends join before the game starts.
+- AI decisions use cash reserves, region completion value, property upgrade value and stock trend/value signals.
+- AI profiles are balanced, cautious and aggressive.
+- Disconnected human seats are reserved for 20 seconds for reload/reconnect before AI takeover.
+- AI minigame results use deterministic seeded behavior and do not read hidden human inputs.
+
+### Multiplayer / reconnect
+
+- Six-digit temporary room codes.
+- Host-authoritative game state.
+- WSS/MQTT relay is the primary transport for cross-network/mobile reliability.
+- PeerJS/WebRTC is kept as fallback transport.
+- Host state is persisted locally and restored after refresh.
+- Guest client identity and seat are persisted locally and rejoin the same seat after refresh.
+- A disconnected seat is not immediately destroyed; the reconnect grace window prevents accidental refresh from creating a new player.
+
+### Stock market
+
+- All 10 stocks move every ROUND.
+- Every stock stores previous price, current price, round change and rolling history.
+- Price movement combines volatility, macro movement, momentum and mean reversion.
+- Every stock is forced to move at least one price unit each round, including price-boundary handling.
+- Players can freely buy and sell quantities during their own turn.
+- Holdings track shares, average cost, current value, unrealized P/L and realized P/L.
+- AI players can also buy and sell using the same market state and cash rules.
+- ROUND transition advances the market exactly once.
+
+### UI behavior
+
+- 股票 / 我的房產 / 道具 / 資訊 are shortcut buttons that open independent modal windows instead of compressing the right-side HUD.
+- Multiplayer setup has its own room dialog.
+- Minigames run in their own modal and show all four participants plus final rankings.
+
+## Alpha 16 verification
+
+Deployment is gated by both existing property-economy tests and the new gameplay-systems test suite. The new checks cover:
+
+- Offline human seat remains active.
+- Three AI seats are created correctly.
+- Every stock changes each round.
+- Buy/sell accounting and turn ownership.
+- AI property-set completion behavior.
+- AI property upgrade selection.
+- Minigame AI filling, human submission, four-player ranking and rewards.
+- Six-digit room-code validation and remote-action validation.
+- Market advances exactly once on round transition.
+- Round 30 ends the game instead of looping forever.
+- Legacy high-low trigger enters the replacement minigame pool.
+
+## Still outside Alpha 16
+
+The following are intentionally separate requested systems, not partial Alpha 16 implementations:
+
+- Remaining non-minigame special-event gameplay.
+- Strategy-item inventory and proactive-use rules.
+- Final V5 art replacement, houses, character animation assets and central five-function artwork, which will be integrated only after the user supplies the complete asset batches.
+
+The V5 visual replacement must remove the old render source first. New art must never be stacked over old tile or icon sources.
