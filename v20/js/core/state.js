@@ -12,6 +12,7 @@ export function createPlayer(seat,name,kind="ai"){
     aiProfile:kind==="ai"?assignAiProfile(seat):null,
     clientId:null,
     connected:true,
+    characterIndex:seat,
     color:PLAYER_COLORS[seat],
     cash:45600,
     position:0,
@@ -82,7 +83,14 @@ export function hydrateState(raw){
       ...base,
       ...saved,
       seat,
-      color:PLAYER_COLORS[seat],
+      characterIndex:Number.isInteger(saved.characterIndex)&&saved.characterIndex>=0&&saved.characterIndex<PLAYER_COLORS.length
+        ? saved.characterIndex
+        : seat,
+      color:PLAYER_COLORS[
+        Number.isInteger(saved.characterIndex)&&saved.characterIndex>=0&&saved.characterIndex<PLAYER_COLORS.length
+          ? saved.characterIndex
+          : seat
+      ],
       portfolio:saved.portfolio??{}
     };
   });
@@ -96,9 +104,33 @@ export function hydrateState(raw){
   return state;
 }
 
-export function setHumanSeat(state,seat,{name,clientId,connected=true}={}){
+export function setPlayerCharacter(state,seat,characterIndex){
+  const target=state.players?.[Number(seat)];
+  const nextIndex=Math.floor(Number(characterIndex));
+  if(!target||!Number.isInteger(nextIndex)||nextIndex<0||nextIndex>=PLAYER_COLORS.length)return false;
+
+  const previousIndex=Number.isInteger(target.characterIndex)?target.characterIndex:target.seat;
+  if(previousIndex===nextIndex){
+    target.characterIndex=nextIndex;
+    target.color=PLAYER_COLORS[nextIndex];
+    return true;
+  }
+
+  const other=state.players.find(player=>player.seat!==target.seat&&player.characterIndex===nextIndex);
+  if(other){
+    other.characterIndex=previousIndex;
+    other.color=PLAYER_COLORS[previousIndex];
+  }
+
+  target.characterIndex=nextIndex;
+  target.color=PLAYER_COLORS[nextIndex];
+  return true;
+}
+
+export function setHumanSeat(state,seat,{name,clientId,connected=true,characterIndex=null}={}){
   const player=state.players[seat];
   if(!player)return false;
+  if(characterIndex!=null)setPlayerCharacter(state,seat,characterIndex);
   player.kind="human";
   player.aiProfile=null;
   player.name=(name||player.name||"玩家"+(seat+1)).slice(0,20);
