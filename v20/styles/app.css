@@ -64,7 +64,7 @@ button:focus-visible{outline:3px solid rgba(47,114,196,.28);outline-offset:2px}
   gap:0;
   overflow:hidden;
   border-radius:12px;
-  background:transparent
+  background:#fff7df
 }
 .tile{
   position:relative;
@@ -1779,28 +1779,60 @@ body.entry-pending .app-shell{
 }
 .stock-market-grid--persistent{
   min-height:0;
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  align-content:start;
-  gap:6px;
+  display:block;
   overflow:auto;
   overscroll-behavior:contain;
   padding-right:2px
 }
+.stock-pair-row{
+  min-width:0;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:6px;
+  margin-bottom:6px
+}
+.stock-pair-row:last-child{margin-bottom:0}
+.stock-pair-row__spacer{min-width:0}
 .desktop-stock-panel .stock-trade-card{
-  padding:8px;
+  min-width:0;
+  padding:7px;
   border-radius:11px
 }
+.desktop-stock-panel .stock-trade-card__head{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:start;
+  gap:4px
+}
 .desktop-stock-panel .stock-trade-card__head strong{
-  font-size:13px
+  overflow:hidden;
+  font-size:11px;
+  line-height:1.15;
+  text-overflow:ellipsis;
+  white-space:nowrap
+}
+.desktop-stock-panel .stock-trade-card__head small{
+  font-size:7px
 }
 .desktop-stock-panel .stock-price b{
-  font-size:18px
+  font-size:16px;
+  line-height:1
+}
+.desktop-stock-panel .stock-price em{
+  font-size:8px
 }
 .desktop-stock-panel .stock-position{
   grid-template-columns:repeat(2,minmax(0,1fr));
   margin-top:5px;
   gap:3px
+}
+.desktop-stock-panel .stock-position--empty{
+  grid-column:1/-1;
+  min-height:42px
+}
+.desktop-stock-panel .stock-position--empty-visual img{
+  width:34px;
+  height:28px
 }
 .desktop-stock-panel .stock-position span{
   padding:4px;
@@ -1818,14 +1850,14 @@ body.entry-pending .app-shell{
   grid-column:1/-1
 }
 .desktop-stock-panel .stock-trade-controls input{
-  min-height:30px;
-  padding:4px 6px;
-  font-size:13px
+  min-height:28px;
+  padding:4px 5px;
+  font-size:12px
 }
 .desktop-stock-panel .stock-trade-controls button{
-  min-height:30px;
-  padding:5px 8px;
-  font-size:10px
+  min-height:28px;
+  padding:4px 6px;
+  font-size:9px
 }
 
 /* V20 Alpha 18 — notification keeps its original size; only its anchor moves to the board center. */
