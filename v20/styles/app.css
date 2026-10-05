@@ -1197,74 +1197,6 @@ body.entry-pending .app-shell{
   cursor:pointer;
 }
 
-.action-toast-stack{
-  position:fixed;
-  top:18px;
-  left:50%;
-  z-index:12000;
-  width:min(620px,calc(100vw - 24px));
-  display:grid;
-  gap:8px;
-  transform:translateX(-50%);
-  pointer-events:none;
-}
-.action-toast{
-  display:grid;
-  grid-template-columns:42px minmax(0,1fr);
-  align-items:center;
-  gap:10px;
-  padding:11px 14px;
-  border:1px solid rgba(189,204,216,.88);
-  border-left:5px solid #457fb2;
-  border-radius:14px;
-  background:rgba(255,255,255,.97);
-  box-shadow:0 13px 36px rgba(25,46,64,.23);
-  opacity:0;
-  transform:translateY(-16px) scale(.98);
-  transition:opacity .2s ease,transform .2s ease;
-}
-.action-toast.show{
-  opacity:1;
-  transform:translateY(0) scale(1);
-}
-.action-toast__icon{
-  width:42px;
-  height:42px;
-  display:grid;
-  place-items:center;
-  border-radius:12px;
-  background:#eef4f8;
-  font-size:22px;
-}
-.action-toast strong{
-  display:block;
-  color:#244763;
-  font-size:11px;
-}
-.action-toast p{
-  margin:2px 0 0;
-  color:#223b51;
-  font-size:13px;
-  font-weight:900;
-  line-height:1.4;
-}
-.action-toast--stock_buy,
-.action-toast--stock_sell{
-  border-left-color:#be8b2c;
-}
-.action-toast--property_buy,
-.action-toast--property_upgrade,
-.action-toast--group_complete{
-  border-left-color:#966fc0;
-}
-.action-toast--rent,
-.action-toast--cash{
-  border-left-color:#47a572;
-}
-.action-toast--market_tick{
-  border-left-color:#2e85b8;
-}
-
 @media(max-width:760px){
   .entry-gate{
     padding:12px;
@@ -1300,9 +1232,6 @@ body.entry-pending .app-shell{
   .room-code-hero>strong{
     text-align:left;
     font-size:28px;
-  }
-  .action-toast-stack{
-    top:8px;
   }
 }
 
