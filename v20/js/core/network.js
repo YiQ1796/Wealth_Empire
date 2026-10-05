@@ -24,6 +24,11 @@ export const NETWORK_ACTION_TYPES=Object.freeze([
   "acquisition_skip",
   "urban_move",
   "urban_skip",
+  "central_bank_deposit",
+  "central_mission_accept",
+  "central_transit",
+  "central_insurance",
+  "central_development",
   "end_turn",
   "start_game"
 ]);
@@ -111,6 +116,24 @@ export function normalizeRemoteAction(raw){
     const destinationIndex=Math.floor(Number(raw.destinationIndex));
     if(!Number.isFinite(destinationIndex)||destinationIndex<0||destinationIndex>43)return null;
     action.destinationIndex=destinationIndex;
+  }
+
+  if(raw.type==="central_mission_accept"){
+    const missionId=String(raw.missionId??"");
+    if(!["buy_property","upgrade_property","buy_stock"].includes(missionId))return null;
+    action.missionId=missionId;
+  }
+
+  if(raw.type==="central_transit"){
+    const distance=Math.floor(Number(raw.distance));
+    if(![3,6,9].includes(distance))return null;
+    action.distance=distance;
+  }
+
+  if(raw.type==="central_development"){
+    const tileIndex=Math.floor(Number(raw.tileIndex));
+    if(!Number.isFinite(tileIndex)||tileIndex<0||tileIndex>43)return null;
+    action.tileIndex=tileIndex;
   }
 
   return action;
