@@ -256,7 +256,7 @@ jobs:
           set -euo pipefail
           grep -q 'id="transportDialog"' v20/index.html
           grep -q 'id="transportDestinationList"' v20/index.html
-          grep -q 'TRANSPORT_NODE_INDEXES=Object.freeze(\[10,13,32,43\])' v20/js/data/transport.js
+          grep -Fq 'TRANSPORT_NODE_INDEXES=Object.freeze([10,13,32,43])' v20/js/data/transport.js
           grep -q 'createPendingTransport' v20/js/core/transport.js
           grep -q 'state.phase="transport"' v20/js/core/game.js
           grep -q 'useTransport(destinationIndex' v20/js/core/game.js
