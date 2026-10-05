@@ -416,8 +416,12 @@ function renderNetworkUi(){
       : player.connected===false
         ? "真人｜重新連線等待中"
         : "真人｜已連線";
+    const badge=player.kind==="ai"
+      ? UI_ASSETS.badges.autoFill
+      : UI_ASSETS.badges.player;
     return '<div class="network-seat-row">'+
       '<span style="--player-color:'+player.color+'"></span>'+
+      '<img class="network-seat-badge" src="'+badge+'" alt="">'+
       '<strong>座位 '+(player.seat+1)+"｜"+player.name+'</strong>'+
       '<em>'+status+'</em>'+
     '</div>';
