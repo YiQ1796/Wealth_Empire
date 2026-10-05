@@ -33,16 +33,26 @@ export function resolveSpecialEvent(state,player,type,random=Math.random){
 
   if(effect.kind==="cash"){
     const requested=Math.round(Number(effect.amount)||0);
-    const actual=requested<0?-Math.min(player.cash,Math.abs(requested)):requested;
-    player.cash=Math.max(0,player.cash+actual);
-    result={...result,amount:actual,cashAfter:player.cash};
+    if(requested<0&&player.taxEventShield){
+      player.taxEventShield=false;
+      result={...result,amount:0,cashAfter:player.cash,blockedBy:"tax"};
+    }else{
+      const actual=requested<0?-Math.min(player.cash,Math.abs(requested)):requested;
+      player.cash=Math.max(0,player.cash+actual);
+      result={...result,amount:actual,cashAfter:player.cash};
+    }
   }else if(effect.kind==="move"){
     const delta=Math.trunc(Number(effect.delta)||0);
+    if(delta<0&&player.medicalMoveShield){
+      player.medicalMoveShield=false;
+      result={...result,delta:0,blockedBy:"hospital"};
+    }else{
     const size=Math.max(1,state.tiles?.length??44);
     const from=player.position;
     const to=wrappedPosition(from,delta,size);
     player.position=to;
     result={...result,moved:from!==to,from,to,delta};
+    }
   }
 
   state.specialEventHistory=[
