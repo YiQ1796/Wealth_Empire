@@ -240,7 +240,10 @@ jobs:
           grep -q 'chance_bonus' v20/js/data/special-events.js
           grep -q 'fate_patron' v20/js/data/special-events.js
           grep -q 'specialEventHistory' v20/js/core/state.js
-          grep -q 'forcedGameId=tile.type==="horse"?"horse":null' v20/js/core/game.js
+          grep -q 'tile.type==="horse"' v20/js/core/game.js
+          grep -q '?"horse"' v20/js/core/game.js
+          grep -q 'tile.type==="auction"' v20/js/core/game.js
+          grep -q '?"auction"' v20/js/core/game.js
           grep -q 'V20 Alpha 24 — gameplay minigames' v20/styles/app.css
 
           if grep -qE 'name:"幸運快遞"|name:"幸運樓層"|name:"命運翻牌"|name:"城市岔路"|name:"商圈開盤"' v20/js/data/minigames.js; then
