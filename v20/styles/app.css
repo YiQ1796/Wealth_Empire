@@ -111,30 +111,6 @@ button:focus-visible{outline:3px solid rgba(47,114,196,.28);outline-offset:2px}
   background:linear-gradient(180deg,#fff,#edf3f7)
 }
 .tile.has-art .tile__fallback-name{display:none}
-.tile__dynamic{
-  position:absolute;
-  left:3px;
-  right:3px;
-  bottom:3px;
-  display:flex;
-  justify-content:flex-start;
-  align-items:center;
-  z-index:3;
-  pointer-events:none
-}
-.tile__price{
-  padding:2px 4px;
-  border-radius:7px;
-  background:rgba(255,255,255,.94);
-  font-size:clamp(7px,.57vw,10px);
-  line-height:1.05;
-  white-space:nowrap;
-  font-weight:1000;
-  color:#243c55;
-  box-shadow:0 1px 4px rgba(0,0,0,.1)
-}
-.tile.vertical .tile__dynamic{left:2px;right:2px}
-.tile.vertical .tile__price{padding:2px 3px;font-size:clamp(7px,.52vw,9px)}
 .tile__tokens{
   position:absolute;
   left:50%;
@@ -1447,13 +1423,13 @@ body.entry-pending .app-shell{
 
 
 /* V20 Alpha 18 — V5 complete visual replacement */
-.tile__houses{
+ .tile__houses{
   position:absolute;
-  left:5px;
-  right:5px;
-  bottom:16px;
+  left:4px;
+  right:4px;
+  bottom:2px;
   z-index:6;
-  min-height:28px;
+  min-height:26px;
   display:flex;
   align-items:flex-end;
   justify-content:space-evenly;
@@ -2857,4 +2833,176 @@ body.entry-pending .app-shell{
   .action-toast--major .action-toast__content{
     min-height:86px
   }
+}
+
+
+/* V20 Alpha 20 — property tiles keep the footer clear for houses.
+   Price/rent details moved to the click-through property information card. */
+.tile--property{cursor:pointer}
+.tile--property:focus-visible{
+  outline:4px solid #3f8bd7;
+  outline-offset:-4px
+}
+.tile__houses{
+  left:4px;
+  right:4px;
+  bottom:2px;
+  min-height:26px
+}
+.tile.vertical .tile__houses{bottom:2px}
+
+.property-info-dialog{
+  width:min(560px,calc(100vw - 24px));
+  max-height:calc(100dvh - 24px);
+  padding:0;
+  border:0;
+  background:transparent;
+  overflow:visible
+}
+.property-info-dialog::backdrop{
+  background:rgba(18,34,49,.48);
+  backdrop-filter:blur(3px)
+}
+.property-info-card{
+  max-height:calc(100dvh - 32px);
+  overflow:auto;
+  padding:16px;
+  border:1px solid rgba(217,226,236,.98);
+  border-radius:20px;
+  background:#fff;
+  box-shadow:0 24px 70px rgba(18,36,56,.34)
+}
+.property-info-card__header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:12px
+}
+.property-info-card__title{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  gap:10px
+}
+.property-info-card__title>img{
+  width:50px;
+  height:50px;
+  flex:0 0 50px;
+  object-fit:contain
+}
+.property-info-card__title h2{
+  margin:0;
+  color:#183953;
+  font-size:24px;
+  line-height:1.05
+}
+.property-info-card__title p{
+  margin:4px 0 0;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:900
+}
+.property-info-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px
+}
+.property-info-grid>div,
+.property-info-owner,
+.property-info-acquisition{
+  border:1px solid #dde6ee;
+  border-radius:12px;
+  background:#f8fbfd
+}
+.property-info-grid>div{
+  min-width:0;
+  padding:10px
+}
+.property-info-grid span,
+.property-info-owner span,
+.property-info-acquisition>span{
+  display:block;
+  color:#718096;
+  font-size:10px;
+  font-weight:1000
+}
+.property-info-grid strong,
+.property-info-owner strong,
+.property-info-acquisition strong{
+  display:block;
+  margin-top:3px;
+  color:#17324d;
+  font-size:18px;
+  line-height:1.15;
+  font-weight:1000
+}
+.property-info-owner{
+  margin-top:8px;
+  padding:10px
+}
+.property-info-owner p{
+  margin:5px 0 0;
+  color:#526a7f;
+  font-size:11px;
+  line-height:1.4;
+  font-weight:900
+}
+.property-info-acquisition{
+  margin-top:8px;
+  padding:11px;
+  border-color:#ead8a1;
+  background:#fff9e8
+}
+.property-info-acquisition strong{
+  color:#8b641e;
+  font-size:21px
+}
+.property-info-acquisition p{
+  margin:5px 0 0;
+  color:#705d35;
+  font-size:10px;
+  line-height:1.45;
+  font-weight:900
+}
+
+@media (orientation:landscape) and (max-height:650px) and (max-width:1180px){
+  .property-info-dialog{
+    width:min(600px,calc(100vw - max(18px,env(safe-area-inset-left)) - max(18px,env(safe-area-inset-right))));
+    max-height:calc(100dvh - max(10px,env(safe-area-inset-top)) - max(10px,env(safe-area-inset-bottom)))
+  }
+  .property-info-card{
+    max-height:calc(100dvh - max(14px,env(safe-area-inset-top)) - max(14px,env(safe-area-inset-bottom)));
+    padding:10px;
+    border-radius:14px
+  }
+  .property-info-card__header{margin-bottom:7px}
+  .property-info-card__title>img{
+    width:38px;
+    height:38px;
+    flex-basis:38px
+  }
+  .property-info-card__title h2{font-size:18px}
+  .property-info-card__title p{font-size:9px}
+  .property-info-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:5px
+  }
+  .property-info-grid>div{padding:7px}
+  .property-info-grid span,
+  .property-info-owner span,
+  .property-info-acquisition>span{font-size:8px}
+  .property-info-grid strong,
+  .property-info-owner strong{font-size:13px}
+  .property-info-owner{
+    margin-top:5px;
+    padding:7px
+  }
+  .property-info-owner p{font-size:9px}
+  .property-info-acquisition{
+    margin-top:5px;
+    padding:7px
+  }
+  .property-info-acquisition strong{font-size:15px}
+  .property-info-acquisition p{font-size:8px}
 }
