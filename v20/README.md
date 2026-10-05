@@ -223,6 +223,8 @@ Alpha 18 replaces the remaining V20 legacy board/player/shortcut render sources 
 - LV.1: 2 houses.
 - LV.2: 3 houses.
 - House color always follows the current owner seat, so ownership transfer automatically changes house color.
+- The legacy board owner-color dot and LV text chip are removed from DOM/CSS; V5 house count/color is the only board ownership/level visual source.
+- Price / rent text remains because it is live gameplay data, not a duplicate ownership marker.
 - LV.2 is protected from forced acquisition in the property-economy core.
 - LV.2 properties display the V5 no-acquisition badge.
 
