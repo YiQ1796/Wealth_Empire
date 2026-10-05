@@ -264,6 +264,7 @@ export class MinigameUI{
     if(fx){
       fx.textContent=label;
       fx.dataset.effect=effect;
+      fx.style.left=runner.style.left||"8px";
       fx.classList.add("show");
     }
 
