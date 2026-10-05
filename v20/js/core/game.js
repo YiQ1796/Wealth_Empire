@@ -1,6 +1,7 @@
 import{shouldBuyProperty,chooseStockOrders,chooseUpgrade}from"./ai.js";
 import{fillAiMinigameResults,finalizeMinigame,startMinigame,submitMinigameResult as submitGameResult}from"./minigames.js";
 import{canUpgradeProperty,ownsCompleteGroup,rentFor,upgradeCost}from"./property-economy.js";
+import{GROUP_SIZES,groupRentMultiplier}from"../data/board.js";
 import{advanceStockMarket,buyStock as executeBuyStock,getMarketStock,sellStock as executeSellStock}from"./stock-market.js";
 
 export class GameEngine{
@@ -103,7 +104,9 @@ export class GameEngine{
         owner.rentReceived+=paid;
         this.log(
           player.name+" 支付「"+tile.name+"」過路費 "+this.formatMoney(paid)+" 給 "+owner.name+"。"+
-          (ownsCompleteGroup(this.state,tile.owner,tile.group)?"（區域完成 +25%）":""),
+          (ownsCompleteGroup(this.state,tile.owner,tile.group)
+            ?"（連區 ×"+groupRentMultiplier(tile.group)+"）"
+            :""),
           "rent",
           {
             payerSeat:player.seat,
@@ -197,10 +200,12 @@ export class GameEngine{
     );
 
     if(ownsCompleteGroup(this.state,player.seat,tile.group)){
+      const total=GROUP_SIZES[tile.group]??0;
+      const multiplier=groupRentMultiplier(tile.group);
       this.log(
-        player.name+" 已完成「"+tile.group+"」3/3 地產，該區過路費永久提高 25%。",
+        player.name+" 已完成「"+tile.group+"」"+total+"/"+total+" 地產，該區過路費提升至 ×"+multiplier+"。",
         "group_complete",
-        {seat:player.seat,group:tile.group}
+        {seat:player.seat,group:tile.group,total,multiplier}
       );
     }
 
