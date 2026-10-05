@@ -50,6 +50,7 @@ const ACTION_TOAST_KINDS=new Set([
   "property_acquisition",
   "bankruptcy",
   "cash",
+  "special_event",
   "game_complete"
 ]);
 const uiContext={
@@ -149,6 +150,18 @@ function resetToastTracker(targetState=state){
 
 function noticeConfig(event){
   const N=UI_ASSETS.notification;
+  if(event.kind==="special_event"){
+    const amount=Number(event.data?.amount)||0;
+    const tone=event.data?.effectKind==="cash"&&amount<0?"red":event.data?.type==="fate"?"purple":"gold";
+    return{
+      title:event.data?.type==="fate"?"命運事件":"機會事件",
+      icon:N.icons.minigameResult,
+      effect:tone==="red"?N.effects.red:tone==="purple"?N.effects.purple:N.effects.gold,
+      tone,
+      major:true,
+      metric:true
+    };
+  }
   const map={
     property_buy:{title:"地產購入",icon:N.icons.propertyBuy,effect:N.effects.gold,tone:"gold",major:true},
     property_upgrade:{title:"地產升級",icon:N.icons.propertyUpgrade,effect:N.effects.purple,tone:"purple",major:true},
@@ -296,6 +309,22 @@ function noticeView(event){
         metric:noticeSignedMoney(data.amount),
         details:[]
       };
+
+    case"special_event":{
+      const metric=data.effectKind==="cash"
+        ? noticeSignedMoney(data.amount)
+        : data.effectKind==="move"
+          ? ((Number(data.delta)>=0?"前進 ":"後退 ")+Math.abs(Number(data.delta)||0)+" 格")
+          : "事件";
+      const details=[];
+      if(data.effectKind==="cash"&&Number.isFinite(Number(data.cashAfter))){
+        details.push("事件後現金 "+noticeMoney(data.cashAfter));
+      }
+      if(data.effectKind==="move"){
+        details.push("位置 "+(Number(data.from)+1)+" → "+(Number(data.to)+1));
+      }
+      return{message:event.text,metric,details};
+    }
 
     case"market_tick":{
       const movers=Array.isArray(data.movers)?data.movers:[];
