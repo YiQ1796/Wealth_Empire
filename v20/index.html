@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#eef3f7">
 <title>財富帝國 V20 Alpha 18</title>
-<link rel="stylesheet" href="./styles/app.css?v=alpha18-184">
+<link rel="stylesheet" href="./styles/app.css?v=alpha18-191">
 </head>
 <body class="entry-pending">
 <section id="entryGate" class="entry-gate" aria-label="遊戲模式選擇">
@@ -15,6 +15,30 @@
       <h1>財富帝國</h1>
       <p>先選擇這一局要怎麼玩，再進入棋盤。</p>
     </div>
+    <section class="character-picker" aria-label="角色選擇">
+      <div class="character-picker__heading">
+        <strong>選擇角色</strong>
+        <span>角色顏色也會成為你持有地產的外框顏色</span>
+      </div>
+      <div class="character-picker__grid">
+        <button type="button" class="character-choice selected" data-character-choice="0" aria-pressed="true">
+          <img src="./assets/v5/ui/characters/PLAYER_BLUE_IDLE.webp" alt="">
+          <strong>藍色玩家</strong>
+        </button>
+        <button type="button" class="character-choice" data-character-choice="1" aria-pressed="false">
+          <img src="./assets/v5/ui/characters/PLAYER_RED_IDLE.webp" alt="">
+          <strong>紅色玩家</strong>
+        </button>
+        <button type="button" class="character-choice" data-character-choice="2" aria-pressed="false">
+          <img src="./assets/v5/ui/characters/PLAYER_GREEN_IDLE.webp" alt="">
+          <strong>綠色玩家</strong>
+        </button>
+        <button type="button" class="character-choice" data-character-choice="3" aria-pressed="false">
+          <img src="./assets/v5/ui/characters/PLAYER_PURPLE_IDLE.webp" alt="">
+          <strong>紫色玩家</strong>
+        </button>
+      </div>
+    </section>
     <div class="entry-mode-grid">
       <button id="startSoloButton" type="button" class="entry-mode entry-mode--solo">
         <span class="entry-mode__icon">🤖</span>
@@ -204,6 +228,6 @@
 </dialog>
 
 <div id="actionToastStack" class="action-toast-stack" aria-live="polite" aria-atomic="false"></div>
-<script type="module" src="./js/main.js?v=alpha18-184"></script>
+<script type="module" src="./js/main.js?v=alpha18-191"></script>
 </body>
 </html>
