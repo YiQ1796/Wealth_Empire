@@ -152,9 +152,11 @@ export class MinigameUI{
       const suffix=rank
         ? "#"+rank.rank+"｜"+rank.score+" 分｜+$"+rank.reward.toLocaleString()
         : result
-          ? result.score+" 分 ✓"
+          ? session?.id==="auction"
+            ? "已暗標 ✓"
+            : result.score+" 分 ✓"
           : player.kind==="ai"
-            ? "AI 已完成"
+            ? session?.id==="auction"?"AI 已暗標":"AI 已完成"
             : "進行中";
       return '<div class="minigame-score-row">'+
         '<span style="--player-color:'+player.color+'"></span>'+
