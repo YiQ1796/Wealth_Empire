@@ -33,6 +33,8 @@ function roundPercent(value){
 export function createInitialMarket(){
   return{
     round:1,
+    tick:0,
+    lastSeat:0,
     seed:20261005,
     stocks:STOCK_DEFINITIONS.map(stock=>({
       ...stock,
@@ -61,14 +63,23 @@ export function getHolding(player,stockId){
   return portfolio[stockId];
 }
 
-export function advanceStockMarket(state,nextRound){
+export function advanceStockMarket(state,context={}){
   if(!state.market)state.market=createInitialMarket();
-  const round=Math.max(1,Number(nextRound)||state.market.round+1);
-  const macroRandom=mulberry32(hashString("macro:"+state.market.seed+":"+round));
+
+  const options=typeof context==="number"?{round:context}:context;
+  const round=Math.max(1,Number(options.round)||Number(state.round)||state.market.round||1);
+  const nextSeat=Number.isInteger(options.nextSeat)?options.nextSeat:Number(state.currentPlayer)||0;
+  const tick=Math.max(1,(Number(state.market.tick)||0)+1);
+
+  const macroRandom=mulberry32(hashString(
+    "macro:"+state.market.seed+":"+tick+":"+round+":"+nextSeat
+  ));
   const macro=(macroRandom()-0.5)*0.055;
 
   for(const stock of state.market.stocks){
-    const random=mulberry32(hashString(stock.id+":"+state.market.seed+":"+round));
+    const random=mulberry32(hashString(
+      stock.id+":"+state.market.seed+":"+tick+":"+round+":"+nextSeat
+    ));
     const noise=(random()-0.5)*2*stock.volatility;
     const reversion=((stock.basePrice-stock.price)/Math.max(1,stock.basePrice))*0.11;
     const momentum=(stock.changePercent/100)*0.16;
@@ -95,6 +106,8 @@ export function advanceStockMarket(state,nextRound){
   }
 
   state.market.round=round;
+  state.market.tick=tick;
+  state.market.lastSeat=nextSeat;
   return state.market;
 }
 
