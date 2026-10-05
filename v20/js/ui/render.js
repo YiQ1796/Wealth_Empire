@@ -41,13 +41,7 @@ export function mountStaticBoard(boardElement){
   BOARD_TILES.forEach((tile,index)=>{
     const placement=boardPlacement(index);
     const node=document.createElement("div");
-    const edgeClasses=[];
-    if(placement.row===1)edgeClasses.push("edge-top");
-    if(placement.row===11)edgeClasses.push("edge-bottom");
-    if(placement.col===1)edgeClasses.push("edge-left");
-    if(placement.col===13)edgeClasses.push("edge-right");
-    node.className="tile "+placement.orientation+(CORNER_INDEXES.includes(index)?" corner":"")+
-      (edgeClasses.length?" "+edgeClasses.join(" "):"");
+    node.className="tile "+placement.orientation+(CORNER_INDEXES.includes(index)?" corner":"");
     node.dataset.index=String(index);
     node.style.gridRow=String(placement.row);
     node.style.gridColumn=String(placement.col);
