@@ -28,8 +28,9 @@ export function renderStockMarket(container,state,localSeat,{onBuy=()=>{},onSell
 
   const canTrade=
     state.gameStatus==="playing"&&
-    state.currentPlayer===localSeat&&
-    state.phase!=="minigame";
+    !player.bankrupt&&
+    state.phase!=="minigame"&&
+    state.phase!=="finished";
 
   container.innerHTML=state.market.stocks.map(stock=>{
     const trend=trendClass(stock.changePercent);
