@@ -219,27 +219,30 @@ async function animateMoveEvent(event){
 
   document.body.classList.add("board-motion-active");
   board.classList.add("moving-seat-"+seat);
-  await sleep(35);
+  try{
+    await sleep(35);
 
-  for(let i=0;i<path.length;i++){
-    const point=tileCenter(path[i]);
-    if(!point)continue;
-    moving.src=characterAsset(seat,i%2===0?"walkA":"walkB");
-    moving.classList.add("walking");
-    moving.style.left=point.left+"px";
-    moving.style.top=point.top+"px";
-    await sleep(65);
+    for(let i=0;i<path.length;i++){
+      const point=tileCenter(path[i]);
+      if(!point)continue;
+      moving.src=characterAsset(seat,i%2===0?"walkA":"walkB");
+      moving.classList.add("walking");
+      moving.style.left=point.left+"px";
+      moving.style.top=point.top+"px";
+      await sleep(65);
+    }
+
+    moving.classList.remove("walking");
+    moving.classList.add("jumping");
+    moving.src=characterAsset(seat,"jump");
+    await sleep(180);
+    moving.src=characterAsset(seat,"idle");
+    await sleep(70);
+  }finally{
+    moving.remove();
+    board.classList.remove("moving-seat-"+seat);
+    document.body.classList.remove("board-motion-active");
   }
-
-  moving.classList.remove("walking");
-  moving.classList.add("jumping");
-  moving.src=characterAsset(seat,"jump");
-  await sleep(180);
-  moving.src=characterAsset(seat,"idle");
-  await sleep(70);
-  moving.remove();
-  board.classList.remove("moving-seat-"+seat);
-  document.body.classList.remove("board-motion-active");
 }
 
 function processMoveAnimations(){
