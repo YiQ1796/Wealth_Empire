@@ -1,4 +1,7 @@
+import{shouldBuyProperty,chooseStockOrders,chooseUpgrade}from"./ai.js";
+import{fillAiMinigameResults,finalizeMinigame,startMinigame,submitMinigameResult as submitGameResult}from"./minigames.js";
 import{canUpgradeProperty,ownsCompleteGroup,rentFor,upgradeCost}from"./property-economy.js";
+import{advanceStockMarket,buyStock as executeBuyStock,sellStock as executeSellStock}from"./stock-market.js";
 
 export class GameEngine{
   constructor(state,onChange){
@@ -6,7 +9,16 @@ export class GameEngine{
     this.onChange=onChange;
   }
 
+  replaceState(nextState){
+    this.state=nextState;
+    this.notify();
+  }
+
   get currentPlayer(){return this.state.players[this.state.currentPlayer]}
+
+  isCurrentSeat(seat){
+    return Number(seat)===this.state.currentPlayer;
+  }
 
   log(text,kind="info",data={}){
     this.state.events.unshift({
@@ -16,23 +28,41 @@ export class GameEngine{
       data,
       round:this.state.round
     });
-    this.state.events=this.state.events.slice(0,60);
+    this.state.events=this.state.events.slice(0,80);
   }
 
   notify(){if(this.onChange)this.onChange(this.state)}
 
-  roll(){
-    if(this.state.phase!=="await-roll")return false;
-    const d1=1+Math.floor(Math.random()*6);
-    const d2=1+Math.floor(Math.random()*6);
+  startGame(seat=0){
+    if(this.state.gameStatus!=="lobby"||Number(seat)!==0)return false;
+    this.state.gameStatus="playing";
+    this.state.phase="await-roll";
+    this.state.currentPlayer=0;
+    this.state.turnToken+=1;
+    this.log("房間開始遊戲，未加入的位置由 AI 玩家補位。","system");
+    this.notify();
+    return true;
+  }
+
+  roll(seat=this.state.currentPlayer,forcedDice=null){
+    if(
+      this.state.gameStatus!=="playing"||
+      this.state.phase!=="await-roll"||
+      !this.isCurrentSeat(seat)
+    )return false;
+
+    const d1=forcedDice?.d1??1+Math.floor(Math.random()*6);
+    const d2=forcedDice?.d2??1+Math.floor(Math.random()*6);
     const total=d1+d2;
     this.state.dice={d1,d2,total};
 
     const player=this.currentPlayer;
     const from=player.position;
     let passedStart=false;
+    const path=[];
     for(let i=0;i<total;i++){
       player.position=(player.position+1)%this.state.tiles.length;
+      path.push(player.position);
       if(player.position===0)passedStart=true;
     }
 
@@ -44,7 +74,7 @@ export class GameEngine{
     this.log(
       player.name+" 擲出 "+d1+" + "+d2+" = "+total+"，從第 "+(from+1)+" 格移動到第 "+(player.position+1)+" 格。",
       "move",
-      {seat:player.seat,from,to:player.position,d1,d2,total}
+      {seat:player.seat,from,to:player.position,path,d1,d2,total}
     );
     this.resolveLanding(player);
     this.notify();
@@ -88,6 +118,14 @@ export class GameEngine{
       return;
     }
 
+    if(tile.type==="highlow"||tile.type==="horse"){
+      const session=startMinigame(this.state,player.seat);
+      fillAiMinigameResults(this.state);
+      this.log(player.name+" 觸發新的都會挑戰："+session.id+"。","minigame_start",{seat:player.seat,gameId:session.id});
+      this.tryFinalizeMinigame();
+      return;
+    }
+
     this.state.phase="landed";
     const eventText={
       start:"回到起點。",
@@ -95,10 +133,8 @@ export class GameEngine{
       station:"抵達交通設施。",
       chance:"觸發機會事件池。",
       fate:"觸發命運事件池。",
-      highlow:"觸發高低骰對決。",
       acquisition:"抵達收購中心。",
-      horse:"觸發財富賽馬。",
-      market:"觸發股市事件。",
+      market:"抵達股市事件格。本回合仍可自由買賣股票。",
       court:"抵達法院。",
       hospital:"抵達醫療中心。",
       auction:"抵達地產拍賣行。",
@@ -107,10 +143,10 @@ export class GameEngine{
     this.log(player.name+" 抵達「"+tile.name+"」："+eventText,"event",{seat:player.seat,tile:player.position,type:tile.type});
   }
 
-  buyCurrentProperty(){
+  buyCurrentProperty(seat=this.state.currentPlayer){
     const tileIndex=this.state.pendingPurchase;
     const player=this.currentPlayer;
-    if(tileIndex==null){
+    if(!this.isCurrentSeat(seat)||tileIndex==null){
       this.log("目前沒有可購買的地產。","warning");
       this.notify();
       return false;
@@ -152,9 +188,9 @@ export class GameEngine{
     return true;
   }
 
-  declineCurrentProperty(){
+  declineCurrentProperty(seat=this.state.currentPlayer){
     const tileIndex=this.state.pendingPurchase;
-    if(tileIndex==null)return false;
+    if(!this.isCurrentSeat(seat)||tileIndex==null)return false;
     const tile=this.state.tiles[tileIndex];
     this.state.pendingPurchase=null;
     this.log(this.currentPlayer.name+" 放棄購買「"+tile.name+"」。","property_decline",{seat:this.currentPlayer.seat,tile:tileIndex});
@@ -162,7 +198,8 @@ export class GameEngine{
     return true;
   }
 
-  upgradeProperty(tileIndex){
+  upgradeProperty(tileIndex,seat=this.state.currentPlayer){
+    if(!this.isCurrentSeat(seat))return false;
     const player=this.currentPlayer;
     const tile=this.state.tiles[Number(tileIndex)];
     const cost=tile?upgradeCost(tile):0;
@@ -190,10 +227,162 @@ export class GameEngine{
     return true;
   }
 
-  endTurn(){
-    if(this.state.phase!=="landed"||this.state.pendingPurchase!=null)return false;
-    this.state.currentPlayer=(this.state.currentPlayer+1)%this.state.players.length;
-    if(this.state.currentPlayer===0)this.state.round=Math.min(this.state.maxRounds,this.state.round+1);
+  buyStock(stockId,shares,seat=this.state.currentPlayer){
+    if(!this.isCurrentSeat(seat))return false;
+    const result=executeBuyStock(this.state,seat,stockId,shares);
+    if(!result.ok){
+      const reason={
+        cash:"現金不足。",
+        not_turn:"只能在自己的回合買賣股票。",
+        invalid:"股票交易數量不正確。"
+      }[result.reason]??"目前無法買進股票。";
+      this.log(reason,"warning",{seat,stockId});
+      this.notify();
+      return false;
+    }
+    this.log(
+      this.state.players[seat].name+" 買進 "+stockId+" "+result.quantity+" 股，共 "+this.formatMoney(result.total)+"。",
+      "stock_buy",
+      {seat,stockId,shares:result.quantity,total:result.total,price:result.price}
+    );
+    this.notify();
+    return true;
+  }
+
+  sellStock(stockId,shares,seat=this.state.currentPlayer){
+    if(!this.isCurrentSeat(seat))return false;
+    const result=executeSellStock(this.state,seat,stockId,shares);
+    if(!result.ok){
+      const reason={
+        shares:"持股數量不足。",
+        not_turn:"只能在自己的回合買賣股票。",
+        invalid:"股票交易數量不正確。"
+      }[result.reason]??"目前無法賣出股票。";
+      this.log(reason,"warning",{seat,stockId});
+      this.notify();
+      return false;
+    }
+    this.log(
+      this.state.players[seat].name+" 賣出 "+stockId+" "+result.quantity+" 股，共 "+this.formatMoney(result.total)+"，已實現損益 "+this.formatSignedMoney(result.realized)+"。",
+      "stock_sell",
+      {seat,stockId,shares:result.quantity,total:result.total,price:result.price,realized:result.realized}
+    );
+    this.notify();
+    return true;
+  }
+
+  submitMinigameResult(seat,result){
+    const submitted=submitGameResult(this.state,seat,result);
+    if(!submitted.ok)return false;
+    this.log(
+      this.state.players[seat].name+" 已完成小遊戲，得分 "+submitted.score+"。",
+      "minigame_result",
+      {seat,score:submitted.score}
+    );
+    this.tryFinalizeMinigame();
+    this.notify();
+    return true;
+  }
+
+  tryFinalizeMinigame(now=Date.now()){
+    const completed=finalizeMinigame(this.state,now);
+    if(!completed)return false;
+    const summary=completed.rankings
+      .map(item=>"#"+item.rank+" "+this.state.players[item.seat].name+" "+item.score+" 分 / +"+this.formatMoney(item.reward))
+      .join("；");
+    this.log(completed.game.name+" 結算："+summary,"minigame_complete",{gameId:completed.game.id,rankings:completed.rankings});
+    return true;
+  }
+
+  tick(now=Date.now()){
+    if(this.state.phase==="minigame"&&this.tryFinalizeMinigame(now)){
+      this.notify();
+      return true;
+    }
+    return false;
+  }
+
+  prepareAiTurn(){
+    const player=this.currentPlayer;
+    if(player.kind!=="ai"||this.state.aiPreparedTurnToken===this.state.turnToken)return false;
+    this.state.aiPreparedTurnToken=this.state.turnToken;
+
+    for(const order of chooseStockOrders(this.state,player.seat)){
+      if(order.type==="buy")this.buyStock(order.stockId,order.shares,player.seat);
+      if(order.type==="sell")this.sellStock(order.stockId,order.shares,player.seat);
+    }
+
+    const upgradeIndex=chooseUpgrade(this.state,player.seat);
+    if(upgradeIndex!=null)this.upgradeProperty(upgradeIndex,player.seat);
+    return true;
+  }
+
+  runAiStep(){
+    if(this.state.gameStatus!=="playing")return false;
+    const player=this.currentPlayer;
+    if(player.kind!=="ai")return false;
+
+    if(this.state.phase==="await-roll"){
+      this.prepareAiTurn();
+      return this.roll(player.seat);
+    }
+
+    if(this.state.phase==="landed"&&this.state.pendingPurchase!=null){
+      const tile=this.state.tiles[this.state.pendingPurchase];
+      if(shouldBuyProperty(this.state,player.seat,tile)){
+        this.buyCurrentProperty(player.seat);
+      }else{
+        this.declineCurrentProperty(player.seat);
+      }
+      return true;
+    }
+
+    if(this.state.phase==="landed"){
+      return this.endTurn(player.seat);
+    }
+
+    if(this.state.phase==="minigame"){
+      fillAiMinigameResults(this.state);
+      if(this.tryFinalizeMinigame()){
+        this.notify();
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  endTurn(seat=this.state.currentPlayer){
+    if(
+      !this.isCurrentSeat(seat)||
+      this.state.phase!=="landed"||
+      this.state.pendingPurchase!=null
+    )return false;
+
+    const previousSeat=this.state.currentPlayer;
+    let nextSeat=previousSeat;
+    do{
+      nextSeat=(nextSeat+1)%this.state.players.length;
+    }while(this.state.players[nextSeat].bankrupt&&nextSeat!==previousSeat);
+
+    const wrapped=nextSeat<=previousSeat;
+    this.state.currentPlayer=nextSeat;
+    if(wrapped){
+      const nextRound=Math.min(this.state.maxRounds,this.state.round+1);
+      if(nextRound!==this.state.round){
+        this.state.round=nextRound;
+        advanceStockMarket(this.state,nextRound);
+        const movers=[...this.state.market.stocks]
+          .sort((a,b)=>Math.abs(b.changePercent)-Math.abs(a.changePercent))
+          .slice(0,3)
+          .map(stock=>stock.name+" "+(stock.changePercent>0?"+":"")+stock.changePercent.toFixed(1)+"%")
+          .join("、");
+        this.log("ROUND "+nextRound+" 開始，所有股票已完成本回合漲跌更新："+movers+"。","market_round",{round:nextRound});
+      }
+    }
+
+    this.state.turnToken+=1;
+    this.state.aiPreparedTurnToken=null;
     this.state.dice=null;
     this.state.phase="await-roll";
     this.notify();
@@ -201,4 +390,8 @@ export class GameEngine{
   }
 
   formatMoney(value){return"$"+Math.round(value).toLocaleString()}
+  formatSignedMoney(value){
+    const rounded=Math.round(value);
+    return(rounded>=0?"+":"-")+"$"+Math.abs(rounded).toLocaleString();
+  }
 }
