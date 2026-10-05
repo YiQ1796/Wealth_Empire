@@ -307,8 +307,10 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
     current.kind==="human"&&
     current.connected!==false;
 
-  document.getElementById("rollButton").disabled=
-    !isLocalTurn||state.phase!=="await-roll";
+  const rollDisabled=!isLocalTurn||state.phase!=="await-roll";
+  document.getElementById("rollButton").disabled=rollDisabled;
+  const mobileRollButton=document.getElementById("mobileRollButton");
+  if(mobileRollButton)mobileRollButton.disabled=rollDisabled;
 
   const pending=state.pendingPurchase!=null?state.tiles[state.pendingPurchase]:null;
   const canBuy=Boolean(
