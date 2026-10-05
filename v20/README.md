@@ -204,3 +204,37 @@ These notices are driven from host-authoritative event state, so multiplayer cli
 - Player 1 → 2, 2 → 3, 3 → 4 and 4 → 1 each create a new market tick.
 - ROUND only increments when seat order wraps back to the first active player.
 - An invalid End Turn call does not create an extra market movement.
+
+
+## Alpha 18 — V5 Batch01-09 complete visual replacement
+
+Alpha 18 replaces the overlapping legacy visual sources instead of stacking new art on top of old assets.
+
+### Replaced sources
+
+- All **44 board tiles** now come from V5 Batch01-05 and are mapped by tile number, including the repacked TILE 31-40 batch.
+- Legacy 36-tile ZIP packs and the old tiles-v2 runtime source are no longer used.
+- Legacy pawn images are removed. Player pieces now use the four V5 character sets with IDLE / WALK_A / WALK_B / JUMP states.
+- Legacy QUICK_STOCK / QUICK_PROPERTY / QUICK_ITEM / QUICK_INFO files are removed. The shortcut buttons and modal identity use V5 Batch09 art.
+- Property ownership is shown with the V5 colored house assets:
+  - purchase / LV.0 = 1 house,
+  - LV.1 = 2 houses,
+  - LV.2 = 3 houses.
+- House color is derived from the current owner, so a future successful ownership transfer automatically changes the visible house color without keeping the previous owner's render.
+- V5 AI / PLAYER / THINKING / AUTO_FILL badges are wired into player and room UI.
+- All eight region badges, +25% region badge, property-max badge and no-acquisition badge are wired into property UI.
+- V5 modal headers, icons, close art and empty-state art are wired into the four shortcut modal experiences.
+
+### Property rule carried with the art
+
+LV.2 remains the hard maximum level and is explicitly marked as **not force-acquirable** in the property economy rule layer, not just in the UI.
+
+### Character movement
+
+The board token now switches through V5 WALK_A / WALK_B while traversing the dice path, uses JUMP on arrival, then returns to IDLE. AI action pacing waits for the movement animation instead of immediately skipping past it.
+
+### Source-of-truth rule
+
+Batch01-09 is the only render source for tiles, houses, characters, related badges and quick/modal art. New V5 visuals are not layered on legacy tile/pawn/quick assets.
+
+The center background and the roll/end-turn action icons remain because Batch01-09 does not contain replacements for those assets. Central five-function building art (Batch10-14) and the redesigned central notification cards are intentionally deferred until their dedicated assets arrive.
