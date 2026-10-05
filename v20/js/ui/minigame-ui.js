@@ -606,6 +606,7 @@ export class MinigameUI{
 
     this.bindChoiceButtons("[data-highlow]",button=>{
       const pick=button.dataset.highlow;
+      this.arena.querySelectorAll("[data-highlow]").forEach(choice=>{choice.disabled=true;});
       const d1=1+Math.floor(random()*6);
       const d2=1+Math.floor(random()*6);
       const total=d1+d2;
