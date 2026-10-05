@@ -7,6 +7,22 @@ import{resolveSpecialEvent}from"./special-events.js";
 import{canUseTransport,chooseAiTransportDestination,createPendingTransport,transportNode}from"./transport.js";
 import{chooseAiAcquisition,createPendingAcquisition,executeAcquisition}from"./acquisition-center.js";
 import{applyCourt,applyHospital,applyMarketEvent,applyTaxOffice,canUseUrban,chooseAiUrbanDestination,createPendingUrban}from"./civic-specials.js";
+import{
+  acceptMission,
+  activateInsurance,
+  applyRentInsurance,
+  buildForwardPath,
+  canAcceptMission,
+  canActivateInsurance,
+  canOpenBankDeposit,
+  canUseCentralDevelopment,
+  canUseCentralTransit,
+  markCentralDevelopmentUsed,
+  markCentralTransitUsed,
+  recordMissionAction,
+  settleBankDeposits,
+  startBankDeposit
+}from"./central-features.js";
 
 export class GameEngine{
   constructor(state,onChange){
@@ -103,7 +119,9 @@ export class GameEngine{
 
       if(tile.owner!==player.seat){
         const owner=this.state.players[tile.owner];
-        const rent=rentFor(this.state,tile);
+        const requestedRent=rentFor(this.state,tile);
+        const insurance=applyRentInsurance(player,requestedRent);
+        const rent=insurance.rent;
         const paid=Math.min(player.cash,rent);
         player.cash-=paid;
         owner.cash+=paid;
@@ -123,12 +141,22 @@ export class GameEngine{
             tile:player.position,
             tileName:tile.name,
             amount:paid,
-            requested:rent,
+            requested:requestedRent,
+            discount:insurance.discount,
+            insured:insurance.protected,
             group:tile.group,
             payerCashAfter:player.cash,
             ownerCashAfter:owner.cash
           }
         );
+        if(insurance.protected){
+          this.log(
+            player.name+" 的租金保險生效，本次原租金 "+this.formatMoney(requestedRent)+
+              "，減壓後為 "+this.formatMoney(rent)+"。",
+            "central_insurance_used",
+            {seat:player.seat,requested:requestedRent,amount:rent,discount:insurance.discount}
+          );
+        }
         if(paid<rent){
           this.log(player.name+" 現金不足，實際支付可用現金 "+this.formatMoney(paid)+"。","warning",{seat:player.seat});
         }
@@ -309,6 +337,102 @@ export class GameEngine{
       start:"回到起點。"
     }[tile.type]||"觸發特殊事件。";
     this.log(player.name+" 抵達「"+tile.name+"」："+eventText,"event",{seat:player.seat,tile:player.position,type:tile.type});
+  }
+
+  handleCentralMissionAction(seat,action){
+    const result=recordMissionAction(this.state,seat,action);
+    if(!result?.completed)return result;
+    const player=this.state.players[Number(seat)];
+    this.log(
+      player.name+" 完成城市委託，獲得 "+this.formatMoney(result.reward)+"。",
+      "central_mission_complete",
+      {seat:Number(seat),playerName:player.name,missionId:result.missionId,reward:result.reward,cashAfter:result.cashAfter}
+    );
+    return result;
+  }
+
+  centralBankDeposit(seat=this.state.currentPlayer){
+    if(!this.isCurrentSeat(seat)||!canOpenBankDeposit(this.state,seat))return false;
+    const result=startBankDeposit(this.state,seat);
+    if(!result.ok)return false;
+    const player=this.state.players[Number(seat)];
+    this.log(
+      player.name+" 在都會銀行存入 "+this.formatMoney(result.principal)+
+        "，ROUND "+result.maturesRound+" 到期返還 "+this.formatMoney(result.returnAmount)+"。",
+      "central_bank_active",
+      {seat:Number(seat),playerName:player.name,principal:result.principal,returnAmount:result.returnAmount,maturesRound:result.maturesRound,cashAfter:result.cashAfter}
+    );
+    this.notify();
+    return true;
+  }
+
+  centralAcceptMission(missionId,seat=this.state.currentPlayer){
+    if(!this.isCurrentSeat(seat)||!canAcceptMission(this.state,seat,missionId))return false;
+    const result=acceptMission(this.state,seat,missionId);
+    if(!result.ok)return false;
+    const player=this.state.players[Number(seat)];
+    this.log(
+      player.name+" 接受城市委託「"+missionId+"」。",
+      "central_mission_active",
+      {seat:Number(seat),playerName:player.name,missionId,reward:result.mission.reward}
+    );
+    this.notify();
+    return true;
+  }
+
+  centralActivateInsurance(seat=this.state.currentPlayer){
+    if(!this.isCurrentSeat(seat)||!canActivateInsurance(this.state,seat))return false;
+    const result=activateInsurance(this.state,seat);
+    if(!result.ok)return false;
+    const player=this.state.players[Number(seat)];
+    this.log(
+      player.name+" 啟動租金保險，下一次踩到他人地產時租金壓力降低。",
+      "central_insurance_active",
+      {seat:Number(seat),playerName:player.name}
+    );
+    this.notify();
+    return true;
+  }
+
+  centralTransit(distance,seat=this.state.currentPlayer){
+    if(!this.isCurrentSeat(seat)||!canUseCentralTransit(this.state,seat,distance))return false;
+    const player=this.currentPlayer;
+    const from=player.position;
+    const path=buildForwardPath(this.state,from,Number(distance));
+    const passedStart=path.includes(0);
+    player.position=path.at(-1)??from;
+    markCentralTransitUsed(this.state,seat);
+    this.state.dice=null;
+
+    if(passedStart){
+      player.cash+=2500;
+      this.log(player.name+" 搭乘快捷通車通過起點，獲得 $2,500。","cash",{seat:player.seat,amount:2500});
+    }
+
+    this.log(
+      player.name+" 搭乘快捷通車前進 "+distance+" 格，從第 "+(from+1)+" 格抵達第 "+(player.position+1)+" 格。",
+      "move",
+      {seat:player.seat,from,to:player.position,path,centralTransit:true,distance:Number(distance)}
+    );
+    this.resolveLanding(player);
+    this.notify();
+    return true;
+  }
+
+  centralDevelopmentUpgrade(tileIndex,seat=this.state.currentPlayer){
+    if(!this.isCurrentSeat(seat)||!canUseCentralDevelopment(this.state,seat,tileIndex))return false;
+    markCentralDevelopmentUsed(this.state,seat);
+    const success=this.upgradeProperty(tileIndex,seat);
+    if(!success)return false;
+    const player=this.state.players[Number(seat)];
+    const tile=this.state.tiles[Number(tileIndex)];
+    this.log(
+      player.name+" 透過城市建案中心完成「"+tile.name+"」建案。",
+      "central_development",
+      {seat:Number(seat),playerName:player.name,tile:Number(tileIndex),tileName:tile.name,level:tile.level}
+    );
+    this.notify();
+    return true;
   }
 
   useUrban(destinationIndex,seat=this.state.currentPlayer){
@@ -511,6 +635,8 @@ export class GameEngine{
       }
     );
 
+    this.handleCentralMissionAction(player.seat,"buy_property");
+
     if(ownsCompleteGroup(this.state,player.seat,tile.group)){
       const total=GROUP_SIZES[tile.group]??0;
       const multiplier=groupRentMultiplier(tile.group);
@@ -571,6 +697,7 @@ export class GameEngine{
         cashAfter:player.cash
       }
     );
+    this.handleCentralMissionAction(player.seat,"upgrade_property");
     this.notify();
     return true;
   }
@@ -604,6 +731,7 @@ export class GameEngine{
         cashAfter:this.state.players[seat].cash
       }
     );
+    this.handleCentralMissionAction(seat,"buy_stock");
     this.notify();
     return true;
   }
@@ -778,6 +906,14 @@ export class GameEngine{
         return true;
       }
       this.state.round+=1;
+      for(const settled of settleBankDeposits(this.state)){
+        const player=this.state.players[settled.seat];
+        this.log(
+          player.name+" 的都會銀行定存到期，入帳 "+this.formatMoney(settled.amount)+"。",
+          "central_bank_matured",
+          {seat:settled.seat,playerName:player.name,amount:settled.amount,cashAfter:settled.cashAfter}
+        );
+      }
     }
 
     advanceStockMarket(this.state,{
