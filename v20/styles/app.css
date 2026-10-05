@@ -2237,3 +2237,388 @@ body.entry-pending .app-shell{
   .fate-card small{font-size:9px}
   .floor-pick{min-height:62px;font-size:16px}
 }
+
+
+/* V20 Alpha 19 — phone landscape authority.
+   Mobile is a separate responsive layout, not a shrunken desktop HUD. */
+.mobile-primary-actions{
+  display:none
+}
+.stock-market-grid--mobile{
+  min-height:0
+}
+
+@media (orientation:landscape) and (max-height:650px) and (max-width:1180px){
+  html,
+  body{
+    width:100%;
+    min-width:0;
+    height:100%;
+    overflow:hidden;
+    overscroll-behavior:none
+  }
+
+  /* Entry flow may scroll inside its own full-screen layer on very short phones. */
+  body.entry-pending{
+    overflow:hidden
+  }
+  .entry-gate{
+    overflow:auto;
+    overscroll-behavior:contain;
+    place-items:start center;
+    padding:
+      max(8px,env(safe-area-inset-top))
+      max(8px,env(safe-area-inset-right))
+      max(8px,env(safe-area-inset-bottom))
+      max(8px,env(safe-area-inset-left))
+  }
+  .entry-card{
+    width:min(980px,100%);
+    min-height:min-content;
+    margin:auto 0;
+    padding:12px;
+    border-radius:18px;
+    display:grid;
+    grid-template-columns:minmax(0,1.35fr) minmax(240px,.65fr);
+    grid-template-areas:
+      "brand brand"
+      "characters modes"
+      "characters resume";
+    gap:10px 12px;
+    align-items:start
+  }
+  .entry-card__brand{
+    grid-area:brand
+  }
+  .entry-card__brand h1{
+    margin:2px 0;
+    font-size:28px
+  }
+  .entry-card__brand p{
+    font-size:11px
+  }
+  .entry-card__eyebrow{
+    font-size:9px
+  }
+  .character-picker{
+    grid-area:characters;
+    margin:0;
+    padding:9px
+  }
+  .character-picker__heading{
+    margin-bottom:7px
+  }
+  .character-picker__heading strong{
+    font-size:13px
+  }
+  .character-picker__heading span{
+    font-size:9px
+  }
+  .character-picker__grid{
+    gap:6px
+  }
+  .character-choice{
+    min-height:72px;
+    padding:5px;
+    border-radius:11px
+  }
+  .character-choice img{
+    width:34px;
+    height:44px
+  }
+  .character-choice strong{
+    font-size:11px
+  }
+  .entry-mode-grid{
+    grid-area:modes;
+    grid-template-columns:1fr;
+    gap:7px;
+    margin:0
+  }
+  .entry-mode{
+    min-height:80px;
+    gap:3px;
+    padding:8px;
+    border-radius:13px
+  }
+  .entry-mode__icon{
+    font-size:27px
+  }
+  .entry-mode strong{
+    font-size:16px
+  }
+  .entry-mode small{
+    font-size:9px;
+    line-height:1.35
+  }
+  .entry-resume{
+    grid-area:resume;
+    min-height:38px;
+    margin:0;
+    font-size:11px
+  }
+
+  .app-shell{
+    width:100%;
+    height:100dvh;
+    padding:
+      max(3px,env(safe-area-inset-top))
+      max(3px,env(safe-area-inset-right))
+      max(3px,env(safe-area-inset-bottom))
+      max(3px,env(safe-area-inset-left));
+    overflow:hidden
+  }
+  .game-layout{
+    width:100%;
+    height:100%;
+    grid-template-columns:minmax(0,1fr) clamp(250px,29vw,300px);
+    gap:4px;
+    overflow:hidden
+  }
+  .board-panel,
+  .board{
+    width:100%;
+    height:100%;
+    min-width:0;
+    min-height:0
+  }
+
+  .hud-panel{
+    height:100%;
+    min-height:0;
+    padding:5px;
+    gap:4px;
+    grid-template-rows:auto minmax(0,1fr) auto;
+    overflow:hidden
+  }
+  .hud-header{
+    gap:5px
+  }
+  .hud-heading{
+    min-width:68px
+  }
+  .hud-header h1{
+    font-size:17px
+  }
+  .round-inline{
+    margin-top:2px;
+    font-size:9px
+  }
+  .round-inline strong{
+    font-size:11px
+  }
+  .hud-turn-tools{
+    grid-template-columns:50px minmax(0,1fr);
+    gap:4px
+  }
+  .dice-result{
+    width:50px;
+    min-width:50px;
+    min-height:38px;
+    padding:3px
+  }
+  .dice-result__faces{
+    font-size:9px
+  }
+  .dice-result__total{
+    font-size:12px
+  }
+  .control-actions--turn{
+    grid-template-columns:1fr
+  }
+  .control-actions--turn #rollButton{
+    display:none
+  }
+  .control-actions--turn .action-button{
+    min-height:38px;
+    padding:4px 5px;
+    font-size:10px
+  }
+  .control-actions--turn .action-button img{
+    width:20px;
+    height:20px;
+    flex-basis:20px
+  }
+
+  .players{
+    min-height:0;
+    overflow:hidden;
+    gap:3px;
+    align-content:start
+  }
+  .player-card{
+    min-height:0;
+    grid-template-columns:30px minmax(0,1fr);
+    gap:5px;
+    padding:3px 5px;
+    border-radius:9px
+  }
+  .player-pawn{
+    width:29px;
+    height:29px
+  }
+  .player-card h3{
+    margin-bottom:1px;
+    font-size:11px
+  }
+  .player-kind{
+    padding:1px 4px;
+    font-size:7px
+  }
+  .player-stats{
+    gap:2px 6px;
+    font-size:8px;
+    line-height:1.15
+  }
+  .player-stats b{
+    font-size:9px
+  }
+
+  .feature-tabs--secondary,
+  .desktop-stock-panel{
+    display:none
+  }
+  .mobile-primary-actions{
+    min-height:0;
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:4px
+  }
+  .mobile-primary-action{
+    min-width:0;
+    min-height:46px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+    padding:5px 6px;
+    border:1px solid #d7e2eb;
+    border-radius:11px;
+    background:#f8fbfd;
+    color:#244765;
+    font-size:11px;
+    font-weight:1000;
+    cursor:pointer
+  }
+  .mobile-primary-action img{
+    width:29px;
+    height:29px;
+    flex:0 0 29px;
+    object-fit:contain
+  }
+  .mobile-primary-action--roll{
+    background:#eaf3ff;
+    border-color:#b9d2ee;
+    color:#1e5f9e
+  }
+  .board-motion-active #mobileRollButton{
+    pointer-events:none;
+    opacity:.58
+  }
+
+  .feature-dialog,
+  .network-dialog,
+  .minigame-dialog{
+    width:calc(100vw - max(10px,env(safe-area-inset-left)) - max(10px,env(safe-area-inset-right)));
+    max-width:none;
+    max-height:calc(100dvh - max(8px,env(safe-area-inset-top)) - max(8px,env(safe-area-inset-bottom)));
+    margin:auto;
+    overflow:hidden
+  }
+  .feature-modal,
+  .network-modal,
+  .minigame-modal{
+    max-height:calc(100dvh - max(12px,env(safe-area-inset-top)) - max(12px,env(safe-area-inset-bottom)));
+    padding:10px;
+    border-radius:14px;
+    overflow:auto;
+    overscroll-behavior:contain
+  }
+  .feature-modal__header,
+  .minigame-header{
+    top:-10px;
+    margin:-10px -10px 8px;
+    padding:9px 10px 7px
+  }
+  .feature-modal__header h2,
+  .minigame-header h2{
+    font-size:18px
+  }
+  .feature-modal__header p,
+  .minigame-header p{
+    font-size:9px
+  }
+  .modal-close{
+    width:36px;
+    height:36px;
+    flex-basis:36px
+  }
+  .feature-modal__header-art{
+    width:38px;
+    height:38px;
+    flex-basis:38px
+  }
+
+  .stock-market-grid--mobile{
+    max-height:calc(100dvh - 92px);
+    overflow:auto;
+    overscroll-behavior:contain;
+    padding-right:2px
+  }
+  .stock-market-grid--mobile .stock-summary{
+    position:sticky;
+    top:0;
+    z-index:4;
+    background:#fff;
+    padding-bottom:6px
+  }
+  .stock-market-grid--mobile .stock-pair-row{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:7px
+  }
+  .stock-market-grid--mobile .stock-trade-card{
+    padding:8px
+  }
+  .stock-market-grid--mobile .stock-title strong{
+    font-size:13px
+  }
+  .stock-market-grid--mobile .stock-title small{
+    font-size:9px
+  }
+  .stock-market-grid--mobile .stock-quote>b{
+    font-size:18px
+  }
+  .stock-market-grid--mobile .stock-holding-row,
+  .stock-market-grid--mobile .stock-pnl-row{
+    font-size:9px
+  }
+  .stock-market-grid--mobile .stock-trade-controls{
+    grid-template-columns:58px minmax(0,1fr) minmax(0,1fr);
+    gap:5px
+  }
+  .stock-market-grid--mobile .stock-trade-controls input,
+  .stock-market-grid--mobile .stock-trade-controls button{
+    min-height:36px
+  }
+
+  .action-toast-stack{
+    top:24%;
+    width:min(78%,640px)
+  }
+}
+
+@media (orientation:landscape) and (max-height:430px) and (max-width:1180px){
+  .entry-card{
+    grid-template-columns:minmax(0,1.45fr) minmax(220px,.55fr);
+    gap:7px 10px;
+    padding:9px
+  }
+  .entry-card__brand h1{font-size:24px}
+  .character-choice{min-height:64px}
+  .character-choice img{width:30px;height:38px}
+  .entry-mode{min-height:68px}
+  .entry-mode__icon{font-size:23px}
+  .hud-panel{padding:4px;gap:3px}
+  .player-card{padding:2px 4px}
+  .mobile-primary-action{min-height:41px}
+}
