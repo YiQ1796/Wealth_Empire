@@ -5,11 +5,37 @@ import{
   MAX_PROPERTY_LEVEL,
   boardPlacement
 }from"../data/board.js";
-import{CENTER_BACKGROUND,TILE_ART_BY_NAME}from"../data/assets.js";
+import{CENTER_BACKGROUND,TILE_ART_BY_INDEX}from"../data/assets.js";
 import{UI_ASSETS}from"../data/ui-assets.js";
 import{groupProgress,propertyValue,rentFor,upgradeCost}from"../core/property-economy.js";
 
 function money(value){return"$"+Math.round(value).toLocaleString()}
+
+function badge(path,label,className=""){
+  return'<img class="state-badge '+className+'" src="'+path+'" alt="'+label+'" title="'+label+'">';
+}
+
+function regionBadge(group){
+  const path=UI_ASSETS.badges.regions[group];
+  return path?'<img class="region-badge" src="'+path+'" alt="'+group+'">':"";
+}
+
+function houseMarkup(ownerSeat,level){
+  if(ownerSeat==null)return"";
+  const path=UI_ASSETS.houses[ownerSeat];
+  const count=Math.max(1,Math.min(3,(Number(level)||0)+1));
+  return Array.from({length:count},(_,index)=>
+    '<img class="property-house property-house--'+(index+1)+'" src="'+path+'" alt="" aria-hidden="true">'
+  ).join("");
+}
+
+function playerCharacter(seat,stateName="idle"){
+  return UI_ASSETS.characters[seat]?.[stateName]??UI_ASSETS.characters[seat]?.idle??"";
+}
+
+export function characterAsset(seat,stateName="idle"){
+  return playerCharacter(seat,stateName);
+}
 
 export function mountStaticBoard(boardElement){
   BOARD_TILES.forEach((tile,index)=>{
@@ -20,21 +46,29 @@ export function mountStaticBoard(boardElement){
     node.style.gridRow=String(placement.row);
     node.style.gridColumn=String(placement.col);
 
-    const art=TILE_ART_BY_NAME[tile.name];
-    if(art?.path&&art.orientation===placement.orientation){
-      const img=document.createElement("img");
-      img.className="tile-art";
-      img.alt="";
-      img.src=art.path;
-      img.onload=()=>node.classList.add("has-art");
-      img.onerror=()=>img.remove();
-      node.appendChild(img);
-    }
+    const img=document.createElement("img");
+    img.className="tile-art";
+    img.alt="";
+    img.src=TILE_ART_BY_INDEX[index];
+    img.onload=()=>node.classList.add("has-art");
+    img.onerror=()=>{
+      node.classList.add("asset-error");
+      img.remove();
+    };
+    node.appendChild(img);
 
     const fallback=document.createElement("div");
     fallback.className="tile__fallback-name";
     fallback.textContent=tile.name;
     node.appendChild(fallback);
+
+    const houses=document.createElement("div");
+    houses.className="tile__houses";
+    node.appendChild(houses);
+
+    const badges=document.createElement("div");
+    badges.className="tile__badges";
+    node.appendChild(badges);
 
     const dynamic=document.createElement("div");
     dynamic.className="tile__dynamic";
@@ -44,6 +78,7 @@ export function mountStaticBoard(boardElement){
     const tokens=document.createElement("div");
     tokens.className="tile__tokens";
     node.appendChild(tokens);
+
     boardElement.appendChild(node);
   });
 
@@ -61,9 +96,11 @@ function renderRegionSummary(state,currentPlayer){
   container.innerHTML=GROUP_ORDER.map(group=>{
     const progress=groupProgress(state,currentPlayer.seat,group);
     return '<article class="region-card '+(progress.complete?"complete":"")+'">'+
-      '<strong>'+group+'</strong>'+
+      regionBadge(group)+
+      '<div class="region-card__copy"><strong>'+group+'</strong>'+
+      '<small>'+(progress.complete?"過路費 +25%":"集滿 3 塊啟動加成")+'</small></div>'+
       '<span>'+progress.owned+' / '+progress.total+'</span>'+
-      '<small>'+(progress.complete?"過路費 +25%":"集滿 3 塊啟動加成")+'</small>'+
+      (progress.complete?badge(UI_ASSETS.badges.regionBonus,"區域完成 +25%","region-bonus-badge"):"")+
     '</article>';
   }).join("");
 }
@@ -83,7 +120,7 @@ function renderRentHistory(state,currentPlayer){
 
   const history=related.length
     ? related.map(event=>'<div class="rent-history-row">'+event.text+'</div>').join("")
-    : '<div class="empty-state empty-state--compact">目前尚無過路費紀錄。</div>';
+    : '<div class="empty-state empty-state--visual"><img src="'+UI_ASSETS.modal.emptyData+'" alt=""><span>目前尚無過路費紀錄。</span></div>';
 
   container.innerHTML=summary+history;
 }
@@ -96,7 +133,7 @@ function renderProperties(state,viewerPlayer,canControl){
   if(!container)return;
 
   if(viewerPlayer.properties.length===0){
-    container.innerHTML='<div class="empty-state">目前尚未持有地產。</div>';
+    container.innerHTML='<div class="empty-state empty-state--visual"><img src="'+UI_ASSETS.modal.emptyData+'" alt=""><span>目前尚未持有地產。</span></div>';
     return;
   }
 
@@ -118,10 +155,15 @@ function renderProperties(state,viewerPlayer,canControl){
     const buttonText=maxLevel?"已滿級":canAfford?"升級 "+money(cost):"現金不足";
 
     return '<article class="property-row">'+
+      regionBadge(tile.group)+
       '<div class="property-row__main">'+
         '<div class="property-row__title"><strong>'+tile.name+'</strong><em>LV.'+tile.level+'</em></div>'+
-        '<span>'+tile.group+'｜區域 '+progress.owned+'/'+progress.total+(progress.complete?'｜<b class="region-bonus">+25%</b>':'')+'</span>'+
+        '<span>'+tile.group+'｜區域 '+progress.owned+'/'+progress.total+'</span>'+
         '<small>資產 '+money(value)+'｜目前過路費 '+money(rent)+'</small>'+
+        '<div class="property-row__badges">'+
+          (progress.complete?badge(UI_ASSETS.badges.regionBonus,"區域完成 +25%"):"")+
+          (maxLevel?badge(UI_ASSETS.badges.propertyMax,"房產滿級")+badge(UI_ASSETS.badges.noAcquisition,"不可強制收購"):"")+
+        '</div>'+
       '</div>'+
       '<button class="property-upgrade" data-upgrade-property="'+tileIndex+'" '+(disabled?'disabled':'')+'>'+buttonText+'</button>'+
     '</article>';
@@ -139,13 +181,15 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
 
   const players=document.getElementById("players");
   players.innerHTML=state.players.map((player,index)=>{
-    const kindLabel=player.kind==="ai"
-      ? '<span class="player-kind player-kind--ai">AI</span>'
-      : '<span class="player-kind '+(player.connected===false?"player-kind--offline":"player-kind--human")+'">'+(player.connected===false?"離線":"真人")+'</span>';
+    const kindAsset=player.kind==="ai"?UI_ASSETS.badges.ai:UI_ASSETS.badges.player;
+    const statusBadge=player.kind==="ai"
+      ? '<img class="player-type-badge" src="'+kindAsset+'" alt="AI">'
+      : '<img class="player-type-badge" src="'+kindAsset+'" alt="真人">';
+    const offlineLabel=player.connected===false?'<span class="player-offline-label">離線</span>':"";
     return '<article class="player-card '+(index===state.currentPlayer?"active":"")+'">'+
-      '<img class="player-pawn" src="'+UI_ASSETS.pawns[index]+'" alt="">'+
+      '<img class="player-pawn" data-player-avatar="'+index+'" src="'+playerCharacter(index,"idle")+'" alt="">'+
       '<div class="player-card__body">'+
-        '<h3>'+player.name+(index===state.currentPlayer?" 👑":"")+kindLabel+'</h3>'+
+        '<h3>'+player.name+(index===state.currentPlayer?" 👑":"")+statusBadge+offlineLabel+'</h3>'+
         '<div class="player-stats">'+
           '<span>現金 <b>'+money(player.cash)+'</b></span>'+
           '<span>地產 <b>'+player.properties.length+'</b></span>'+
@@ -160,25 +204,33 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
     const price=node.querySelector(".tile__price");
     const level=node.querySelector(".tile__level");
     const owner=node.querySelector(".tile__owner");
+    const houses=node.querySelector(".tile__houses");
+    const badges=node.querySelector(".tile__badges");
     const tokens=node.querySelector(".tile__tokens");
 
     price.textContent=tile.type==="property"
       ? (tile.owner==null?money(tile.price):"租 "+money(rentFor(state,tile)))
       : "";
 
-    level.textContent=tile.type==="property"&&tile.level>0?"LV."+tile.level:"";
+    level.textContent=tile.type==="property"&&tile.owner!=null?"LV."+tile.level:"";
     level.style.display=level.textContent?"inline-flex":"none";
 
     if(tile.owner==null){
       owner.style.display="none";
+      houses.innerHTML="";
+      badges.innerHTML="";
     }else{
       owner.style.display="block";
       owner.style.background=state.players[tile.owner].color;
+      houses.innerHTML=houseMarkup(tile.owner,tile.level);
+      badges.innerHTML=tile.level>=MAX_PROPERTY_LEVEL
+        ? badge(UI_ASSETS.badges.noAcquisition,"不可強制收購","tile-no-acquisition")
+        : "";
     }
 
     tokens.innerHTML=state.players
       .filter(player=>!player.bankrupt&&player.position===index)
-      .map(player=>'<img class="pawn-token" src="'+UI_ASSETS.pawns[player.seat]+'" alt="" title="'+player.name+'">')
+      .map(player=>'<img class="pawn-token" data-board-player="'+player.seat+'" src="'+playerCharacter(player.seat,"idle")+'" alt="" title="'+player.name+'">')
       .join("");
   });
 
