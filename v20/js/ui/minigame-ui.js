@@ -254,8 +254,151 @@ export class MinigameUI{
     });
   }
 
+  applyRaceEffect(runnerIndex,effect,label,durationMs=900){
+    const runner=this.arena.querySelector('[data-runner="'+runnerIndex+'"]');
+    const fx=this.arena.querySelector('[data-race-fx="'+runnerIndex+'"]');
+    if(!runner)return;
+
+    const className="race-runner--fx-"+effect;
+    runner.classList.add(className);
+    if(fx){
+      fx.textContent=label;
+      fx.dataset.effect=effect;
+      fx.classList.add("show");
+    }
+
+    const timer=setTimeout(()=>{
+      runner.classList.remove(className);
+      if(fx){
+        fx.classList.remove("show");
+        fx.textContent="";
+        delete fx.dataset.effect;
+      }
+    },durationMs);
+    this.cleanupFns.push(()=>clearTimeout(timer));
+  }
+
+  runContinuousRace({
+    session,
+    gameId,
+    racers,
+    pick,
+    order,
+    durationMs,
+    eventPlan,
+    eventMessageSelector,
+    eventFeedSelector=null,
+    scoreTable
+  }){
+    const startedAt=performance.now();
+    const states=racers.map((_,index)=>({
+      progress:0,
+      baseSpeed:9.1+(3-order.indexOf(index))*0.24,
+      multiplier:1,
+      multiplierUntil:0,
+      pauseUntil:0,
+      dragUntil:0,
+      transientOffset:0
+    }));
+    const feed=[];
+    let eventIndex=0;
+    let lastTime=startedAt;
+    let rafId=0;
+    let finished=false;
+
+    const pushMessage=(text,effectTarget=null,effect=null)=>{
+      const message=this.arena.querySelector(eventMessageSelector);
+      if(message)message.textContent=text;
+      if(eventFeedSelector){
+        feed.unshift(text);
+        feed.splice(5);
+        const node=this.arena.querySelector(eventFeedSelector);
+        if(node)node.innerHTML=feed.map(item=>'<span>'+escapeHtml(item)+'</span>').join("");
+      }
+      if(effectTarget!=null&&effect){
+        this.applyRaceEffect(effectTarget,effect.kind,effect.label,effect.durationMs);
+      }
+    };
+
+    const finishTargets=order.map((_,rank)=>100-rank*5);
+    const targetForIndex=index=>finishTargets[order.indexOf(index)];
+
+    const frame=now=>{
+      if(finished)return;
+      const elapsed=now-startedAt;
+      const dt=Math.min(0.05,Math.max(0,(now-lastTime)/1000));
+      lastTime=now;
+
+      while(eventIndex<eventPlan.length&&elapsed>=eventPlan[eventIndex].atMs){
+        const event=eventPlan[eventIndex++];
+        const state=states[event.target];
+        event.apply(state,elapsed);
+        pushMessage(event.text,event.target,event.effect);
+      }
+
+      for(let index=0;index<states.length;index++){
+        const state=states[index];
+        let speed=state.baseSpeed;
+        if(elapsed<state.pauseUntil)speed=0;
+        if(elapsed<state.dragUntil)speed*=0.48;
+        if(elapsed<state.multiplierUntil)speed*=state.multiplier;
+
+        state.progress=Math.max(0,state.progress+speed*dt);
+        if(Math.abs(state.transientOffset)>0.02){
+          state.progress+=state.transientOffset*dt*1.8;
+          state.transientOffset*=Math.pow(0.16,dt);
+        }
+
+        const finalStretch=Math.max(0,(elapsed-(durationMs-1500))/1500);
+        if(finalStretch>0){
+          const target=targetForIndex(index);
+          const easing=Math.min(1,dt*(2.2+finalStretch*4.5));
+          state.progress+= (target-state.progress)*easing;
+        }
+
+        state.progress=clamp(state.progress,0,100);
+        const runner=this.arena.querySelector('[data-runner="'+index+'"]');
+        if(runner){
+          runner.style.left=(2+state.progress*0.9)+"%";
+          runner.dataset.progress=state.progress.toFixed(2);
+        }
+      }
+
+      if(elapsed>=durationMs){
+        finished=true;
+        for(let index=0;index<states.length;index++){
+          states[index].progress=targetForIndex(index);
+          const runner=this.arena.querySelector('[data-runner="'+index+'"]');
+          if(runner)runner.style.left=(2+states[index].progress*0.9)+"%";
+        }
+
+        const place=order.indexOf(pick)+1;
+        const score=scoreTable[place-1]??scoreTable.at(-1)??3000;
+        pushMessage((pick+1)+" 號最終第 "+place+" 名！");
+        const timer=setTimeout(()=>{
+          this.finish({
+            game:gameId,
+            pick,
+            place,
+            ranking:order,
+            sharedRace:true,
+            continuous:true,
+            events:feed
+          },score);
+        },950);
+        this.cleanupFns.push(()=>clearTimeout(timer));
+        return;
+      }
+
+      rafId=requestAnimationFrame(frame);
+    };
+
+    rafId=requestAnimationFrame(frame);
+    this.cleanupFns.push(()=>cancelAnimationFrame(rafId));
+  }
+
   startHorse(session){
-    const random=this.sharedRandomFor(session,"horse-events");
+    const random=this.sharedRandomFor(session,"horse-events-v2");
     const order=this.sharedRaceOrder(session,"horse");
     const horses=[
       {name:"閃電",icon:"🐎"},
@@ -264,65 +407,87 @@ export class MinigameUI{
       {name:"金星",icon:"🎠"}
     ];
     this.arena.innerHTML=
-      '<div class="race-game"><div class="race-intro"><strong>先下注一匹馬</strong><span>比賽開始後會實際跑完整段賽程。</span></div>'+
+      '<div class="race-game horse-race-game"><div class="race-intro"><strong>先下注一匹馬</strong><span>這次是連續直線賽跑，途中會有爆發、泥地與最後衝刺。</span></div>'+
       '<div class="race-pick-grid">'+horses.map((horse,index)=>
         '<button type="button" class="race-pick" data-horse="'+index+'"><span>'+horse.icon+'</span><strong>'+(index+1)+' 號 '+horse.name+'</strong></button>'
       ).join("")+'</div></div>';
 
     this.bindChoiceButtons("[data-horse]",button=>{
       const pick=Number(button.dataset.horse);
-      this.runHorseRace(random,horses,pick,order);
+      this.runHorseRace(session,random,horses,pick,order);
     });
   }
 
-  runHorseRace(random,horses,pick,order){
-    const progress=[0,0,0,0];
-    let tick=0;
+  runHorseRace(session,random,horses,pick,order){
     this.arena.innerHTML=
-      '<div class="race-game"><div class="race-status"><strong>你下注 '+(pick+1)+' 號 '+horses[pick].name+'</strong><span data-race-message>準備起跑！</span></div>'+
+      '<div class="race-game horse-race-game">'+
+      '<div class="race-status"><strong>你下注 '+(pick+1)+' 號 '+horses[pick].name+'</strong><span data-race-message>閘門開啟，直線開跑！</span></div>'+
       '<div class="race-lanes">'+horses.map((horse,index)=>
-        '<div class="race-lane"><div class="race-lane__label">'+(index+1)+' '+horse.name+'</div><div class="race-track"><span class="race-runner" data-runner="'+index+'" style="left:0%">'+horse.icon+'</span><i></i></div></div>'
+        '<div class="race-lane race-lane--horse">'+
+          '<div class="race-lane__label">'+(index+1)+' '+horse.name+'</div>'+
+          '<div class="race-track race-track--horse">'+
+            '<span class="race-track__speed-lines" aria-hidden="true"></span>'+
+            '<span class="race-runner race-runner--horse" data-runner="'+index+'" style="left:2%">'+horse.icon+'</span>'+
+            '<span class="race-event-fx" data-race-fx="'+index+'"></span><i></i>'+
+          '</div>'+
+        '</div>'
       ).join("")+'</div></div>';
 
-    const interval=this.registerTimer(setInterval(()=>{
-      tick++;
-      let message="全馬群持續推進";
-      for(let index=0;index<horses.length;index++){
-        let gain=7+Math.floor(random()*10);
-        const eventRoll=random();
-        if(eventRoll<0.12){
-          gain+=9;
-          message=(index+1)+" 號突然爆發衝刺！";
-        }else if(eventRoll<0.20){
-          gain=Math.max(2,gain-7);
-          message=(index+1)+" 號步伐亂掉，速度下降。";
-        }
-        progress[index]=Math.min(100,progress[index]+gain);
-        const runner=this.arena.querySelector('[data-runner="'+index+'"]');
-        if(runner)runner.style.left=Math.min(92,progress[index]*0.92)+"%";
+    const eventTypes=[
+      {
+        key:"sprint",label:"💨 爆發衝刺",text:"突然爆發衝刺！",
+        apply:(state,elapsed)=>{state.multiplier=1.85;state.multiplierUntil=elapsed+950;},
+        durationMs:950
+      },
+      {
+        key:"mud",label:"💦 泥地減速",text:"踩進泥地，速度被拖慢！",
+        apply:(state,elapsed)=>{state.dragUntil=elapsed+900;},
+        durationMs:900
+      },
+      {
+        key:"stumble",label:"💫 步伐踉蹌",text:"步伐踉蹌，短暫失速！",
+        apply:(state,elapsed)=>{state.pauseUntil=elapsed+520;},
+        durationMs:650
+      },
+      {
+        key:"cheer",label:"✨ 觀眾歡呼",text:"聽到全場歡呼，越跑越快！",
+        apply:(state,elapsed)=>{state.multiplier=1.45;state.multiplierUntil=elapsed+1250;},
+        durationMs:1200
+      },
+      {
+        key:"kick",label:"🔥 最後衝刺",text:"進入最後直線，全力加速！",
+        apply:(state,elapsed)=>{state.multiplier=1.7;state.multiplierUntil=elapsed+1100;state.transientOffset+=1.4;},
+        durationMs:1100
       }
-      const messageNode=this.arena.querySelector("[data-race-message]");
-      if(messageNode)messageNode.textContent=message;
+    ];
 
-      if(tick>=9||progress.some(value=>value>=100)){
-        clearInterval(interval);
-        order.forEach((runnerIndex,rank)=>{
-          progress[runnerIndex]=100-rank*6;
-          const runner=this.arena.querySelector('[data-runner="'+runnerIndex+'"]');
-          if(runner)runner.style.left=Math.min(92,progress[runnerIndex]*0.92)+"%";
-        });
-        const place=order.indexOf(pick)+1;
-        const score=[9500,7600,5600,3600][place-1];
-        const timer=this.registerTimer(setTimeout(()=>{
-          this.finish({game:"horse",pick,place,ranking:order,sharedRace:true},score);
-        },900));
-        void timer;
-      }
-    },560),"interval");
+    const eventPlan=Array.from({length:6},(_,index)=>{
+      const type=eventTypes[Math.floor(random()*eventTypes.length)];
+      const target=Math.floor(random()*horses.length);
+      return{
+        atMs:1000+index*850+Math.floor(random()*320),
+        target,
+        text:(target+1)+" 號"+type.text,
+        effect:{kind:type.key,label:type.label,durationMs:type.durationMs},
+        apply:type.apply
+      };
+    }).sort((a,b)=>a.atMs-b.atMs);
+
+    this.runContinuousRace({
+      session,
+      gameId:"horse",
+      racers:horses,
+      pick,
+      order,
+      durationMs:7200,
+      eventPlan,
+      eventMessageSelector:"[data-race-message]",
+      scoreTable:[9500,7600,5600,3600]
+    });
   }
 
   startSnail(session){
-    const random=this.sharedRandomFor(session,"snail-events");
+    const random=this.sharedRandomFor(session,"snail-events-v2");
     const order=this.sharedRaceOrder(session,"snail");
     const snails=[
       {name:"阿慢",icon:"🐌"},
@@ -331,106 +496,98 @@ export class MinigameUI{
       {name:"寶仔",icon:"🐌"}
     ];
     this.arena.innerHTML=
-      '<div class="race-game snail-game"><div class="race-intro"><strong>下注一隻瘋狂蝸牛</strong><span>牠們會在途中遇到各種荒謬突發狀況。</span></div>'+
+      '<div class="race-game snail-game"><div class="race-intro"><strong>下注一隻瘋狂蝸牛</strong><span>蝸牛會一路連續爬行，但途中什麼荒謬事情都可能發生。</span></div>'+
       '<div class="race-pick-grid">'+snails.map((snail,index)=>
         '<button type="button" class="race-pick" data-snail="'+index+'"><span>'+snail.icon+'</span><strong>'+(index+1)+' 號 '+snail.name+'</strong></button>'
       ).join("")+'</div></div>';
 
     this.bindChoiceButtons("[data-snail]",button=>{
       const pick=Number(button.dataset.snail);
-      this.runSnailRace(random,snails,pick,order);
+      this.runSnailRace(session,random,snails,pick,order);
     });
   }
 
-  runSnailRace(random,snails,pick,order){
-    const progress=[0,0,0,0];
-    const stunned=[0,0,0,0];
-    let tick=0;
-    const eventLog=[];
+  runSnailRace(session,random,snails,pick,order){
     this.arena.innerHTML=
-      '<div class="race-game snail-game"><div class="race-status"><strong>你下注 '+(pick+1)+' 號 '+snails[pick].name+'</strong><span data-snail-message>蝸牛們開始蠕動！</span></div>'+
+      '<div class="race-game snail-game">'+
+      '<div class="race-status"><strong>你下注 '+(pick+1)+' 號 '+snails[pick].name+'</strong><span data-snail-message>蝸牛們開始直線蠕動！</span></div>'+
       '<div class="race-lanes">'+snails.map((snail,index)=>
-        '<div class="race-lane"><div class="race-lane__label">'+(index+1)+' '+snail.name+'</div><div class="race-track race-track--snail"><span class="race-runner race-runner--snail" data-runner="'+index+'" style="left:0%">'+snail.icon+'</span><i></i></div></div>'
+        '<div class="race-lane race-lane--snail">'+
+          '<div class="race-lane__label">'+(index+1)+' '+snail.name+'</div>'+
+          '<div class="race-track race-track--snail">'+
+            '<span class="race-runner race-runner--snail" data-runner="'+index+'" style="left:2%">'+snail.icon+'</span>'+
+            '<span class="race-event-fx" data-race-fx="'+index+'"></span><i></i>'+
+          '</div>'+
+        '</div>'
       ).join("")+'</div><div class="snail-event-feed" data-snail-feed></div></div>';
 
-    const pushEvent=text=>{
-      eventLog.unshift(text);
-      eventLog.splice(4);
-      const feed=this.arena.querySelector("[data-snail-feed]");
-      if(feed)feed.innerHTML=eventLog.map(item=>'<span>'+escapeHtml(item)+'</span>').join("");
-      const message=this.arena.querySelector("[data-snail-message]");
-      if(message)message.textContent=text;
-    };
-
-    const interval=this.registerTimer(setInterval(()=>{
-      tick++;
-      for(let index=0;index<snails.length;index++){
-        if(stunned[index]>0){
-          stunned[index]--;
-          continue;
-        }
-        progress[index]=Math.min(100,progress[index]+3+Math.floor(random()*5));
+    const events=[
+      {
+        key:"fall",label:"💫 跌倒",text:"跌倒了！原地暈一下。",
+        apply:(state,elapsed)=>{state.pauseUntil=elapsed+720;},
+        durationMs:780
+      },
+      {
+        key:"rocket",label:"🚀 火箭",text:"偷偷坐上火箭，直接暴衝！",
+        apply:(state,elapsed)=>{state.transientOffset+=7;state.multiplier=2.15;state.multiplierUntil=elapsed+1000;},
+        durationMs:1050
+      },
+      {
+        key:"heart",label:"😍 分心",text:"看到帥哥分心，完全忘記在比賽！",
+        apply:(state,elapsed)=>{state.pauseUntil=elapsed+900;},
+        durationMs:950
+      },
+      {
+        key:"fart",label:"💨 放屁衝鋒",text:"放屁衝鋒，突然噴射加速！",
+        apply:(state,elapsed)=>{state.transientOffset+=4.5;state.multiplier=1.9;state.multiplierUntil=elapsed+850;},
+        durationMs:900
+      },
+      {
+        key:"oil",label:"🛢️ 踩到油",text:"踩到油一路滑行，速度暴增！",
+        apply:(state,elapsed)=>{state.transientOffset+=3.5;state.multiplier=1.65;state.multiplierUntil=elapsed+900;},
+        durationMs:900
+      },
+      {
+        key:"slip",label:"🫨 打滑",text:"踩到油卻打滑，倒退又停住！",
+        apply:(state,elapsed)=>{state.transientOffset-=2.2;state.pauseUntil=elapsed+620;},
+        durationMs:760
+      },
+      {
+        key:"treasure",label:"💎 發現寶物",text:"看到地上有寶物，停下來研究！",
+        apply:(state,elapsed)=>{state.pauseUntil=elapsed+1050;},
+        durationMs:1100
+      },
+      {
+        key:"cheat",label:"🥸 作弊偷跑",text:"趁裁判不注意作弊偷跑！",
+        apply:state=>{state.transientOffset+=7.5;},
+        durationMs:850
       }
+    ];
 
+    const eventPlan=Array.from({length:8},(_,index)=>{
+      const type=events[Math.floor(random()*events.length)];
       const target=Math.floor(random()*snails.length);
-      const roll=random();
-      if(roll<0.11){
-        stunned[target]=1;
-        pushEvent((target+1)+" 號跌倒了！原地休息一下。");
-      }else if(roll<0.22){
-        progress[target]=Math.min(100,progress[target]+22);
-        pushEvent((target+1)+" 號偷偷坐上火箭，瞬間暴衝！");
-      }else if(roll<0.33){
-        stunned[target]=1;
-        pushEvent((target+1)+" 號看到帥哥分心，完全忘記在比賽。");
-      }else if(roll<0.44){
-        progress[target]=Math.min(100,progress[target]+14);
-        pushEvent((target+1)+" 號放屁衝鋒，莫名其妙加速！");
-      }else if(roll<0.56){
-        if(random()<0.5){
-          progress[target]=Math.min(100,progress[target]+12);
-          pushEvent((target+1)+" 號踩到油一路滑行，意外加速！");
-        }else{
-          progress[target]=Math.max(0,progress[target]-5);
-          stunned[target]=1;
-          pushEvent((target+1)+" 號踩油打滑，倒退還停一回合！");
-        }
-      }else if(roll<0.68){
-        stunned[target]=1;
-        pushEvent((target+1)+" 號看到地上有寶物，停下來研究半天。");
-      }else if(roll<0.80){
-        progress[target]=Math.min(100,progress[target]+16);
-        pushEvent((target+1)+" 號趁裁判不注意作弊偷跑！");
-      }else{
-        pushEvent("這一段沒有怪事，所有蝸牛努力蠕動。");
-      }
+      return{
+        atMs:700+index*720+Math.floor(random()*260),
+        target,
+        text:(target+1)+" 號"+type.text,
+        effect:{kind:type.key,label:type.label,durationMs:type.durationMs},
+        apply:type.apply
+      };
+    }).sort((a,b)=>a.atMs-b.atMs);
 
-      for(let index=0;index<snails.length;index++){
-        const runner=this.arena.querySelector('[data-runner="'+index+'"]');
-        if(runner)runner.style.left=Math.min(92,progress[index]*0.92)+"%";
-      }
-
-      if(tick>=12||progress.some(value=>value>=100)){
-        clearInterval(interval);
-        order.forEach((runnerIndex,rank)=>{
-          progress[runnerIndex]=100-rank*7;
-          const runner=this.arena.querySelector('[data-runner="'+runnerIndex+'"]');
-          if(runner)runner.style.left=Math.min(92,progress[runnerIndex]*0.92)+"%";
-        });
-        const place=order.indexOf(pick)+1;
-        const score=[9600,7600,5400,3400][place-1];
-        this.registerTimer(setTimeout(()=>{
-          this.finish({
-            game:"snail",
-            pick,
-            place,
-            events:eventLog,
-            ranking:order,
-            sharedRace:true
-          },score);
-        },1000));
-      }
-    },620),"interval");
+    this.runContinuousRace({
+      session,
+      gameId:"snail",
+      racers:snails,
+      pick,
+      order,
+      durationMs:7600,
+      eventPlan,
+      eventMessageSelector:"[data-snail-message]",
+      eventFeedSelector:"[data-snail-feed]",
+      scoreTable:[9600,7600,5400,3400]
+    });
   }
 
   startTreasure(session){
