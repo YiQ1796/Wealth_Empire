@@ -3,10 +3,10 @@ const CLIENT_KEY="wealth_empire_v20_client_id";
 const HOST_STATE_PREFIX="wealth_empire_v20_host_state_";
 const PEER_PREFIX="wealth-empire-v20-";
 const RELAY_BROKER_URLS=Object.freeze([
-  "wss://broker.emqx.io:8084/mqtt",
-  "wss://broker.hivemq.com:8884/mqtt"
+  "wss://broker.hivemq.com:8884/mqtt",
+  "wss://broker.emqx.io:8084/mqtt"
 ]);
-const RELAY_PROTOCOL="v20";
+const RELAY_PROTOCOL="v20a28";
 const RELAY_HEARTBEAT_MS=7000;
 const RELAY_STALE_MS=35000;
 const ROOM_RE=/^\d{6}$/;
