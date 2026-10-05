@@ -407,15 +407,6 @@ function renderStocks(){
 }
 
 function renderNetworkUi(){
-  const statusBar=document.getElementById("networkStatusBar");
-  if(network.mode==="host"){
-    statusBar.textContent="房主｜房號 "+network.roomCode+"｜未滿座位由 AI 補位";
-  }else if(network.mode==="guest"){
-    statusBar.textContent="已連線｜房號 "+network.roomCode+"｜座位 "+(currentLocalSeat()+1);
-  }else{
-    statusBar.textContent="單機模式｜1 真人 + 3 AI";
-  }
-
   const seatList=document.getElementById("networkSeatList");
   seatList.innerHTML=state.players.map(player=>{
     const status=player.kind==="ai"
@@ -527,10 +518,6 @@ featureDialog.addEventListener("click",event=>{
 
 purchaseDialog.addEventListener("cancel",event=>event.preventDefault());
 
-document.getElementById("openNetworkButton").addEventListener("click",()=>{
-  renderNetworkUi();
-  if(!networkDialog.open)networkDialog.showModal();
-});
 document.getElementById("closeNetworkDialog").addEventListener("click",()=>networkDialog.close());
 networkDialog.addEventListener("click",event=>{
   if(event.target===networkDialog)networkDialog.close();
