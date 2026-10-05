@@ -5,6 +5,7 @@ const html=fs.readFileSync(new URL("../index.html",import.meta.url),"utf8");
 const css=fs.readFileSync(new URL("../styles/app.css",import.meta.url),"utf8");
 const main=fs.readFileSync(new URL("../js/main.js",import.meta.url),"utf8");
 const render=fs.readFileSync(new URL("../js/ui/render.js",import.meta.url),"utf8");
+const ui=fs.readFileSync(new URL("../js/ui/minigame-ui.js",import.meta.url),"utf8");
 
 assert.match(html,/class="mobile-primary-actions"/);
 assert.match(html,/id="mobileRollButton"/);
