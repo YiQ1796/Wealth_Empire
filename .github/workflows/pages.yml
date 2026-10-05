@@ -122,8 +122,8 @@ jobs:
           grep -q '.stock-holding-row{' v20/styles/app.css
           grep -q '.stock-pnl-row{' v20/styles/app.css
           grep -q 'grid-template-columns:repeat(2,minmax(0,1fr))' v20/styles/app.css
-          grep -q 'app.css?v=alpha18-194' v20/index.html
-          grep -q 'main.js?v=alpha18-194' v20/index.html
+          grep -q 'app.css?v=alpha19-195' v20/index.html
+          grep -q 'main.js?v=alpha19-195' v20/index.html
 
           if grep -q 'data-feature="stock"' v20/index.html; then
             echo "Desktop stock market must not return as a shortcut"
@@ -298,6 +298,23 @@ jobs:
           grep -q 'cornerTilesAreSpecial' v20/js/data/board.js
           grep -q 'duplicateAdjacentEventTypes' v20/js/data/board.js
           echo "V20 mixed 2/3/4 regions, special corners and separated event types PASS"
+
+      - name: Validate V20 mobile landscape authority
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'class="mobile-primary-actions"' v20/index.html
+          grep -q 'id="mobileRollButton"' v20/index.html
+          grep -q 'data-feature="market"' v20/index.html
+          grep -q 'id="stockMarketMobileGrid"' v20/index.html
+          grep -q 'stockMarketMobileGrid' v20/js/main.js
+          grep -q 'V20 Alpha 19 — phone landscape authority' v20/styles/app.css
+          grep -q 'orientation:landscape' v20/styles/app.css
+          grep -q 'grid-template-columns:minmax(0,1fr) clamp(250px,29vw,300px)' v20/styles/app.css
+          grep -q '.desktop-stock-panel{' v20/styles/app.css
+          grep -q 'env(safe-area-inset-left)' v20/styles/app.css
+          node --experimental-default-type=module v20/tests/mobile-responsive.test.mjs
+          echo "V20 mobile landscape responsive authority PASS"
 
       - name: Validate V20 module syntax
         shell: bash
