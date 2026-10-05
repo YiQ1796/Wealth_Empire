@@ -1487,15 +1487,16 @@ document.getElementById("createRoomButton").addEventListener("click",async()=>{
   const code=createRoomCode();
   setNetworkStatus("正在建立房間…");
   try{
-    await network.host({roomCode:code,playerName:name,characterIndex:selectedCharacterIndex});
+    const result=await network.host({roomCode:code,playerName:name,characterIndex:selectedCharacterIndex});
+    const finalCode=result.roomCode;
     uiContext.localSeat=0;
     const next=createLobbyState(name,getOrCreateClientId());
     setPlayerCharacter(next,0,selectedCharacterIndex);
-    next.network.roomCode=code;
+    next.network.roomCode=finalCode;
     state=next;
     resetToastTracker(state);
     engine.replaceState(state);
-    document.getElementById("networkRoomCode").value=code;
+    document.getElementById("networkRoomCode").value=finalCode;
     setEntryVisible(false);
   }catch(error){
     setNetworkStatus("建立房間失敗："+(error?.message??"unknown"),"error");
