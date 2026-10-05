@@ -144,6 +144,19 @@ jobs:
 
           echo "V20 board-center visual layout PASS"
 
+      - name: Validate V20 tight board ring
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'edgeClasses.push("edge-top")' v20/js/ui/render.js
+          grep -q 'edgeClasses.push("edge-left")' v20/js/ui/render.js
+          grep -q 'grid-template-columns:10.6% repeat(11,minmax(0,1fr)) 10.6%' v20/styles/app.css
+          grep -q 'grid-template-rows:12.5% repeat(9,minmax(0,1fr)) 12.5%' v20/styles/app.css
+          grep -q '.tile.horizontal img.tile-art' v20/styles/app.css
+          grep -q '.tile.vertical img.tile-art' v20/styles/app.css
+          grep -q '.tile.corner img.tile-art' v20/styles/app.css
+          echo "V20 tight board ring PASS"
+
       - name: Validate V20 module syntax
         shell: bash
         run: |
