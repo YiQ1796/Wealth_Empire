@@ -99,10 +99,13 @@ export function advanceStockMarket(state,nextRound){
 }
 
 export function canTradeStock(state,seat){
+  const player=state.players?.[seat];
   return Boolean(
+    player&&
+    !player.bankrupt&&
     state.gameStatus==="playing"&&
-    state.currentPlayer===seat&&
-    state.phase!=="minigame"
+    state.phase!=="minigame"&&
+    state.phase!=="finished"
   );
 }
 
@@ -111,7 +114,7 @@ export function buyStock(state,seat,stockId,shares){
   const stock=getMarketStock(state,stockId);
   const quantity=Math.floor(Number(shares));
   if(!player||!stock||!Number.isFinite(quantity)||quantity<=0)return{ok:false,reason:"invalid"};
-  if(!canTradeStock(state,seat))return{ok:false,reason:"not_turn"};
+  if(!canTradeStock(state,seat))return{ok:false,reason:"trade_locked"};
 
   const total=stock.price*quantity;
   if(player.cash<total)return{ok:false,reason:"cash"};
@@ -132,7 +135,7 @@ export function sellStock(state,seat,stockId,shares){
   const stock=getMarketStock(state,stockId);
   const quantity=Math.floor(Number(shares));
   if(!player||!stock||!Number.isFinite(quantity)||quantity<=0)return{ok:false,reason:"invalid"};
-  if(!canTradeStock(state,seat))return{ok:false,reason:"not_turn"};
+  if(!canTradeStock(state,seat))return{ok:false,reason:"trade_locked"};
 
   const holding=getHolding(player,stockId);
   if(holding.shares<quantity)return{ok:false,reason:"shares"};
