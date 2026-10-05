@@ -3006,3 +3006,50 @@ body.entry-pending .app-shell{
   .property-info-acquisition strong{font-size:15px}
   .property-info-acquisition p{font-size:8px}
 }
+
+
+/* V20 Alpha 21 — first-entry iPhone landscape stabilization.
+   iOS may report a short dynamic viewport immediately after the entry gate closes.
+   Use the large landscape viewport so the board does not appear vertically centered
+   with grey bands until the browser chrome settles. */
+@media (orientation:landscape) and (max-height:650px) and (max-width:1180px){
+  html,
+  body{
+    min-height:100vh;
+    min-height:100lvh;
+    height:100lvh
+  }
+  .app-shell{
+    width:100%;
+    min-height:100vh;
+    min-height:100lvh;
+    height:100lvh;
+    margin:0 auto;
+    align-self:stretch
+  }
+  .game-layout,
+  .board-panel,
+  .board,
+  .hud-panel{
+    min-height:0;
+    height:100%
+  }
+
+  /* Four players start on the same tile. Keep the initial stack inside the tile
+     instead of letting 3-4 pawns clip above the board edge. */
+  .tile__tokens:has(.pawn-token:nth-child(3)){
+    width:86%;
+    gap:0
+  }
+  .tile__tokens:has(.pawn-token:nth-child(3)) .pawn-token{
+    width:20px;
+    height:20px
+  }
+}
+
+@media (orientation:landscape) and (max-height:430px) and (max-width:1180px){
+  .tile__tokens:has(.pawn-token:nth-child(3)) .pawn-token{
+    width:18px;
+    height:18px
+  }
+}
