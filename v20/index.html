@@ -48,36 +48,37 @@
 
     <aside class="hud-panel" aria-label="玩家與功能資訊">
       <header class="hud-header">
-        <div>
+        <div class="hud-heading">
           <h1>玩家資訊</h1>
           <div class="round-inline">ROUND <strong id="roundValue">1</strong> / 30</div>
         </div>
-        <div class="dice-result">🎲 <strong id="diceValue">—</strong></div>
+
+        <div class="hud-turn-tools">
+          <div class="dice-result">🎲 <strong id="diceValue">—</strong></div>
+          <div class="control-actions control-actions--turn">
+            <button id="rollButton" class="action-button action-button--primary">
+              <img src="./assets/ui/ACTION_ROLL.webp" alt="">
+              <span>擲骰子</span>
+            </button>
+            <button id="endTurnButton" class="action-button">
+              <img src="./assets/ui/ACTION_END_TURN.webp" alt="">
+              <span>結束回合</span>
+            </button>
+          </div>
+        </div>
       </header>
 
       <section id="players" class="players" aria-label="玩家資訊"></section>
 
-      <div class="control-actions control-actions--three">
-        <button id="rollButton" class="action-button action-button--primary">
-          <img src="./assets/ui/ACTION_ROLL.webp" alt="">
-          <span>擲骰子</span>
-        </button>
-        <button id="endTurnButton" class="action-button">
-          <img src="./assets/ui/ACTION_END_TURN.webp" alt="">
-          <span>結束回合</span>
-        </button>
-        <button id="openNetworkButton" class="action-button action-button--network">
-          <span class="action-button__emoji">🌐</span>
+      <div class="network-strip">
+        <div id="networkStatusBar" class="network-status-bar">單機模式｜1 真人 + 3 AI</div>
+        <button id="openNetworkButton" class="network-compact-button" type="button">
+          <span aria-hidden="true">🌐</span>
           <span>連線</span>
         </button>
       </div>
 
-      <div id="networkStatusBar" class="network-status-bar">單機模式｜1 真人 + 3 AI</div>
-
-      <nav class="feature-tabs" aria-label="快捷功能">
-        <button class="feature-tab" data-feature="stock">
-          <img src="./assets/v5/ui/modal/MODAL_STOCK_ICON.webp" alt=""><span>股票</span>
-        </button>
+      <nav class="feature-tabs feature-tabs--secondary" aria-label="其他功能">
         <button class="feature-tab" data-feature="property">
           <img src="./assets/v5/ui/modal/MODAL_PROPERTY_ICON.webp" alt=""><span>我的房產</span>
         </button>
@@ -88,6 +89,17 @@
           <img src="./assets/v5/ui/modal/MODAL_INFO_ICON.webp" alt=""><span>資訊</span>
         </button>
       </nav>
+
+      <section class="desktop-stock-panel" aria-label="股票市場">
+        <header class="desktop-stock-panel__header">
+          <div>
+            <h2>股票市場</h2>
+            <p>即時價格、持股、損益與買賣固定顯示</p>
+          </div>
+          <span class="market-badge">即時行情</span>
+        </header>
+        <div id="stockMarketGrid" class="stock-market-grid stock-market-grid--persistent"></div>
+      </section>
     </aside>
   </section>
 </main>
@@ -122,14 +134,6 @@
     </header>
 
     <section class="feature-modal__body">
-      <div class="feature-modal__pane" data-feature-panel="stock">
-        <div class="feature-heading">
-          <div><h3>股票市場</h3><p>每次輪到下一位玩家時，全市場重新漲跌；遊戲進行中可隨時自由買賣。</p></div>
-          <span class="market-badge">即時行情</span>
-        </div>
-        <div id="stockMarketGrid" class="stock-market-grid"></div>
-      </div>
-
       <div class="feature-modal__pane" data-feature-panel="property">
         <div class="feature-heading"><div><h3>我的房產</h3><p>24 塊地產｜8 區域｜最高 LV.2</p></div></div>
         <div id="propertyRegionSummary" class="region-summary" aria-label="區域完成度"></div>
