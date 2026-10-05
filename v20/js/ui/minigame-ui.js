@@ -216,7 +216,8 @@ export class MinigameUI{
       blackjack:()=>this.startBlackjack(session),
       plinko:()=>this.startPlinko(session),
       auction:()=>this.startAuction(session),
-      snail:()=>this.startSnail(session)
+      snail:()=>this.startSnail(session),
+      highlow:()=>this.startHighLow(session)
     };
     starters[definition.id]?.();
   }
@@ -588,6 +589,37 @@ export class MinigameUI{
       eventMessageSelector:"[data-snail-message]",
       eventFeedSelector:"[data-snail-feed]",
       scoreTable:[9600,7600,5400,3400]
+    });
+  }
+
+  startHighLow(session){
+    const random=this.randomFor(session,"highlow");
+    this.arena.innerHTML=
+      '<div class="decision-game highlow-game">'+
+        '<div class="decision-summary"><strong>高低骰對決</strong><span>猜兩顆骰子的總和：小 2–6｜7 平手｜大 8–12</span></div>'+
+        '<div class="highlow-dice" data-highlow-dice>🎲 🎲</div>'+
+        '<div class="decision-actions">'+
+          '<button type="button" data-highlow="low">猜小 2–6</button>'+
+          '<button type="button" data-highlow="high">猜大 8–12</button>'+
+        '</div>'+
+      '</div>';
+
+    this.bindChoiceButtons("[data-highlow]",button=>{
+      const pick=button.dataset.highlow;
+      const d1=1+Math.floor(random()*6);
+      const d2=1+Math.floor(random()*6);
+      const total=d1+d2;
+      const outcome=total===7?"tie":total<=6?"low":"high";
+      const won=outcome===pick;
+      const dice=this.arena.querySelector("[data-highlow-dice]");
+      if(dice){
+        dice.textContent="🎲 "+d1+" + 🎲 "+d2+" = "+total;
+        dice.classList.add(won?"win":outcome==="tie"?"tie":"lose");
+      }
+      const score=outcome==="tie"?5600:won?9000:2600;
+      this.registerTimer(setTimeout(()=>{
+        this.finish({game:"highlow",pick,d1,d2,total,outcome,won},score);
+      },900));
     });
   }
 
