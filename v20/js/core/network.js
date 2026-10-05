@@ -22,6 +22,8 @@ export const NETWORK_ACTION_TYPES=Object.freeze([
   "transport_skip",
   "acquisition_buy",
   "acquisition_skip",
+  "urban_move",
+  "urban_skip",
   "end_turn",
   "start_game"
 ]);
@@ -103,6 +105,12 @@ export function normalizeRemoteAction(raw){
     const tileIndex=Math.floor(Number(raw.tileIndex));
     if(!Number.isFinite(tileIndex)||tileIndex<0||tileIndex>43)return null;
     action.tileIndex=tileIndex;
+  }
+
+  if(raw.type==="urban_move"){
+    const destinationIndex=Math.floor(Number(raw.destinationIndex));
+    if(!Number.isFinite(destinationIndex)||destinationIndex<0||destinationIndex>43)return null;
+    action.destinationIndex=destinationIndex;
   }
 
   return action;
