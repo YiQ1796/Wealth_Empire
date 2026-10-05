@@ -266,6 +266,7 @@ The three new notification batches are integrated into the host-authoritative ev
 - Gold sparkle.
 
 Notifications now use one central focus card at a time with a queue. They no longer stack multiple small cards at the top of the screen.
+The obsolete Alpha 17 toast layout CSS is removed instead of being overridden, so V5 card backgrounds, icons and effects are the only notification visual source.
 
 ### Alpha 18 visual deployment gate
 
