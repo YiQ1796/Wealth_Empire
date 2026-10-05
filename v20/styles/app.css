@@ -26,18 +26,19 @@ button{font:inherit}
 button:focus-visible{outline:3px solid rgba(47,114,196,.28);outline-offset:2px}
 
 .app-shell{
-  width:min(1720px,100%);
+  width:100vw;
+  max-width:none;
   height:100dvh;
-  margin:auto;
-  padding:6px;
+  margin:0;
+  padding:2px;
   overflow:hidden
 }
 .game-layout{
   width:100%;
   height:100%;
   display:grid;
-  grid-template-columns:minmax(0,1fr) clamp(340px,24vw,400px);
-  gap:6px;
+  grid-template-columns:minmax(0,1fr) clamp(320px,22vw,390px);
+  gap:3px;
   overflow:hidden
 }
 .board-panel{
@@ -4389,4 +4390,68 @@ body.entry-pending .app-shell{
   .central-mission-card strong,
   .central-development-card strong{font-size:9px}
   .central-feature-active{padding:7px}
+}
+
+
+/* V20 Alpha 28 — fill the desktop viewport more aggressively without changing phone authority. */
+@media (min-width:1181px){
+  .board-panel,
+  .board{
+    border-radius:8px
+  }
+  .hud-panel{
+    padding:8px;
+    gap:6px
+  }
+}
+
+/* Network dialog: keep room information readable on short mobile landscape screens. */
+@media (orientation:landscape) and (max-height:650px) and (max-width:1180px){
+  .network-modal{
+    display:block;
+    max-height:calc(var(--phone-app-height,100dvh) - 14px);
+    padding:9px;
+    scroll-padding-top:58px
+  }
+  .network-modal .feature-modal__header{
+    top:-9px;
+    margin:-9px -9px 7px;
+    padding:8px 9px 7px
+  }
+  .network-modal .room-code-hero{
+    margin-bottom:8px;
+    padding:8px 10px;
+    gap:7px
+  }
+  .network-modal .room-code-hero>strong{
+    font-size:24px
+  }
+  .network-modal .network-form-grid{
+    gap:7px
+  }
+  .network-modal .network-form-grid input{
+    min-height:36px;
+    padding:6px 8px;
+    font-size:13px
+  }
+  .network-modal .network-actions{
+    gap:5px;
+    margin-top:7px
+  }
+  .network-modal .network-actions button{
+    min-height:36px;
+    font-size:10px
+  }
+  .network-modal .network-status{
+    margin-top:7px;
+    padding:7px 8px;
+    font-size:9px
+  }
+  .network-modal .network-seat-list{
+    gap:4px;
+    margin-top:6px
+  }
+  .network-modal .network-seat-row{
+    padding:5px 7px
+  }
 }
