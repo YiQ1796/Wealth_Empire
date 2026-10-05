@@ -25,6 +25,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Expand V20 central five assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf v20/assets/center-v1
+          mkdir -p v20/assets/center-v1
+          cat .asset-packs/central-five-v1/part*.b64 > /tmp/central-five-v1.b64
+          base64 --decode /tmp/central-five-v1.b64 > /tmp/central-five-v1.zip
+          unzip -oq /tmp/central-five-v1.zip -d v20/assets/center-v1
+
+          for asset in             CENTRAL_BANK.webp             CENTRAL_MISSION.webp             CENTRAL_TRANSIT.webp             CENTRAL_INSURANCE.webp             CENTRAL_DEVELOPMENT.webp             TITLE_BANK.webp             TITLE_MISSION.webp             TITLE_TRANSIT.webp             TITLE_INSURANCE.webp             TITLE_DEVELOPMENT.webp             CENTRAL_GLOW.webp             STATUS_READY.webp             STATUS_COOLDOWN.webp             STATUS_ACTIVE.webp; do
+            test -s "v20/assets/center-v1/$asset"
+          done
+          echo "Central five approved asset pack materialized PASS"
+
       - name: Validate inline JavaScript
         shell: bash
         run: |
@@ -312,6 +327,28 @@ jobs:
           grep -q 'V20 Alpha 27 — remaining special-grid completion' v20/styles/app.css
           node --experimental-default-type=module v20/tests/gameplay-systems.test.mjs
           echo "V20 Alpha27 high-low, tax, court, hospital, market and urban special grids PASS"
+
+      - name: Validate V20 central five facilities
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'data-central-facility="bank"' v20/index.html
+          grep -q 'data-central-facility="mission"' v20/index.html
+          grep -q 'data-central-facility="transit"' v20/index.html
+          grep -q 'data-central-facility="insurance"' v20/index.html
+          grep -q 'data-central-facility="development"' v20/index.html
+          grep -q 'CENTRAL_GLOW.webp' v20/index.html
+          grep -q 'centralBankDeposit' v20/js/core/state.js
+          grep -q 'central_bank_deposit' v20/js/core/network.js
+          grep -q 'central_mission_accept' v20/js/core/network.js
+          grep -q 'central_transit' v20/js/core/network.js
+          grep -q 'central_insurance' v20/js/core/network.js
+          grep -q 'central_development' v20/js/core/network.js
+          grep -q 'function renderCentralFacilities' v20/js/main.js
+          grep -q 'V20 Alpha 28 — central five facilities' v20/styles/app.css
+          test -s v20/assets/center-v1/CENTRAL_BANK.webp
+          test -s v20/assets/center-v1/STATUS_READY.webp
+          echo "V20 Alpha28 central five facilities and approved assets PASS"
 
       - name: Validate V20 character ownership and contiguous regions
         shell: bash
