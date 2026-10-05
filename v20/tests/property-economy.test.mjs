@@ -1,5 +1,5 @@
 import assert from"node:assert/strict";
-import{BOARD_TILES,GROUP_ORDER,MAX_PROPERTY_LEVEL,boardPlacement}from"../js/data/board.js";
+import{BOARD_TILES,GROUP_ORDER,MAX_PROPERTY_LEVEL,boardPlacement,groupTileIndexes,groupsAreContiguous}from"../js/data/board.js";
 import{createInitialState}from"../js/core/state.js";
 import{GameEngine}from"../js/core/game.js";
 import{canForceAcquireProperty,groupProgress,rentFor,transferPropertyOwnership,upgradeCost}from"../js/core/property-economy.js";
@@ -17,6 +17,16 @@ for(const group of GROUP_ORDER){
     group+" must contain exactly 3 properties"
   );
 }
+
+for(const group of GROUP_ORDER){
+  const indexes=groupTileIndexes(group);
+  assert.deepEqual(
+    indexes,
+    [indexes[0],indexes[0]+1,indexes[0]+2],
+    group+" properties must be physically contiguous on the route"
+  );
+}
+assert.equal(groupsAreContiguous(),true,"all eight property regions must be contiguous three-tile blocks");
 
 const occupied=new Set();
 BOARD_TILES.forEach((tile,index)=>{
