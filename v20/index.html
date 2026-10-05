@@ -4,10 +4,33 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#eef3f7">
-<title>財富帝國 V20 Alpha 16</title>
+<title>財富帝國 V20 Alpha 17</title>
 <link rel="stylesheet" href="./styles/app.css">
 </head>
-<body>
+<body class="entry-pending">
+<section id="entryGate" class="entry-gate" aria-label="遊戲模式選擇">
+  <div class="entry-card">
+    <div class="entry-card__brand">
+      <span class="entry-card__eyebrow">WEALTH EMPIRE V20</span>
+      <h1>財富帝國</h1>
+      <p>先選擇這一局要怎麼玩，再進入棋盤。</p>
+    </div>
+    <div class="entry-mode-grid">
+      <button id="startSoloButton" type="button" class="entry-mode entry-mode--solo">
+        <span class="entry-mode__icon">🤖</span>
+        <strong>單機遊玩</strong>
+        <small>你 + 3 位 AI 玩家<br>直接開始 30 ROUND 對局</small>
+      </button>
+      <button id="startFriendButton" type="button" class="entry-mode entry-mode--friend">
+        <span class="entry-mode__icon">🌐</span>
+        <strong>好友遊玩</strong>
+        <small>建立 / 加入 6 位數房間<br>人數不足由 AI 補位</small>
+      </button>
+    </div>
+    <button id="resumeRoomButton" type="button" class="entry-resume" hidden>重新連回上一個好友房間</button>
+  </div>
+</section>
+
 <main class="app-shell">
   <section class="game-layout">
     <div class="board-panel">
@@ -98,7 +121,7 @@
     <section class="feature-modal__body">
       <div class="feature-modal__pane" data-feature-panel="stock">
         <div class="feature-heading">
-          <div><h3>股票市場</h3><p>每個 ROUND 全市場重新漲跌；只能在自己的回合自由買賣。</p></div>
+          <div><h3>股票市場</h3><p>每次輪到下一位玩家時，全市場重新漲跌；遊戲進行中可隨時自由買賣。</p></div>
           <span class="market-badge">即時行情</span>
         </div>
         <div id="stockMarketGrid" class="stock-market-grid"></div>
@@ -137,6 +160,12 @@
       <button id="closeNetworkDialog" type="button" class="modal-close" aria-label="關閉">×</button>
     </header>
 
+    <div id="roomCodeHero" class="room-code-hero" hidden>
+      <span>好友房號</span>
+      <strong id="networkRoomCodeDisplay">------</strong>
+      <button id="copyRoomCodeButton" type="button">複製房號</button>
+    </div>
+
     <div class="network-form-grid">
       <label>玩家名稱
         <input id="networkPlayerName" type="text" maxlength="20" value="玩家1" autocomplete="nickname">
@@ -172,6 +201,7 @@
   </div>
 </dialog>
 
+<div id="actionToastStack" class="action-toast-stack" aria-live="polite" aria-atomic="false"></div>
 <script type="module" src="./js/main.js"></script>
 </body>
 </html>
