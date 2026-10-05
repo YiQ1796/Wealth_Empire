@@ -105,7 +105,19 @@ export class GameEngine{
           player.name+" 支付「"+tile.name+"」過路費 "+this.formatMoney(paid)+" 給 "+owner.name+"。"+
           (ownsCompleteGroup(this.state,tile.owner,tile.group)?"（區域完成 +25%）":""),
           "rent",
-          {payerSeat:player.seat,ownerSeat:owner.seat,tile:player.position,amount:paid,requested:rent,group:tile.group}
+          {
+            payerSeat:player.seat,
+            payerName:player.name,
+            ownerSeat:owner.seat,
+            ownerName:owner.name,
+            tile:player.position,
+            tileName:tile.name,
+            amount:paid,
+            requested:rent,
+            group:tile.group,
+            payerCashAfter:player.cash,
+            ownerCashAfter:owner.cash
+          }
         );
         if(paid<rent){
           this.log(player.name+" 現金不足，實際支付可用現金 "+this.formatMoney(paid)+"。","warning",{seat:player.seat});
@@ -173,7 +185,15 @@ export class GameEngine{
     this.log(
       player.name+" 以 "+this.formatMoney(tile.price)+" 購買「"+tile.name+"」。",
       "property_buy",
-      {seat:player.seat,tile:tileIndex,amount:tile.price,group:tile.group}
+      {
+        seat:player.seat,
+        playerName:player.name,
+        tile:tileIndex,
+        tileName:tile.name,
+        amount:tile.price,
+        group:tile.group,
+        cashAfter:player.cash
+      }
     );
 
     if(ownsCompleteGroup(this.state,player.seat,tile.group)){
@@ -218,10 +238,21 @@ export class GameEngine{
 
     player.cash-=cost;
     tile.level+=1;
+    const rentAfter=rentFor(this.state,tile);
     this.log(
-      player.name+" 花費 "+this.formatMoney(cost)+" 將「"+tile.name+"」升級至 LV."+tile.level+"，目前過路費 "+this.formatMoney(rentFor(this.state,tile))+"。",
+      player.name+" 花費 "+this.formatMoney(cost)+" 將「"+tile.name+"」升級至 LV."+tile.level+"，目前過路費 "+this.formatMoney(rentAfter)+"。",
       "property_upgrade",
-      {seat:player.seat,tile:Number(tileIndex),level:tile.level,amount:cost}
+      {
+        seat:player.seat,
+        playerName:player.name,
+        tile:Number(tileIndex),
+        tileName:tile.name,
+        group:tile.group,
+        level:tile.level,
+        amount:cost,
+        rentAfter,
+        cashAfter:player.cash
+      }
     );
     this.notify();
     return true;
@@ -243,7 +274,18 @@ export class GameEngine{
     this.log(
       this.state.players[seat].name+" 買進「"+(stock?.name??stockId)+"」"+result.quantity+" 股，共 "+this.formatMoney(result.total)+"。",
       "stock_buy",
-      {seat,stockId,stockName:stock?.name??stockId,shares:result.quantity,total:result.total,price:result.price}
+      {
+        seat,
+        playerName:this.state.players[seat].name,
+        stockId,
+        stockName:stock?.name??stockId,
+        shares:result.quantity,
+        total:result.total,
+        price:result.price,
+        holdingShares:result.holding.shares,
+        avgCost:result.holding.avgCost,
+        cashAfter:this.state.players[seat].cash
+      }
     );
     this.notify();
     return true;
@@ -265,7 +307,18 @@ export class GameEngine{
     this.log(
       this.state.players[seat].name+" 賣出「"+(stock?.name??stockId)+"」"+result.quantity+" 股，共 "+this.formatMoney(result.total)+"，已實現損益 "+this.formatSignedMoney(result.realized)+"。",
       "stock_sell",
-      {seat,stockId,stockName:stock?.name??stockId,shares:result.quantity,total:result.total,price:result.price,realized:result.realized}
+      {
+        seat,
+        playerName:this.state.players[seat].name,
+        stockId,
+        stockName:stock?.name??stockId,
+        shares:result.quantity,
+        total:result.total,
+        price:result.price,
+        realized:result.realized,
+        holdingShares:result.holding.shares,
+        cashAfter:this.state.players[seat].cash
+      }
     );
     this.notify();
     return true;
@@ -393,7 +446,16 @@ export class GameEngine{
     this.log(
       "市場更新｜輪到 "+this.state.players[nextSeat].name+"：全市場重新漲跌，"+movers+"。",
       "market_tick",
-      {round:this.state.round,seat:nextSeat,tick:this.state.market.tick}
+      {
+        round:this.state.round,
+        seat:nextSeat,
+        playerName:this.state.players[nextSeat].name,
+        tick:this.state.market.tick,
+        movers:[...this.state.market.stocks]
+          .sort((a,b)=>Math.abs(b.changePercent)-Math.abs(a.changePercent))
+          .slice(0,3)
+          .map(stock=>({name:stock.name,changePercent:stock.changePercent}))
+      }
     );
 
     this.state.turnToken+=1;
