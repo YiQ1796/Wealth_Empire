@@ -47,6 +47,14 @@ export const MINIGAME_DEFINITIONS=Object.freeze([
     category:"下注＋突發事件",
     durationMs:52000,
     description:"下注 1 隻蝸牛；賽途中可能跌倒、坐火箭、分心、放屁衝鋒、踩油、撿寶或作弊偷跑。"
+  },
+  {
+    id:"highlow",
+    name:"高低骰對決",
+    category:"猜大／猜小",
+    durationMs:30000,
+    randomEligible:false,
+    description:"先猜兩顆骰子的總和是小（2–6）還是大（8–12）；7 為平手。"
   }
 ]);
 
