@@ -20,21 +20,25 @@ function regionBadge(group){
   return path?'<img class="region-badge" src="'+path+'" alt="'+group+'">':"";
 }
 
-function houseMarkup(ownerSeat,level){
-  if(ownerSeat==null)return"";
-  const path=UI_ASSETS.houses[ownerSeat];
+function houseMarkup(ownerPlayer,level){
+  if(!ownerPlayer)return"";
+  const characterIndex=Number.isInteger(ownerPlayer.characterIndex)?ownerPlayer.characterIndex:ownerPlayer.seat;
+  const path=UI_ASSETS.houses[characterIndex];
   const count=Math.max(1,Math.min(3,(Number(level)||0)+1));
   return Array.from({length:count},(_,index)=>
     '<img class="property-house property-house--'+(index+1)+'" src="'+path+'" alt="" aria-hidden="true">'
   ).join("");
 }
 
-function playerCharacter(seat,stateName="idle"){
-  return UI_ASSETS.characters[seat]?.[stateName]??UI_ASSETS.characters[seat]?.idle??"";
+function playerCharacter(playerOrIndex,stateName="idle"){
+  const characterIndex=typeof playerOrIndex==="object"
+    ? (Number.isInteger(playerOrIndex.characterIndex)?playerOrIndex.characterIndex:playerOrIndex.seat)
+    : Number(playerOrIndex);
+  return UI_ASSETS.characters[characterIndex]?.[stateName]??UI_ASSETS.characters[characterIndex]?.idle??"";
 }
 
-export function characterAsset(seat,stateName="idle"){
-  return playerCharacter(seat,stateName);
+export function characterAsset(playerOrIndex,stateName="idle"){
+  return playerCharacter(playerOrIndex,stateName);
 }
 
 export function mountStaticBoard(boardElement){
@@ -196,7 +200,7 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
       : "";
     const offlineLabel=player.connected===false?'<span class="player-offline-label">離線</span>':"";
     return '<article class="player-card '+(index===state.currentPlayer?"active":"")+'">'+
-      '<img class="player-pawn" data-player-avatar="'+index+'" src="'+playerCharacter(index,"idle")+'" alt="">'+
+      '<img class="player-pawn" data-player-avatar="'+index+'" src="'+playerCharacter(player,"idle")+'" alt="">'+
       '<div class="player-card__body">'+
         '<h3>'+player.name+(index===state.currentPlayer?" 👑":"")+statusBadge+thinkingBadge+offlineLabel+'</h3>'+
         '<div class="player-stats">'+
@@ -220,10 +224,17 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
       : "";
 
     if(tile.owner==null){
+      node.classList.remove("tile--owned");
+      node.style.removeProperty("--owner-color");
+      node.removeAttribute("data-owner-seat");
       houses.innerHTML="";
       badges.innerHTML="";
     }else{
-      houses.innerHTML=houseMarkup(tile.owner,tile.level);
+      const ownerPlayer=state.players[tile.owner];
+      node.classList.add("tile--owned");
+      node.style.setProperty("--owner-color",ownerPlayer?.color??"#377bd1");
+      node.dataset.ownerSeat=String(tile.owner);
+      houses.innerHTML=houseMarkup(ownerPlayer,tile.level);
       badges.innerHTML=tile.level>=MAX_PROPERTY_LEVEL
         ? badge(UI_ASSETS.badges.noAcquisition,"不可強制收購","tile-no-acquisition")
         : "";
@@ -231,7 +242,7 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
 
     tokens.innerHTML=state.players
       .filter(player=>!player.bankrupt&&player.position===index)
-      .map(player=>'<img class="pawn-token" data-board-player="'+player.seat+'" src="'+playerCharacter(player.seat,"idle")+'" alt="" title="'+player.name+'">')
+      .map(player=>'<img class="pawn-token" data-board-player="'+player.seat+'" src="'+playerCharacter(player,"idle")+'" alt="" title="'+player.name+'">')
       .join("");
   });
 
