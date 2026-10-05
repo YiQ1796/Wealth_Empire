@@ -308,6 +308,7 @@ jobs:
           grep -q 'data-feature="market"' v20/index.html
           grep -q 'id="stockMarketMobileGrid"' v20/index.html
           grep -q 'stockMarketMobileGrid' v20/js/main.js
+          grep -q 'mobileRollButton.disabled=rollDisabled' v20/js/ui/render.js
           grep -q 'V20 Alpha 19 — phone landscape authority' v20/styles/app.css
           grep -q 'orientation:landscape' v20/styles/app.css
           grep -q 'grid-template-columns:minmax(0,1fr) clamp(250px,29vw,300px)' v20/styles/app.css
