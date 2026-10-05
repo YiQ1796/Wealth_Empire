@@ -1,7 +1,7 @@
 import{shouldBuyProperty,chooseStockOrders,chooseUpgrade}from"./ai.js";
 import{fillAiMinigameResults,finalizeMinigame,startMinigame,submitMinigameResult as submitGameResult}from"./minigames.js";
 import{canUpgradeProperty,ownsCompleteGroup,rentFor,upgradeCost}from"./property-economy.js";
-import{advanceStockMarket,buyStock as executeBuyStock,sellStock as executeSellStock}from"./stock-market.js";
+import{advanceStockMarket,buyStock as executeBuyStock,getMarketStock,sellStock as executeSellStock}from"./stock-market.js";
 
 export class GameEngine{
   constructor(state,onChange){
@@ -228,44 +228,44 @@ export class GameEngine{
   }
 
   buyStock(stockId,shares,seat=this.state.currentPlayer){
-    if(!this.isCurrentSeat(seat))return false;
     const result=executeBuyStock(this.state,seat,stockId,shares);
     if(!result.ok){
       const reason={
         cash:"現金不足。",
-        not_turn:"只能在自己的回合買賣股票。",
+        trade_locked:"目前正在小遊戲或結算中，暫時不能交易股票。",
         invalid:"股票交易數量不正確。"
       }[result.reason]??"目前無法買進股票。";
       this.log(reason,"warning",{seat,stockId});
       this.notify();
       return false;
     }
+    const stock=getMarketStock(this.state,stockId);
     this.log(
-      this.state.players[seat].name+" 買進 "+stockId+" "+result.quantity+" 股，共 "+this.formatMoney(result.total)+"。",
+      this.state.players[seat].name+" 買進「"+(stock?.name??stockId)+"」"+result.quantity+" 股，共 "+this.formatMoney(result.total)+"。",
       "stock_buy",
-      {seat,stockId,shares:result.quantity,total:result.total,price:result.price}
+      {seat,stockId,stockName:stock?.name??stockId,shares:result.quantity,total:result.total,price:result.price}
     );
     this.notify();
     return true;
   }
 
   sellStock(stockId,shares,seat=this.state.currentPlayer){
-    if(!this.isCurrentSeat(seat))return false;
     const result=executeSellStock(this.state,seat,stockId,shares);
     if(!result.ok){
       const reason={
         shares:"持股數量不足。",
-        not_turn:"只能在自己的回合買賣股票。",
+        trade_locked:"目前正在小遊戲或結算中，暫時不能交易股票。",
         invalid:"股票交易數量不正確。"
       }[result.reason]??"目前無法賣出股票。";
       this.log(reason,"warning",{seat,stockId});
       this.notify();
       return false;
     }
+    const stock=getMarketStock(this.state,stockId);
     this.log(
-      this.state.players[seat].name+" 賣出 "+stockId+" "+result.quantity+" 股，共 "+this.formatMoney(result.total)+"，已實現損益 "+this.formatSignedMoney(result.realized)+"。",
+      this.state.players[seat].name+" 賣出「"+(stock?.name??stockId)+"」"+result.quantity+" 股，共 "+this.formatMoney(result.total)+"，已實現損益 "+this.formatSignedMoney(result.realized)+"。",
       "stock_sell",
-      {seat,stockId,shares:result.quantity,total:result.total,price:result.price,realized:result.realized}
+      {seat,stockId,stockName:stock?.name??stockId,shares:result.quantity,total:result.total,price:result.price,realized:result.realized}
     );
     this.notify();
     return true;
