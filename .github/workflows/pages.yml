@@ -88,6 +88,11 @@ jobs:
         run: |
           node --experimental-default-type=module v20/tests/property-economy.test.mjs
 
+      - name: Validate V20 gameplay systems
+        shell: bash
+        run: |
+          node --experimental-default-type=module v20/tests/gameplay-systems.test.mjs
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
