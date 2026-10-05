@@ -145,6 +145,7 @@ function pumpActionNotice(){
     '</picture>'+
     '<img class="action-toast__fx" src="'+config.effect+'" alt="">'+
     '<img class="action-toast__shine" src="'+UI_ASSETS.notification.effects.edgeShine+'" alt="">'+
+    (config.major&&config.tone==="gold"?'<img class="action-toast__sparkle" src="'+UI_ASSETS.notification.effects.sparkleGold+'" alt="">':"")+
     '<div class="action-toast__content">'+
       '<img class="action-toast__icon" src="'+config.icon+'" alt="">'+
       '<div class="action-toast__copy"><strong></strong><p></p></div>'+
