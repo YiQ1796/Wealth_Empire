@@ -210,6 +210,11 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
       ? '<img class="player-thinking-badge" src="'+UI_ASSETS.badges.thinking+'" alt="AI思考中" title="AI思考中">'
       : "";
     const offlineLabel=player.connected===false?'<span class="player-offline-label">離線</span>':"";
+    const civicBadges=[
+      player.taxEventShield?'<span class="player-civic-badge player-civic-badge--tax">稅務抵免</span>':"",
+      player.medicalMoveShield?'<span class="player-civic-badge player-civic-badge--hospital">醫療保護</span>':"",
+      Number(player.courtShieldUntilRound)>=Number(state.round)?'<span class="player-civic-badge player-civic-badge--court">法院保全 R'+player.courtShieldUntilRound+'</span>':""
+    ].join("");
     return '<article class="player-card '+(index===state.currentPlayer?"active":"")+'">'+
       '<img class="player-pawn" data-player-avatar="'+index+'" src="'+playerCharacter(player,"idle")+'" alt="">'+
       '<div class="player-card__body">'+
@@ -219,6 +224,7 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
           '<span>地產 <b>'+player.properties.length+'</b></span>'+
           '<span>位置 <b>#'+(player.position+1)+'</b></span>'+
         '</div>'+
+        (civicBadges?'<div class="player-civic-badges">'+civicBadges+'</div>':"")+
       '</div>'+
     '</article>';
   }).join("");
@@ -287,6 +293,8 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
             ? current.name+" 正在選擇交通轉乘目的地。"
           : state.phase==="acquisition"
             ? current.name+" 正在收購中心選擇目標地產。"
+          : state.phase==="urban"
+            ? current.name+" 正在城市更新局選擇重新部署位置。"
           : state.phase==="await-roll"
             ? current.name+" 的回合，請擲骰。"
             : state.pendingPurchase!=null
