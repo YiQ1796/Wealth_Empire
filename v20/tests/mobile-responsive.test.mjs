@@ -10,8 +10,8 @@ assert.match(html,/class="mobile-primary-actions"/);
 assert.match(html,/id="mobileRollButton"/);
 assert.match(html,/data-feature="market"/);
 assert.match(html,/id="stockMarketMobileGrid"/);
-assert.match(html,/app\.css\?v=alpha21-199/);
-assert.match(html,/main\.js\?v=alpha21-199/);
+assert.match(html,/app\.css\?v=alpha22-200/);
+assert.match(html,/main\.js\?v=alpha22-200/);
 
 assert.match(css,/V20 Alpha 19 — phone landscape authority/);
 assert.match(css,/@media \(orientation:landscape\) and \(max-height:650px\) and \(max-width:1180px\)/);
@@ -44,3 +44,12 @@ assert.match(css,/\.tile__tokens:has\(\.pawn-token:nth-child\(3\)\)/);
 assert.match(main,/function settlePhoneLandscapeLayout/);
 assert.match(main,/visualViewport\?\.addEventListener\("resize",settlePhoneLandscapeLayout\)/);
 assert.match(main,/if\(!visible\)settlePhoneLandscapeLayout\(\)/);
+
+assert.match(css,/V20 Alpha 22 — mobile-only pawn, houses and HUD fill/);
+assert.match(css,/\.tile__tokens\{[\s\S]*?top:42%/);
+assert.match(css,/\.tile__tokens \.pawn-token\{[\s\S]*?width:22px/);
+assert.match(css,/grid-template-columns:repeat\(2,15px\)/);
+assert.match(css,/\.property-house\{[\s\S]*?width:13px/);
+assert.match(css,/\.tile__houses\{[\s\S]*?height:14px/);
+assert.match(css,/\.hud-panel\{[\s\S]*?grid-template-rows:auto minmax\(0,1fr\) auto/);
+assert.match(css,/\.players\{[\s\S]*?grid-template-rows:repeat\(4,minmax\(0,1fr\)\)/);
