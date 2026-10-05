@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#eef3f7">
-<title>財富帝國 V20 Alpha 17</title>
+<title>財富帝國 V20 Alpha 18</title>
 <link rel="stylesheet" href="./styles/app.css">
 </head>
 <body class="entry-pending">
@@ -76,16 +76,16 @@
 
       <nav class="feature-tabs" aria-label="快捷功能">
         <button class="feature-tab" data-feature="stock">
-          <img src="./assets/ui/QUICK_STOCK.webp" alt=""><span>股票</span>
+          <img id="quickStockIcon" alt=""><span>股票</span>
         </button>
         <button class="feature-tab" data-feature="property">
-          <img src="./assets/ui/QUICK_PROPERTY.webp" alt=""><span>我的房產</span>
+          <img id="quickPropertyIcon" alt=""><span>我的房產</span>
         </button>
         <button class="feature-tab" data-feature="item">
-          <img src="./assets/ui/QUICK_ITEM.webp" alt=""><span>道具</span>
+          <img id="quickItemIcon" alt=""><span>道具</span>
         </button>
         <button class="feature-tab" data-feature="info">
-          <img src="./assets/ui/QUICK_INFO.webp" alt=""><span>資訊</span>
+          <img id="quickInfoIcon" alt=""><span>資訊</span>
         </button>
       </nav>
     </aside>
@@ -94,7 +94,7 @@
 
 <dialog id="purchaseDialog" class="purchase-dialog">
   <div class="purchase-card">
-    <img class="purchase-card__icon" src="./assets/ui/QUICK_PROPERTY.webp" alt="">
+    <img id="purchasePropertyIcon" class="purchase-card__icon" alt="">
     <h2 id="purchaseTitle">購買地產？</h2>
     <p id="purchaseSubtitle">—</p>
     <div class="purchase-summary">
@@ -111,11 +111,14 @@
 <dialog id="featureDialog" class="feature-dialog">
   <div class="feature-modal">
     <header class="feature-modal__header">
-      <div>
-        <h2 id="featureDialogTitle">功能</h2>
-        <p id="featureDialogSubtitle">—</p>
+      <div class="feature-modal__identity">
+        <img id="featureDialogHeaderArt" class="feature-modal__header-art" alt="">
+        <div>
+          <h2 id="featureDialogTitle" class="sr-only">功能</h2>
+          <p id="featureDialogSubtitle">—</p>
+        </div>
       </div>
-      <button id="closeFeatureDialog" type="button" class="modal-close" aria-label="關閉">×</button>
+      <button id="closeFeatureDialog" type="button" class="modal-close" aria-label="關閉"><img id="closeFeatureDialogIcon" alt=""></button>
     </header>
 
     <section class="feature-modal__body">
@@ -138,7 +141,7 @@
 
       <div class="feature-modal__pane" data-feature-panel="item">
         <div class="feature-heading"><div><h3>策略道具</h3><p>可使用時會主動提示，不需要玩家自行猜時機。</p></div></div>
-        <div class="empty-state">目前尚未持有策略道具。</div>
+        <div class="empty-state empty-state--art"><img id="itemEmptyStateArt" alt=""><span>目前尚未持有策略道具。</span></div>
       </div>
 
       <div class="feature-modal__pane" data-feature-panel="info">
@@ -157,7 +160,7 @@
         <h2>好友連線 / AI 補位</h2>
         <p>真人不足 4 位時，由 AI 自動補滿；房主保存正式遊戲狀態。</p>
       </div>
-      <button id="closeNetworkDialog" type="button" class="modal-close" aria-label="關閉">×</button>
+      <button id="closeNetworkDialog" type="button" class="modal-close" aria-label="關閉"><img id="closeNetworkDialogIcon" alt=""></button>
     </header>
 
     <div id="roomCodeHero" class="room-code-hero" hidden>
