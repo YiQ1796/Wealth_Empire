@@ -484,7 +484,6 @@ function scheduleAi(){
 
 function openFeature(name){
   const meta={
-    stock:["股票市場","每次換到下一位玩家時全市場重新漲跌；遊戲進行中可隨時自由買賣。"],
     property:["我的房產","查看地產、區域完成度、收租與升級。"],
     item:["策略道具","符合使用條件時會主動提示。"],
     info:["遊戲資訊","目前格子與事件紀錄。"]
