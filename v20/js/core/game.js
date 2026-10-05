@@ -6,6 +6,7 @@ import{advanceStockMarket,buyStock as executeBuyStock,getMarketStock,sellStock a
 import{resolveSpecialEvent}from"./special-events.js";
 import{canUseTransport,chooseAiTransportDestination,createPendingTransport,transportNode}from"./transport.js";
 import{chooseAiAcquisition,createPendingAcquisition,executeAcquisition}from"./acquisition-center.js";
+import{applyCourt,applyHospital,applyMarketEvent,applyTaxOffice,canUseUrban,chooseAiUrbanDestination,createPendingUrban}from"./civic-specials.js";
 
 export class GameEngine{
   constructor(state,onChange){
@@ -89,6 +90,7 @@ export class GameEngine{
     this.state.pendingPurchase=null;
     this.state.pendingTransport=null;
     this.state.pendingAcquisition=null;
+    this.state.pendingUrban=null;
     const tile=this.state.tiles[player.position];
 
     if(tile.type==="property"){
@@ -193,7 +195,7 @@ export class GameEngine{
         ?"horse"
         : tile.type==="auction"
           ?"auction"
-          : null;
+          :"highlow";
       const session=startMinigame(this.state,player.seat,Date.now(),forcedGameId);
       fillAiMinigameResults(this.state);
       this.log(
@@ -202,6 +204,47 @@ export class GameEngine{
         {seat:player.seat,gameId:session.id,tileType:tile.type}
       );
       this.tryFinalizeMinigame();
+      return;
+    }
+
+    if(tile.type==="tax"||tile.type==="court"||tile.type==="hospital"||tile.type==="market"){
+      this.state.phase="landed";
+      const result=tile.type==="tax"
+        ?applyTaxOffice(this.state,player)
+        :tile.type==="court"
+          ?applyCourt(this.state,player)
+          :tile.type==="hospital"
+            ?applyHospital(this.state,player)
+            :applyMarketEvent(this.state,player);
+      this.log(
+        player.name+"｜"+result.title+"："+result.text,
+        tile.type==="market"?"market_tick":"special_grid",
+        {
+          seat:player.seat,
+          playerName:player.name,
+          type:tile.type,
+          untilRound:result.untilRound,
+          tick:result.tick,
+          movers:result.movers??[]
+        }
+      );
+      return;
+    }
+
+    if(tile.type==="urban"){
+      const pending=createPendingUrban(this.state,player);
+      if(!pending){
+        this.state.phase="landed";
+        this.log(player.name+" 抵達「城市更新局」，但目前沒有自己持有的地產可重新部署。","urban_empty",{seat:player.seat});
+        return;
+      }
+      this.state.pendingUrban=pending;
+      this.state.phase="urban";
+      this.log(
+        player.name+" 抵達「城市更新局」，可選擇一塊自己的地產作為重新部署位置。",
+        "urban_offer",
+        {seat:player.seat,sourceIndex:pending.sourceIndex,destinationIndexes:pending.destinationIndexes}
+      );
       return;
     }
 
@@ -224,7 +267,11 @@ export class GameEngine{
 
       const isChance=tile.type==="chance";
       const label=isChance?"機會":"命運";
-      const effectText=resolved.kind==="cash"
+      const effectText=resolved.blockedBy==="tax"
+        ?"稅務抵免生效，本次負面金錢事件取消"
+        :resolved.blockedBy==="hospital"
+          ?"醫療保護生效，本次後退事件取消"
+        :resolved.kind==="cash"
         ? (resolved.amount>=0
           ?"獲得 "+this.formatMoney(resolved.amount)
           :"支付 "+this.formatMoney(Math.abs(resolved.amount)))
@@ -246,7 +293,8 @@ export class GameEngine{
           delta:resolved.delta,
           from:resolved.from,
           to:resolved.to,
-          cashAfter:resolved.cashAfter
+          cashAfter:resolved.cashAfter,
+          blockedBy:resolved.blockedBy??null
         }
       );
 
@@ -266,6 +314,38 @@ export class GameEngine{
       urban:"抵達城市更新局。"
     }[tile.type]||"觸發特殊事件。";
     this.log(player.name+" 抵達「"+tile.name+"」："+eventText,"event",{seat:player.seat,tile:player.position,type:tile.type});
+  }
+
+  useUrban(destinationIndex,seat=this.state.currentPlayer){
+    if(!this.isCurrentSeat(seat)||!canUseUrban(this.state,seat,destinationIndex))return false;
+    const player=this.currentPlayer;
+    const from=player.position;
+    const to=Number(destinationIndex);
+    player.position=to;
+    this.state.pendingUrban=null;
+    this.state.phase="landed";
+    this.log(
+      player.name+" 透過城市更新局重新部署到自己的「"+this.state.tiles[to].name+"」。",
+      "move",
+      {seat:player.seat,from,to,path:[to],urban:true}
+    );
+    this.log(
+      player.name+" 完成城市更新重新部署。",
+      "urban_complete",
+      {seat:player.seat,playerName:player.name,from,to,tileName:this.state.tiles[to].name}
+    );
+    this.notify();
+    return true;
+  }
+
+  skipUrban(seat=this.state.currentPlayer){
+    const pending=this.state.pendingUrban;
+    if(!this.isCurrentSeat(seat)||this.state.phase!=="urban"||!pending||pending.seat!==Number(seat))return false;
+    this.state.pendingUrban=null;
+    this.state.phase="landed";
+    this.log(this.currentPlayer.name+" 放棄城市更新重新部署。","urban_skip",{seat:this.currentPlayer.seat});
+    this.notify();
+    return true;
   }
 
   acquireFromCenter(tileIndex,seat=this.state.currentPlayer){
@@ -642,6 +722,12 @@ export class GameEngine{
       return this.skipAcquisition(player.seat);
     }
 
+    if(this.state.phase==="urban"){
+      const tileIndex=chooseAiUrbanDestination(this.state,player.seat);
+      if(tileIndex!=null)return this.useUrban(tileIndex,player.seat);
+      return this.skipUrban(player.seat);
+    }
+
     if(this.state.phase==="landed"&&this.state.pendingPurchase!=null){
       const tile=this.state.tiles[this.state.pendingPurchase];
       if(shouldBuyProperty(this.state,player.seat,tile)){
@@ -673,7 +759,8 @@ export class GameEngine{
       this.state.phase!=="landed"||
       this.state.pendingPurchase!=null||
       this.state.pendingTransport!=null||
-      this.state.pendingAcquisition!=null
+      this.state.pendingAcquisition!=null||
+      this.state.pendingUrban!=null
     )return false;
 
     const previousSeat=this.state.currentPlayer;
