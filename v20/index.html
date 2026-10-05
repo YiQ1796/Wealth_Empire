@@ -270,6 +270,23 @@
   </div>
 </dialog>
 
+<dialog id="urbanDialog" class="urban-dialog">
+  <div class="urban-modal">
+    <header class="urban-modal__header">
+      <div>
+        <span class="urban-modal__eyebrow">城市更新局</span>
+        <h2>重新部署</h2>
+        <p>選擇一塊自己持有的地產作為新的棋盤位置；這次移動不重複觸發落地事件。</p>
+      </div>
+      <button id="skipUrbanIconButton" type="button" class="modal-close" aria-label="放棄重新部署">
+        <img src="./assets/v5/ui/modal/MODAL_CLOSE.webp" alt="">
+      </button>
+    </header>
+    <div id="urbanDestinationList" class="urban-destinations" aria-label="可重新部署地產"></div>
+    <button id="skipUrbanButton" type="button" class="urban-skip">留在城市更新局</button>
+  </div>
+</dialog>
+
 <dialog id="acquisitionDialog" class="acquisition-dialog">
   <div class="acquisition-modal">
     <header class="acquisition-modal__header">
