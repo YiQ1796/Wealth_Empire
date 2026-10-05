@@ -2,7 +2,7 @@ import assert from"node:assert/strict";
 import{BOARD_TILES,GROUP_ORDER,MAX_PROPERTY_LEVEL,boardPlacement}from"../js/data/board.js";
 import{createInitialState}from"../js/core/state.js";
 import{GameEngine}from"../js/core/game.js";
-import{groupProgress,rentFor,upgradeCost}from"../js/core/property-economy.js";
+import{canForceAcquireProperty,groupProgress,rentFor,upgradeCost}from"../js/core/property-economy.js";
 
 assert.equal(BOARD_TILES.length,44,"board must contain exactly 44 tiles");
 
@@ -63,7 +63,14 @@ assert.equal(engine.upgradeProperty(firstGroupIndexes[0]),true,"LV0 -> LV1 upgra
 assert.equal(upgradedTile.level,1);
 assert.equal(engine.upgradeProperty(firstGroupIndexes[0]),true,"LV1 -> LV2 upgrade should succeed");
 assert.equal(upgradedTile.level,MAX_PROPERTY_LEVEL);
+assert.equal(canForceAcquireProperty(upgradedTile),false,"LV2 property must never be force-acquirable");
 assert.equal(engine.upgradeProperty(firstGroupIndexes[0]),false,"upgrading past LV2 must be rejected");
+
+const forceAcquireCandidate=state.tiles[firstGroupIndexes[1]];
+forceAcquireCandidate.level=1;
+assert.equal(canForceAcquireProperty(forceAcquireCandidate),true,"LV1 property may still be force-acquirable");
+forceAcquireCandidate.level=0;
+assert.equal(canForceAcquireProperty(forceAcquireCandidate),true,"LV0 owned property may still be force-acquirable");
 
 state.currentPlayer=1;
 state.phase="await-roll";
@@ -103,4 +110,4 @@ assert.equal(payer.cash,payerCashBefore-expectedRent,"payer must pay the exact c
 assert.equal(buyer.rentReceived,rentReceivedBefore+expectedRent,"owner rent history total must update");
 assert.equal(payer.rentPaid,rentPaidBefore+expectedRent,"payer rent history total must update");
 
-console.log("V20 Alpha 15 property economy test PASS");
+console.log("V20 Alpha 18 property economy test PASS");
