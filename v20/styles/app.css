@@ -3053,3 +3053,171 @@ body.entry-pending .app-shell{
     height:18px
   }
 }
+
+
+/* V20 Alpha 22 — mobile-only pawn, houses and HUD fill.
+   Desktop rules above are intentionally untouched. */
+@media (orientation:landscape) and (max-height:650px) and (max-width:1180px){
+  /* Board pawns: keep the character readable without covering house slots. */
+  .tile__tokens{
+    top:42%;
+    width:auto;
+    max-width:72%;
+    flex-wrap:nowrap;
+    gap:1px
+  }
+  .tile__tokens .pawn-token{
+    width:22px;
+    height:22px;
+    flex:0 0 22px
+  }
+  .tile__tokens:has(.pawn-token:nth-child(2)):not(:has(.pawn-token:nth-child(3))){
+    display:flex;
+    width:auto;
+    gap:1px
+  }
+  .tile__tokens:has(.pawn-token:nth-child(2)):not(:has(.pawn-token:nth-child(3))) .pawn-token{
+    width:18px;
+    height:18px;
+    flex-basis:18px
+  }
+  .tile__tokens:has(.pawn-token:nth-child(3)){
+    display:grid;
+    grid-template-columns:repeat(2,15px);
+    width:auto;
+    gap:1px
+  }
+  .tile__tokens:has(.pawn-token:nth-child(3)) .pawn-token{
+    width:15px;
+    height:15px;
+    flex-basis:15px
+  }
+  .tile__tokens:has(.pawn-token:nth-child(4)){
+    grid-template-columns:repeat(2,14px)
+  }
+  .tile__tokens:has(.pawn-token:nth-child(4)) .pawn-token{
+    width:14px;
+    height:14px;
+    flex-basis:14px
+  }
+
+  /* House strip: reserve the lower edge of every owned property for up to 3 houses. */
+  .tile__houses{
+    left:2px;
+    right:2px;
+    bottom:1px;
+    z-index:11;
+    min-height:14px;
+    height:14px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    gap:0;
+    overflow:visible
+  }
+  .property-house{
+    width:13px;
+    height:13px;
+    flex:0 0 13px;
+    object-fit:contain;
+    filter:drop-shadow(0 1px 1px rgba(0,0,0,.34))
+  }
+  .tile__badges{
+    right:1px;
+    bottom:15px;
+    z-index:10
+  }
+  .tile__badges .state-badge{
+    width:14px;
+    height:14px
+  }
+
+  /* HUD: stretch the four player information cards into the former blank area.
+     This affects phone landscape only; desktop HUD remains unchanged. */
+  .hud-panel{
+    grid-template-rows:auto minmax(0,1fr) auto;
+    align-content:stretch
+  }
+  .players{
+    min-height:0;
+    height:100%;
+    display:grid;
+    grid-template-rows:repeat(4,minmax(0,1fr));
+    align-content:stretch;
+    gap:4px
+  }
+  .player-card{
+    height:100%;
+    min-height:0;
+    padding:5px 7px;
+    grid-template-columns:34px minmax(0,1fr);
+    align-content:center
+  }
+  .player-pawn{
+    width:32px;
+    height:32px
+  }
+  .player-card h3{
+    font-size:12px
+  }
+  .player-stats{
+    font-size:9px;
+    gap:3px 7px
+  }
+  .player-stats b{
+    font-size:10px
+  }
+  .mobile-primary-actions{
+    margin-top:4px;
+    grid-template-rows:repeat(2,minmax(58px,auto))
+  }
+  .mobile-primary-action{
+    min-height:58px
+  }
+}
+
+@media (orientation:landscape) and (max-height:430px) and (max-width:1180px){
+  .tile__tokens .pawn-token{
+    width:20px;
+    height:20px;
+    flex-basis:20px
+  }
+  .tile__tokens:has(.pawn-token:nth-child(2)):not(:has(.pawn-token:nth-child(3))) .pawn-token{
+    width:17px;
+    height:17px;
+    flex-basis:17px
+  }
+  .tile__tokens:has(.pawn-token:nth-child(3)) .pawn-token{
+    width:14px;
+    height:14px;
+    flex-basis:14px
+  }
+  .tile__tokens:has(.pawn-token:nth-child(4)) .pawn-token{
+    width:13px;
+    height:13px;
+    flex-basis:13px
+  }
+  .property-house{
+    width:12px;
+    height:12px;
+    flex-basis:12px
+  }
+  .tile__houses{
+    min-height:13px;
+    height:13px
+  }
+  .player-card{
+    padding:3px 6px;
+    grid-template-columns:30px minmax(0,1fr)
+  }
+  .player-pawn{
+    width:28px;
+    height:28px
+  }
+  .mobile-primary-actions{
+    grid-template-rows:repeat(2,minmax(50px,auto))
+  }
+  .mobile-primary-action{
+    min-height:50px
+  }
+}
