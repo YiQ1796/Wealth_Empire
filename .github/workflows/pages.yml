@@ -122,8 +122,8 @@ jobs:
           grep -q '.stock-holding-row{' v20/styles/app.css
           grep -q '.stock-pnl-row{' v20/styles/app.css
           grep -q 'grid-template-columns:repeat(2,minmax(0,1fr))' v20/styles/app.css
-          grep -q 'app.css?v=alpha23-201' v20/index.html
-          grep -q 'main.js?v=alpha23-201' v20/index.html
+          grep -q 'app.css?v=alpha24-202' v20/index.html
+          grep -q 'main.js?v=alpha24-202' v20/index.html
 
           if grep -q 'data-feature="stock"' v20/index.html; then
             echo "Desktop stock market must not return as a shortcut"
@@ -219,30 +219,36 @@ jobs:
 
           echo "V20 notification detail cards PASS"
 
-      - name: Validate V20 luck-first minigames
+      - name: Validate V20 gameplay minigames and special events
         shell: bash
         run: |
           set -euo pipefail
-          grep -q 'name:"幸運快遞"' v20/js/data/minigames.js
-          grep -q 'name:"黃金金庫"' v20/js/data/minigames.js
-          grep -q 'name:"幸運樓層"' v20/js/data/minigames.js
-          grep -q 'name:"命運翻牌"' v20/js/data/minigames.js
-          grep -q 'name:"城市岔路"' v20/js/data/minigames.js
-          grep -q 'name:"商圈開盤"' v20/js/data/minigames.js
-          grep -q 'class="luck-choice"' v20/js/ui/minigame-ui.js
-          grep -q 'class="vault-pick"' v20/js/ui/minigame-ui.js
-          grep -q 'class="floor-pick"' v20/js/ui/minigame-ui.js
-          grep -q 'class="fate-card ' v20/js/ui/minigame-ui.js
-          grep -q 'Luck is the dominant factor now' v20/js/core/minigames.js
-          grep -q '.luck-game{' v20/styles/app.css
-          grep -q 'min-height:172px' v20/styles/app.css
+          grep -q 'name:"財富賽馬"' v20/js/data/minigames.js
+          grep -q 'name:"黃金寶箱"' v20/js/data/minigames.js
+          grep -q 'name:"財富猜拳"' v20/js/data/minigames.js
+          grep -q 'name:"幸運 21 點"' v20/js/data/minigames.js
+          grep -q 'name:"財富彈珠"' v20/js/data/minigames.js
+          grep -q 'name:"搶錢拍賣"' v20/js/data/minigames.js
+          grep -q 'name:"瘋狂蝸牛賽跑"' v20/js/data/minigames.js
+          grep -q 'startHorse(session)' v20/js/ui/minigame-ui.js
+          grep -q 'startSnail(session)' v20/js/ui/minigame-ui.js
+          grep -q '偷偷坐上火箭' v20/js/ui/minigame-ui.js
+          grep -q '放屁衝鋒' v20/js/ui/minigame-ui.js
+          grep -q '看到帥哥分心' v20/js/ui/minigame-ui.js
+          grep -q '作弊偷跑' v20/js/ui/minigame-ui.js
+          grep -q 'resolveSpecialEvent' v20/js/core/game.js
+          grep -q 'chance_bonus' v20/js/data/special-events.js
+          grep -q 'fate_patron' v20/js/data/special-events.js
+          grep -q 'specialEventHistory' v20/js/core/state.js
+          grep -q 'forcedGameId=tile.type==="horse"?"horse":null' v20/js/core/game.js
+          grep -q 'V20 Alpha 24 — gameplay minigames' v20/styles/app.css
 
-          if grep -qE 'performance\.now|requestAnimationFrame|courier-prompt|vault-needle|tower-moving|memory-sequence|route-grid|district-options' v20/js/ui/minigame-ui.js; then
-            echo "Legacy reflex/speed minigame mechanics must not remain in the active minigame UI"
+          if grep -qE 'name:"幸運快遞"|name:"幸運樓層"|name:"命運翻牌"|name:"城市岔路"|name:"商圈開盤"' v20/js/data/minigames.js; then
+            echo "Legacy luck-only minigame pool must not remain active"
             exit 1
           fi
 
-          echo "V20 luck-first minigames PASS"
+          echo "V20 Alpha24 distinct minigames and functional chance/fate events PASS"
 
       - name: Validate V20 character ownership and contiguous regions
         shell: bash
@@ -325,8 +331,8 @@ jobs:
           grep -q 'Alpha 19 mobile notification correction' v20/styles/app.css
           grep -q 'width:min(68%,560px)' v20/styles/app.css
           grep -q 'grid-template-columns:48px minmax(0,1fr) 78px' v20/styles/app.css
-          grep -q 'app.css?v=alpha23-201' v20/index.html
-          grep -q 'main.js?v=alpha23-201' v20/index.html
+          grep -q 'app.css?v=alpha24-202' v20/index.html
+          grep -q 'main.js?v=alpha24-202' v20/index.html
           echo "V20 phone notification sizing and mobile-art selection PASS"
 
       - name: Validate V20 mobile pass 2 composition
@@ -337,8 +343,8 @@ jobs:
           grep -q 'grid-template-rows:auto auto auto' v20/styles/app.css
           grep -q 'width:min(58%,460px)' v20/styles/app.css
           grep -q 'grid-template-columns:42px minmax(0,1fr) 68px' v20/styles/app.css
-          grep -q 'app.css?v=alpha23-201' v20/index.html
-          grep -q 'main.js?v=alpha23-201' v20/index.html
+          grep -q 'app.css?v=alpha24-202' v20/index.html
+          grep -q 'main.js?v=alpha24-202' v20/index.html
           echo "V20 phone composition pass 2 PASS"
 
       - name: Validate V20 mobile scroll and viewport authority
@@ -353,8 +359,8 @@ jobs:
           grep -q 'function syncPhoneViewportHeight' v20/js/main.js
           grep -q -- '--phone-app-height' v20/js/main.js
           grep -q 'resetScrollPosition()' v20/js/ui/minigame-ui.js
-          grep -q 'app.css?v=alpha23-201' v20/index.html
-          grep -q 'main.js?v=alpha23-201' v20/index.html
+          grep -q 'app.css?v=alpha24-202' v20/index.html
+          grep -q 'main.js?v=alpha24-202' v20/index.html
           node --experimental-default-type=module v20/tests/mobile-responsive.test.mjs
           echo "V20 mobile scroll and first-entry viewport authority PASS"
 
@@ -368,8 +374,8 @@ jobs:
           grep -q 'width:13px' v20/styles/app.css
           grep -q 'height:14px' v20/styles/app.css
           grep -q 'grid-template-rows:repeat(4,minmax(0,1fr))' v20/styles/app.css
-          grep -q 'app.css?v=alpha23-201' v20/index.html
-          grep -q 'main.js?v=alpha23-201' v20/index.html
+          grep -q 'app.css?v=alpha24-202' v20/index.html
+          grep -q 'main.js?v=alpha24-202' v20/index.html
           node --experimental-default-type=module v20/tests/mobile-responsive.test.mjs
           echo "V20 mobile-only pawn/house/HUD fill PASS"
 
@@ -382,8 +388,8 @@ jobs:
           grep -q 'tile__tokens:has(.pawn-token:nth-child(3))' v20/styles/app.css
           grep -q 'function settlePhoneLandscapeLayout' v20/js/main.js
           grep -q 'visualViewport?.addEventListener("resize",settlePhoneLandscapeLayout)' v20/js/main.js
-          grep -q 'app.css?v=alpha23-201' v20/index.html
-          grep -q 'main.js?v=alpha23-201' v20/index.html
+          grep -q 'app.css?v=alpha24-202' v20/index.html
+          grep -q 'main.js?v=alpha24-202' v20/index.html
           echo "V20 first-entry phone landscape stabilization PASS"
 
       - name: Validate V20 property tile info card
