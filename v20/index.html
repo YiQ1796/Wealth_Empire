@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#eef3f7">
-<title>財富帝國 V20 Alpha 27</title>
-<link rel="stylesheet" href="./styles/app.css?v=alpha27-205">
+<title>財富帝國 V20 Alpha 28</title>
+<link rel="stylesheet" href="./styles/app.css?v=alpha28-206">
 </head>
 <body class="entry-pending">
 <section id="entryGate" class="entry-gate" aria-label="遊戲模式選擇">
@@ -60,11 +60,34 @@
     <div class="board-panel">
       <div id="board" class="board" aria-label="財富帝國 44 格棋盤">
         <div id="centerStage" class="center-stage">
-          <img id="centerBackground" alt="" aria-hidden="true">
+          <img id="centerBackground" class="center-stage__background" alt="" aria-hidden="true">
           <div class="center-stage__shade"></div>
-          <div class="center-stage__content">
-            <h2>都會核心</h2>
-            <p id="statusText">等待擲骰。</p>
+          <div id="centralFacilities" class="central-facilities" aria-label="中央五功能">
+            <button type="button" class="central-facility central-facility--mission" data-central-facility="mission" aria-label="城市委託中心">
+              <img class="central-facility__glow" src="./assets/v5/center/CENTRAL_GLOW.webp" alt="" aria-hidden="true">
+              <img class="central-facility__building" src="./assets/v5/center/CENTRAL_MISSION.webp" alt="">
+              <img class="central-facility__status" data-central-status="mission" src="./assets/v5/center/STATUS_COOLDOWN.webp" alt="狀態">
+            </button>
+            <button type="button" class="central-facility central-facility--insurance" data-central-facility="insurance" aria-label="租金保險中心">
+              <img class="central-facility__glow" src="./assets/v5/center/CENTRAL_GLOW.webp" alt="" aria-hidden="true">
+              <img class="central-facility__building" src="./assets/v5/center/CENTRAL_INSURANCE.webp" alt="">
+              <img class="central-facility__status" data-central-status="insurance" src="./assets/v5/center/STATUS_COOLDOWN.webp" alt="狀態">
+            </button>
+            <button type="button" class="central-facility central-facility--bank" data-central-facility="bank" aria-label="都會銀行">
+              <img class="central-facility__glow" src="./assets/v5/center/CENTRAL_GLOW.webp" alt="" aria-hidden="true">
+              <img class="central-facility__building" src="./assets/v5/center/CENTRAL_BANK.webp" alt="">
+              <img class="central-facility__status" data-central-status="bank" src="./assets/v5/center/STATUS_COOLDOWN.webp" alt="狀態">
+            </button>
+            <button type="button" class="central-facility central-facility--transit" data-central-facility="transit" aria-label="快捷通車">
+              <img class="central-facility__glow" src="./assets/v5/center/CENTRAL_GLOW.webp" alt="" aria-hidden="true">
+              <img class="central-facility__building" src="./assets/v5/center/CENTRAL_TRANSIT.webp" alt="">
+              <img class="central-facility__status" data-central-status="transit" src="./assets/v5/center/STATUS_COOLDOWN.webp" alt="狀態">
+            </button>
+            <button type="button" class="central-facility central-facility--development" data-central-facility="development" aria-label="城市建案中心">
+              <img class="central-facility__glow" src="./assets/v5/center/CENTRAL_GLOW.webp" alt="" aria-hidden="true">
+              <img class="central-facility__building" src="./assets/v5/center/CENTRAL_DEVELOPMENT.webp" alt="">
+              <img class="central-facility__status" data-central-status="development" src="./assets/v5/center/STATUS_COOLDOWN.webp" alt="狀態">
+            </button>
           </div>
         </div>
       </div>
@@ -233,6 +256,21 @@
   </div>
 </dialog>
 
+<dialog id="centralFacilityDialog" class="central-facility-dialog">
+  <div class="central-facility-modal">
+    <header class="central-facility-modal__header">
+      <div class="central-facility-modal__title">
+        <img id="centralFacilityTitleArt" src="./assets/v5/center/TITLE_BANK.webp" alt="">
+        <p id="centralFacilityDescription">—</p>
+      </div>
+      <button id="closeCentralFacilityDialog" type="button" class="modal-close" aria-label="關閉">
+        <img src="./assets/v5/ui/modal/MODAL_CLOSE.webp" alt="">
+      </button>
+    </header>
+    <section id="centralFacilityBody" class="central-facility-modal__body"></section>
+  </div>
+</dialog>
+
 <dialog id="networkDialog" class="network-dialog">
   <div class="network-modal">
     <header class="feature-modal__header">
@@ -346,6 +384,6 @@
 </dialog>
 
 <div id="actionToastStack" class="action-toast-stack" aria-live="polite" aria-atomic="false"></div>
-<script type="module" src="./js/main.js?v=alpha27-205"></script>
+<script type="module" src="./js/main.js?v=alpha28-206"></script>
 </body>
 </html>
