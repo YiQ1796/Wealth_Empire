@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#eef3f7">
-<title>財富帝國 V20 Alpha 23</title>
-<link rel="stylesheet" href="./styles/app.css?v=alpha24-202">
+<title>財富帝國 V20 Alpha 25</title>
+<link rel="stylesheet" href="./styles/app.css?v=alpha25-203">
 </head>
 <body class="entry-pending">
 <section id="entryGate" class="entry-gate" aria-label="遊戲模式選擇">
@@ -270,6 +270,28 @@
   </div>
 </dialog>
 
+<dialog id="transportDialog" class="transport-dialog">
+  <div class="transport-modal">
+    <header class="transport-modal__header">
+      <div>
+        <span class="transport-modal__eyebrow">快速通車</span>
+        <h2 id="transportTitle">交通轉乘</h2>
+        <p id="transportSubtitle">選擇要前往的交通節點，或留在原地。</p>
+      </div>
+      <button id="skipTransportIconButton" type="button" class="modal-close" aria-label="放棄轉乘">
+        <img src="./assets/v5/ui/modal/MODAL_CLOSE.webp" alt="">
+      </button>
+    </header>
+    <div class="transport-current">
+      <span>目前位置</span>
+      <strong id="transportSourceName">—</strong>
+      <small>本版轉乘不收費；抵達另一個交通節點後不會再次連鎖觸發交通。</small>
+    </div>
+    <div id="transportDestinationList" class="transport-destinations" aria-label="交通目的地"></div>
+    <button id="skipTransportButton" type="button" class="transport-skip">留在原地，不轉乘</button>
+  </div>
+</dialog>
+
 <dialog id="minigameDialog" class="minigame-dialog">
   <div class="minigame-modal">
     <header class="minigame-header">
@@ -285,6 +307,6 @@
 </dialog>
 
 <div id="actionToastStack" class="action-toast-stack" aria-live="polite" aria-atomic="false"></div>
-<script type="module" src="./js/main.js?v=alpha24-202"></script>
+<script type="module" src="./js/main.js?v=alpha25-203"></script>
 </body>
 </html>
