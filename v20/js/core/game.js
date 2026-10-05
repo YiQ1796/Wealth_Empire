@@ -368,17 +368,26 @@ export class GameEngine{
     const wrapped=nextSeat<=previousSeat;
     this.state.currentPlayer=nextSeat;
     if(wrapped){
-      const nextRound=Math.min(this.state.maxRounds,this.state.round+1);
-      if(nextRound!==this.state.round){
-        this.state.round=nextRound;
-        advanceStockMarket(this.state,nextRound);
-        const movers=[...this.state.market.stocks]
-          .sort((a,b)=>Math.abs(b.changePercent)-Math.abs(a.changePercent))
-          .slice(0,3)
-          .map(stock=>stock.name+" "+(stock.changePercent>0?"+":"")+stock.changePercent.toFixed(1)+"%")
-          .join("、");
-        this.log("ROUND "+nextRound+" 開始，所有股票已完成本回合漲跌更新："+movers+"。","market_round",{round:nextRound});
+      if(this.state.round>=this.state.maxRounds){
+        this.state.gameStatus="finished";
+        this.state.phase="finished";
+        this.state.turnToken+=1;
+        this.state.aiPreparedTurnToken=null;
+        this.state.dice=null;
+        this.log("第 "+this.state.maxRounds+" ROUND 已完成，遊戲正式結束。","game_complete",{round:this.state.round});
+        this.notify();
+        return true;
       }
+
+      const nextRound=this.state.round+1;
+      this.state.round=nextRound;
+      advanceStockMarket(this.state,nextRound);
+      const movers=[...this.state.market.stocks]
+        .sort((a,b)=>Math.abs(b.changePercent)-Math.abs(a.changePercent))
+        .slice(0,3)
+        .map(stock=>stock.name+" "+(stock.changePercent>0?"+":"")+stock.changePercent.toFixed(1)+"%")
+        .join("、");
+      this.log("ROUND "+nextRound+" 開始，所有股票已完成本回合漲跌更新："+movers+"。","market_round",{round:nextRound});
     }
 
     this.state.turnToken+=1;
