@@ -56,7 +56,7 @@ export function createInitialState(){
     events:[{
       id:1,
       kind:"system",
-      text:"V20 Alpha 16：AI、多人連線、新小遊戲與動態股票系統已啟動。",
+      text:"V20 Alpha 25：交通轉乘、特殊事件、小遊戲與動態市場系統已啟動。",
       data:{},
       round:1
     }],
