@@ -2,7 +2,7 @@ import assert from"node:assert/strict";
 import{BOARD_TILES,GROUP_ORDER,MAX_PROPERTY_LEVEL,boardPlacement}from"../js/data/board.js";
 import{createInitialState}from"../js/core/state.js";
 import{GameEngine}from"../js/core/game.js";
-import{groupProgress,rentFor,upgradeCost}from"../js/core/property-economy.js";
+import{canForceAcquireProperty,groupProgress,rentFor,transferPropertyOwnership,upgradeCost}from"../js/core/property-economy.js";
 
 assert.equal(BOARD_TILES.length,44,"board must contain exactly 44 tiles");
 
@@ -64,6 +64,27 @@ assert.equal(upgradedTile.level,1);
 assert.equal(engine.upgradeProperty(firstGroupIndexes[0]),true,"LV1 -> LV2 upgrade should succeed");
 assert.equal(upgradedTile.level,MAX_PROPERTY_LEVEL);
 assert.equal(engine.upgradeProperty(firstGroupIndexes[0]),false,"upgrading past LV2 must be rejected");
+assert.equal(
+  canForceAcquireProperty(state,firstGroupIndexes[0],1),
+  false,
+  "LV2 property must be protected from forced acquisition"
+);
+
+const normalAcquireIndex=firstGroupIndexes[1];
+assert.equal(
+  canForceAcquireProperty(state,normalAcquireIndex,1),
+  true,
+  "property below LV2 must remain eligible for forced acquisition"
+);
+const transfer=transferPropertyOwnership(state,normalAcquireIndex,1);
+assert.equal(transfer.ok,true);
+assert.equal(state.tiles[normalAcquireIndex].owner,1);
+assert.equal(buyer.properties.includes(normalAcquireIndex),false);
+assert.equal(state.players[1].properties.includes(normalAcquireIndex),true);
+
+state.tiles[normalAcquireIndex].owner=0;
+state.players[1].properties=state.players[1].properties.filter(index=>index!==normalAcquireIndex);
+if(!buyer.properties.includes(normalAcquireIndex))buyer.properties.push(normalAcquireIndex);
 
 state.currentPlayer=1;
 state.phase="await-roll";
@@ -103,4 +124,4 @@ assert.equal(payer.cash,payerCashBefore-expectedRent,"payer must pay the exact c
 assert.equal(buyer.rentReceived,rentReceivedBefore+expectedRent,"owner rent history total must update");
 assert.equal(payer.rentPaid,rentPaidBefore+expectedRent,"payer rent history total must update");
 
-console.log("V20 Alpha 15 property economy test PASS");
+console.log("V20 Alpha 18 property economy test PASS");
