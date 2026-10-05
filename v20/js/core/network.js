@@ -18,6 +18,8 @@ export const NETWORK_ACTION_TYPES=Object.freeze([
   "buy_stock",
   "sell_stock",
   "minigame_result",
+  "transport_travel",
+  "transport_skip",
   "end_turn",
   "start_game"
 ]);
@@ -87,6 +89,12 @@ export function normalizeRemoteAction(raw){
     const detail=raw.detail&&typeof raw.detail==="object"?raw.detail:{};
     action.score=score;
     action.detail=detail;
+  }
+
+  if(raw.type==="transport_travel"){
+    const destinationIndex=Math.floor(Number(raw.destinationIndex));
+    if(!Number.isFinite(destinationIndex)||destinationIndex<0||destinationIndex>43)return null;
+    action.destinationIndex=destinationIndex;
   }
 
   return action;
