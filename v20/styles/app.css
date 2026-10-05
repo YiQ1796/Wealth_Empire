@@ -1743,3 +1743,11 @@ body.entry-pending .app-shell{
   28%{opacity:.95;transform:scale(1.04) rotate(1deg)}
   100%{opacity:.18;transform:scale(1.08) rotate(0)}
 }
+
+
+.board-motion-active #rollButton,
+.board-motion-active #endTurnButton,
+.board-motion-active .property-upgrade{
+  pointer-events:none;
+  opacity:.58
+}
