@@ -227,7 +227,6 @@ export class GameEngine{
     const eventText={
       start:"回到起點。",
       tax:"抵達稅務局。",
-      station:"抵達交通設施。",
       acquisition:"抵達收購中心。",
       market:"抵達股市事件格。本回合仍可自由買賣股票。",
       court:"抵達法院。",
@@ -575,7 +574,8 @@ export class GameEngine{
     if(
       !this.isCurrentSeat(seat)||
       this.state.phase!=="landed"||
-      this.state.pendingPurchase!=null
+      this.state.pendingPurchase!=null||
+      this.state.pendingTransport!=null
     )return false;
 
     const previousSeat=this.state.currentPlayer;
