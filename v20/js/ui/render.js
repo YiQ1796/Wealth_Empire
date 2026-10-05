@@ -172,9 +172,15 @@ function renderProperties(state,viewerPlayer,canControl){
 
 export function render(state,{localSeat=0,networkMode="offline"}={}){
   document.getElementById("roundValue").textContent=state.round;
-  document.getElementById("diceValue").textContent=state.dice
-    ? state.dice.d1+" + "+state.dice.d2+" = "+state.dice.total
-    : "—";
+  const diceFacesValue=document.getElementById("diceFacesValue");
+  const diceTotalValue=document.getElementById("diceTotalValue");
+  if(state.dice){
+    diceFacesValue.textContent="🎲 "+state.dice.d1+" + "+state.dice.d2;
+    diceTotalValue.textContent="= "+state.dice.total;
+  }else{
+    diceFacesValue.textContent="🎲 —";
+    diceTotalValue.textContent="= —";
+  }
 
   const localPlayer=state.players[localSeat]??state.players[0];
   const canControl=networkMode!=="guest"||localPlayer.kind==="human";
