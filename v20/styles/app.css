@@ -59,8 +59,8 @@ button:focus-visible{outline:3px solid rgba(47,114,196,.28);outline-offset:2px}
   height:100%;
   min-width:0;
   min-height:0;
-  grid-template-columns:8.6% repeat(11,minmax(0,1fr)) 8.6%;
-  grid-template-rows:10.5% repeat(9,minmax(0,1fr)) 10.5%;
+  grid-template-columns:9.2% repeat(11,minmax(0,1fr)) 9.2%;
+  grid-template-rows:11.2% repeat(9,minmax(0,1fr)) 11.2%;
   overflow:hidden;
   border-radius:12px;
   background:transparent
@@ -75,11 +75,22 @@ button:focus-visible{outline:3px solid rgba(47,114,196,.28);outline-offset:2px}
 }
 .tile.corner{background:transparent}
 .tile.has-art{border:0;background:transparent}
+.tile{z-index:2}
+.tile.edge-top{height:calc(100% + 12px)}
+.tile.edge-bottom{
+  height:calc(100% + 12px);
+  transform:translateY(-12px)
+}
+.tile.edge-left{width:calc(100% + 12px)}
+.tile.edge-right{
+  width:calc(100% + 12px);
+  transform:translateX(-12px)
+}
 .tile img.tile-art{
   position:absolute;
-  inset:-1px;
-  width:calc(100% + 2px);
-  height:calc(100% + 2px);
+  inset:-5px;
+  width:calc(100% + 10px);
+  height:calc(100% + 10px);
   object-fit:fill;
   display:block
 }
@@ -141,6 +152,7 @@ button:focus-visible{outline:3px solid rgba(47,114,196,.28);outline-offset:2px}
   grid-column:2 / 13;
   grid-row:2 / 11;
   position:relative;
+  z-index:1;
   overflow:hidden;
   background:transparent
 }
@@ -408,8 +420,8 @@ button:focus-visible{outline:3px solid rgba(47,114,196,.28);outline-offset:2px}
   body{min-width:920px}
   .game-layout{grid-template-columns:minmax(0,1fr) 310px}
   .board{
-    grid-template-columns:8.6% repeat(11,minmax(0,1fr)) 8.6%;
-    grid-template-rows:10.5% repeat(9,minmax(0,1fr)) 10.5%
+    grid-template-columns:9.2% repeat(11,minmax(0,1fr)) 9.2%;
+    grid-template-rows:11.2% repeat(9,minmax(0,1fr)) 11.2%
   }
   .pawn-token{width:18px;height:18px}
 }
@@ -1798,62 +1810,13 @@ body.entry-pending .app-shell{
   font-size:10px
 }
 
-/* Reduce central notifications so they no longer dominate the map. */
+/* V20 Alpha 18 — notification keeps its original size; only its anchor moves to the board center. */
 .action-toast-stack{
-  top:23%;
-  width:min(540px,calc(100vw - 28px))
-}
-.action-toast{
-  min-height:88px
-}
-.action-toast__card-bg img{
-  min-height:88px
-}
-.action-toast__content{
-  min-height:88px;
-  grid-template-columns:54px minmax(0,1fr);
-  gap:11px;
-  padding:12px 22px
-}
-.action-toast__icon{
-  width:50px;
-  height:50px
-}
-.action-toast strong{
-  margin-bottom:3px;
-  font-size:clamp(17px,1.3vw,22px)
-}
-.action-toast p{
-  font-size:clamp(11px,.85vw,14px);
-  line-height:1.35
-}
-.action-toast--major{
-  width:min(560px,calc(100vw - 28px));
-  min-height:102px
-}
-.action-toast--major .action-toast__card-bg img,
-.action-toast--major .action-toast__content{
-  min-height:102px
-}
-.action-toast--major .action-toast__icon{
-  width:58px;
-  height:58px
-}
-.action-toast--market{
-  width:min(520px,calc(100vw - 28px));
-  min-height:76px
-}
-.action-toast--market .action-toast__card-bg img{
-  min-height:76px
-}
-.action-toast--market .action-toast__content{
-  min-height:76px;
-  grid-template-columns:44px minmax(0,1fr);
-  padding:10px 18px
-}
-.action-toast--market .action-toast__icon{
-  width:40px;
-  height:40px
+  position:absolute;
+  top:22%;
+  left:50%;
+  width:min(760px,calc(100% - 48px));
+  transform:translate(-50%,-50%)
 }
 
 @media(max-height:760px){
@@ -1871,30 +1834,4 @@ body.entry-pending .app-shell{
     grid-template-columns:auto minmax(0,1fr)
   }
   .desktop-stock-panel__header h2{font-size:15px}
-  .action-toast-stack{
-    top:22%;
-    width:min(520px,76vw)
-  }
-  .action-toast,
-  .action-toast--major{
-    min-height:88px
-  }
-  .action-toast__card-bg img,
-  .action-toast--major .action-toast__card-bg img{
-    min-height:88px
-  }
-  .action-toast__content,
-  .action-toast--major .action-toast__content{
-    min-height:88px;
-    grid-template-columns:50px minmax(0,1fr);
-    gap:8px;
-    padding:11px 16px
-  }
-  .action-toast__icon,
-  .action-toast--major .action-toast__icon{
-    width:46px;
-    height:46px
-  }
-  .action-toast strong{font-size:16px}
-  .action-toast p{font-size:10px}
 }
