@@ -23,6 +23,13 @@ export function createPlayer(seat,name,kind="ai"){
     taxEventShield:false,
     medicalMoveShield:false,
     courtShieldUntilRound:0,
+    centralBankDeposit:null,
+    centralMission:null,
+    centralMissionUsedRound:0,
+    rentInsuranceActive:false,
+    rentInsuranceUsedRound:0,
+    centralTransitUsedRound:0,
+    centralDevelopmentUsedRound:0,
     bankrupt:false
   };
 }
@@ -61,7 +68,7 @@ export function createInitialState(){
     events:[{
       id:1,
       kind:"system",
-      text:"V20 Alpha 27：所有特殊格已接入可測試功能流程。",
+      text:"V20 Alpha 28：中央五功能正式接入新素材與可測試玩法。",
       data:{},
       round:1
     }],
@@ -101,7 +108,18 @@ export function hydrateState(raw){
       portfolio:saved.portfolio??{},
       taxEventShield:Boolean(saved.taxEventShield),
       medicalMoveShield:Boolean(saved.medicalMoveShield),
-      courtShieldUntilRound:Math.max(0,Number(saved.courtShieldUntilRound)||0)
+      courtShieldUntilRound:Math.max(0,Number(saved.courtShieldUntilRound)||0),
+      centralBankDeposit:saved.centralBankDeposit&&typeof saved.centralBankDeposit==="object"
+        ? saved.centralBankDeposit
+        : null,
+      centralMission:saved.centralMission&&typeof saved.centralMission==="object"
+        ? saved.centralMission
+        : null,
+      centralMissionUsedRound:Math.max(0,Number(saved.centralMissionUsedRound)||0),
+      rentInsuranceActive:Boolean(saved.rentInsuranceActive),
+      rentInsuranceUsedRound:Math.max(0,Number(saved.rentInsuranceUsedRound)||0),
+      centralTransitUsedRound:Math.max(0,Number(saved.centralTransitUsedRound)||0),
+      centralDevelopmentUsedRound:Math.max(0,Number(saved.centralDevelopmentUsedRound)||0)
     };
   });
 
