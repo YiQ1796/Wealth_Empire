@@ -464,6 +464,7 @@ document.getElementById("joinRoomButton").addEventListener("click",async()=>{
     setEntryVisible(false);
     renderAll();
   }catch(error){
+    initialGuestStatePending=false;
     setNetworkStatus("加入房間失敗："+(error?.message??"unknown"),"error");
   }
 });
