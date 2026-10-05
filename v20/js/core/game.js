@@ -387,11 +387,19 @@ export class GameEngine{
   submitMinigameResult(seat,result){
     const submitted=submitGameResult(this.state,seat,result);
     if(!submitted.ok)return false;
-    this.log(
-      this.state.players[seat].name+" 已完成小遊戲，得分 "+submitted.score+"。",
-      "minigame_result",
-      {seat,score:submitted.score}
-    );
+    if(this.state.minigame?.id==="auction"){
+      this.log(
+        this.state.players[seat].name+" 已提交拍賣暗標，等待其他玩家開標。",
+        "minigame_result",
+        {seat,gameId:"auction",submitted:true}
+      );
+    }else{
+      this.log(
+        this.state.players[seat].name+" 已完成小遊戲，得分 "+submitted.score+"。",
+        "minigame_result",
+        {seat,score:submitted.score,gameId:this.state.minigame?.id}
+      );
+    }
     this.tryFinalizeMinigame();
     this.notify();
     return true;
