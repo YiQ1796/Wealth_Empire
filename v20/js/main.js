@@ -290,7 +290,10 @@ function noticeView(event){
       return{
         message:event.text,
         metric:Number.isFinite(Number(data.amount))?noticeMoney(data.amount):"收購",
-        details:[]
+        details:[
+          data.sellerName?"原持有人 "+data.sellerName:null,
+          Number.isFinite(Number(data.buyerCashAfter))?"收購後現金 "+noticeMoney(data.buyerCashAfter):null
+        ].filter(Boolean)
       };
 
     case"bankruptcy":
