@@ -297,7 +297,7 @@ function pumpActionNotice(){
 
   node.innerHTML=
     '<picture class="action-toast__card-bg">'+
-      '<source media="(max-width:760px)" srcset="'+source.mobile+'">'+
+      '<source media="(orientation:landscape) and (max-height:650px) and (max-width:1180px), (max-width:760px)" srcset="'+source.mobile+'">'+
       '<img src="'+source.desktop+'" alt="">'+
     '</picture>'+
     '<img class="action-toast__fx" src="'+config.effect+'" alt="">'+
