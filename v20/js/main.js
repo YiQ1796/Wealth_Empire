@@ -15,7 +15,8 @@ import{characterAsset,mountStaticBoard,render}from"./ui/render.js";
 import{renderStockMarket}from"./ui/stock-render.js";
 import{UI_ASSETS}from"./data/ui-assets.js";
 import{MinigameUI}from"./ui/minigame-ui.js";
-import{GROUP_SIZES,groupRentMultiplier}from"./data/board.js";
+import{GROUP_SIZES,MAX_PROPERTY_LEVEL,groupRentMultiplier}from"./data/board.js";
+import{canForceAcquireProperty,groupProgress,propertyValue,rentFor,suggestedAcquisitionOffer,upgradeCost}from"./core/property-economy.js";
 
 const board=document.getElementById("board");
 mountStaticBoard(board);
@@ -59,6 +60,7 @@ const uiContext={
 const featureDialog=document.getElementById("featureDialog");
 const networkDialog=document.getElementById("networkDialog");
 const purchaseDialog=document.getElementById("purchaseDialog");
+const propertyInfoDialog=document.getElementById("propertyInfoDialog");
 const entryGate=document.getElementById("entryGate");
 const actionToastStack=document.getElementById("actionToastStack");
 board.appendChild(actionToastStack);
@@ -671,6 +673,68 @@ function scheduleAi(){
   },1100);
 }
 
+function setPropertyInfoValue(id,value){
+  const node=document.getElementById(id);
+  if(node)node.textContent=value;
+}
+
+function openPropertyInfo(tileIndex){
+  const index=Number(tileIndex);
+  const tile=state.tiles?.[index];
+  if(!tile||tile.type!=="property")return;
+
+  const viewer=state.players?.[currentLocalSeat()]??state.players?.[0];
+  const owner=tile.owner!=null?state.players?.[tile.owner]:null;
+  const value=propertyValue(tile);
+  const currentRent=rentFor(state,tile);
+  const maxLevel=tile.level>=MAX_PROPERTY_LEVEL;
+  const nextLevel=maxLevel?null:tile.level+1;
+  const nextRent=nextLevel==null?null:rentFor(state,{...tile,level:nextLevel});
+  const nextUpgradeCost=maxLevel?null:upgradeCost(tile);
+  const progressSeat=owner?.seat??viewer?.seat??0;
+  const progress=groupProgress(state,progressSeat,tile.group);
+  const progressLabel=(owner?"地主":"你的")+"區域進度 "+progress.owned+"/"+progress.total+
+    (progress.complete?"｜已完成連區 ×"+groupRentMultiplier(tile.group):"");
+
+  const opponentOwned=Boolean(owner&&viewer&&owner.seat!==viewer.seat);
+  const estimatedOffer=opponentOwned?suggestedAcquisitionOffer(tile):0;
+  const forceEligible=opponentOwned&&canForceAcquireProperty(state,index,viewer.seat);
+
+  document.getElementById("propertyInfoTitle").textContent=tile.name;
+  document.getElementById("propertyInfoSubtitle").textContent="#"+tile.number+"｜"+tile.group;
+  setPropertyInfoValue("propertyInfoPurchasePrice",noticeMoney(tile.price));
+  setPropertyInfoValue("propertyInfoAssetValue",noticeMoney(value));
+  setPropertyInfoValue("propertyInfoRent",noticeMoney(currentRent));
+  setPropertyInfoValue("propertyInfoLevel","LV."+tile.level+" / "+MAX_PROPERTY_LEVEL);
+  setPropertyInfoValue(
+    "propertyInfoUpgrade",
+    maxLevel?"已滿級":noticeMoney(nextUpgradeCost)+" → LV."+nextLevel
+  );
+  setPropertyInfoValue(
+    "propertyInfoNextRent",
+    nextRent==null?"—":noticeMoney(nextRent)
+  );
+  setPropertyInfoValue("propertyInfoOwner",owner?.name??"尚未持有");
+  setPropertyInfoValue("propertyInfoRegion",progressLabel);
+
+  const acquisitionValue=document.getElementById("propertyInfoAcquisition");
+  const acquisitionNote=document.getElementById("propertyInfoAcquisitionNote");
+  if(!owner){
+    acquisitionValue.textContent="—";
+    acquisitionNote.textContent="目前無地主，可依售價直接購買。";
+  }else if(!opponentOwned){
+    acquisitionValue.textContent="自己的地產";
+    acquisitionNote.textContent="不需要收購。";
+  }else{
+    acquisitionValue.textContent=noticeMoney(estimatedOffer);
+    acquisitionNote.textContent=forceEligible
+      ?"預估報價＝目前資產估值 ×1.25；LV."+tile.level+" 可強制收購。實際交易仍依收購/協商流程。"
+      :"預估報價＝目前資產估值 ×1.25；LV."+tile.level+" 已受滿級保護，不可強制收購，仍可一般協商。";
+  }
+
+  if(!propertyInfoDialog.open)propertyInfoDialog.showModal();
+}
+
 function openFeature(name){
   const meta={
     property:["我的房產","查看地產、區域完成度、收租與升級。"],
@@ -699,6 +763,24 @@ if(mobileRollButton){
 document.getElementById("confirmPurchaseButton").addEventListener("click",()=>dispatchAction({type:"buy_property"}));
 document.getElementById("declinePurchaseButton").addEventListener("click",()=>dispatchAction({type:"decline_property"}));
 document.getElementById("endTurnButton").addEventListener("click",()=>dispatchAction({type:"end_turn"}));
+
+board.addEventListener("click",event=>{
+  const tileNode=event.target.closest(".tile--property[data-index]");
+  if(!tileNode)return;
+  openPropertyInfo(tileNode.dataset.index);
+});
+board.addEventListener("keydown",event=>{
+  if(!["Enter"," "].includes(event.key))return;
+  const tileNode=event.target.closest(".tile--property[data-index]");
+  if(!tileNode)return;
+  event.preventDefault();
+  openPropertyInfo(tileNode.dataset.index);
+});
+
+document.getElementById("closePropertyInfoDialog").addEventListener("click",()=>propertyInfoDialog.close());
+propertyInfoDialog.addEventListener("click",event=>{
+  if(event.target===propertyInfoDialog)propertyInfoDialog.close();
+});
 
 document.getElementById("propertyTabList").addEventListener("click",event=>{
   const button=event.target.closest("[data-upgrade-property]");
