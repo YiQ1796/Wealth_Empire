@@ -41,39 +41,46 @@ jobs:
           PY
           node --check /tmp/wealth_empire_inline.js
 
-      - name: Expand V20 tile assets
+      - name: Expand V20 V5 visual assets
         shell: bash
         run: |
           set -euo pipefail
-          rm -rf v20/assets/tiles-v2
-          mkdir -p v20/assets/tiles-v2
-          for pack in \
-            v20/assets/packs/tiles_01_10.zip \
-            v20/assets/packs/tiles_11_20.zip \
-            v20/assets/packs/tiles_21_30.zip \
-            v20/assets/packs/tiles_31_36.zip
-          do
-            unzip -oq "$pack" -d v20/assets/tiles-v2
-          done
+          rm -rf v20/assets/v5 v20/assets/tiles-v2
+          mkdir -p v20/assets/v5
+          unzip -oq v20/assets/packs/alpha18_v5_assets.zip -d v20/assets/v5
 
-      - name: Validate V20 visual assets
+      - name: Validate V20 V5 visual assets
         shell: bash
         run: |
           set -euo pipefail
           test -s v20/assets/board/center-bg.webp
-          for n in $(seq -w 1 36); do
-            test -s "v20/assets/tiles-v2/TILE_${n}.webp"
+
+          for n in $(seq -w 1 44); do
+            test -s "v20/assets/v5/tiles/TILE_${n}.webp"
           done
-          test "$(find v20/assets/tiles-v2 -maxdepth 1 -name 'TILE_*.webp' | wc -l)" -eq 36
-          for asset in \
-            QUICK_STOCK QUICK_PROPERTY QUICK_ITEM QUICK_INFO \
-            ACTION_ROLL ACTION_END_TURN \
-            PAWN_BLUE PAWN_RED PAWN_GREEN PAWN_PURPLE
-          do
-            test -s "v20/assets/ui/${asset}.webp"
-          done
-          test "$(find v20/assets/ui -maxdepth 1 -name '*.webp' | wc -l)" -eq 10
-          echo "V20 visual assets PASS: center + 36 reusable full-tile WebPs + committed Batch05 UI10"
+          test "$(find v20/assets/v5/tiles -maxdepth 1 -name 'TILE_*.webp' | wc -l)" -eq 44
+
+          test "$(find v20/assets/v5/ui/houses -maxdepth 1 -name 'HOUSE_*.webp' | wc -l)" -eq 4
+          test "$(find v20/assets/v5/ui/characters -maxdepth 1 -name 'PLAYER_*.webp' | wc -l)" -eq 16
+          test "$(find v20/assets/v5/ui/badges -maxdepth 1 -name '*.webp' | wc -l)" -eq 15
+          test "$(find v20/assets/v5/ui/modal -maxdepth 1 -name '*.webp' | wc -l)" -eq 11
+
+          test "$(find v20/assets/v5/notification/cards -maxdepth 1 -name '*.webp' | wc -l)" -eq 4
+          test "$(find v20/assets/v5/notification/icons -maxdepth 1 -name '*.webp' | wc -l)" -eq 13
+          test "$(find v20/assets/v5/notification/effects -maxdepth 1 -name '*.webp' | wc -l)" -eq 7
+          test "$(find v20/assets/v5/notification/market -maxdepth 1 -name '*.webp' | wc -l)" -eq 2
+
+          test -s v20/assets/v5/ui/modal/MODAL_CLOSE.webp
+          test -s v20/assets/v5/ui/badges/BADGE_NO_ACQUISITION.webp
+          test -s v20/assets/v5/notification/cards/NOTIFY_CARD_MAJOR_DESKTOP.webp
+          test -s v20/assets/v5/notification/icons/NOTIFY_ICON_PROPERTY_BUY.webp
+
+          if [ -e v20/assets/tiles-v2 ]; then
+            echo "Legacy tiles-v2 render directory must not exist"
+            exit 1
+          fi
+
+          echo "V20 Alpha18 V5 visual assets PASS: 44 tiles + houses + 16 character states + badges + modal + notification UI"
 
       - name: Validate V20 module syntax
         shell: bash
