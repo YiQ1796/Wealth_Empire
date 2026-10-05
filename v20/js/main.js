@@ -17,6 +17,7 @@ import{UI_ASSETS}from"./data/ui-assets.js";
 import{MinigameUI}from"./ui/minigame-ui.js";
 import{GROUP_SIZES,MAX_PROPERTY_LEVEL,groupRentMultiplier}from"./data/board.js";
 import{canForceAcquireProperty,groupProgress,propertyValue,rentFor,suggestedAcquisitionOffer,upgradeCost}from"./core/property-economy.js";
+import{TRANSPORT_NODE_BY_INDEX}from"./data/transport.js";
 
 const board=document.getElementById("board");
 mountStaticBoard(board);
@@ -51,6 +52,7 @@ const ACTION_TOAST_KINDS=new Set([
   "bankruptcy",
   "cash",
   "special_event",
+  "transport_complete",
   "game_complete"
 ]);
 const uiContext={
@@ -62,6 +64,7 @@ const featureDialog=document.getElementById("featureDialog");
 const networkDialog=document.getElementById("networkDialog");
 const purchaseDialog=document.getElementById("purchaseDialog");
 const propertyInfoDialog=document.getElementById("propertyInfoDialog");
+const transportDialog=document.getElementById("transportDialog");
 const entryGate=document.getElementById("entryGate");
 const actionToastStack=document.getElementById("actionToastStack");
 board.appendChild(actionToastStack);
@@ -177,6 +180,7 @@ function noticeConfig(event){
     network_join:{title:"好友加入",icon:N.icons.network,effect:N.effects.blue,tone:"blue"},
     network_reconnect:{title:"重新連線",icon:N.icons.network,effect:N.effects.green,tone:"green"},
     network_ai_takeover:{title:"AI 接手",icon:N.icons.aiTakeover,effect:N.effects.purple,tone:"purple"},
+    transport_complete:{title:"快速通車",icon:N.icons.network,effect:N.effects.blue,tone:"blue",major:true},
     cash:{title:"現金變動",icon:N.icons.rent,effect:N.effects.green,tone:"green",metric:true}
   };
   return map[event.kind]??{title:"遊戲動態",icon:N.icons.marketTick,effect:N.effects.blue,tone:"blue"};
@@ -325,6 +329,16 @@ function noticeView(event){
       }
       return{message:event.text,metric,details};
     }
+
+    case"transport_complete":
+      return{
+        message:(data.playerName??"玩家")+" 完成交通轉乘",
+        metric:"抵達",
+        details:[
+          (data.sourceName??"交通設施")+" → "+(data.destinationName??"目的地"),
+          "本次轉乘不連鎖觸發第二次交通"
+        ]
+      };
 
     case"market_tick":{
       const movers=Array.isArray(data.movers)?data.movers:[];
@@ -641,6 +655,10 @@ function executeAction(action,seat=currentLocalSeat()){
       return engine.sellStock(action.stockId,action.shares,seat);
     case"minigame_result":
       return engine.submitMinigameResult(seat,{score:action.score,detail:action.detail});
+    case"transport_travel":
+      return engine.useTransport(action.destinationIndex,seat);
+    case"transport_skip":
+      return engine.skipTransport(seat);
     case"end_turn":
       return engine.endTurn(seat);
     case"start_game":
@@ -714,6 +732,62 @@ function renderNetworkUi(){
   }
 }
 
+function renderTransportDialog(){
+  const pending=state.pendingTransport;
+  const localSeat=currentLocalSeat();
+  const player=state.players?.[localSeat];
+  const shouldShow=Boolean(
+    transportDialog&&
+    state.phase==="transport"&&
+    pending&&
+    pending.seat===localSeat&&
+    player?.kind==="human"&&
+    player.connected!==false
+  );
+
+  if(!shouldShow){
+    if(transportDialog?.open)transportDialog.close();
+    return;
+  }
+
+  const source=TRANSPORT_NODE_BY_INDEX[pending.sourceIndex];
+  document.getElementById("transportTitle").textContent=source?.name??"交通轉乘";
+  document.getElementById("transportSubtitle").textContent="選擇另一個交通節點作為本回合轉乘目的地。";
+  document.getElementById("transportSourceName").textContent=(source?.icon?source.icon+" ":"")+(source?.name??"交通設施");
+
+  const list=document.getElementById("transportDestinationList");
+  list.replaceChildren();
+
+  for(const destinationIndex of pending.destinationIndexes??[]){
+    const node=TRANSPORT_NODE_BY_INDEX[destinationIndex];
+    if(!node)continue;
+    const button=document.createElement("button");
+    button.type="button";
+    button.className="transport-destination";
+    button.dataset.destinationIndex=String(destinationIndex);
+
+    const icon=document.createElement("span");
+    icon.className="transport-destination__icon";
+    icon.textContent=node.icon;
+
+    const copy=document.createElement("span");
+    copy.className="transport-destination__copy";
+    const title=document.createElement("strong");
+    title.textContent=node.name;
+    const meta=document.createElement("small");
+    meta.textContent=node.mode+"｜第 "+(destinationIndex+1)+" 格";
+    copy.append(title,meta);
+
+    button.append(icon,copy);
+    button.addEventListener("click",()=>{
+      dispatchAction({type:"transport_travel",destinationIndex});
+    },{once:true});
+    list.appendChild(button);
+  }
+
+  if(!transportDialog.open)transportDialog.showModal();
+}
+
 function renderAll(){
   uiContext.networkMode=network.mode;
   render(state,{
@@ -722,6 +796,7 @@ function renderAll(){
   });
   renderStocks();
   renderNetworkUi();
+  renderTransportDialog();
   minigameUi.sync(state,currentLocalSeat());
   processMoveAnimations();
   processActionToasts();
@@ -872,6 +947,11 @@ featureDialog.addEventListener("click",event=>{
 });
 
 purchaseDialog.addEventListener("cancel",event=>event.preventDefault());
+
+const skipTransport=()=>dispatchAction({type:"transport_skip"});
+document.getElementById("skipTransportButton").addEventListener("click",skipTransport);
+document.getElementById("skipTransportIconButton").addEventListener("click",skipTransport);
+transportDialog.addEventListener("cancel",event=>event.preventDefault());
 
 document.getElementById("closeNetworkDialog").addEventListener("click",()=>networkDialog.close());
 networkDialog.addEventListener("click",event=>{
