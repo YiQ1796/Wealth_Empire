@@ -325,11 +325,15 @@ function noticeView(event){
       };
 
     case"special_event":{
-      const metric=data.effectKind==="cash"
-        ? noticeSignedMoney(data.amount)
-        : data.effectKind==="move"
-          ? ((Number(data.delta)>=0?"前進 ":"後退 ")+Math.abs(Number(data.delta)||0)+" 格")
-          : "事件";
+      const metric=data.blockedBy==="tax"
+        ?"已抵免"
+        :data.blockedBy==="hospital"
+          ?"已保護"
+          :data.effectKind==="cash"
+            ? noticeSignedMoney(data.amount)
+            : data.effectKind==="move"
+              ? ((Number(data.delta)>=0?"前進 ":"後退 ")+Math.abs(Number(data.delta)||0)+" 格")
+              : "事件";
       const details=[];
       if(data.effectKind==="cash"&&Number.isFinite(Number(data.cashAfter))){
         details.push("事件後現金 "+noticeMoney(data.cashAfter));
@@ -373,7 +377,9 @@ function noticeView(event){
     case"market_tick":{
       const movers=Array.isArray(data.movers)?data.movers:[];
       return{
-        message:"輪到 "+(data.playerName??"下一位玩家")+"｜全市場重新漲跌",
+        message:data.type==="market"
+          ?"股市事件｜全市場立即重新漲跌"
+          :"輪到 "+(data.playerName??"下一位玩家")+"｜全市場重新漲跌",
         metric:null,
         details:movers.map(stock=>stock.name+" "+(stock.changePercent>0?"+":"")+Number(stock.changePercent).toFixed(1)+"%")
       };
