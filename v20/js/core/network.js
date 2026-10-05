@@ -2,7 +2,10 @@ const SESSION_KEY="wealth_empire_v20_network_session";
 const CLIENT_KEY="wealth_empire_v20_client_id";
 const HOST_STATE_PREFIX="wealth_empire_v20_host_state_";
 const PEER_PREFIX="wealth-empire-v20-";
-const RELAY_BROKER_URL="wss://broker.emqx.io:8084/mqtt";
+const RELAY_BROKER_URLS=Object.freeze([
+  "wss://broker.emqx.io:8084/mqtt",
+  "wss://broker.hivemq.com:8884/mqtt"
+]);
 const RELAY_PROTOCOL="v20";
 const RELAY_HEARTBEAT_MS=7000;
 const RELAY_STALE_MS=35000;
@@ -325,34 +328,59 @@ export class PeerNetwork{
     this.playerName=sanitizePlayerName(playerName);
     this.characterIndex=sanitizeCharacterIndex(characterIndex);
 
-    try{
-      await this.startHostRelay();
-      this.transport="relay";
-      this.startHostPeer().catch(()=>{});
-      this.status("房間已建立，房號 "+code+"。目前使用 WSS 中繼，可跨不同網路與手機 NAT；P2P 同步作為備援。","success");
-    }catch(relayError){
-      this.cleanupRelayTransport();
-      this.status("WSS 中繼暫時不可用，正在切換 P2P 備援。","warning");
-      await this.startHostPeer();
-      this.transport="peer";
-      this.status("房間已建立，房號 "+code+"。目前使用 P2P 備援。","success");
+    let relayConnected=false;
+    let relayError=null;
+    for(const brokerUrl of RELAY_BROKER_URLS){
+      try{
+        await this.startHostRelay(brokerUrl);
+        relayConnected=true;
+        break;
+      }catch(error){
+        relayError=error;
+        this.cleanupRelayTransport();
+      }
     }
 
+    if(relayConnected){
+      this.transport="relay";
+      this.startHostPeer().catch(()=>{});
+      this.status("房間已建立，房號 "+this.roomCode+"。目前使用 WSS 中繼，可跨不同網路與手機 NAT；P2P 同步作為備援。","success");
+    }else{
+      this.status("WSS 中繼暫時不可用，正在切換 P2P 備援。","warning");
+      let peerError=relayError;
+      for(let attempt=0;attempt<4;attempt++){
+        try{
+          await this.startHostPeer();
+          peerError=null;
+          break;
+        }catch(error){
+          peerError=error;
+          const message=String(error?.message??error?.type??"");
+          if(!/taken|unavailable|ID/i.test(message)||attempt===3)break;
+          this.roomCode=createRoomCode();
+        }
+      }
+      if(peerError)throw peerError;
+      this.transport="peer";
+      this.status("房間已建立，房號 "+this.roomCode+"。目前使用 P2P 備援。","success");
+    }
+
+    const finalCode=this.roomCode;
     saveNetworkSession({
       mode:"host",
-      roomCode:code,
+      roomCode:finalCode,
       playerName:this.playerName,
       characterIndex:this.characterIndex,
       clientId:this.clientId,
       seat:0
     });
-    return{roomCode:code,seat:0,transport:this.transport};
+    return{roomCode:finalCode,seat:0,transport:this.transport};
   }
 
-  async startHostRelay(){
+  async startHostRelay(brokerUrl=RELAY_BROKER_URLS[0]){
     const mqtt=await loadMqttLibrary();
     const base=relayBase(this.roomCode);
-    const client=mqtt.connect(RELAY_BROKER_URL,{
+    const client=mqtt.connect(brokerUrl,{
       clientId:relayRandomId("we-host-"+this.roomCode),
       clean:true,
       connectTimeout:8000,
@@ -560,24 +588,35 @@ export class PeerNetwork{
     this.playerName=sanitizePlayerName(playerName);
     this.characterIndex=sanitizeCharacterIndex(characterIndex);
 
+    let relayError=null;
+    for(const brokerUrl of RELAY_BROKER_URLS){
+      try{
+        const result=await this.joinViaRelay(brokerUrl);
+        this.transport="relay";
+        return result;
+      }catch(error){
+        relayError=error;
+        this.cleanupRelayTransport();
+      }
+    }
+
+    this.status("WSS 中繼暫時不可用，正在切換 P2P 備援。","warning");
     try{
-      const result=await this.joinViaRelay();
-      this.transport="relay";
-      return result;
-    }catch(relayError){
-      this.cleanupRelayTransport();
-      this.status("WSS 中繼暫時不可用，正在切換 P2P 備援。","warning");
       const result=await this.joinViaPeer();
       this.transport="peer";
       return result;
+    }catch(peerError){
+      const relayMessage=relayError?.message??"relay_unavailable";
+      const peerMessage=peerError?.message??peerError?.type??"peer_unavailable";
+      throw new Error("relay="+relayMessage+"; peer="+peerMessage);
     }
   }
 
-  async joinViaRelay(){
+  async joinViaRelay(brokerUrl=RELAY_BROKER_URLS[0]){
     const mqtt=await loadMqttLibrary();
     const base=relayBase(this.roomCode);
     const relayId=relayRandomId("we-guest-"+this.roomCode);
-    const client=mqtt.connect(RELAY_BROKER_URL,{
+    const client=mqtt.connect(brokerUrl,{
       clientId:relayId,
       clean:true,
       connectTimeout:8000,
@@ -695,7 +734,7 @@ export class PeerNetwork{
     clearInterval(this.relayHeartbeatTimer);
     this.relayHeartbeatTimer=setInterval(()=>{
       if(this.mode!=="guest"||!connection.open)return;
-      sendPresence();
+      try{connection.send({type:"ping",at:Date.now()})}catch{}
     },RELAY_HEARTBEAT_MS);
 
     return result;
