@@ -141,7 +141,7 @@ button:focus-visible{outline:3px solid rgba(47,114,196,.28);outline-offset:2px}
   overflow:hidden;
   background:transparent
 }
-.center-stage img{
+#centerBackground{
   position:absolute;
   inset:0;
   width:100%;
@@ -149,33 +149,13 @@ button:focus-visible{outline:3px solid rgba(47,114,196,.28);outline-offset:2px}
   object-fit:cover;
   display:none
 }
-.center-stage.has-art img{display:block}
+.center-stage.has-art #centerBackground{display:block}
 .center-stage__shade{
   position:absolute;
   inset:0;
-  background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.10))
-}
-.center-stage__content{
-  position:absolute;
-  inset:0;
-  display:grid;
-  place-content:center;
-  text-align:center;
-  padding:20px;
+  z-index:1;
+  background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.08));
   pointer-events:none
-}
-.center-stage__content h2{
-  margin:0;
-  font-size:clamp(27px,2.2vw,40px);
-  text-shadow:0 2px 9px rgba(255,255,255,.95)
-}
-.center-stage__content p{
-  margin:7px 0 0;
-  padding:8px 14px;
-  border-radius:999px;
-  background:rgba(255,255,255,.86);
-  font-size:14px;
-  font-weight:1000
 }
 
 .hud-panel{
@@ -4131,4 +4111,282 @@ body.entry-pending .app-shell{
   .urban-skip{min-height:32px;margin-top:6px;font-size:9px}
   .highlow-dice{min-height:72px;font-size:28px}
   .player-civic-badge{font-size:6px;min-height:14px;padding:1px 4px}
+}
+
+
+/* V20 Alpha 28 — central five facilities replace the old text-only center render source. */
+.central-facilities{
+  position:absolute;
+  inset:0;
+  z-index:2;
+  pointer-events:none
+}
+.central-facility{
+  position:absolute;
+  width:clamp(112px,17.5%,190px);
+  aspect-ratio:1;
+  padding:0;
+  border:0;
+  background:transparent;
+  transform:translate(-50%,-50%);
+  cursor:pointer;
+  pointer-events:auto;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation
+}
+.central-facility--bank{
+  left:50%;
+  top:50%;
+  width:clamp(140px,21.5%,230px);
+  z-index:4
+}
+.central-facility--mission{left:50%;top:17%;z-index:3}
+.central-facility--insurance{left:24%;top:50%;z-index:3}
+.central-facility--transit{left:76%;top:50%;z-index:3}
+.central-facility--development{left:50%;top:83%;z-index:3}
+.central-facility__building,
+.central-facility__glow,
+.central-facility__status{
+  position:absolute;
+  display:block;
+  object-fit:contain;
+  pointer-events:none
+}
+.central-facility__building{
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:2;
+  filter:drop-shadow(0 7px 7px rgba(51,59,50,.18));
+  transition:transform .16s ease,filter .16s ease
+}
+.central-facility__glow{
+  inset:-8%;
+  width:116%;
+  height:116%;
+  z-index:1;
+  opacity:0;
+  transform:scale(.94);
+  transition:opacity .16s ease,transform .16s ease
+}
+.central-facility__status{
+  right:-2%;
+  top:-2%;
+  width:38%;
+  height:auto;
+  z-index:5;
+  filter:drop-shadow(0 2px 3px rgba(0,0,0,.18))
+}
+.central-facility:hover .central-facility__building,
+.central-facility:focus-visible .central-facility__building{
+  transform:translateY(-3px) scale(1.035);
+  filter:drop-shadow(0 10px 9px rgba(51,59,50,.25))
+}
+.central-facility:hover .central-facility__glow,
+.central-facility:focus-visible .central-facility__glow,
+.central-facility.is-selected .central-facility__glow{
+  opacity:.9;
+  transform:scale(1)
+}
+.central-facility:focus-visible{
+  outline:0
+}
+.central-facility[data-status="cooldown"] .central-facility__building{
+  filter:grayscale(.14) saturate(.82) drop-shadow(0 6px 6px rgba(51,59,50,.16))
+}
+.central-facility-dialog{
+  width:min(720px,calc(100vw - 24px));
+  max-height:calc(100dvh - 24px);
+  padding:0;
+  border:0;
+  background:transparent;
+  overflow:visible
+}
+.central-facility-dialog::backdrop{
+  background:rgba(18,34,49,.56);
+  backdrop-filter:blur(3px)
+}
+.central-facility-modal{
+  max-height:calc(100dvh - 32px);
+  overflow:auto;
+  padding:16px;
+  border:1px solid #dce5ec;
+  border-radius:20px;
+  background:#fff;
+  box-shadow:0 24px 70px rgba(18,36,56,.34)
+}
+.central-facility-modal__header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  padding-bottom:11px;
+  border-bottom:1px solid #e4eaf0
+}
+.central-facility-modal__title{
+  min-width:0
+}
+.central-facility-modal__title>img{
+  display:block;
+  width:min(300px,68vw);
+  height:auto;
+  max-height:86px;
+  object-fit:contain;
+  object-position:left center
+}
+.central-facility-modal__title p{
+  margin:4px 0 0;
+  color:#65788a;
+  font-size:11px;
+  font-weight:800
+}
+.central-facility-modal__body{
+  display:grid;
+  gap:10px;
+  margin-top:12px
+}
+.central-feature-summary{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px
+}
+.central-feature-summary>div{
+  min-width:0;
+  padding:10px;
+  border:1px solid #dde5ec;
+  border-radius:12px;
+  background:#f7fafc
+}
+.central-feature-summary span{
+  display:block;
+  color:#748698;
+  font-size:9px;
+  font-weight:900
+}
+.central-feature-summary strong{
+  display:block;
+  margin-top:3px;
+  color:#203d55;
+  font-size:16px
+}
+.central-feature-note{
+  margin:0;
+  padding:9px 11px;
+  border-radius:11px;
+  background:#fff9e9;
+  color:#70571e;
+  font-size:10px;
+  font-weight:800;
+  line-height:1.45
+}
+.central-feature-actions,
+.central-mission-grid,
+.central-development-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px
+}
+.central-mission-grid,
+.central-development-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr))
+}
+.central-feature-action,
+.central-mission-card,
+.central-development-card{
+  min-width:0;
+  min-height:74px;
+  padding:10px;
+  border:1px solid #d7e1e9;
+  border-radius:13px;
+  background:#fff;
+  color:#27445b;
+  text-align:left;
+  font-weight:900;
+  cursor:pointer
+}
+.central-feature-action strong,
+.central-mission-card strong,
+.central-development-card strong{
+  display:block;
+  font-size:13px
+}
+.central-feature-action small,
+.central-mission-card small,
+.central-development-card small{
+  display:block;
+  margin-top:4px;
+  color:#718396;
+  font-size:9px;
+  line-height:1.35;
+  font-weight:800
+}
+.central-feature-action:not(:disabled):hover,
+.central-mission-card:not(:disabled):hover,
+.central-development-card:not(:disabled):hover{
+  border-color:#7fa9c6;
+  background:#f2f8fc
+}
+.central-feature-action:disabled,
+.central-mission-card:disabled,
+.central-development-card:disabled{
+  opacity:.48;
+  cursor:not-allowed
+}
+.central-feature-active{
+  padding:12px;
+  border:1px solid #cae6d4;
+  border-radius:13px;
+  background:#f2fbf5;
+  color:#2d6243
+}
+.central-feature-active strong{font-size:14px}
+.central-feature-active p{
+  margin:4px 0 0;
+  font-size:10px;
+  line-height:1.45;
+  font-weight:800
+}
+
+@media (orientation:landscape) and (max-height:650px) and (max-width:1180px){
+  .central-facility{
+    width:clamp(70px,17%,118px)
+  }
+  .central-facility--bank{
+    width:clamp(88px,21%,142px)
+  }
+  .central-facility--mission{top:16%}
+  .central-facility--development{top:84%}
+  .central-facility-dialog{
+    width:min(690px,calc(100vw - max(14px,env(safe-area-inset-left)) - max(14px,env(safe-area-inset-right))))
+  }
+  .central-facility-modal{
+    max-height:calc(var(--phone-app-height,100dvh) - 18px);
+    padding:9px;
+    border-radius:14px
+  }
+  .central-facility-modal__header{padding-bottom:6px}
+  .central-facility-modal__title>img{width:210px;max-height:58px}
+  .central-facility-modal__title p{font-size:8px}
+  .central-facility-modal__body{gap:6px;margin-top:7px}
+  .central-feature-summary{gap:5px}
+  .central-feature-summary>div{padding:6px}
+  .central-feature-summary strong{font-size:11px}
+  .central-feature-summary span,
+  .central-feature-note,
+  .central-feature-action small,
+  .central-mission-card small,
+  .central-development-card small{font-size:7px}
+  .central-feature-actions,
+  .central-mission-grid,
+  .central-development-grid{gap:5px}
+  .central-feature-action,
+  .central-mission-card,
+  .central-development-card{
+    min-height:48px;
+    padding:6px
+  }
+  .central-feature-action strong,
+  .central-mission-card strong,
+  .central-development-card strong{font-size:9px}
+  .central-feature-active{padding:7px}
 }
