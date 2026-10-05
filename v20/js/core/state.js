@@ -20,6 +20,9 @@ export function createPlayer(seat,name,kind="ai"){
     portfolio:{},
     rentPaid:0,
     rentReceived:0,
+    taxEventShield:false,
+    medicalMoveShield:false,
+    courtShieldUntilRound:0,
     bankrupt:false
   };
 }
@@ -38,6 +41,7 @@ export function createInitialState(){
     pendingPurchase:null,
     pendingTransport:null,
     pendingAcquisition:null,
+    pendingUrban:null,
     minigame:null,
     minigameHistory:[],
     lastMinigame:null,
@@ -57,7 +61,7 @@ export function createInitialState(){
     events:[{
       id:1,
       kind:"system",
-      text:"V20 Alpha 26：收購中心、交通特殊格與連續賽跑動畫已啟動。",
+      text:"V20 Alpha 27：所有特殊格已接入可測試功能流程。",
       data:{},
       round:1
     }],
@@ -94,7 +98,10 @@ export function hydrateState(raw){
           ? saved.characterIndex
           : seat
       ],
-      portfolio:saved.portfolio??{}
+      portfolio:saved.portfolio??{},
+      taxEventShield:Boolean(saved.taxEventShield),
+      medicalMoveShield:Boolean(saved.medicalMoveShield),
+      courtShieldUntilRound:Math.max(0,Number(saved.courtShieldUntilRound)||0)
     };
   });
 
@@ -105,6 +112,7 @@ export function hydrateState(raw){
   state.specialEventHistory=Array.isArray(raw.specialEventHistory)?raw.specialEventHistory:[];
   state.pendingTransport=raw.pendingTransport&&typeof raw.pendingTransport==="object"?raw.pendingTransport:null;
   state.pendingAcquisition=raw.pendingAcquisition&&typeof raw.pendingAcquisition==="object"?raw.pendingAcquisition:null;
+  state.pendingUrban=raw.pendingUrban&&typeof raw.pendingUrban==="object"?raw.pendingUrban:null;
   state.turnToken=Math.max(1,Number(raw.turnToken)||1);
   state.version=BOARD_VERSION;
   return state;
