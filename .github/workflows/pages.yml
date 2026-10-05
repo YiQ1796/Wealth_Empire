@@ -122,8 +122,8 @@ jobs:
           grep -q '.stock-holding-row{' v20/styles/app.css
           grep -q '.stock-pnl-row{' v20/styles/app.css
           grep -q 'grid-template-columns:repeat(2,minmax(0,1fr))' v20/styles/app.css
-          grep -q 'app.css?v=alpha26-204' v20/index.html
-          grep -q 'main.js?v=alpha26-204' v20/index.html
+          grep -q 'app.css?v=alpha27-205' v20/index.html
+          grep -q 'main.js?v=alpha27-205' v20/index.html
 
           if grep -q 'data-feature="stock"' v20/index.html; then
             echo "Desktop stock market must not return as a shortcut"
@@ -290,6 +290,29 @@ jobs:
           node --experimental-default-type=module v20/tests/gameplay-systems.test.mjs
           echo "V20 Alpha26 acquisition, bridge, auction and continuous race PASS"
 
+      - name: Validate V20 completed special grids
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'id="urbanDialog"' v20/index.html
+          grep -q 'name:"高低骰對決"' v20/js/data/minigames.js
+          grep -q 'randomEligible:false' v20/js/data/minigames.js
+          grep -q 'highlow:()=>this.startHighLow(session)' v20/js/ui/minigame-ui.js
+          grep -q 'applyTaxOffice' v20/js/core/game.js
+          grep -q 'applyCourt' v20/js/core/game.js
+          grep -q 'applyHospital' v20/js/core/game.js
+          grep -q 'applyMarketEvent' v20/js/core/game.js
+          grep -q 'state.phase="urban"' v20/js/core/game.js
+          grep -q 'useUrban(destinationIndex' v20/js/core/game.js
+          grep -q '"urban_move"' v20/js/core/network.js
+          grep -q '"urban_skip"' v20/js/core/network.js
+          grep -q 'taxEventShield' v20/js/core/special-events.js
+          grep -q 'medicalMoveShield' v20/js/core/special-events.js
+          grep -q 'courtShieldUntilRound' v20/js/core/property-economy.js
+          grep -q 'V20 Alpha 27 — remaining special-grid completion' v20/styles/app.css
+          node --experimental-default-type=module v20/tests/gameplay-systems.test.mjs
+          echo "V20 Alpha27 high-low, tax, court, hospital, market and urban special grids PASS"
+
       - name: Validate V20 character ownership and contiguous regions
         shell: bash
         run: |
@@ -371,8 +394,8 @@ jobs:
           grep -q 'Alpha 19 mobile notification correction' v20/styles/app.css
           grep -q 'width:min(68%,560px)' v20/styles/app.css
           grep -q 'grid-template-columns:48px minmax(0,1fr) 78px' v20/styles/app.css
-          grep -q 'app.css?v=alpha26-204' v20/index.html
-          grep -q 'main.js?v=alpha26-204' v20/index.html
+          grep -q 'app.css?v=alpha27-205' v20/index.html
+          grep -q 'main.js?v=alpha27-205' v20/index.html
           echo "V20 phone notification sizing and mobile-art selection PASS"
 
       - name: Validate V20 mobile pass 2 composition
@@ -383,8 +406,8 @@ jobs:
           grep -q 'grid-template-rows:auto auto auto' v20/styles/app.css
           grep -q 'width:min(58%,460px)' v20/styles/app.css
           grep -q 'grid-template-columns:42px minmax(0,1fr) 68px' v20/styles/app.css
-          grep -q 'app.css?v=alpha26-204' v20/index.html
-          grep -q 'main.js?v=alpha26-204' v20/index.html
+          grep -q 'app.css?v=alpha27-205' v20/index.html
+          grep -q 'main.js?v=alpha27-205' v20/index.html
           echo "V20 phone composition pass 2 PASS"
 
       - name: Validate V20 mobile scroll and viewport authority
@@ -399,8 +422,8 @@ jobs:
           grep -q 'function syncPhoneViewportHeight' v20/js/main.js
           grep -q -- '--phone-app-height' v20/js/main.js
           grep -q 'resetScrollPosition()' v20/js/ui/minigame-ui.js
-          grep -q 'app.css?v=alpha26-204' v20/index.html
-          grep -q 'main.js?v=alpha26-204' v20/index.html
+          grep -q 'app.css?v=alpha27-205' v20/index.html
+          grep -q 'main.js?v=alpha27-205' v20/index.html
           node --experimental-default-type=module v20/tests/mobile-responsive.test.mjs
           echo "V20 mobile scroll and first-entry viewport authority PASS"
 
@@ -414,8 +437,8 @@ jobs:
           grep -q 'width:13px' v20/styles/app.css
           grep -q 'height:14px' v20/styles/app.css
           grep -q 'grid-template-rows:repeat(4,minmax(0,1fr))' v20/styles/app.css
-          grep -q 'app.css?v=alpha26-204' v20/index.html
-          grep -q 'main.js?v=alpha26-204' v20/index.html
+          grep -q 'app.css?v=alpha27-205' v20/index.html
+          grep -q 'main.js?v=alpha27-205' v20/index.html
           node --experimental-default-type=module v20/tests/mobile-responsive.test.mjs
           echo "V20 mobile-only pawn/house/HUD fill PASS"
 
@@ -428,8 +451,8 @@ jobs:
           grep -q 'tile__tokens:has(.pawn-token:nth-child(3))' v20/styles/app.css
           grep -q 'function settlePhoneLandscapeLayout' v20/js/main.js
           grep -q 'visualViewport?.addEventListener("resize",settlePhoneLandscapeLayout)' v20/js/main.js
-          grep -q 'app.css?v=alpha26-204' v20/index.html
-          grep -q 'main.js?v=alpha26-204' v20/index.html
+          grep -q 'app.css?v=alpha27-205' v20/index.html
+          grep -q 'main.js?v=alpha27-205' v20/index.html
           echo "V20 first-entry phone landscape stabilization PASS"
 
       - name: Validate V20 property tile info card
