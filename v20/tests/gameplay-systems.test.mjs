@@ -28,6 +28,15 @@ import{createRoomCode,normalizeRemoteAction,sanitizePlayerName,sanitizeRoomCode}
 
 {
   const state=createInitialState();
+  const engine=new GameEngine(state,()=>{});
+  state.currentPlayer=2;
+  const stock=state.market.stocks[1];
+  assert.equal(engine.buyStock(stock.id,3,0),true,"GameEngine must accept a human stock trade outside that player's turn");
+  assert.equal(getHolding(state.players[0],stock.id).shares,3);
+}
+
+{
+  const state=createInitialState();
   const player=state.players[0];
   const stock=state.market.stocks[0];
   const cashBefore=player.cash;
