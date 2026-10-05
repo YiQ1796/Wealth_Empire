@@ -71,7 +71,7 @@ export class MinigameUI{
     const modal=this.dialog?.querySelector(".minigame-modal");
     if(!modal)return;
     modal.scrollTop=0;
-    requestAnimationFrame(()=>{modal.scrollTop=0});
+    setTimeout(()=>{modal.scrollTop=0},0);
   }
 
   close(){
