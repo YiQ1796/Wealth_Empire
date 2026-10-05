@@ -10,8 +10,8 @@ assert.match(html,/class="mobile-primary-actions"/);
 assert.match(html,/id="mobileRollButton"/);
 assert.match(html,/data-feature="market"/);
 assert.match(html,/id="stockMarketMobileGrid"/);
-assert.match(html,/app\.css\?v=alpha22-200/);
-assert.match(html,/main\.js\?v=alpha22-200/);
+assert.match(html,/app\.css\?v=alpha23-201/);
+assert.match(html,/main\.js\?v=alpha23-201/);
 
 assert.match(css,/V20 Alpha 19 — phone landscape authority/);
 assert.match(css,/@media \(orientation:landscape\) and \(max-height:650px\) and \(max-width:1180px\)/);
@@ -53,3 +53,15 @@ assert.match(css,/\.property-house\{[\s\S]*?width:13px/);
 assert.match(css,/\.tile__houses\{[\s\S]*?height:14px/);
 assert.match(css,/\.hud-panel\{[\s\S]*?grid-template-rows:auto minmax\(0,1fr\) auto/);
 assert.match(css,/\.players\{[\s\S]*?grid-template-rows:repeat\(4,minmax\(0,1fr\)\)/);
+
+assert.match(css,/V20 Alpha 23 — mobile scroll and viewport authority/);
+assert.match(css,/height:var\(--phone-app-height,100dvh\)/);
+assert.match(css,/\.minigame-modal\{[\s\S]*?overflow-y:scroll/);
+assert.match(css,/-webkit-overflow-scrolling:touch/);
+assert.match(css,/touch-action:pan-y/);
+assert.match(main,/function syncPhoneViewportHeight/);
+assert.match(main,/--phone-app-height/);
+assert.match(main,/\[80,180,350,650,1000\]/);
+assert.match(main,/visualViewport\?\.addEventListener\("scroll",syncPhoneViewportHeight\)/);
+assert.match(ui,/resetScrollPosition\(\)/);
+assert.match(ui,/modal\.scrollTop=0/);
