@@ -546,117 +546,238 @@ button:focus-visible{outline:3px solid rgba(47,114,196,.28);outline-offset:2px}
 }
 
 .stock-market-grid{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:7px
+  min-height:0;
+  overflow:hidden
 }
+.stock-summary{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:5px;
+  margin-bottom:7px
+}
+.stock-summary>div{
+  min-width:0;
+  padding:6px 7px;
+  border:1px solid #dde6ee;
+  border-radius:9px;
+  background:#f5f8fb
+}
+.stock-summary span{
+  display:block;
+  overflow:hidden;
+  color:#718096;
+  font-size:9px;
+  line-height:1.1;
+  font-weight:900;
+  text-overflow:ellipsis;
+  white-space:nowrap
+}
+.stock-summary strong{
+  display:block;
+  margin-top:3px;
+  color:#17324d;
+  font-size:14px;
+  line-height:1;
+  font-weight:1000;
+  white-space:nowrap
+}
+.stock-summary .profit strong{color:#cb4a42}
+.stock-summary .loss strong{color:#237d59}
+.stock-card-list{
+  min-height:0
+}
+.stock-pair-row{
+  min-width:0;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:6px;
+  margin-bottom:6px
+}
+.stock-pair-row:last-child{margin-bottom:0}
+.stock-pair-row__spacer{min-width:0}
 .stock-trade-card{
   min-width:0;
-  padding:11px;
+  padding:8px;
   border:1px solid #dce5ed;
-  border-radius:14px;
+  border-radius:12px;
   background:#fff
 }
 .stock-trade-card__head{
-  display:flex;
-  justify-content:space-between;
-  gap:10px
+  min-width:0;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:start;
+  gap:6px
 }
-.stock-trade-card__head>div:first-child{
+.stock-title{
   min-width:0
 }
-.stock-trade-card__head strong{
+.stock-title strong{
   display:block;
-  font-size:15px
-}
-.stock-trade-card__head small{
-  display:block;
-  margin-top:2px;
-  color:var(--muted);
-  font-size:10px;
-  font-weight:800
-}
-.stock-price{
-  text-align:right;
+  overflow:hidden;
+  color:#17324d;
+  font-size:14px;
+  line-height:1.1;
+  font-weight:1000;
+  text-overflow:ellipsis;
   white-space:nowrap
 }
-.stock-price b{
+.stock-title small{
   display:block;
-  font-size:23px
-}
-.stock-price em{
-  display:block;
-  margin-top:2px
-}
-.stock-position{
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:5px;
-  margin-top:8px
-}
-.stock-position span{
-  padding:6px;
-  border-radius:8px;
-  background:#f3f7fa;
-  color:var(--muted);
+  margin-top:3px;
+  overflow:hidden;
+  color:#718096;
   font-size:9px;
-  font-weight:800
-}
-.stock-position b{
-  display:block;
-  margin-top:1px;
-  color:var(--text);
-  font-size:11px
-}
-.stock-position .profit b{color:#cb4a42}
-.stock-position .loss b{color:#237d59}
-.stock-position--empty{
-  display:block;
-  padding:8px;
-  border:1px dashed #d9e2ea;
-  border-radius:9px;
-  color:#8795a3;
-  font-size:10px;
+  line-height:1.1;
   font-weight:900;
-  text-align:center
+  text-overflow:ellipsis;
+  white-space:nowrap
 }
-.stock-trade-controls{
+.stock-quote{
+  min-width:58px;
+  text-align:right
+}
+.stock-quote>b{
+  display:block;
+  color:#17324d;
+  font-size:21px;
+  line-height:1;
+  font-weight:1000
+}
+.stock-trend{
+  display:inline-block;
+  margin-top:4px;
+  padding:3px 5px;
+  border-radius:999px;
+  font-size:9px;
+  line-height:1;
+  font-style:normal;
+  font-weight:1000;
+  white-space:nowrap
+}
+.stock-trend.up{
+  border:1px solid #ffc5c1;
+  background:#fff0ef;
+  color:#c9433d
+}
+.stock-trend.down{
+  border:1px solid #bce6cf;
+  background:#edf9f2;
+  color:#237d59
+}
+.stock-trend.flat{
+  border:1px solid #d8e0e7;
+  background:#f2f5f8;
+  color:#66798b
+}
+.stock-holding-row{
   display:grid;
-  grid-template-columns:minmax(90px,1fr) auto auto;
-  gap:6px;
-  align-items:end;
-  margin-top:8px
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:5px;
+  margin-top:7px;
+  padding:6px 7px;
+  border:1px solid #dce6ee;
+  border-radius:9px;
+  background:#eef5fb
 }
-.stock-trade-controls label{
+.stock-holding-row span{
+  min-width:0;
   color:#607589;
   font-size:9px;
-  font-weight:900
+  line-height:1.15;
+  font-weight:900;
+  white-space:nowrap
+}
+.stock-holding-row span:last-child{text-align:right}
+.stock-holding-row b{
+  color:#1f5f99;
+  font-size:11px
+}
+.stock-pnl-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:6px;
+  margin-top:5px;
+  padding:6px 7px;
+  border:1px solid #dce6ee;
+  border-radius:9px;
+  background:#f5f7f9
+}
+.stock-pnl-row span{
+  color:#617487;
+  font-size:9px;
+  font-weight:1000
+}
+.stock-pnl-row strong{
+  font-size:11px;
+  line-height:1;
+  white-space:nowrap
+}
+.stock-pnl-row strong small{
+  font-size:9px
+}
+.stock-pnl-row.profit{
+  border-color:#ffc5c1;
+  background:#fff1f0;
+  color:#c9433d
+}
+.stock-pnl-row.loss{
+  border-color:#bce6cf;
+  background:#eef9f2;
+  color:#237d59
+}
+.stock-pnl-row.flat{color:#65788a}
+.stock-trade-controls{
+  display:grid;
+  grid-template-columns:52px minmax(0,1fr) minmax(0,1fr);
+  gap:5px;
+  align-items:stretch;
+  margin-top:7px
+}
+.stock-trade-controls label{
+  min-width:0
 }
 .stock-trade-controls input{
   width:100%;
-  min-height:36px;
-  margin-top:3px;
-  padding:6px 8px;
-  border:1px solid #cfdbe5;
-  border-radius:8px;
-  font-size:16px
+  height:34px;
+  padding:5px 6px;
+  border:1px solid #cbd8e4;
+  border-radius:9px;
+  background:#fff;
+  color:#17324d;
+  font-size:14px;
+  font-weight:900;
+  text-align:center
 }
 .stock-trade-controls button{
-  min-height:36px;
+  min-width:0;
+  min-height:34px;
   border:0;
   border-radius:9px;
-  padding:7px 12px;
+  padding:5px 6px;
   color:#fff;
   font-size:11px;
   font-weight:1000;
   cursor:pointer
 }
-.stock-buy{background:#c6524a}
-.stock-sell{background:#31865f}
+.stock-buy{background:#238a5d}
+.stock-sell{background:#d34f49}
 .stock-trade-controls button:disabled{
   background:#dce4ea;
   color:#8997a4;
   cursor:not-allowed
+}
+.sr-only{
+  position:absolute!important;
+  width:1px!important;
+  height:1px!important;
+  padding:0!important;
+  margin:-1px!important;
+  overflow:hidden!important;
+  clip:rect(0,0,0,0)!important;
+  white-space:nowrap!important;
+  border:0!important
 }
 
 .network-form-grid{
