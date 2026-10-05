@@ -22,6 +22,33 @@ function signedMoney(value){
   return(rounded>=0?"+":"-")+"$"+Math.abs(rounded).toLocaleString();
 }
 
+function stockCardMarkup(stock,player,canTrade){
+  const trend=trendClass(stock.changePercent);
+  const position=stockPosition(player,stock);
+  const pnlClass=position.unrealized>0?"profit":position.unrealized<0?"loss":"flat";
+  const holdingInfo=position.shares>0
+    ? '<div class="stock-position">'+
+        '<span>持有 <b>'+position.shares+'</b> 股</span>'+
+        '<span>均價 <b>'+money(position.avgCost)+'</b></span>'+
+        '<span>現值 <b>'+money(position.marketValue)+'</b></span>'+
+        '<span class="'+pnlClass+'">損益 <b>'+signedMoney(position.unrealized)+'</b></span>'+
+      '</div>'
+    : '<div class="stock-position stock-position--empty stock-position--empty-visual"><img src="'+UI_ASSETS.modal.emptyHoldings+'" alt=""><span>尚未持有</span></div>';
+
+  return '<article class="stock-trade-card" data-stock-id="'+stock.id+'">'+
+    '<div class="stock-trade-card__head">'+
+      '<div><strong>'+stock.name+'</strong><small>'+stock.id+'｜'+stock.sector+'</small></div>'+
+      '<div class="stock-price"><b>'+stock.price+'</b><em class="stock-trend '+trend+'">'+trendText(stock.changePercent)+'</em></div>'+
+    '</div>'+
+    holdingInfo+
+    '<div class="stock-trade-controls">'+
+      '<label>股數<input type="number" min="1" max="9999" step="1" value="1" inputmode="numeric" data-stock-qty></label>'+
+      '<button type="button" class="stock-buy" data-stock-buy '+(canTrade?"":"disabled")+'>買進</button>'+
+      '<button type="button" class="stock-sell" data-stock-sell '+(canTrade&&position.shares>0?"":"disabled")+'>賣出</button>'+
+    '</div>'+
+  '</article>';
+}
+
 export function renderStockMarket(container,state,localSeat,{onBuy=()=>{},onSell=()=>{}}={}){
   if(!container||!state?.market)return;
   const player=state.players?.[localSeat];
@@ -33,32 +60,17 @@ export function renderStockMarket(container,state,localSeat,{onBuy=()=>{},onSell
     state.phase!=="minigame"&&
     state.phase!=="finished";
 
-  container.innerHTML=state.market.stocks.map(stock=>{
-    const trend=trendClass(stock.changePercent);
-    const position=stockPosition(player,stock);
-    const pnlClass=position.unrealized>0?"profit":position.unrealized<0?"loss":"flat";
-    const holdingInfo=position.shares>0
-      ? '<div class="stock-position">'+
-          '<span>持有 <b>'+position.shares+'</b> 股</span>'+
-          '<span>均價 <b>'+money(position.avgCost)+'</b></span>'+
-          '<span>現值 <b>'+money(position.marketValue)+'</b></span>'+
-          '<span class="'+pnlClass+'">損益 <b>'+signedMoney(position.unrealized)+'</b></span>'+
-        '</div>'
-      : '<div class="stock-position stock-position--empty stock-position--empty-visual"><img src="'+UI_ASSETS.modal.emptyHoldings+'" alt=""><span>尚未持有</span></div>';
-
-    return '<article class="stock-trade-card" data-stock-id="'+stock.id+'">'+
-      '<div class="stock-trade-card__head">'+
-        '<div><strong>'+stock.name+'</strong><small>'+stock.id+'｜'+stock.sector+'</small></div>'+
-        '<div class="stock-price"><b>'+stock.price+'</b><em class="stock-trend '+trend+'">'+trendText(stock.changePercent)+'</em></div>'+
-      '</div>'+
-      holdingInfo+
-      '<div class="stock-trade-controls">'+
-        '<label>股數<input type="number" min="1" max="9999" step="1" value="1" inputmode="numeric" data-stock-qty></label>'+
-        '<button type="button" class="stock-buy" data-stock-buy '+(canTrade?"":"disabled")+'>買進</button>'+
-        '<button type="button" class="stock-sell" data-stock-sell '+(canTrade&&position.shares>0?"":"disabled")+'>賣出</button>'+
-      '</div>'+
-    '</article>';
-  }).join("");
+  const cards=state.market.stocks.map(stock=>stockCardMarkup(stock,player,canTrade));
+  const rows=[];
+  for(let index=0;index<cards.length;index+=2){
+    rows.push(
+      '<div class="stock-pair-row">'+
+        cards[index]+
+        (cards[index+1]??'<div class="stock-pair-row__spacer" aria-hidden="true"></div>')+
+      '</div>'
+    );
+  }
+  container.innerHTML=rows.join("");
 
   container.querySelectorAll("[data-stock-buy]").forEach(button=>{
     button.addEventListener("click",()=>{
