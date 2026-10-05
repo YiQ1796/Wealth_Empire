@@ -2749,3 +2749,112 @@ body.entry-pending .app-shell{
   .action-toast p{font-size:9px}
   .mobile-primary-action{min-height:48px}
 }
+
+
+/* V20 Alpha 19 mobile pass 2 — match the proven phone composition:
+   player cards and primary controls stay together; board notices stay compact. */
+@media (orientation:landscape) and (max-height:650px) and (max-width:1180px){
+  .hud-panel{
+    grid-template-rows:auto auto auto;
+    align-content:start
+  }
+  .mobile-primary-actions{
+    margin-top:3px
+  }
+  .mobile-primary-action{
+    min-height:62px;
+    border-radius:12px;
+    font-size:12px
+  }
+  .mobile-primary-action img{
+    width:34px;
+    height:34px;
+    flex-basis:34px
+  }
+
+  .action-toast-stack{
+    top:19%;
+    width:min(58%,460px)
+  }
+  .action-toast,
+  .action-toast__card-bg img,
+  .action-toast__content{
+    min-height:84px
+  }
+  .action-toast--major,
+  .action-toast--major .action-toast__card-bg img,
+  .action-toast--major .action-toast__content{
+    min-height:92px
+  }
+  .action-toast--market,
+  .action-toast--market .action-toast__card-bg img,
+  .action-toast--market .action-toast__content{
+    min-height:76px
+  }
+  .action-toast__content{
+    grid-template-columns:42px minmax(0,1fr);
+    gap:7px;
+    padding:10px 13px
+  }
+  .action-toast--major .action-toast__content{
+    grid-template-columns:46px minmax(0,1fr);
+    gap:8px;
+    padding:11px 14px
+  }
+  .action-toast--has-metric .action-toast__content{
+    grid-template-columns:42px minmax(0,1fr) 68px;
+    gap:7px;
+    padding-right:11px
+  }
+  .action-toast__icon{width:40px;height:40px}
+  .action-toast--major .action-toast__icon{width:44px;height:44px}
+  .action-toast strong{
+    font-size:13px;
+    white-space:nowrap
+  }
+  .action-toast p{
+    font-size:9px;
+    line-height:1.2
+  }
+  .action-toast__details{
+    margin-top:3px;
+    gap:2px 3px
+  }
+  .action-toast__details span{
+    padding:2px 4px;
+    font-size:7px
+  }
+  .action-toast__metric{
+    min-height:34px;
+    padding:3px 4px;
+    font-size:13px
+  }
+  .action-toast--market .action-toast__content{
+    grid-template-columns:36px minmax(0,1fr);
+    gap:6px;
+    padding:9px 12px
+  }
+  .action-toast--market .action-toast__icon{
+    width:34px;
+    height:34px
+  }
+}
+@media (orientation:landscape) and (max-height:430px) and (max-width:1180px){
+  .mobile-primary-action{
+    min-height:52px
+  }
+  .action-toast-stack{
+    top:18%;
+    width:min(56%,430px)
+  }
+  .action-toast,
+  .action-toast__card-bg img,
+  .action-toast__content{
+    min-height:78px
+  }
+  .action-toast--major,
+  .action-toast--major .action-toast__card-bg img,
+  .action-toast--major .action-toast__content{
+    min-height:86px
+  }
+}
