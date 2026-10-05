@@ -285,6 +285,8 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
           ? "都會挑戰進行中，等待所有玩家完成。"
           : state.phase==="transport"
             ? current.name+" 正在選擇交通轉乘目的地。"
+          : state.phase==="acquisition"
+            ? current.name+" 正在收購中心選擇目標地產。"
           : state.phase==="await-roll"
             ? current.name+" 的回合，請擲骰。"
             : state.pendingPurchase!=null
