@@ -59,6 +59,7 @@ const networkDialog=document.getElementById("networkDialog");
 const purchaseDialog=document.getElementById("purchaseDialog");
 const entryGate=document.getElementById("entryGate");
 const actionToastStack=document.getElementById("actionToastStack");
+board.appendChild(actionToastStack);
 
 function setNetworkStatus(text,kind="info"){
   const node=document.getElementById("networkStatus");
