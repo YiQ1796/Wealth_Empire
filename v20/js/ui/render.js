@@ -88,28 +88,32 @@ function renderRentHistory(state,currentPlayer){
   container.innerHTML=summary+history;
 }
 
-function renderProperties(state,currentPlayer){
-  renderRegionSummary(state,currentPlayer);
-  renderRentHistory(state,currentPlayer);
+function renderProperties(state,viewerPlayer,canControl){
+  renderRegionSummary(state,viewerPlayer);
+  renderRentHistory(state,viewerPlayer);
 
   const container=document.getElementById("propertyTabList");
   if(!container)return;
 
-  if(currentPlayer.properties.length===0){
+  if(viewerPlayer.properties.length===0){
     container.innerHTML='<div class="empty-state">目前尚未持有地產。</div>';
     return;
   }
 
-  container.innerHTML=currentPlayer.properties.map(tileIndex=>{
+  container.innerHTML=viewerPlayer.properties.map(tileIndex=>{
     const tile=state.tiles[tileIndex];
     if(!tile)return"";
     const rent=rentFor(state,tile);
     const value=propertyValue(tile);
     const cost=upgradeCost(tile);
-    const progress=groupProgress(state,currentPlayer.seat,tile.group);
+    const progress=groupProgress(state,viewerPlayer.seat,tile.group);
     const maxLevel=tile.level>=MAX_PROPERTY_LEVEL;
-    const canAfford=currentPlayer.cash>=cost;
-    const canUse=state.pendingPurchase==null&&["await-roll","landed"].includes(state.phase);
+    const canAfford=viewerPlayer.cash>=cost;
+    const canUse=
+      canControl&&
+      state.currentPlayer===viewerPlayer.seat&&
+      state.pendingPurchase==null&&
+      ["await-roll","landed"].includes(state.phase);
     const disabled=maxLevel||!canAfford||!canUse;
     const buttonText=maxLevel?"已滿級":canAfford?"升級 "+money(cost):"現金不足";
 
@@ -124,26 +128,32 @@ function renderProperties(state,currentPlayer){
   }).join("");
 }
 
-export function render(state){
+export function render(state,{localSeat=0,networkMode="offline"}={}){
   document.getElementById("roundValue").textContent=state.round;
   document.getElementById("diceValue").textContent=state.dice
     ? state.dice.d1+" + "+state.dice.d2+" = "+state.dice.total
     : "—";
 
+  const localPlayer=state.players[localSeat]??state.players[0];
+  const canControl=networkMode!=="guest"||localPlayer.kind==="human";
+
   const players=document.getElementById("players");
-  players.innerHTML=state.players.map((player,index)=>
-    '<article class="player-card '+(index===state.currentPlayer?"active":"")+'">'+
+  players.innerHTML=state.players.map((player,index)=>{
+    const kindLabel=player.kind==="ai"
+      ? '<span class="player-kind player-kind--ai">AI</span>'
+      : '<span class="player-kind '+(player.connected===false?"player-kind--offline":"player-kind--human")+'">'+(player.connected===false?"離線":"真人")+'</span>';
+    return '<article class="player-card '+(index===state.currentPlayer?"active":"")+'">'+
       '<img class="player-pawn" src="'+UI_ASSETS.pawns[index]+'" alt="">'+
       '<div class="player-card__body">'+
-        '<h3>'+player.name+(index===state.currentPlayer?" 👑":"")+'</h3>'+
+        '<h3>'+player.name+(index===state.currentPlayer?" 👑":"")+kindLabel+'</h3>'+
         '<div class="player-stats">'+
           '<span>現金 <b>'+money(player.cash)+'</b></span>'+
           '<span>地產 <b>'+player.properties.length+'</b></span>'+
           '<span>位置 <b>#'+(player.position+1)+'</b></span>'+
         '</div>'+
       '</div>'+
-    '</article>'
-  ).join("");
+    '</article>';
+  }).join("");
 
   document.querySelectorAll(".tile").forEach((node,index)=>{
     const tile=state.tiles[index];
@@ -179,28 +189,49 @@ export function render(state){
     ? groupProgress(state,owner.seat,tile.group).complete
     : false;
 
-  document.getElementById("currentTileInfo").innerHTML=
-    '<strong>#'+tile.number+" "+tile.name+"</strong><br>"+
-    (tile.type==="property"
-      ? tile.group+"<br>售價 "+money(tile.price)+"｜目前過路費 "+money(rentFor(state,tile))+
-        (owner?"<br>持有者 "+owner.name+(groupBonus?"｜區域完成 +25%":""):"")
-      : "特殊事件格");
+  const currentTileInfo=document.getElementById("currentTileInfo");
+  if(currentTileInfo){
+    currentTileInfo.innerHTML=
+      '<strong>#'+tile.number+" "+tile.name+"</strong><br>"+
+      (tile.type==="property"
+        ? tile.group+"<br>售價 "+money(tile.price)+"｜目前過路費 "+money(rentFor(state,tile))+
+          (owner?"<br>持有者 "+owner.name+(groupBonus?"｜區域完成 +25%":""):"")
+        : "特殊事件格");
+  }
 
-  document.getElementById("statusText").textContent=
-    state.phase==="await-roll"
-      ? current.name+" 的回合，請擲骰。"
-      : state.pendingPurchase!=null
-        ? "是否購買「"+state.tiles[state.pendingPurchase].name+"」？"
-        : current.name+" 已完成移動。";
+  const statusText=document.getElementById("statusText");
+  if(statusText){
+    statusText.textContent=
+      state.gameStatus==="lobby"
+        ? "多人房間等待中，房主開始後未滿座位由 AI 補位。"
+        : state.phase==="minigame"
+          ? "都會挑戰進行中，等待所有玩家完成。"
+          : state.phase==="await-roll"
+            ? current.name+" 的回合，請擲骰。"
+            : state.pendingPurchase!=null
+              ? current.name+" 正在決定是否購買「"+state.tiles[state.pendingPurchase].name+"」。"
+              : current.name+" 已完成移動。";
+  }
 
-  document.getElementById("eventLog").innerHTML=state.events
-    .map(event=>'<div class="event-entry event-entry--'+event.kind+'">'+event.text+"</div>")
-    .join("");
+  const eventLog=document.getElementById("eventLog");
+  if(eventLog){
+    eventLog.innerHTML=state.events
+      .map(event=>'<div class="event-entry event-entry--'+event.kind+'">'+event.text+"</div>")
+      .join("");
+  }
 
-  document.getElementById("rollButton").disabled=state.phase!=="await-roll";
+  const isLocalTurn=
+    state.gameStatus==="playing"&&
+    state.currentPlayer===localSeat&&
+    current.kind==="human"&&
+    current.connected!==false;
+
+  document.getElementById("rollButton").disabled=
+    !isLocalTurn||state.phase!=="await-roll";
 
   const pending=state.pendingPurchase!=null?state.tiles[state.pendingPurchase]:null;
   const canBuy=Boolean(
+    isLocalTurn&&
     pending&&
     pending.type==="property"&&
     pending.owner==null&&
@@ -211,8 +242,13 @@ export function render(state){
 
   const purchaseDialog=document.getElementById("purchaseDialog");
   const confirmPurchaseButton=document.getElementById("confirmPurchaseButton");
+  const shouldShowPurchase=Boolean(
+    isLocalTurn&&
+    pending&&
+    state.phase==="landed"
+  );
 
-  if(pending&&state.phase==="landed"){
+  if(shouldShowPurchase){
     document.getElementById("purchaseTitle").textContent="是否購買「"+pending.name+"」？";
     document.getElementById("purchaseSubtitle").textContent=pending.group+"｜第 "+pending.number+" 格";
     document.getElementById("purchasePrice").textContent=money(pending.price);
@@ -225,7 +261,9 @@ export function render(state){
   }
 
   document.getElementById("endTurnButton").disabled=
-    state.phase!=="landed"||state.pendingPurchase!=null;
+    !isLocalTurn||
+    state.phase!=="landed"||
+    state.pendingPurchase!=null;
 
-  renderProperties(state,current);
+  renderProperties(state,localPlayer,canControl);
 }
