@@ -11,7 +11,7 @@ export function createPlayer(seat,name,kind="ai"){
     kind,
     aiProfile:kind==="ai"?assignAiProfile(seat):null,
     clientId:null,
-    connected:kind==="ai",
+    connected:true,
     color:PLAYER_COLORS[seat],
     cash:45600,
     position:0,
