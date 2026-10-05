@@ -285,8 +285,9 @@ export class PeerNetwork{
     let attempt=0;
     while(attempt<=retries){
       attempt++;
+      let peer=null;
       try{
-        const peer=new Peer(id||undefined,{
+        peer=new Peer(id||undefined,{
           host:"0.peerjs.com",
           port:443,
           path:"/",
@@ -306,6 +307,7 @@ export class PeerNetwork{
         });
         return peer;
       }catch(error){
+        try{peer?.destroy()}catch{}
         const type=error?.type??error?.message??"peer_error";
         if(id&&String(type).includes("unavailable")&&attempt<=retries){
           await new Promise(resolve=>setTimeout(resolve,1200*attempt));
