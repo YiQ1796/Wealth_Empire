@@ -1,5 +1,5 @@
 import assert from"node:assert/strict";
-import{createInitialState}from"../js/core/state.js";
+import{createInitialState,setPlayerCharacter}from"../js/core/state.js";
 import{TILE_ART_BY_INDEX}from"../js/data/assets.js";
 import{UI_ASSETS}from"../js/data/ui-assets.js";
 import{GameEngine}from"../js/core/game.js";
@@ -28,6 +28,14 @@ import{createRoomCode,normalizeRemoteAction,sanitizePlayerName,sanitizeRoomCode}
   assert.equal(state.players[0].kind,"human");
   assert.equal(state.players[0].connected,true);
   assert.deepEqual(state.players.slice(1).map(player=>player.kind),["ai","ai","ai"]);
+}
+
+{
+  const state=createInitialState();
+  assert.equal(setPlayerCharacter(state,0,3),true);
+  assert.equal(state.players[0].characterIndex,3);
+  assert.equal(state.players[0].color,"#8a63d2");
+  assert.equal(state.players[3].characterIndex,0,"character selection must keep all four characters unique");
 }
 
 {
@@ -177,9 +185,12 @@ import{createRoomCode,normalizeRemoteAction,sanitizePlayerName,sanitizeRoomCode}
 {
   const state=createInitialState();
   const engine=new GameEngine(state,()=>{});
-  assert.equal(engine.roll(0,{d1:5,d2:5}),true);
-  assert.equal(state.players[0].position,10);
-  assert.equal(state.phase,"minigame","old high-low tile must route into the replacement minigame system");
+  const highLowIndex=state.tiles.findIndex(tile=>tile.type==="highlow");
+  assert.ok(highLowIndex>0,"high-low tile must exist");
+  state.players[0].position=(highLowIndex-2+state.tiles.length)%state.tiles.length;
+  assert.equal(engine.roll(0,{d1:1,d2:1}),true);
+  assert.equal(state.players[0].position,highLowIndex);
+  assert.equal(state.phase,"minigame","high-low tile must route into the replacement minigame system");
   assert.ok(["courier","vault","tower","memory","route","district"].includes(state.minigame.id));
 }
 
