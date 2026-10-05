@@ -72,18 +72,20 @@ button:focus-visible{outline:3px solid rgba(47,114,196,.28);outline-offset:2px}
   min-height:0;
   overflow:hidden;
   border:0;
-  background:#fff7df
+  border-radius:8px;
+  background:#fff7df;
+  box-shadow:inset 0 0 0 2px rgba(183,132,33,.92)
 }
 .tile.corner{background:#fff7df}
-.tile.has-art{border:0;background:#fff7df}
+.tile.has-art{background:#fff7df}
 .tile img.tile-art{
   position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
+  left:-6%;
+  top:-6%;
+  width:112%;
+  height:112%;
   object-fit:fill;
-  display:block;
-  transform-origin:center
+  display:block
 }
 .tile__fallback-name{
   position:absolute;
@@ -1679,23 +1681,59 @@ body.entry-pending .app-shell{
 .hud-turn-tools{
   min-width:0;
   display:grid;
-  grid-template-columns:auto minmax(0,1fr);
+  grid-template-columns:58px minmax(0,1fr);
   align-items:center;
   gap:6px;
   flex:1
+}
+.dice-result{
+  width:58px;
+  min-width:58px;
+  min-height:46px;
+  padding:5px 4px;
+  display:grid;
+  grid-template-rows:auto auto;
+  place-items:center;
+  gap:1px;
+  border-radius:11px;
+  background:#eef3f8;
+  line-height:1.05;
+  text-align:center;
+  white-space:normal
+}
+.dice-result__faces{
+  display:block;
+  font-size:11px;
+  font-weight:900;
+  white-space:nowrap
+}
+.dice-result__total{
+  display:block;
+  font-size:15px;
+  line-height:1;
+  white-space:nowrap
 }
 .control-actions--turn{
   grid-template-columns:repeat(2,minmax(0,1fr));
   gap:6px
 }
 .control-actions--turn .action-button{
+  min-width:0;
   min-height:44px;
-  padding:5px 7px;
-  font-size:13px
+  padding:5px 6px;
+  flex-direction:row;
+  gap:4px;
+  font-size:12px;
+  white-space:nowrap
+}
+.control-actions--turn .action-button span{
+  display:block;
+  white-space:nowrap
 }
 .control-actions--turn .action-button img{
-  width:28px;
-  height:28px
+  width:24px;
+  height:24px;
+  flex:0 0 24px
 }
 .feature-tabs--secondary{
   grid-template-columns:repeat(3,minmax(0,1fr))
@@ -1827,8 +1865,11 @@ body.entry-pending .app-shell{
   .desktop-stock-panel__header p{display:none}
   .desktop-stock-panel .stock-trade-card{padding:6px}
   .desktop-stock-panel .stock-trade-controls{margin-top:4px}
-  .control-actions--turn .action-button{min-height:36px;font-size:11px}
-  .control-actions--turn .action-button img{width:23px;height:23px}
+  .dice-result{width:54px;min-width:54px;min-height:38px;padding:3px}
+  .dice-result__faces{font-size:9px}
+  .dice-result__total{font-size:13px}
+  .control-actions--turn .action-button{min-height:36px;padding:3px 4px;font-size:10px}
+  .control-actions--turn .action-button img{width:20px;height:20px;flex-basis:20px}
 }
 
 @media(max-width:760px){
