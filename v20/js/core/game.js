@@ -306,12 +306,7 @@ export class GameEngine{
 
     this.state.phase="landed";
     const eventText={
-      start:"回到起點。",
-      tax:"抵達稅務局。",
-      market:"抵達股市事件格。本回合仍可自由買賣股票。",
-      court:"抵達法院。",
-      hospital:"抵達醫療中心。",
-      urban:"抵達城市更新局。"
+      start:"回到起點。"
     }[tile.type]||"觸發特殊事件。";
     this.log(player.name+" 抵達「"+tile.name+"」："+eventText,"event",{seat:player.seat,tile:player.position,type:tile.type});
   }
