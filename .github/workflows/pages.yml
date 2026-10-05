@@ -96,6 +96,11 @@ jobs:
             fi
           done
 
+          if grep -R -nE 'tile__owner|tile__level' v20/js v20/index.html v20/styles/app.css; then
+            echo "Legacy board owner/level visual source must not coexist with V5 houses"
+            exit 1
+          fi
+
           echo "V20 Alpha18 V5 visual assets PASS: 44 tiles + houses + 16 character states + badges + modal + notification UI"
 
       - name: Validate V20 module syntax
