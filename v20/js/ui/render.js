@@ -283,6 +283,8 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
         ? "多人房間等待中，房主開始後未滿座位由 AI 補位。"
         : state.phase==="minigame"
           ? "都會挑戰進行中，等待所有玩家完成。"
+          : state.phase==="transport"
+            ? current.name+" 正在選擇交通轉乘目的地。"
           : state.phase==="await-roll"
             ? current.name+" 的回合，請擲骰。"
             : state.pendingPurchase!=null
