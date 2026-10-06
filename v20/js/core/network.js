@@ -308,8 +308,9 @@ export class PeerNetwork{
         return peer;
       }catch(error){
         try{peer?.destroy()}catch{}
-        const type=error?.type??error?.message??"peer_error";
-        if(id&&String(type).includes("unavailable")&&attempt<=retries){
+        const type=String(error?.type??error?.message??"peer_error");
+        const idBusy=type.includes("unavailable")||type.includes("is taken")||type.includes("unavailable-id");
+        if(id&&idBusy&&attempt<=retries){
           await new Promise(resolve=>setTimeout(resolve,1200*attempt));
           continue;
         }
@@ -418,6 +419,7 @@ export class PeerNetwork{
         if(!settled){
           settled=true;
           clearTimeout(timer);
+          if(presenceRetryTimer)clearInterval(presenceRetryTimer);
           reject(error);
         }
       });
@@ -662,8 +664,23 @@ export class PeerNetwork{
     };
 
     const result=await new Promise((resolve,reject)=>{
-      const timer=setTimeout(()=>reject(new Error("relay_join_timeout")),12000);
+      let presenceRetryTimer=null;
+      const finish=callback=>value=>{
+        if(presenceRetryTimer)clearInterval(presenceRetryTimer);
+        callback(value);
+      };
+      const timer=setTimeout(()=>{
+        if(presenceRetryTimer)clearInterval(presenceRetryTimer);
+        reject(new Error("relay_join_timeout"));
+      },15000);
       let settled=false;
+
+      const startPresenceRetry=()=>{
+        if(presenceRetryTimer)clearInterval(presenceRetryTimer);
+        presenceRetryTimer=setInterval(()=>{
+          if(!settled&&connection.open)sendPresence();
+        },1400);
+      };
 
       client.on("connect",()=>{
         if(this.relayClient!==client)return;
@@ -678,6 +695,7 @@ export class PeerNetwork{
           }
           connection.open=true;
           sendPresence();
+          startPresenceRetry();
         });
       });
 
@@ -704,6 +722,7 @@ export class PeerNetwork{
             if(!settled){
               settled=true;
               clearTimeout(timer);
+              if(presenceRetryTimer)clearInterval(presenceRetryTimer);
               resolve({seat:this.localSeat,state:message.state,transport:"relay"});
             }
             return;
@@ -713,6 +732,7 @@ export class PeerNetwork{
             if(!settled){
               settled=true;
               clearTimeout(timer);
+              if(presenceRetryTimer)clearInterval(presenceRetryTimer);
               reject(new Error(message.error??"join_rejected"));
             }
             return;
