@@ -351,9 +351,9 @@ export class GameEngine{
     return result;
   }
 
-  centralBankDeposit(seat=this.state.currentPlayer){
-    if(!this.isCurrentSeat(seat)||!canOpenBankDeposit(this.state,seat))return false;
-    const result=startBankDeposit(this.state,seat);
+  centralBankDeposit(seat=this.state.currentPlayer,principal=5000){
+    if(!this.isCurrentSeat(seat)||!canOpenBankDeposit(this.state,seat,principal))return false;
+    const result=startBankDeposit(this.state,seat,principal);
     if(!result.ok)return false;
     const player=this.state.players[Number(seat)];
     this.log(
