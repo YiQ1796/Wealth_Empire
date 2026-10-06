@@ -62,7 +62,8 @@ export function createInitialState(){
     market:createInitialMarket(),
     network:{
       roomCode:null,
-      hostSeat:0
+      hostSeat:0,
+      hostClientId:null
     },
     players:[
       createPlayer(0,"玩家1","human"),
@@ -89,6 +90,8 @@ export function createLobbyState(hostName="玩家1",hostClientId=null){
   state.players[0].name=hostName||"玩家1";
   state.players[0].clientId=hostClientId;
   state.players[0].connected=true;
+  state.network.hostSeat=0;
+  state.network.hostClientId=hostClientId;
   return state;
 }
 
@@ -96,6 +99,7 @@ export function hydrateState(raw){
   if(!raw||typeof raw!=="object")return createInitialState();
   const fallback=createInitialState();
   const state={...fallback,...raw};
+  state.network={...fallback.network,...(raw.network??{})};
 
   state.players=fallback.players.map((base,seat)=>{
     const saved=raw.players?.[seat]??{};

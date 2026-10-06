@@ -107,6 +107,21 @@ function currentLocalSeat(){
   return Number.isInteger(uiContext.localSeat)?uiContext.localSeat:0;
 }
 
+function isLocalRoomHost(){
+  const hostSeat=Number.isInteger(Number(state.network?.hostSeat))
+    ?Number(state.network.hostSeat)
+    :0;
+  const localSeat=currentLocalSeat();
+  if(network.mode!=="host"||localSeat!==hostSeat)return false;
+  const host=state.players?.[hostSeat];
+  const expectedClientId=state.network?.hostClientId??host?.clientId??null;
+  return !expectedClientId||expectedClientId===network.clientId;
+}
+
+function canStartRoomGame(){
+  return isLocalRoomHost()&&(state.gameStatus==="lobby"||state.phase==="lobby");
+}
+
 const phoneLandscapeQuery=window.matchMedia("(orientation: landscape) and (max-height: 650px) and (max-width: 1180px)");
 let phoneLayoutSettleTimers=[];
 
@@ -220,18 +235,6 @@ function noticeConfig(event){
     cash:{title:"現金變動",icon:N.icons.rent,effect:N.effects.green,tone:"green",metric:true}
   };
   return map[event.kind]??{title:"遊戲動態",icon:N.icons.marketTick,effect:N.effects.blue,tone:"blue"};
-}
-
-function noticeCardSources(config){
-  const cards=UI_ASSETS.notification.cards;
-  const market=UI_ASSETS.notification.market;
-  if(config.market){
-    return{desktop:market.desktop,mobile:market.mobile};
-  }
-  if(config.major||config.metric){
-    return{desktop:cards.majorDesktop,mobile:cards.majorMobile};
-  }
-  return{desktop:cards.standardDesktop,mobile:cards.standardMobile};
 }
 
 function noticeMoney(value){
@@ -532,7 +535,6 @@ function pumpActionNotice(){
 
   const event=noticeQueue.shift();
   const config=noticeConfig(event);
-  const source=noticeCardSources(config);
   const view=noticeView(event);
   const node=document.createElement("div");
   node.className=
@@ -543,15 +545,10 @@ function pumpActionNotice(){
     (view.metric?" action-toast--has-metric":"");
 
   node.innerHTML=
-    '<picture class="action-toast__card-bg">'+
-      '<source media="(orientation:landscape) and (max-height:650px) and (max-width:1180px), (max-width:760px)" srcset="'+source.mobile+'">'+
-      '<img src="'+source.desktop+'" alt="">'+
-    '</picture>'+
     '<img class="action-toast__fx" src="'+config.effect+'" alt="">'+
     (config.major&&config.tone==="gold"?'<img class="action-toast__sparkle" src="'+UI_ASSETS.notification.effects.sparkleGold+'" alt="">':"")+
     '<div class="action-toast__content">'+
       '<img class="action-toast__icon" src="'+config.icon+'" alt="">'+
-      '<span class="action-toast__divider-mask" aria-hidden="true"></span>'+
       '<div class="action-toast__copy">'+
         '<strong></strong>'+
         '<p></p>'+
@@ -577,14 +574,24 @@ function pumpActionNotice(){
 
   requestAnimationFrame(()=>node.classList.add("show"));
 
-  const hold=config.major?2350:config.market?1350:1750;
+  const hold=config.major?2400:config.market?1500:1850;
   setTimeout(()=>{
-    node.classList.remove("show");
-    setTimeout(()=>{
+    let finished=false;
+    const finish=()=>{
+      if(finished)return;
+      finished=true;
+      node.removeEventListener("transitionend",onTransitionEnd);
       node.remove();
       noticeActive=false;
       pumpActionNotice();
-    },260);
+    };
+    const onTransitionEnd=event=>{
+      if(event.target===node&&event.propertyName==="opacity")finish();
+    };
+    node.addEventListener("transitionend",onTransitionEnd);
+    node.classList.add("leaving");
+    node.classList.remove("show");
+    setTimeout(finish,460);
   },hold);
 }
 
@@ -901,7 +908,12 @@ function renderNetworkUi(){
   }).join("");
 
   const startButton=document.getElementById("startRoomGameButton");
-  startButton.disabled=!(network.mode==="host"&&state.gameStatus==="lobby");
+  const localHost=isLocalRoomHost();
+  const startable=canStartRoomGame();
+  startButton.disabled=!startable;
+  startButton.textContent=localHost
+    ?(startable?"開始遊戲":state.gameStatus==="playing"?"遊戲進行中":"開始遊戲")
+    :(state.gameStatus==="lobby"||state.phase==="lobby"?"等待房主開始":"遊戲進行中");
 
   const leaveButton=document.getElementById("leaveRoomButton");
   leaveButton.disabled=network.mode==="offline";
@@ -1629,6 +1641,8 @@ document.getElementById("createRoomButton").addEventListener("click",async()=>{
     const next=createLobbyState(name,getOrCreateClientId());
     setPlayerCharacter(next,0,selectedCharacterIndex);
     next.network.roomCode=finalCode;
+    next.network.hostSeat=0;
+    next.network.hostClientId=getOrCreateClientId();
     state=next;
     resetToastTracker(state);
     engine.replaceState(state);
@@ -1665,7 +1679,23 @@ document.getElementById("joinRoomButton").addEventListener("click",async()=>{
 });
 
 document.getElementById("startRoomGameButton").addEventListener("click",()=>{
-  if(network.mode==="host")dispatchAction({type:"start_game"});
+  if(!isLocalRoomHost()){
+    setNetworkStatus("只有房主可以開始遊戲。","warning");
+    renderNetworkUi();
+    return;
+  }
+  if(state.gameStatus!=="lobby"&&state.phase==="lobby"){
+    state.gameStatus="lobby";
+  }
+  const hostSeat=Number(state.network?.hostSeat??0);
+  const started=engine.startGame(hostSeat);
+  if(!started){
+    setNetworkStatus("目前房間狀態無法開始，請重新開啟好友連線視窗再試一次。","error");
+    renderNetworkUi();
+    return;
+  }
+  if(networkDialog.open)networkDialog.close();
+  setNetworkStatus("遊戲已開始，好友與 AI 補位已同步進入棋盤。","success");
 });
 
 document.getElementById("leaveRoomButton").addEventListener("click",async()=>{
@@ -1706,6 +1736,8 @@ async function restorePreviousSession(){
       const snapshot=loadHostSnapshot(saved.roomCode);
       state=hydrateState(snapshot??createLobbyState(saved.playerName,saved.clientId));
       state.network.roomCode=saved.roomCode;
+      state.network.hostSeat=0;
+      state.network.hostClientId=saved.clientId;
       setHumanSeat(state,0,{
         name:saved.playerName,
         clientId:saved.clientId,
