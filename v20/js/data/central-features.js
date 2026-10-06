@@ -4,7 +4,6 @@ export const CENTRAL_FEATURES=Object.freeze([
     name:"都會銀行",
     position:"center",
     building:"./assets/center-v1/CENTRAL_BANK.webp",
-    title:"./assets/center-v1/TITLE_BANK.webp",
     description:"2 ROUND 定存；到期自動返還本金與測試版利息。"
   },
   {
@@ -12,7 +11,6 @@ export const CENTRAL_FEATURES=Object.freeze([
     name:"城市委託中心",
     position:"top",
     building:"./assets/center-v1/CENTRAL_MISSION.webp",
-    title:"./assets/center-v1/TITLE_MISSION.webp",
     description:"接受一項城市委託，完成指定操作後取得獎勵。"
   },
   {
@@ -20,7 +18,6 @@ export const CENTRAL_FEATURES=Object.freeze([
     name:"快捷通車",
     position:"right",
     building:"./assets/center-v1/CENTRAL_TRANSIT.webp",
-    title:"./assets/center-v1/TITLE_TRANSIT.webp",
     description:"本回合不用正常擲骰，改搭短／中／長距離快線。"
   },
   {
@@ -28,7 +25,6 @@ export const CENTRAL_FEATURES=Object.freeze([
     name:"租金保險中心",
     position:"left",
     building:"./assets/center-v1/CENTRAL_INSURANCE.webp",
-    title:"./assets/center-v1/TITLE_INSURANCE.webp",
     description:"啟動一次租金保護，降低下一次踩到他人地產的租金。"
   },
   {
@@ -36,7 +32,6 @@ export const CENTRAL_FEATURES=Object.freeze([
     name:"城市建案中心",
     position:"bottom",
     building:"./assets/center-v1/CENTRAL_DEVELOPMENT.webp",
-    title:"./assets/center-v1/TITLE_DEVELOPMENT.webp",
     description:"使用既有升級價格與等級規則，直接執行一項持有地產建案。"
   }
 ]);
