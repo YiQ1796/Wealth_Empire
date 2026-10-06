@@ -341,9 +341,12 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
       node.style.setProperty("--owner-color",ownerPlayer?.color??"#377bd1");
       node.dataset.ownerSeat=String(tile.owner);
       houses.innerHTML=houseMarkup(ownerPlayer,tile.level);
+      const titleProtected=Number(tile.acquisitionProtectedUntilRound)>=Number(state.round);
       badges.innerHTML=tile.level>=MAX_PROPERTY_LEVEL
-        ? badge(UI_ASSETS.badges.noAcquisition,"不可強制收購","tile-no-acquisition")
-        : "";
+        ? badge(UI_ASSETS.badges.noAcquisition,"滿級保護｜不可強制收購","tile-no-acquisition")
+        : titleProtected
+          ? badge(UI_ASSETS.badges.noAcquisition,"產權保全至 ROUND "+tile.acquisitionProtectedUntilRound,"tile-no-acquisition")
+          : "";
     }
 
     tokens.innerHTML=state.players
