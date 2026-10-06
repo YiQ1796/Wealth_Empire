@@ -66,9 +66,14 @@ function diceTargets(){
 export function normalizeInventory(raw){
   const source=raw&&typeof raw==="object"?raw:{};
   const normalized={};
+  let remaining=ITEM_INVENTORY_LIMIT;
   for(const definition of ITEM_DEFINITIONS){
-    const count=Math.min(definition.maxPerPlayer??2,safeCount(source[definition.id]));
-    if(count>0)normalized[definition.id]=count;
+    if(remaining<=0)break;
+    const count=Math.min(definition.maxPerPlayer??2,safeCount(source[definition.id]),remaining);
+    if(count>0){
+      normalized[definition.id]=count;
+      remaining-=count;
+    }
   }
   return normalized;
 }
