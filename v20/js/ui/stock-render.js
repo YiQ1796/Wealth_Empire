@@ -1,5 +1,7 @@
 import{stockPosition}from"../core/stock-market.js";
 
+const tradeDrafts=new WeakMap();
+
 function trendClass(change){
   if(change>0)return"up";
   if(change<0)return"down";
@@ -26,6 +28,10 @@ function signedPercent(value){
   return(rounded>=0?"+":"")+rounded.toFixed(1)+"%";
 }
 
+function normalizeShares(value){
+  return Math.max(1,Math.min(9999,Math.floor(Number(value)||1)));
+}
+
 function portfolioSummary(player,state){
   return state.market.stocks.reduce((summary,stock)=>{
     const position=stockPosition(player,stock);
@@ -36,14 +42,25 @@ function portfolioSummary(player,state){
   },{marketValue:0,unrealized:0,realized:0});
 }
 
-function stockCardMarkup(stock,player,canTrade){
+function getDraft(container){
+  let draft=tradeDrafts.get(container);
+  if(!draft){
+    draft={stockId:null,quantities:new Map()};
+    tradeDrafts.set(container,draft);
+  }
+  return draft;
+}
+
+function stockCardMarkup(stock,player,canTrade,draft){
   const trend=trendClass(stock.changePercent);
   const position=stockPosition(player,stock);
   const cost=position.shares*position.avgCost;
   const pnlPercent=cost>0?(position.unrealized/cost)*100:0;
   const pnlClass=position.unrealized>0?"profit":position.unrealized<0?"loss":"flat";
+  const shares=normalizeShares(draft.quantities.get(stock.id)??1);
+  const active=draft.stockId===stock.id;
 
-  return '<article class="stock-trade-card" data-stock-id="'+stock.id+'">'+
+  return '<article class="stock-trade-card '+(active?"is-active-trade":"")+'" data-stock-id="'+stock.id+'" data-stock-name="'+stock.name+'" data-stock-price="'+stock.price+'">'+
     '<div class="stock-trade-card__head">'+
       '<div class="stock-title">'+
         '<strong>'+stock.name+'</strong>'+
@@ -62,12 +79,27 @@ function stockCardMarkup(stock,player,canTrade){
       '<span>持倉損益</span>'+
       '<strong>'+signedMoney(position.unrealized)+' <small>('+signedPercent(pnlPercent)+')</small></strong>'+
     '</div>'+
+    '<div class="stock-trade-preview" data-stock-card-preview>'+
+      '<span>正在操作</span><strong>'+stock.name+'｜'+shares+' 股｜預估 '+money(stock.price*shares)+'</strong>'+
+    '</div>'+
     '<div class="stock-trade-controls">'+
-      '<label><span class="sr-only">股數</span><input type="number" min="1" max="9999" step="1" value="1" inputmode="numeric" data-stock-qty aria-label="交易股數"></label>'+
+      '<label class="stock-qty-field"><span>交易股數</span><span class="stock-qty-input"><input type="number" min="1" max="9999" step="1" value="'+shares+'" inputmode="numeric" enterkeyhint="done" data-stock-qty aria-label="'+stock.name+'交易股數"><b>股</b></span></label>'+
       '<button type="button" class="stock-buy" data-stock-buy '+(canTrade?"":"disabled")+'>買進</button>'+
       '<button type="button" class="stock-sell" data-stock-sell '+(canTrade&&position.shares>0?"":"disabled")+'>賣出</button>'+
     '</div>'+
   '</article>';
+}
+
+function selectionMarkup(state,draft,canTrade){
+  if(!canTrade){
+    return '<div class="stock-selection-bar is-locked" data-stock-selection><strong>目前只能查看行情</strong><span>輪到你的回合時才能買賣股票。</span></div>';
+  }
+  const stock=state.market.stocks.find(item=>item.id===draft.stockId);
+  if(!stock){
+    return '<div class="stock-selection-bar" data-stock-selection><strong>選擇一檔股票</strong><span>點一下「交易股數」，這裡會固定顯示股票名稱、股數與預估金額。</span></div>';
+  }
+  const shares=normalizeShares(draft.quantities.get(stock.id)??1);
+  return '<div class="stock-selection-bar is-active" data-stock-selection><strong>目前操作：'+stock.name+'</strong><span>'+shares+' 股｜預估 '+money(stock.price*shares)+'</span></div>';
 }
 
 export function renderStockMarket(container,state,localSeat,{onBuy=()=>{},onSell=()=>{}}={}){
@@ -77,15 +109,21 @@ export function renderStockMarket(container,state,localSeat,{onBuy=()=>{},onSell
 
   const canTrade=
     state.gameStatus==="playing"&&
+    state.currentPlayer===localSeat&&
+    player.kind==="human"&&
+    player.connected!==false&&
     !player.bankrupt&&
     state.phase!=="minigame"&&
     state.phase!=="finished";
+
+  const draft=getDraft(container);
+  if(draft.stockId&&!state.market.stocks.some(stock=>stock.id===draft.stockId))draft.stockId=null;
 
   const summary=portfolioSummary(player,state);
   const summaryUnrealizedClass=summary.unrealized>0?"profit":summary.unrealized<0?"loss":"flat";
   const summaryRealizedClass=summary.realized>0?"profit":summary.realized<0?"loss":"flat";
 
-  const cards=state.market.stocks.map(stock=>stockCardMarkup(stock,player,canTrade));
+  const cards=state.market.stocks.map(stock=>stockCardMarkup(stock,player,canTrade,draft));
   const rows=[];
   for(let index=0;index<cards.length;index+=2){
     rows.push(
@@ -102,13 +140,55 @@ export function renderStockMarket(container,state,localSeat,{onBuy=()=>{},onSell
       '<div class="'+summaryUnrealizedClass+'"><span>未實現損益</span><strong>'+signedMoney(summary.unrealized)+'</strong></div>'+
       '<div class="'+summaryRealizedClass+'"><span>已實現損益</span><strong>'+signedMoney(summary.realized)+'</strong></div>'+
     '</section>'+
+    selectionMarkup(state,draft,canTrade)+
     '<div class="stock-card-list">'+rows.join("")+'</div>';
+
+  const selection=container.querySelector("[data-stock-selection]");
+
+  const activateCard=(card,{scroll=false}={})=>{
+    if(!card)return;
+    const stockId=card.dataset.stockId;
+    const stock=state.market.stocks.find(item=>item.id===stockId);
+    const qty=card.querySelector("[data-stock-qty]");
+    if(!stock||!qty)return;
+    const shares=normalizeShares(qty.value);
+    qty.value=String(shares);
+    draft.stockId=stockId;
+    draft.quantities.set(stockId,shares);
+
+    container.querySelectorAll(".stock-trade-card").forEach(node=>{
+      node.classList.toggle("is-active-trade",node===card);
+    });
+
+    const cardPreview=card.querySelector("[data-stock-card-preview] strong");
+    if(cardPreview)cardPreview.textContent=stock.name+"｜"+shares+" 股｜預估 "+money(stock.price*shares);
+    if(selection){
+      selection.classList.remove("is-locked");
+      selection.classList.add("is-active");
+      selection.innerHTML="<strong>目前操作："+stock.name+"</strong><span>"+shares+" 股｜預估 "+money(stock.price*shares)+"</span>";
+    }
+
+    if(scroll){
+      setTimeout(()=>{
+        try{card.scrollIntoView({block:"center",behavior:"smooth"})}catch{}
+      },120);
+    }
+  };
+
+  container.querySelectorAll("[data-stock-qty]").forEach(input=>{
+    const card=input.closest("[data-stock-id]");
+    input.addEventListener("focus",()=>activateCard(card,{scroll:true}));
+    input.addEventListener("click",()=>activateCard(card));
+    input.addEventListener("input",()=>activateCard(card));
+    input.addEventListener("change",()=>activateCard(card));
+  });
 
   container.querySelectorAll("[data-stock-buy]").forEach(button=>{
     button.addEventListener("click",()=>{
       const card=button.closest("[data-stock-id]");
+      activateCard(card);
       const qty=card?.querySelector("[data-stock-qty]");
-      const shares=Math.max(1,Math.min(9999,Math.floor(Number(qty?.value)||1)));
+      const shares=normalizeShares(qty?.value);
       onBuy(card.dataset.stockId,shares);
     });
   });
@@ -116,8 +196,9 @@ export function renderStockMarket(container,state,localSeat,{onBuy=()=>{},onSell
   container.querySelectorAll("[data-stock-sell]").forEach(button=>{
     button.addEventListener("click",()=>{
       const card=button.closest("[data-stock-id]");
+      activateCard(card);
       const qty=card?.querySelector("[data-stock-qty]");
-      const shares=Math.max(1,Math.min(9999,Math.floor(Number(qty?.value)||1)));
+      const shares=normalizeShares(qty?.value);
       onSell(card.dataset.stockId,shares);
     });
   });
