@@ -754,6 +754,8 @@ function executeAction(action,seat=currentLocalSeat()){
       return engine.declineCurrentProperty(seat);
     case"upgrade_property":
       return engine.upgradeProperty(action.tileIndex,seat);
+    case"decline_upgrade":
+      return engine.declineUpgrade(seat);
     case"buy_stock":
       return engine.buyStock(action.stockId,action.shares,seat);
     case"sell_stock":
@@ -1350,7 +1352,7 @@ function openPropertyInfo(tileIndex){
 
 function openFeature(name){
   const meta={
-    property:["我的房產","查看地產、區域完成度、收租與升級。"],
+    property:["我的房產","查看地產、區域完成度與收租；一般升級需再次走到自己的地產。"],
     item:["策略道具","符合使用條件時會主動提示。"],
     market:["市場操作","查看即時行情、持股損益並進行買賣。"],
     info:["遊戲資訊","目前格子與事件紀錄。"]
@@ -1387,6 +1389,11 @@ if(mobileRollButton){
 }
 document.getElementById("confirmPurchaseButton").addEventListener("click",()=>dispatchAction({type:"buy_property"}));
 document.getElementById("declinePurchaseButton").addEventListener("click",()=>dispatchAction({type:"decline_property"}));
+document.getElementById("confirmUpgradeButton").addEventListener("click",()=>{
+  if(state.pendingUpgrade==null)return;
+  dispatchAction({type:"upgrade_property",tileIndex:state.pendingUpgrade});
+});
+document.getElementById("declineUpgradeButton").addEventListener("click",()=>dispatchAction({type:"decline_upgrade"}));
 document.getElementById("endTurnButton").addEventListener("click",()=>dispatchAction({type:"end_turn"}));
 
 board.addEventListener("click",event=>{
@@ -1407,15 +1414,6 @@ propertyInfoDialog.addEventListener("click",event=>{
   if(event.target===propertyInfoDialog)propertyInfoDialog.close();
 });
 
-document.getElementById("propertyTabList").addEventListener("click",event=>{
-  const button=event.target.closest("[data-upgrade-property]");
-  if(!button)return;
-  dispatchAction({
-    type:"upgrade_property",
-    tileIndex:Number(button.dataset.upgradeProperty)
-  });
-});
-
 document.querySelectorAll("[data-feature]").forEach(button=>{
   button.addEventListener("click",()=>openFeature(button.dataset.feature));
 });
@@ -1426,6 +1424,7 @@ featureDialog.addEventListener("click",event=>{
 });
 
 purchaseDialog.addEventListener("cancel",event=>event.preventDefault());
+document.getElementById("upgradeDialog").addEventListener("cancel",event=>event.preventDefault());
 
 const skipUrban=()=>dispatchAction({type:"urban_skip"});
 document.getElementById("skipUrbanButton").addEventListener("click",skipUrban);
