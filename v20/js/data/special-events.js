@@ -16,6 +16,7 @@ export const CHANCE_EVENTS=Object.freeze([
 
   {id:"chance_rare_upgrade",name:"都市改建補助",description:"市府抽中你的建案，隨機一塊未滿級地產免費升級 1 級。",rarity:"rare",category:"property_upgrade",effect:{kind:"random_upgrade",fallbackAmount:1800}},
   {id:"chance_rare_permit",name:"黃金建案許可",description:"取得一張建案許可，可到「我的房產」指定一塊未滿級地產免費升級。",rarity:"rare",category:"property_permit",effect:{kind:"grant_permit",count:1}},
+  {id:"chance_rare_guard",name:"產權保障獎",description:"取得一張產權保全券，可到「我的房產」指定保護一塊地產。",rarity:"rare",category:"property_guard",effect:{kind:"grant_property_protection",count:1}},
   {id:"chance_rare_jackpot",name:"城市超級獎金",description:"抽中年度城市獎金。",rarity:"rare",category:"cash_gain",effect:{kind:"cash",amount:3000}}
 ]);
 
@@ -37,6 +38,7 @@ export const FATE_EVENTS=Object.freeze([
 
   {id:"fate_rare_upgrade",name:"命運改建",description:"意外取得建築改善資格，隨機一塊未滿級地產免費升級 1 級。",rarity:"rare",category:"property_upgrade",effect:{kind:"random_upgrade",fallbackAmount:1600}},
   {id:"fate_rare_permit",name:"命運建案券",description:"取得一張建案許可，可到「我的房產」自由指定升級目標。",rarity:"rare",category:"property_permit",effect:{kind:"grant_permit",count:1}},
+  {id:"fate_rare_guard",name:"命運保全令",description:"取得一張產權保全券，可到「我的房產」指定保護地產。",rarity:"rare",category:"property_guard",effect:{kind:"grant_property_protection",count:1}},
   {id:"fate_rare_windfall",name:"意外大進帳",description:"一筆多年未領取的資金突然入帳。",rarity:"rare",category:"cash_gain",effect:{kind:"cash",amount:2800}},
   {id:"fate_rare_loss",name:"重大意外支出",description:"突發事故造成一筆較大的臨時支出。",rarity:"rare",category:"cash_loss",effect:{kind:"cash",amount:-2200}}
 ]);
