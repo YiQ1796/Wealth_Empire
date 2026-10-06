@@ -143,7 +143,9 @@ export class GameEngine{
           requestedRent=Math.round(requestedRent*2);
           strategyRentEffect="rent_burst";
         }
-        const insurance=applyRentInsurance(player,requestedRent);
+        const insurance=requestedRent>0
+          ? applyRentInsurance(player,requestedRent)
+          : {rent:0,discount:0,protected:false};
         const rent=insurance.rent;
         const paid=Math.min(player.cash,rent);
         player.cash-=paid;
