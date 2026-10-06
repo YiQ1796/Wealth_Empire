@@ -25,4 +25,4 @@ assert.match(controller,/document\.addEventListener\("pointerdown",tryStart,true
 assert.match(controller,/localStorage\.setItem/);
 assert.doesNotMatch(controller,/PeerNetwork|GameEngine|networkMode|dispatchRemote/);
 assert.doesNotMatch(controller,/audio\.autoplay=true/);
-console.log("V20 Alpha32.1 BGM controller regression PASS");
+console.log("V20 Alpha32.2 BGM controller regression PASS");
