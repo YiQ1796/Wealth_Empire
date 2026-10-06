@@ -1,7 +1,7 @@
 import{advanceStockMarket}from"./stock-market.js";
 import{CIVIC_EVENT_POOLS}from"../data/civic-events.js";
 import{appendEventHistory,pickEventFromPool,RARE_EVENT_RATE}from"./event-picker.js";
-import{applyRandomPropertyUpgrade,grantDevelopmentPermits}from"./property-events.js";
+import{applyRandomPropertyUpgrade,grantDevelopmentPermits,grantPropertyProtectionPermits}from"./property-events.js";
 
 function nextPropertyOpportunityScore(state,startIndex,steps=6){
   const size=state.tiles?.length??44;
@@ -41,6 +41,8 @@ export function resolveCivicEvent(state,player,type,random=Math.random){
     property:null,
     permitDelta:0,
     permitsTotal:Math.max(0,Math.floor(Number(player.developmentPermits)||0)),
+    protectionPermitDelta:0,
+    protectionPermitsTotal:Math.max(0,Math.floor(Number(player.propertyProtectionPermits)||0)),
     tick:null,
     movers:[]
   };
@@ -63,6 +65,12 @@ export function resolveCivicEvent(state,player,type,random=Math.random){
     result={...result,permitDelta:granted.added,permitsTotal:granted.total};
     if(granted.added===0){
       result={...result,kind:"cash",...applyCash(player,700),fallback:"permit_cap"};
+    }
+  }else if(effect.kind==="grant_property_protection"){
+    const granted=grantPropertyProtectionPermits(player,effect.count??1);
+    result={...result,protectionPermitDelta:granted.added,protectionPermitsTotal:granted.total};
+    if(granted.added===0){
+      result={...result,kind:"cash",...applyCash(player,650),fallback:"property_protection_cap"};
     }
   }else if(effect.kind==="random_upgrade"){
     const upgraded=applyRandomPropertyUpgrade(state,player,random);
