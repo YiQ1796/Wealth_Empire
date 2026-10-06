@@ -10,6 +10,15 @@ const RELAY_PROTOCOL="v20a28";
 const RELAY_HEARTBEAT_MS=7000;
 const RELAY_STALE_MS=35000;
 const ROOM_RE=/^\d{6}$/;
+const RELIABLE_RELAY_TYPES=new Set(["join_request","join_ack","join_reject","state","action","action_ack"]);
+
+function relayQos(message){
+  return RELIABLE_RELAY_TYPES.has(message?.type)?1:0;
+}
+
+function sanitizeActionId(value){
+  return String(value??"").replace(/[^A-Za-z0-9:_-]/g,"").slice(0,96);
+}
 
 let mqttLibraryPromise=null;
 
@@ -297,6 +306,8 @@ export class PeerNetwork{
     this.clientId=getOrCreateClientId();
     this.hostConnection=null;
     this.connections=new Map();
+    this.actionCounter=0;
+    this.processedActionIds=new Map();
 
     this.relayClient=null;
     this.relayConnectionsByClient=new Map();
@@ -440,7 +451,7 @@ export class PeerNetwork{
 
       client.on("connect",()=>{
         if(this.relayClient!==client)return;
-        client.subscribe(base+"/guest/+",{qos:0},error=>{
+        client.subscribe(base+"/guest/+",{qos:1},error=>{
           if(error){
             if(!settled){
               settled=true;
@@ -460,7 +471,6 @@ export class PeerNetwork{
         if(!settled){
           settled=true;
           clearTimeout(timer);
-          if(presenceRetryTimer)clearInterval(presenceRetryTimer);
           reject(error);
         }
       });
@@ -487,7 +497,7 @@ export class PeerNetwork{
     client.on("reconnect",()=>this.status("WSS 中繼正在重新連線…","warning"));
     client.on("connect",()=>{
       if(this.mode==="host"){
-        client.subscribe(base+"/guest/+",{qos:0},()=>{});
+        client.subscribe(base+"/guest/+",{qos:1},()=>{});
       }
     });
 
@@ -521,7 +531,7 @@ export class PeerNetwork{
         this.relayClient.publish(
           base+"/host/"+clientId,
           JSON.stringify({payload:message,ts:Date.now()}),
-          {qos:0,retain:false}
+          {qos:relayQos(message),retain:false}
         );
       },
       close:()=>this.disconnectRelayConnection(connection)
@@ -612,8 +622,26 @@ export class PeerNetwork{
       const seat=connection.metadata?.seat;
       const clientId=connection.metadata?.clientId;
       const action=normalizeRemoteAction(message.action);
+      const actionId=sanitizeActionId(message.actionId);
+      const dedupeKey=clientId&&actionId?clientId+":"+actionId:"";
+
+      if(dedupeKey&&this.processedActionIds.has(dedupeKey)){
+        try{connection.send({type:"action_ack",actionId,accepted:this.processedActionIds.get(dedupeKey)})}catch{}
+        return;
+      }
+
+      let accepted=false;
       if(Number.isInteger(seat)&&action){
-        this.onAction({seat,clientId,action});
+        accepted=this.onAction({seat,clientId,action})!==false;
+      }
+
+      if(dedupeKey){
+        this.processedActionIds.set(dedupeKey,accepted);
+        while(this.processedActionIds.size>240){
+          const first=this.processedActionIds.keys().next().value;
+          this.processedActionIds.delete(first);
+        }
+        try{connection.send({type:"action_ack",actionId,accepted})}catch{}
       }
       return;
     }
@@ -685,7 +713,7 @@ export class PeerNetwork{
         client.publish(
           base+"/guest/"+this.clientId,
           JSON.stringify({payload:message,ts:Date.now()}),
-          {qos:0,retain:false}
+          {qos:relayQos(message),retain:false}
         );
       },
       close:()=>{connection.open=false}
@@ -725,7 +753,7 @@ export class PeerNetwork{
 
       client.on("connect",()=>{
         if(this.relayClient!==client)return;
-        client.subscribe(base+"/host/"+this.clientId,{qos:0},error=>{
+        client.subscribe(base+"/host/"+this.clientId,{qos:1},error=>{
           if(error){
             if(!settled){
               settled=true;
@@ -781,6 +809,14 @@ export class PeerNetwork{
 
           if(message.type==="state"){
             this.onState(message.state);
+            return;
+          }
+
+          if(message.type==="action_ack"){
+            if(message.accepted===false){
+              this.status("房主未接受這次操作，畫面正在重新同步。","warning");
+            }
+            return;
           }
         }catch{}
       });
@@ -870,11 +906,24 @@ export class PeerNetwork{
   }
 
   sendAction(action){
-    if(this.mode!=="guest"||!this.hostConnection?.open)return false;
+    if(this.mode!=="guest"||!this.hostConnection?.open){
+      this.status("目前尚未連回房主，操作沒有送出。","warning");
+      return false;
+    }
+    if(this.hostConnection.relay&&this.relayClient?.connected!==true){
+      this.status("網路正在重新連線，請稍候再按一次。","warning");
+      return false;
+    }
     const normalized=normalizeRemoteAction(action);
     if(!normalized)return false;
-    this.hostConnection.send({type:"action",action:normalized});
-    return true;
+    const actionId=this.clientId+":"+Date.now().toString(36)+":"+(++this.actionCounter).toString(36);
+    try{
+      this.hostConnection.send({type:"action",actionId,action:normalized});
+      return true;
+    }catch{
+      this.status("操作送出失敗，系統正在重新連線。","warning");
+      return false;
+    }
   }
 
   cleanupRelayTransport(){
