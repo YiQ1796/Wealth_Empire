@@ -1,6 +1,7 @@
 import{BOARD_TILES,BOARD_VERSION,MAX_ROUNDS}from"../data/board.js";
 import{assignAiProfile,aiDisplayName}from"./ai.js";
 import{createInitialMarket}from"./stock-market.js";
+import{normalizeInventory}from"./items.js";
 
 export const PLAYER_COLORS=Object.freeze(["#377bd1","#e44f55","#25a978","#8a63d2"]);
 
@@ -18,6 +19,7 @@ export function createPlayer(seat,name,kind="ai"){
     position:0,
     properties:[],
     portfolio:{},
+    inventory:{},
     rentPaid:0,
     rentReceived:0,
     taxEventShield:false,
@@ -32,6 +34,7 @@ export function createPlayer(seat,name,kind="ai"){
     centralDevelopmentUsedRound:0,
     developmentPermits:0,
     propertyProtectionPermits:0,
+    forcedDiceTotal:null,
     bankrupt:false
   };
 }
@@ -109,6 +112,10 @@ export function hydrateState(raw){
           : seat
       ],
       portfolio:saved.portfolio??{},
+      inventory:normalizeInventory(saved.inventory),
+      forcedDiceTotal:Number.isInteger(Number(saved.forcedDiceTotal))&&Number(saved.forcedDiceTotal)>=2&&Number(saved.forcedDiceTotal)<=12
+        ? Number(saved.forcedDiceTotal)
+        : null,
       taxEventShield:Boolean(saved.taxEventShield),
       medicalMoveShield:Boolean(saved.medicalMoveShield),
       courtShieldUntilRound:Math.max(0,Number(saved.courtShieldUntilRound)||0),
@@ -133,7 +140,10 @@ export function hydrateState(raw){
     return{
       ...base,
       ...saved,
-      acquisitionProtectedUntilRound:Math.max(0,Number(saved.acquisitionProtectedUntilRound)||0)
+      acquisitionProtectedUntilRound:Math.max(0,Number(saved.acquisitionProtectedUntilRound)||0),
+      permanentRentBoost:Math.max(0,Math.min(0.2,Number(saved.permanentRentBoost)||0)),
+      rentBurstCharges:Math.max(0,Math.min(1,Math.floor(Number(saved.rentBurstCharges)||0))),
+      rentBlockedCharges:Math.max(0,Math.min(1,Math.floor(Number(saved.rentBlockedCharges)||0)))
     };
   });
   state.market=raw.market??createInitialMarket();
