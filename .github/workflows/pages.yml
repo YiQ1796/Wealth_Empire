@@ -224,8 +224,8 @@ jobs:
           grep -q '.stock-holding-row{' v20/styles/app.css
           grep -q '.stock-pnl-row{' v20/styles/app.css
           grep -q 'grid-template-columns:repeat(2,minmax(0,1fr))' v20/styles/app.css
-          grep -q 'app.css?v=alpha30-215' v20/index.html
-          grep -q 'main.js?v=alpha30-215' v20/index.html
+          grep -q 'app.css?v=alpha31-216' v20/index.html
+          grep -q 'main.js?v=alpha31-216' v20/index.html
 
           if grep -q 'data-feature="stock"' v20/index.html; then
             echo "Desktop stock market must not return as a shortcut"
@@ -345,7 +345,8 @@ jobs:
           grep -q 'tile.type==="horse"' v20/js/core/game.js
           grep -q '?"horse"' v20/js/core/game.js
           grep -q 'tile.type==="auction"' v20/js/core/game.js
-          grep -q '?"auction"' v20/js/core/game.js
+          grep -q 'resolveCivicEvent(this.state,player,"auction")' v20/js/core/game.js
+          grep -q 'startMinigame(this.state,player.seat,Date.now(),"auction")' v20/js/core/game.js
           grep -q 'V20 Alpha 24 — gameplay minigames' v20/styles/app.css
 
           if grep -qE 'name:"幸運快遞"|name:"幸運樓層"|name:"命運翻牌"|name:"城市岔路"|name:"商圈開盤"' v20/js/data/minigames.js; then
@@ -411,7 +412,7 @@ jobs:
           grep -q 'courtShieldUntilRound' v20/js/core/civic-specials.js
           grep -q 'V20 Alpha 27 — remaining special-grid completion' v20/styles/app.css
           node --experimental-default-type=module v20/tests/gameplay-systems.test.mjs
-          echo "V20 Alpha30 high-low and varied civic special grids PASS"
+          echo "V20 Alpha31 high-low and varied civic special grids PASS"
 
       - name: Validate V20 central five facilities
         shell: bash
@@ -527,8 +528,8 @@ jobs:
           grep -q 'Alpha 19 mobile notification correction' v20/styles/app.css
           grep -q 'width:min(68%,560px)' v20/styles/app.css
           grep -q 'grid-template-columns:48px minmax(0,1fr) 78px' v20/styles/app.css
-          grep -q 'app.css?v=alpha30-215' v20/index.html
-          grep -q 'main.js?v=alpha30-215' v20/index.html
+          grep -q 'app.css?v=alpha31-216' v20/index.html
+          grep -q 'main.js?v=alpha31-216' v20/index.html
           echo "V20 phone notification sizing and mobile-art selection PASS"
 
       - name: Validate V20 mobile pass 2 composition
@@ -539,8 +540,8 @@ jobs:
           grep -q 'grid-template-rows:auto auto auto' v20/styles/app.css
           grep -q 'width:min(58%,460px)' v20/styles/app.css
           grep -q 'grid-template-columns:42px minmax(0,1fr) 68px' v20/styles/app.css
-          grep -q 'app.css?v=alpha30-215' v20/index.html
-          grep -q 'main.js?v=alpha30-215' v20/index.html
+          grep -q 'app.css?v=alpha31-216' v20/index.html
+          grep -q 'main.js?v=alpha31-216' v20/index.html
           echo "V20 phone composition pass 2 PASS"
 
       - name: Validate V20 mobile scroll and viewport authority
@@ -555,8 +556,8 @@ jobs:
           grep -q 'function syncPhoneViewportHeight' v20/js/main.js
           grep -q -- '--phone-app-height' v20/js/main.js
           grep -q 'resetScrollPosition()' v20/js/ui/minigame-ui.js
-          grep -q 'app.css?v=alpha30-215' v20/index.html
-          grep -q 'main.js?v=alpha30-215' v20/index.html
+          grep -q 'app.css?v=alpha31-216' v20/index.html
+          grep -q 'main.js?v=alpha31-216' v20/index.html
           node --experimental-default-type=module v20/tests/mobile-responsive.test.mjs
           echo "V20 mobile scroll and first-entry viewport authority PASS"
 
@@ -570,8 +571,8 @@ jobs:
           grep -q 'width:13px' v20/styles/app.css
           grep -q 'height:14px' v20/styles/app.css
           grep -q 'grid-template-rows:repeat(4,minmax(0,1fr))' v20/styles/app.css
-          grep -q 'app.css?v=alpha30-215' v20/index.html
-          grep -q 'main.js?v=alpha30-215' v20/index.html
+          grep -q 'app.css?v=alpha31-216' v20/index.html
+          grep -q 'main.js?v=alpha31-216' v20/index.html
           node --experimental-default-type=module v20/tests/mobile-responsive.test.mjs
           echo "V20 mobile-only pawn/house/HUD fill PASS"
 
@@ -584,8 +585,8 @@ jobs:
           grep -q 'tile__tokens:has(.pawn-token:nth-child(3))' v20/styles/app.css
           grep -q 'function settlePhoneLandscapeLayout' v20/js/main.js
           grep -q 'visualViewport?.addEventListener("resize",settlePhoneLandscapeLayout)' v20/js/main.js
-          grep -q 'app.css?v=alpha30-215' v20/index.html
-          grep -q 'main.js?v=alpha30-215' v20/index.html
+          grep -q 'app.css?v=alpha31-216' v20/index.html
+          grep -q 'main.js?v=alpha31-216' v20/index.html
           echo "V20 first-entry phone landscape stabilization PASS"
 
       - name: Validate V20 property tile info card
@@ -634,17 +635,26 @@ jobs:
           node --experimental-default-type=module v20/tests/property-tile-info.test.mjs
           echo "V20 landing-only property upgrade trigger PASS"
 
-      - name: Validate V20 event property system
+      - name: Validate V20 expanded event property system
         shell: bash
         run: |
           set -euo pipefail
           grep -q 'RARE_EVENT_RATE=0.12' v20/js/core/event-picker.js
           grep -q 'chance_rare_upgrade' v20/js/data/special-events.js
+          grep -q 'chance_rare_guard' v20/js/data/special-events.js
+          grep -q 'fate_rare_guard' v20/js/data/special-events.js
           grep -q 'urban_rare_upgrade' v20/js/data/civic-events.js
+          grep -q 'acquisition_standard' v20/js/data/civic-events.js
+          grep -q 'auction_standard' v20/js/data/civic-events.js
           grep -q 'property_permit_upgrade' v20/js/core/network.js
+          grep -q 'property_protection_apply' v20/js/core/network.js
+          grep -q 'propertyProtectionPermits' v20/js/core/state.js
+          grep -q 'acquisitionProtectedUntilRound' v20/js/core/property-economy.js
+          grep -q 'data-property-protection' v20/js/ui/render.js
           grep -q 'propertyEventActions' v20/index.html
+          grep -q 'V20 Alpha 31 — expanded special-grid pools and property protection operations' v20/styles/app.css
           node --experimental-default-type=module v20/tests/event-property-system.test.mjs
-          echo "V20 Alpha30 rare events and property operations PASS"
+          echo "V20 Alpha31 rare events, varied special grids and property operations PASS"
 
       - name: Validate V20 gameplay systems
         shell: bash
