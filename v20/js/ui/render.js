@@ -10,6 +10,7 @@ import{CENTER_BACKGROUND,TILE_ART_BY_INDEX}from"../data/assets.js";
 import{UI_ASSETS}from"../data/ui-assets.js";
 import{groupProgress,propertyValue,rentFor,upgradeCost}from"../core/property-economy.js";
 import{canUseDevelopmentPermit,canUsePropertyProtectionPermit}from"../core/property-events.js";
+import{itemUiSummary,renderStrategyItems}from"./item-render.js";
 
 function money(value){return"$"+Math.round(value).toLocaleString()}
 
@@ -284,6 +285,17 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
 
   const localPlayer=state.players[localSeat]??state.players[0];
   const canControl=networkMode!=="guest"||localPlayer.kind==="human";
+
+  renderStrategyItems(state,localPlayer,{canControl});
+  const itemSummary=itemUiSummary(state,localPlayer);
+  document.querySelectorAll('[data-feature="item"]').forEach(button=>{
+    button.classList.toggle("has-item-action",itemSummary.usable.length>0);
+    button.classList.toggle("has-item-count",itemSummary.count>0);
+    if(itemSummary.count>0)button.dataset.itemCount=String(itemSummary.count);
+    else delete button.dataset.itemCount;
+    if(itemSummary.usable.length>0)button.setAttribute("aria-label","策略道具：目前有 "+itemSummary.usable.length+" 種可使用");
+    else button.removeAttribute("aria-label");
+  });
 
   const propertyPermits=Math.max(0,Math.floor(Number(localPlayer.developmentPermits)||0));
   const propertyProtectionPermits=Math.max(0,Math.floor(Number(localPlayer.propertyProtectionPermits)||0));
