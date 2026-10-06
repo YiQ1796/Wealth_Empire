@@ -148,6 +148,7 @@ assert.deepEqual(
   {type:"central_bank_deposit",principal:20000}
 );
 assert.equal(normalizeRemoteAction({type:"central_bank_deposit",principal:7000}),null);
+assert.deepEqual(normalizeRemoteAction({type:"decline_upgrade"}),{type:"decline_upgrade"});
 assert.deepEqual(normalizeRemoteAction({type:"central_insurance"}),{type:"central_insurance"});
 assert.deepEqual(normalizeRemoteAction({type:"central_transit",distance:6}),{type:"central_transit",distance:6});
 assert.equal(normalizeRemoteAction({type:"central_transit",distance:5}),null);
