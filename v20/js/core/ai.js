@@ -35,26 +35,19 @@ export function shouldBuyProperty(state,seat,tile){
 
 export function chooseUpgrade(state,seat){
   const player=state.players[seat];
-  if(!player)return null;
-  const reserve=reserveFor(player);
+  const tileIndex=Number(state.pendingUpgrade);
+  const tile=state.tiles?.[tileIndex];
+  if(
+    !player||
+    !Number.isInteger(tileIndex)||
+    tileIndex!==player.position||
+    !tile||
+    tile.owner!==seat||
+    tile.level>=2
+  )return null;
 
-  const candidates=player.properties
-    .map(index=>({index,tile:state.tiles[index]}))
-    .filter(({tile})=>tile&&tile.owner===seat&&tile.level<2)
-    .map(entry=>{
-      const progress=groupProgress(state,seat,entry.tile.group);
-      const cost=upgradeCost(entry.tile);
-      const score=
-        (progress.complete?100:0)+
-        entry.tile.level*25+
-        entry.tile.rent/50-
-        cost/500;
-      return{...entry,cost,score};
-    })
-    .filter(entry=>player.cash-entry.cost>=reserve)
-    .sort((a,b)=>b.score-a.score);
-
-  return candidates[0]?.index??null;
+  const cost=upgradeCost(tile);
+  return player.cash-cost>=reserveFor(player)?tileIndex:null;
 }
 
 export function chooseStockOrders(state,seat){
