@@ -1,0 +1,44 @@
+export const CIVIC_EVENT_POOLS=Object.freeze({
+  tax:Object.freeze([
+    {id:"tax_credit",name:"稅務抵免",description:"申報順利，取得一次負面金錢事件抵免。",rarity:"common",category:"shield",effect:{kind:"tax_shield"}},
+    {id:"tax_refund",name:"退稅入帳",description:"收到一筆退稅款。",rarity:"common",category:"cash_gain",effect:{kind:"cash",amount:800}},
+    {id:"tax_supplement",name:"補繳稅款",description:"查核後需要補繳一筆稅款。",rarity:"common",category:"cash_loss",effect:{kind:"cash",amount:-650}},
+    {id:"tax_digital_bonus",name:"電子申報獎勵",description:"提前完成電子申報，取得獎勵金。",rarity:"common",category:"cash_gain",effect:{kind:"cash",amount:450}},
+    {id:"tax_audit_clear",name:"稅務查核通過",description:"本次查核無異常，取得一次稅務抵免。",rarity:"common",category:"shield",effect:{kind:"tax_shield"}},
+    {id:"tax_rare_permit",name:"建設抵減核准",description:"取得一張建案許可，可在「我的房產」指定升級。",rarity:"rare",category:"property_permit",effect:{kind:"grant_permit",count:1}},
+    {id:"tax_rare_refund",name:"重大退稅",description:"歷年稅務重新核算，收到大額退稅。",rarity:"rare",category:"cash_gain",effect:{kind:"cash",amount:2200}}
+  ]),
+  court:Object.freeze([
+    {id:"court_protection",name:"財產保全",description:"法院核准暫時財產保全。",rarity:"common",category:"shield",effect:{kind:"court_shield",rounds:1}},
+    {id:"court_settlement",name:"和解金入帳",description:"訴訟和解，收到一筆賠償金。",rarity:"common",category:"cash_gain",effect:{kind:"cash",amount:750}},
+    {id:"court_fine",name:"行政裁罰",description:"違規案件成立，支付裁罰金。",rarity:"common",category:"cash_loss",effect:{kind:"cash",amount:-650}},
+    {id:"court_extended",name:"延長保全",description:"法院延長財產保全期間。",rarity:"common",category:"shield",effect:{kind:"court_shield",rounds:2}},
+    {id:"court_rare_permit",name:"建案爭議勝訴",description:"建案訴訟勝訴，獲得一張建案許可。",rarity:"rare",category:"property_permit",effect:{kind:"grant_permit",count:1}},
+    {id:"court_rare_award",name:"高額賠償",description:"重大案件勝訴，收到高額賠償。",rarity:"rare",category:"cash_gain",effect:{kind:"cash",amount:1900}}
+  ]),
+  hospital:Object.freeze([
+    {id:"hospital_shield",name:"行動保護",description:"完成治療，取得一次後退事件保護。",rarity:"common",category:"shield",effect:{kind:"medical_shield"}},
+    {id:"hospital_bill",name:"醫療支出",description:"支付一筆醫療費用。",rarity:"common",category:"cash_loss",effect:{kind:"cash",amount:-500}},
+    {id:"hospital_claim",name:"保險理賠",description:"醫療保險完成理賠。",rarity:"common",category:"cash_gain",effect:{kind:"cash",amount:650}},
+    {id:"hospital_rehab",name:"復健完成",description:"狀態恢復，取得一次行動保護。",rarity:"common",category:"shield",effect:{kind:"medical_shield"}},
+    {id:"hospital_rare_full_guard",name:"全方位恢復",description:"完整療程完成，同時取得行動保護與稅務抵免。",rarity:"rare",category:"shield",effect:{kind:"dual_shield"}},
+    {id:"hospital_rare_refund",name:"醫療基金返還",description:"符合補助資格，醫療基金返還一筆款項。",rarity:"rare",category:"cash_gain",effect:{kind:"cash",amount:1800}}
+  ]),
+  market:Object.freeze([
+    {id:"market_tick",name:"盤中震盪",description:"市場立即重新報價一次。",rarity:"common",category:"market",effect:{kind:"market_tick",count:1}},
+    {id:"market_double",name:"雙重行情",description:"市場連續重新報價兩次。",rarity:"common",category:"market",effect:{kind:"market_tick",count:2}},
+    {id:"market_dividend",name:"臨時股息",description:"收到一筆臨時市場回饋。",rarity:"common",category:"cash_gain",effect:{kind:"cash",amount:700}},
+    {id:"market_fee",name:"交易費調整",description:"臨時市場費用增加。",rarity:"common",category:"cash_loss",effect:{kind:"cash",amount:-550}},
+    {id:"market_quiet",name:"市場休整",description:"行情暫時平靜，本次沒有額外資金變動。",rarity:"common",category:"neutral",effect:{kind:"none"}},
+    {id:"market_rare_ipo",name:"IPO 中籤",description:"幸運抽中新股配售，獲得一筆收益。",rarity:"rare",category:"cash_gain",effect:{kind:"cash",amount:2500}},
+    {id:"market_rare_storm",name:"超級行情",description:"市場快速連續重估三次。",rarity:"rare",category:"market",effect:{kind:"market_tick",count:3}}
+  ]),
+  urban:Object.freeze([
+    {id:"urban_redeploy",name:"重新部署",description:"可選擇一塊自己持有的地產作為新的棋盤位置。",rarity:"common",category:"movement",effect:{kind:"urban_redeploy"}},
+    {id:"urban_subsidy",name:"更新補助",description:"取得城市更新補助金。",rarity:"common",category:"cash_gain",effect:{kind:"cash",amount:800}},
+    {id:"urban_permit",name:"建案許可",description:"取得一張建案許可，可在「我的房產」指定升級。",rarity:"common",category:"property_permit",effect:{kind:"grant_permit",count:1}},
+    {id:"urban_planning",name:"規劃獎勵",description:"城市規劃案通過，獲得一筆獎勵。",rarity:"common",category:"cash_gain",effect:{kind:"cash",amount:550}},
+    {id:"urban_rare_upgrade",name:"重點改建區",description:"隨機一塊未滿級地產免費升級 1 級。",rarity:"rare",category:"property_upgrade",effect:{kind:"random_upgrade",fallbackAmount:1600}},
+    {id:"urban_rare_permits",name:"重大建設核准",description:"一次取得兩張建案許可。",rarity:"rare",category:"property_permit",effect:{kind:"grant_permit",count:2}}
+  ])
+});
