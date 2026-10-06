@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#eef3f7">
-<title>財富帝國 V20 Alpha 31</title>
-<link rel="stylesheet" href="./styles/app.css?v=alpha31-216">
+<title>財富帝國 V20 Alpha 32</title>
+<link rel="stylesheet" href="./styles/app.css?v=alpha32-217">
 </head>
 <body class="entry-pending">
 <section id="entryGate" class="entry-gate" aria-label="遊戲模式選擇">
@@ -261,7 +261,7 @@
 
       <div class="feature-modal__pane" data-feature-panel="item">
         <div class="feature-heading"><div><h3>策略道具</h3><p>可使用時會主動提示，不需要玩家自行猜時機。</p></div></div>
-        <div class="empty-state empty-state--visual"><img src="./assets/v5/ui/modal/MODAL_EMPTY_DATA.webp" alt=""><span>目前尚未持有策略道具。</span></div>
+        <div id="itemInventoryList" class="item-inventory" aria-live="polite"></div>
       </div>
 
       <div class="feature-modal__pane feature-modal__pane--market" data-feature-panel="market">
@@ -275,6 +275,17 @@
         <div id="eventLog" class="event-log"></div>
       </div>
     </section>
+  </div>
+</dialog>
+
+<dialog id="itemPromptDialog" class="item-prompt-dialog">
+  <div class="item-prompt-card">
+    <h2>策略道具可使用</h2>
+    <p id="itemPromptText">目前有策略道具符合使用時機。</p>
+    <div class="item-prompt-actions">
+      <button id="openItemPromptButton" type="button">查看道具</button>
+      <button id="dismissItemPromptButton" type="button">這次先不用</button>
+    </div>
   </div>
 </dialog>
 
@@ -406,6 +417,6 @@
 </dialog>
 
 <div id="actionToastStack" class="action-toast-stack" aria-live="polite" aria-atomic="false"></div>
-<script type="module" src="./js/main.js?v=alpha31-216"></script>
+<script type="module" src="./js/main.js?v=alpha32-217"></script>
 </body>
 </html>
