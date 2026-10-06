@@ -171,6 +171,7 @@ function resetToastTracker(targetState=state){
   lastMoveEventId=maxId;
   noticeQueue=[];
   noticeActive=false;
+  lastItemPromptKey="";
   actionToastStack.replaceChildren();
 }
 
