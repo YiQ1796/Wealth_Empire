@@ -89,6 +89,8 @@ jobs:
               if safe_name in required:
                   (out_dir / safe_name).write_bytes(data)
                   extracted.append(safe_name)
+                  if set(extracted) == required:
+                      break
 
               offset = data_end
 
