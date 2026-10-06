@@ -754,6 +754,8 @@ function executeAction(action,seat=currentLocalSeat()){
       return engine.declineCurrentProperty(seat);
     case"upgrade_property":
       return engine.upgradeProperty(action.tileIndex,seat);
+    case"property_permit_upgrade":
+      return engine.usePropertyPermit(action.tileIndex,seat);
     case"decline_upgrade":
       return engine.declineUpgrade(seat);
     case"buy_stock":
@@ -1352,7 +1354,7 @@ function openPropertyInfo(tileIndex){
 
 function openFeature(name){
   const meta={
-    property:["我的房產","查看地產、區域完成度與收租；一般升級需再次走到自己的地產。"],
+    property:["我的房產","查看地產與收租；事件取得的建案許可會在這裡解鎖指定升級。"],
     item:["策略道具","符合使用條件時會主動提示。"],
     market:["市場操作","查看即時行情、持股損益並進行買賣。"],
     info:["遊戲資訊","目前格子與事件紀錄。"]
@@ -1412,6 +1414,15 @@ board.addEventListener("keydown",event=>{
 document.getElementById("closePropertyInfoDialog").addEventListener("click",()=>propertyInfoDialog.close());
 propertyInfoDialog.addEventListener("click",event=>{
   if(event.target===propertyInfoDialog)propertyInfoDialog.close();
+});
+
+document.getElementById("propertyTabList").addEventListener("click",event=>{
+  const button=event.target.closest("[data-property-permit-upgrade]");
+  if(!button||button.disabled)return;
+  dispatchAction({
+    type:"property_permit_upgrade",
+    tileIndex:Number(button.dataset.propertyPermitUpgrade)
+  });
 });
 
 document.querySelectorAll("[data-feature]").forEach(button=>{
