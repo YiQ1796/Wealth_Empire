@@ -483,6 +483,10 @@ export class GameEngine{
           permitsTotal:resolved.permitsTotal,
           protectionPermitDelta:resolved.protectionPermitDelta,
           protectionPermitsTotal:resolved.protectionPermitsTotal,
+          itemId:resolved.itemId,
+          itemName:resolved.itemName,
+          itemDelta:resolved.itemDelta,
+          itemTotal:resolved.itemTotal,
           amount:resolved.amount,
           delta:resolved.delta,
           from:resolved.from,
@@ -1280,6 +1284,11 @@ export class GameEngine{
       return result.protectionPermitDelta>0
         ?"獲得產權保全券 ×"+result.protectionPermitDelta+"（目前 "+result.protectionPermitsTotal+" 張）"
         :"產權保全券已達上限，改為替代獎勵";
+    }
+    if(result.kind==="grant_item"){
+      return result.itemDelta>0
+        ?"獲得策略道具「"+result.itemName+"」×"+result.itemDelta+"（目前 "+result.itemTotal+" 張）"
+        :"策略道具已達持有上限，改為替代獎勵";
     }
     if(result.kind==="random_upgrade"&&result.property){
       return"「"+result.property.tileName+"」免費升級至 LV."+result.property.level;
