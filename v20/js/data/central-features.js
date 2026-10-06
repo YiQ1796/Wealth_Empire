@@ -42,9 +42,12 @@ export const CENTRAL_FEATURE_BY_ID=Object.freeze(
 
 
 export const CENTRAL_TEST_TUNING=Object.freeze({
-  bankPrincipal:5000,
   bankRounds:2,
-  bankReturn:5500,
+  bankPlans:Object.freeze([
+    Object.freeze({principal:5000,returnAmount:6000}),
+    Object.freeze({principal:10000,returnAmount:12000}),
+    Object.freeze({principal:20000,returnAmount:23000})
+  ]),
   insuranceRentMultiplier:0.5,
   missionReward:900,
   transitDistances:Object.freeze([3,6,9])
