@@ -195,6 +195,7 @@ function noticeConfig(event){
     group_complete:{title:"區域完成",icon:N.icons.regionComplete,effect:N.effects.gold,tone:"gold",major:true},
     rent:{title:"過路費結算",icon:N.icons.rent,effect:N.effects.green,tone:"green",major:true},
     property_acquisition:{title:"強制收購",icon:N.icons.acquisition,effect:N.effects.red,tone:"red",major:true},
+    item_use:{title:"策略道具",icon:N.icons.minigameResult,effect:N.effects.purple,tone:"purple",major:true},
     bankruptcy:{title:"玩家破產",icon:N.icons.bankruptcy,effect:N.effects.red,tone:"red",major:true},
     minigame_complete:{title:"都會挑戰結算",icon:N.icons.minigameResult,effect:N.effects.gold,tone:"gold",major:true},
     game_complete:{title:"遊戲結束",icon:N.icons.victory,effect:N.effects.gold,tone:"gold",major:true},
@@ -274,8 +275,10 @@ function noticeView(event){
       };
 
     case"rent":
-      details.push("支付 "+noticeMoney(data.amount));
-      if(Number(data.requested)!==Number(data.amount))details.push("原應付 "+noticeMoney(data.requested));
+      if(data.strategyRentEffect==="rent_block")details.push("租金封鎖生效，本次免收");
+      else if(data.strategyRentEffect==="rent_burst")details.push("過路費爆發生效，本次租金 ×2");
+      else details.push("支付 "+noticeMoney(data.amount));
+      if(Number(data.requested)!==Number(data.amount)&&data.strategyRentEffect!=="rent_block")details.push("原應付 "+noticeMoney(data.requested));
       if(group)details.push("區域 "+group);
       return{
         message:(data.payerName??"玩家")+" → "+(data.ownerName??"地主")+"｜「"+tileName+"」",
@@ -315,6 +318,15 @@ function noticeView(event){
         metric:noticeSignedMoney(data.realized),
         details
       };
+
+    case"item_use":{
+      const itemDetails=[];
+      if(data.tileName)itemDetails.push("目標 "+data.tileName);
+      if(data.stockName)itemDetails.push(data.stockName+" "+noticeMoney(data.previousPrice)+" → "+noticeMoney(data.price));
+      if(data.forcedDiceTotal)itemDetails.push("骰子總點數 "+data.forcedDiceTotal);
+      itemDetails.push("剩餘 "+Math.max(0,Number(data.remaining)||0)+" 張");
+      return{message:playerName+" 使用「"+(data.itemName??"策略道具")+"」",metric:data.itemName??"已使用",details:itemDetails};
+    }
 
     case"property_acquisition":
       return{
@@ -364,7 +376,9 @@ function noticeView(event){
                   ?"建案券 +"+Math.max(0,Number(data.permitDelta)||0)
                   : data.effectKind==="grant_property_protection"
                     ?"保全券 +"+Math.max(0,Number(data.protectionPermitDelta)||0)
-                    :"事件";
+                    : data.effectKind==="grant_item"
+                      ?"道具 +"+Math.max(0,Number(data.itemDelta)||0)
+                      :"事件";
       const details=[];
       if(data.effectKind==="cash"&&Number.isFinite(Number(data.cashAfter))){
         details.push("事件後現金 "+noticeMoney(data.cashAfter));
@@ -380,6 +394,9 @@ function noticeView(event){
       }
       if(data.effectKind==="grant_property_protection"&&Number(data.protectionPermitDelta)>0){
         details.push("目前產權保全券 "+data.protectionPermitsTotal+" 張");
+      }
+      if(data.effectKind==="grant_item"&&Number(data.itemDelta)>0){
+        details.push("取得「"+data.itemName+"」｜同名持有 "+data.itemTotal+" 張");
       }
       return{message:event.text,metric,details};
     }
