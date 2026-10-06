@@ -764,7 +764,7 @@ const network=new PeerNetwork({
     return{ok:true,seat,state};
   },
   onAction:({seat,action})=>{
-    executeAction(action,seat);
+    return executeAction(action,seat);
   },
   onDisconnect:({seat,clientId})=>{
     const player=state.players[seat];
