@@ -27,6 +27,8 @@ assert.match(main,/board\.addEventListener\("click"/);
 assert.match(main,/board\.addEventListener\("keydown"/);
 assert.match(main,/目前資產估值 ×1\.25/);
 assert.match(main,/decline_upgrade/);
+assert.match(main,/acquisitionProtectedUntilRound/);
+assert.match(main,/property_protection_apply/);
 
 assert.match(economy,/export function suggestedAcquisitionOffer/);
 assert.match(economy,/propertyValue\(tile\)\*1\.25/);
@@ -38,6 +40,9 @@ assert.match(css,/orientation:landscape[\s\S]*?\.property-info-dialog/);
 assert.match(css,/V20 Alpha 29\.3 — landing-only property upgrades/);
 assert.match(render,/state\.pendingUpgrade===tileIndex/);
 assert.match(render,/需再次走到此地產/);
+assert.match(render,/data-property-protection/);
+assert.match(render,/property-protection-badge/);
+assert.match(css,/V20 Alpha 31 — expanded special-grid pools and property protection operations/);
 assert.doesNotMatch(render,/data-upgrade-property/);
 
-console.log("V20 Alpha20 property tile info regression PASS");
+console.log("V20 Alpha31 property tile info regression PASS");
