@@ -29,8 +29,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          rm -rf v20/assets/center-v1
           mkdir -p v20/assets/center-v1
+          rm -f \
+            v20/assets/center-v1/CENTRAL_BANK.webp \
+            v20/assets/center-v1/CENTRAL_MISSION.webp \
+            v20/assets/center-v1/CENTRAL_TRANSIT.webp \
+            v20/assets/center-v1/CENTRAL_INSURANCE.webp \
+            v20/assets/center-v1/CENTRAL_DEVELOPMENT.webp
           python - <<'PY'
           from pathlib import Path
           import base64, binascii, struct, zlib
@@ -51,32 +56,7 @@ jobs:
               "CENTRAL_TRANSIT.webp",
               "CENTRAL_INSURANCE.webp",
               "CENTRAL_DEVELOPMENT.webp",
-              "TITLE_BANK.webp",
-              "TITLE_MISSION.webp",
-              "TITLE_TRANSIT.webp",
-              "TITLE_INSURANCE.webp",
-              "TITLE_DEVELOPMENT.webp",
           }
-
-          def is_structurally_valid_webp(data):
-              if len(data) < 20 or data[:4] != b"RIFF" or data[8:12] != b"WEBP":
-                  return False
-              declared = struct.unpack_from("<I", data, 4)[0] + 8
-              if declared != len(data):
-                  return False
-              offset = 12
-              saw_image_chunk = False
-              while offset + 8 <= len(data):
-                  chunk_type = data[offset:offset+4]
-                  chunk_size = struct.unpack_from("<I", data, offset + 4)[0]
-                  offset += 8
-                  end = offset + chunk_size
-                  if end > len(data):
-                      return False
-                  if chunk_type in {b"VP8 ", b"VP8L", b"VP8X"}:
-                      saw_image_chunk = True
-                  offset = end + (chunk_size & 1)
-              return saw_image_chunk and offset == len(data)
 
           offset = 0
           extracted = []
@@ -109,12 +89,8 @@ jobs:
                   raise SystemExit(f"size mismatch: {name}")
 
               safe_name = Path(name).name
-              actual_crc = binascii.crc32(data) & 0xffffffff
-              if actual_crc != crc32_expected:
-                  if safe_name.startswith("TITLE_") and is_structurally_valid_webp(data):
-                      print(f"Accepted structurally valid sign with stale ZIP CRC: {safe_name}")
-                  else:
-                      raise SystemExit(f"crc mismatch: {name}")
+              if (binascii.crc32(data) & 0xffffffff) != crc32_expected:
+                  raise SystemExit(f"crc mismatch: {name}")
 
               if safe_name in required:
                   (out_dir / safe_name).write_bytes(data)
@@ -136,16 +112,20 @@ jobs:
             CENTRAL_MISSION.webp \
             CENTRAL_TRANSIT.webp \
             CENTRAL_INSURANCE.webp \
-            CENTRAL_DEVELOPMENT.webp \
+            CENTRAL_DEVELOPMENT.webp
+          do
+            test -s "v20/assets/center-v1/$asset"
+          done
+          for sign in \
             TITLE_BANK.webp \
             TITLE_MISSION.webp \
             TITLE_TRANSIT.webp \
             TITLE_INSURANCE.webp \
             TITLE_DEVELOPMENT.webp
           do
-            test -s "v20/assets/center-v1/$asset"
+            test -s "v20/assets/center-v1/$sign"
           done
-          echo "Central five approved building + sign assets materialized PASS"
+          echo "Central buildings rebuilt and committed clean signs preserved PASS"
 
       - name: Validate inline JavaScript
         shell: bash
@@ -244,8 +224,8 @@ jobs:
           grep -q '.stock-holding-row{' v20/styles/app.css
           grep -q '.stock-pnl-row{' v20/styles/app.css
           grep -q 'grid-template-columns:repeat(2,minmax(0,1fr))' v20/styles/app.css
-          grep -q 'app.css?v=alpha29-210' v20/index.html
-          grep -q 'main.js?v=alpha29-210' v20/index.html
+          grep -q 'app.css?v=alpha29-211' v20/index.html
+          grep -q 'main.js?v=alpha29-211' v20/index.html
 
           if grep -q 'data-feature="stock"' v20/index.html; then
             echo "Desktop stock market must not return as a shortcut"
@@ -547,8 +527,8 @@ jobs:
           grep -q 'Alpha 19 mobile notification correction' v20/styles/app.css
           grep -q 'width:min(68%,560px)' v20/styles/app.css
           grep -q 'grid-template-columns:48px minmax(0,1fr) 78px' v20/styles/app.css
-          grep -q 'app.css?v=alpha29-210' v20/index.html
-          grep -q 'main.js?v=alpha29-210' v20/index.html
+          grep -q 'app.css?v=alpha29-211' v20/index.html
+          grep -q 'main.js?v=alpha29-211' v20/index.html
           echo "V20 phone notification sizing and mobile-art selection PASS"
 
       - name: Validate V20 mobile pass 2 composition
@@ -559,8 +539,8 @@ jobs:
           grep -q 'grid-template-rows:auto auto auto' v20/styles/app.css
           grep -q 'width:min(58%,460px)' v20/styles/app.css
           grep -q 'grid-template-columns:42px minmax(0,1fr) 68px' v20/styles/app.css
-          grep -q 'app.css?v=alpha29-210' v20/index.html
-          grep -q 'main.js?v=alpha29-210' v20/index.html
+          grep -q 'app.css?v=alpha29-211' v20/index.html
+          grep -q 'main.js?v=alpha29-211' v20/index.html
           echo "V20 phone composition pass 2 PASS"
 
       - name: Validate V20 mobile scroll and viewport authority
@@ -575,8 +555,8 @@ jobs:
           grep -q 'function syncPhoneViewportHeight' v20/js/main.js
           grep -q -- '--phone-app-height' v20/js/main.js
           grep -q 'resetScrollPosition()' v20/js/ui/minigame-ui.js
-          grep -q 'app.css?v=alpha29-210' v20/index.html
-          grep -q 'main.js?v=alpha29-210' v20/index.html
+          grep -q 'app.css?v=alpha29-211' v20/index.html
+          grep -q 'main.js?v=alpha29-211' v20/index.html
           node --experimental-default-type=module v20/tests/mobile-responsive.test.mjs
           echo "V20 mobile scroll and first-entry viewport authority PASS"
 
@@ -590,8 +570,8 @@ jobs:
           grep -q 'width:13px' v20/styles/app.css
           grep -q 'height:14px' v20/styles/app.css
           grep -q 'grid-template-rows:repeat(4,minmax(0,1fr))' v20/styles/app.css
-          grep -q 'app.css?v=alpha29-210' v20/index.html
-          grep -q 'main.js?v=alpha29-210' v20/index.html
+          grep -q 'app.css?v=alpha29-211' v20/index.html
+          grep -q 'main.js?v=alpha29-211' v20/index.html
           node --experimental-default-type=module v20/tests/mobile-responsive.test.mjs
           echo "V20 mobile-only pawn/house/HUD fill PASS"
 
@@ -604,8 +584,8 @@ jobs:
           grep -q 'tile__tokens:has(.pawn-token:nth-child(3))' v20/styles/app.css
           grep -q 'function settlePhoneLandscapeLayout' v20/js/main.js
           grep -q 'visualViewport?.addEventListener("resize",settlePhoneLandscapeLayout)' v20/js/main.js
-          grep -q 'app.css?v=alpha29-210' v20/index.html
-          grep -q 'main.js?v=alpha29-210' v20/index.html
+          grep -q 'app.css?v=alpha29-211' v20/index.html
+          grep -q 'main.js?v=alpha29-211' v20/index.html
           echo "V20 first-entry phone landscape stabilization PASS"
 
       - name: Validate V20 property tile info card
