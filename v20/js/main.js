@@ -23,7 +23,6 @@ import{
   CENTRAL_FEATURE_BY_ID,
   CENTRAL_MISSIONS,
   CENTRAL_MISSION_BY_ID,
-  CENTRAL_STATUS_ASSETS,
   CENTRAL_TEST_TUNING
 }from"./data/central-features.js";
 import{centralDevelopmentOptions,centralFacilityStatus}from"./core/central-features.js";
@@ -1066,8 +1065,10 @@ function renderCentralFacilities(){
     button.classList.toggle("is-selected",centralFacilityDialog.open&&openCentralFacilityId===id);
     const badge=button.querySelector("[data-central-status]");
     if(badge){
-      badge.src=CENTRAL_STATUS_ASSETS[status]??CENTRAL_STATUS_ASSETS.cooldown;
-      badge.alt=status==="active"?"已啟動":status==="ready"?"可使用":"冷卻中";
+      const label=status==="active"?"已啟動":status==="ready"?"可使用":"冷卻中";
+      badge.dataset.status=status;
+      badge.textContent=label;
+      badge.setAttribute("aria-label",label);
     }
   });
 
