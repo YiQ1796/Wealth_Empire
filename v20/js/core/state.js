@@ -30,6 +30,7 @@ export function createPlayer(seat,name,kind="ai"){
     rentInsuranceUsedRound:0,
     centralTransitUsedRound:0,
     centralDevelopmentUsedRound:0,
+    developmentPermits:0,
     bankrupt:false
   };
 }
@@ -69,7 +70,7 @@ export function createInitialState(){
     events:[{
       id:1,
       kind:"system",
-      text:"V20 Alpha 28：中央五功能正式接入新素材與可測試玩法。",
+      text:"V20 Alpha 30：事件系統、稀有事件與地產經營權整合。",
       data:{},
       round:1
     }],
@@ -120,7 +121,8 @@ export function hydrateState(raw){
       rentInsuranceActive:Boolean(saved.rentInsuranceActive),
       rentInsuranceUsedRound:Math.max(0,Number(saved.rentInsuranceUsedRound)||0),
       centralTransitUsedRound:Math.max(0,Number(saved.centralTransitUsedRound)||0),
-      centralDevelopmentUsedRound:Math.max(0,Number(saved.centralDevelopmentUsedRound)||0)
+      centralDevelopmentUsedRound:Math.max(0,Number(saved.centralDevelopmentUsedRound)||0),
+      developmentPermits:Math.max(0,Math.min(3,Math.floor(Number(saved.developmentPermits)||0)))
     };
   });
 
