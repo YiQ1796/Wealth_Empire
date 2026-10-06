@@ -9,6 +9,15 @@ function currentRound(state){
   return Math.max(1,Number(state?.round)||1);
 }
 
+function bankPlan(principal){
+  const amount=Math.round(Number(principal)||0);
+  return CENTRAL_TEST_TUNING.bankPlans.find(plan=>plan.principal===amount)??null;
+}
+
+function minimumBankPrincipal(){
+  return Math.min(...CENTRAL_TEST_TUNING.bankPlans.map(plan=>plan.principal));
+}
+
 export function centralFeatureDefinition(id){
   return CENTRAL_FEATURE_BY_ID[id]??null;
 }
@@ -31,7 +40,7 @@ export function centralFacilityStatus(state,seat,id){
 
   if(id==="bank"){
     if(player.centralBankDeposit)return"active";
-    return canUseCentralBase(state,seat)&&player.cash>=CENTRAL_TEST_TUNING.bankPrincipal
+    return canUseCentralBase(state,seat)&&player.cash>=minimumBankPrincipal()
       ?"ready"
       :"cooldown";
   }
@@ -64,23 +73,26 @@ export function centralFacilityStatus(state,seat,id){
   return"cooldown";
 }
 
-export function canOpenBankDeposit(state,seat){
+export function canOpenBankDeposit(state,seat,principal=minimumBankPrincipal()){
   const player=state?.players?.[Number(seat)];
+  const plan=bankPlan(principal);
   return Boolean(
+    plan&&
     canUseCentralBase(state,seat)&&
     !player.centralBankDeposit&&
-    player.cash>=CENTRAL_TEST_TUNING.bankPrincipal
+    player.cash>=plan.principal
   );
 }
 
-export function startBankDeposit(state,seat){
-  if(!canOpenBankDeposit(state,seat))return{ok:false,reason:"unavailable"};
+export function startBankDeposit(state,seat,principal=minimumBankPrincipal()){
+  const plan=bankPlan(principal);
+  if(!plan||!canOpenBankDeposit(state,seat,plan.principal))return{ok:false,reason:"unavailable"};
   const player=state.players[Number(seat)];
   const round=currentRound(state);
-  player.cash-=CENTRAL_TEST_TUNING.bankPrincipal;
+  player.cash-=plan.principal;
   player.centralBankDeposit={
-    principal:CENTRAL_TEST_TUNING.bankPrincipal,
-    returnAmount:CENTRAL_TEST_TUNING.bankReturn,
+    principal:plan.principal,
+    returnAmount:plan.returnAmount,
     startedRound:round,
     maturesRound:round+CENTRAL_TEST_TUNING.bankRounds
   };
