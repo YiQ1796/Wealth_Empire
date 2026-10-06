@@ -46,6 +46,7 @@ export function createInitialState(){
     aiPreparedTurnToken:null,
     dice:null,
     pendingPurchase:null,
+    pendingUpgrade:null,
     pendingTransport:null,
     pendingAcquisition:null,
     pendingUrban:null,
@@ -128,6 +129,7 @@ export function hydrateState(raw){
   state.events=Array.isArray(raw.events)?raw.events:fallback.events;
   state.minigameHistory=Array.isArray(raw.minigameHistory)?raw.minigameHistory:[];
   state.specialEventHistory=Array.isArray(raw.specialEventHistory)?raw.specialEventHistory:[];
+  state.pendingUpgrade=Number.isInteger(raw.pendingUpgrade)?raw.pendingUpgrade:null;
   state.pendingTransport=raw.pendingTransport&&typeof raw.pendingTransport==="object"?raw.pendingTransport:null;
   state.pendingAcquisition=raw.pendingAcquisition&&typeof raw.pendingAcquisition==="object"?raw.pendingAcquisition:null;
   state.pendingUrban=raw.pendingUrban&&typeof raw.pendingUrban==="object"?raw.pendingUrban:null;
