@@ -121,6 +121,12 @@ export function normalizeRemoteAction(raw){
     action.destinationIndex=destinationIndex;
   }
 
+  if(raw.type==="central_bank_deposit"){
+    const principal=Math.round(Number(raw.principal??5000));
+    if(![5000,10000,20000].includes(principal))return null;
+    action.principal=principal;
+  }
+
   if(raw.type==="central_mission_accept"){
     const missionId=String(raw.missionId??"");
     if(!["buy_property","upgrade_property","buy_stock"].includes(missionId))return null;
