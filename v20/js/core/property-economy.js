@@ -27,7 +27,8 @@ export function rentFor(state,tile){
   const groupMultiplier=tile.owner!=null&&ownsCompleteGroup(state,tile.owner,tile.group)
     ? (GROUP_RENT_MULTIPLIERS[tile.group]??1)
     : 1;
-  return Math.round(tile.rent*levelMultiplier*groupMultiplier);
+  const permanentMultiplier=1+Math.max(0,Math.min(0.2,Number(tile.permanentRentBoost)||0));
+  return Math.round(tile.rent*levelMultiplier*groupMultiplier*permanentMultiplier);
 }
 
 export function upgradeCost(tile){
