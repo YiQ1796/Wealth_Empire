@@ -893,8 +893,7 @@ function renderCentralFacilityBody(id){
   const usable=localCanUseCentral();
   const status=centralFacilityStatus(state,seat,id);
 
-  document.getElementById("centralFacilityTitleArt").src=feature.title;
-  document.getElementById("centralFacilityTitleArt").alt=feature.name;
+  document.getElementById("centralFacilityTitleText").textContent=feature.name;
   document.getElementById("centralFacilityDescription").textContent=feature.description;
   body.replaceChildren();
 
