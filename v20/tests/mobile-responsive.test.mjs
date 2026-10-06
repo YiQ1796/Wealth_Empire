@@ -97,10 +97,10 @@ assert.match(css,/Network dialog: keep room information readable on short mobile
 
 console.log("V20 Alpha 31 central/mobile layout regression PASS");
 
-assert.match(css,/V20 Alpha 32\.2 — single-surface notifications/);
+assert.match(css,/V20 Alpha 32\.3 — single-surface notifications/);
 assert.match(css,/\.action-toast__card-bg,[\s\S]*?display:none!important/);
 assert.match(css,/\.action-toast\.leaving/);
 assert.match(main,/function isLocalRoomHost/);
 assert.match(main,/function canStartRoomGame/);
 assert.match(main,/只有房主可以開始遊戲/);
-console.log("V20 Alpha32.2 lobby + notification hotfix regression PASS");
+console.log("V20 Alpha32.3 lobby + notification hotfix regression PASS");
