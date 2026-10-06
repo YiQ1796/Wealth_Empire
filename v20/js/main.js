@@ -772,7 +772,7 @@ function executeAction(action,seat=currentLocalSeat()){
     case"urban_skip":
       return engine.skipUrban(seat);
     case"central_bank_deposit":
-      return engine.centralBankDeposit(seat);
+      return engine.centralBankDeposit(seat,action.principal);
     case"central_mission_accept":
       return engine.centralAcceptMission(action.missionId,seat);
     case"central_transit":
@@ -927,17 +927,18 @@ function renderCentralFacilityBody(id){
     }else{
       const note=document.createElement("p");
       note.className="central-feature-note";
-      note.textContent="Alpha 28 測試值：存入 "+noticeMoney(CENTRAL_TEST_TUNING.bankPrincipal)+
-        "，2 ROUND 後自動返還 "+noticeMoney(CENTRAL_TEST_TUNING.bankReturn)+"。";
+      note.textContent="選擇一種 2 ROUND 定存方案；同一時間只能持有 1 筆定存。";
       body.appendChild(note);
       const actions=document.createElement("div");
       actions.className="central-feature-actions";
-      actions.appendChild(centralButton(
-        "開始 2 ROUND 定存",
-        "立即存入 "+noticeMoney(CENTRAL_TEST_TUNING.bankPrincipal),
-        !usable||player.cash<CENTRAL_TEST_TUNING.bankPrincipal,
-        ()=>dispatchAction({type:"central_bank_deposit"})
-      ));
+      for(const plan of CENTRAL_TEST_TUNING.bankPlans){
+        actions.appendChild(centralButton(
+          "存入 "+noticeMoney(plan.principal),
+          "2 ROUND 後返還 "+noticeMoney(plan.returnAmount),
+          !usable||player.cash<plan.principal,
+          ()=>dispatchAction({type:"central_bank_deposit",principal:plan.principal})
+        ));
+      }
       body.appendChild(actions);
     }
     return;
