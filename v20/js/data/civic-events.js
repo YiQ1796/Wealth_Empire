@@ -35,7 +35,7 @@ export const CIVIC_EVENT_POOLS=Object.freeze({
     {id:"market_rare_storm",name:"超級行情",description:"市場快速連續重估三次。",rarity:"rare",category:"market",effect:{kind:"market_tick",count:3}}
   ]),
   urban:Object.freeze([
-    {id:"urban_redeploy",name:"重新部署",description:"可選擇一塊自己持有的地產作為新的棋盤位置。",rarity:"common",category:"movement",effect:{kind:"urban_redeploy"}},
+    {id:"urban_redeploy",name:"重新部署",description:"可選擇一塊自己持有的地產作為新的棋盤位置。",rarity:"common",category:"movement",weight:2,effect:{kind:"urban_redeploy"}},
     {id:"urban_subsidy",name:"更新補助",description:"取得城市更新補助金。",rarity:"common",category:"cash_gain",effect:{kind:"cash",amount:800}},
     {id:"urban_permit",name:"建案許可",description:"取得一張建案許可，可在「我的房產」指定升級。",rarity:"common",category:"property_permit",effect:{kind:"grant_permit",count:1}},
     {id:"urban_title_guard",name:"產權更新保護",description:"取得一張產權保全券，可在「我的房產」指定保護地產。",rarity:"common",category:"property_guard",effect:{kind:"grant_property_protection",count:1}},
@@ -44,7 +44,7 @@ export const CIVIC_EVENT_POOLS=Object.freeze({
     {id:"urban_rare_permits",name:"重大建設核准",description:"一次取得兩張建案許可。",rarity:"rare",category:"property_permit",effect:{kind:"grant_permit",count:2}}
   ]),
   acquisition:Object.freeze([
-    {id:"acquisition_standard",name:"正常收購案",description:"本次開放正常強制收購流程。",rarity:"common",category:"acquisition",effect:{kind:"acquisition_offer"}},
+    {id:"acquisition_standard",name:"正常收購案",description:"本次開放正常強制收購流程。",rarity:"common",category:"acquisition",weight:4,effect:{kind:"acquisition_offer"}},
     {id:"acquisition_broker_rebate",name:"仲介回饋",description:"收購中心返還一筆仲介服務回饋。",rarity:"common",category:"cash_gain",effect:{kind:"cash",amount:650}},
     {id:"acquisition_due_diligence",name:"盡職調查費",description:"支付本次資產查核與估值費用。",rarity:"common",category:"cash_loss",effect:{kind:"cash",amount:-450}},
     {id:"acquisition_permit",name:"整合開發許可",description:"取得一張建案許可，可到「我的房產」指定升級。",rarity:"common",category:"property_permit",effect:{kind:"grant_permit",count:1}},
@@ -53,7 +53,7 @@ export const CIVIC_EVENT_POOLS=Object.freeze({
     {id:"acquisition_rare_bonus",name:"併購顧問紅利",description:"重大交易案結案，獲得一筆顧問紅利。",rarity:"rare",category:"cash_gain",effect:{kind:"cash",amount:2100}}
   ]),
   auction:Object.freeze([
-    {id:"auction_standard",name:"公開競標",description:"進入地產拍賣挑戰，由四位玩家一起暗標競爭。",rarity:"common",category:"auction",effect:{kind:"auction_game"}},
+    {id:"auction_standard",name:"公開競標",description:"進入地產拍賣挑戰，由四位玩家一起暗標競爭。",rarity:"common",category:"auction",weight:4,effect:{kind:"auction_game"}},
     {id:"auction_commission",name:"拍賣佣金回饋",description:"拍賣行返還一筆成交佣金。",rarity:"common",category:"cash_gain",effect:{kind:"cash",amount:700}},
     {id:"auction_listing_fee",name:"委託上架費",description:"支付一筆拍賣上架與鑑價費用。",rarity:"common",category:"cash_loss",effect:{kind:"cash",amount:-500}},
     {id:"auction_permit",name:"建案標售券",description:"取得一張建案許可，可在「我的房產」指定升級。",rarity:"common",category:"property_permit",effect:{kind:"grant_permit",count:1}},
