@@ -2319,17 +2319,17 @@ body.entry-pending .app-shell{
     width:100%;
     height:100dvh;
     padding:
-      max(3px,env(safe-area-inset-top))
-      max(3px,env(safe-area-inset-right))
-      max(3px,env(safe-area-inset-bottom))
-      max(3px,env(safe-area-inset-left));
+      max(1px,env(safe-area-inset-top))
+      1px
+      1px
+      max(1px,env(safe-area-inset-left));
     overflow:hidden
   }
   .game-layout{
     width:100%;
     height:100%;
-    grid-template-columns:minmax(0,1fr) clamp(250px,29vw,300px);
-    gap:4px;
+    grid-template-columns:minmax(0,1fr) clamp(242px,27.5vw,286px);
+    gap:2px;
     overflow:hidden
   }
   .board-panel,
@@ -4674,3 +4674,14 @@ body.entry-pending .app-shell{
   .central-facility--mission{top:20%}
 }
 
+
+
+/* V20 Alpha 29.1 — phone board fill tuning. */
+@media (orientation:landscape) and (max-height:650px) and (max-width:1180px){
+  .board-panel{
+    border-radius:8px
+  }
+  .board{
+    border-radius:8px
+  }
+}
