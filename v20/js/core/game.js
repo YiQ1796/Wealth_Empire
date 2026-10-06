@@ -152,11 +152,15 @@ export class GameEngine{
         owner.cash+=paid;
         player.rentPaid+=paid;
         owner.rentReceived+=paid;
+        const rentMessage=strategyRentEffect==="rent_block"
+          ? player.name+" 踩到「"+tile.name+"」，租金封鎖卡生效，本次免收過路費。"
+          : player.name+" 支付「"+tile.name+"」過路費 "+this.formatMoney(paid)+" 給 "+owner.name+"。"+
+            (strategyRentEffect==="rent_burst"?"（過路費爆發 ×2）":"")+
+            (ownsCompleteGroup(this.state,tile.owner,tile.group)
+              ?"（連區 ×"+groupRentMultiplier(tile.group)+"）"
+              :"");
         this.log(
-          player.name+" 支付「"+tile.name+"」過路費 "+this.formatMoney(paid)+" 給 "+owner.name+"。"+
-          (ownsCompleteGroup(this.state,tile.owner,tile.group)
-            ?"（連區 ×"+groupRentMultiplier(tile.group)+"）"
-            :""),
+          rentMessage,
           "rent",
           {
             payerSeat:player.seat,
