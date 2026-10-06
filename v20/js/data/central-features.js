@@ -45,13 +45,6 @@ export const CENTRAL_FEATURE_BY_ID=Object.freeze(
   Object.fromEntries(CENTRAL_FEATURES.map(feature=>[feature.id,feature]))
 );
 
-export const CENTRAL_STATUS_ASSETS=Object.freeze({
-  ready:"./assets/center-v1/STATUS_READY.webp",
-  cooldown:"./assets/center-v1/STATUS_COOLDOWN.webp",
-  active:"./assets/center-v1/STATUS_ACTIVE.webp"
-});
-
-export const CENTRAL_GLOW_ASSET="./assets/center-v1/CENTRAL_GLOW.webp";
 
 export const CENTRAL_TEST_TUNING=Object.freeze({
   bankPrincipal:5000,
