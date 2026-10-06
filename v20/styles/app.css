@@ -4732,3 +4732,23 @@ body.entry-pending .app-shell{
     width:9px
   }
 }
+
+
+/* V20 Alpha 29.3 — landing-only property upgrades. */
+.property-upgrade--status{
+  display:inline-grid!important;
+  place-items:center;
+  min-width:104px;
+  max-width:126px;
+  min-height:34px;
+  padding:6px 8px;
+  background:#edf2f7;
+  color:#60758a!important;
+  cursor:default;
+  text-align:center;
+  line-height:1.2!important
+}
+.property-upgrade--status.ready{
+  background:#e7f6ee;
+  color:#23724f!important
+}
