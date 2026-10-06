@@ -102,7 +102,10 @@ import{TRANSPORT_NODE_INDEXES}from"../js/data/transport.js";
 
   target.owner=0;
   state.players[0].properties.push(groupTiles[3].index);
-  assert.notEqual(chooseUpgrade(state,0),null);
+  assert.equal(chooseUpgrade(state,0),null,"AI must not upgrade before landing on the owned property");
+  state.players[0].position=groupTiles[3].index;
+  state.pendingUpgrade=groupTiles[3].index;
+  assert.notEqual(chooseUpgrade(state,0),null,"AI may consider the property after landing on it");
 }
 
 {
