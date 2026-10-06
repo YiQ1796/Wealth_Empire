@@ -26,6 +26,13 @@ function sequenceRandom(values){
   };
 }
 
+function rarePickValue(pool,eventId){
+  const candidates=pool.filter(event=>(event.rarity??"common")==="rare");
+  const index=candidates.findIndex(event=>event.id===eventId);
+  assert.ok(index>=0,"missing rare event "+eventId);
+  return(index+0.5)/candidates.length;
+}
+
 assert.equal(RARE_EVENT_RATE,0.12,"rare-event rate must remain 12%");
 assert.ok(CHANCE_EVENTS.length>=18,"chance pool must be expanded");
 assert.ok(FATE_EVENTS.length>=19,"fate pool must be expanded");
@@ -42,7 +49,7 @@ for(const type of["tax","court","hospital","market","urban","acquisition","aucti
   player.properties.push(tileIndex);
   const cashBefore=player.cash;
 
-  const result=resolveSpecialEvent(state,player,"chance",sequenceRandom([0.01,0,0]));
+  const result=resolveSpecialEvent(state,player,"chance",sequenceRandom([0.01,rarePickValue(CHANCE_EVENTS,"chance_rare_upgrade"),0]));
   assert.equal(result.rarity,"rare");
   assert.equal(result.event.id,"chance_rare_upgrade");
   assert.equal(result.property.tileIndex,tileIndex);
@@ -53,7 +60,7 @@ for(const type of["tax","court","hospital","market","urban","acquisition","aucti
 {
   const state=createInitialState();
   const player=state.players[0];
-  const result=resolveSpecialEvent(state,player,"chance",sequenceRandom([0.01,0.4]));
+  const result=resolveSpecialEvent(state,player,"chance",sequenceRandom([0.01,rarePickValue(CHANCE_EVENTS,"chance_rare_permit")]));
   assert.equal(result.event.id,"chance_rare_permit");
   assert.equal(result.permitDelta,1);
   assert.equal(player.developmentPermits,1);
@@ -62,7 +69,7 @@ for(const type of["tax","court","hospital","market","urban","acquisition","aucti
 {
   const state=createInitialState();
   const player=state.players[0];
-  const result=resolveSpecialEvent(state,player,"chance",sequenceRandom([0.01,0.6]));
+  const result=resolveSpecialEvent(state,player,"chance",sequenceRandom([0.01,rarePickValue(CHANCE_EVENTS,"chance_rare_guard")]));
   assert.equal(result.event.id,"chance_rare_guard");
   assert.equal(result.protectionPermitDelta,1);
   assert.equal(player.propertyProtectionPermits,1);
