@@ -247,6 +247,13 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
   const localPlayer=state.players[localSeat]??state.players[0];
   const canControl=networkMode!=="guest"||localPlayer.kind==="human";
 
+  const propertyPermits=Math.max(0,Math.floor(Number(localPlayer.developmentPermits)||0));
+  document.querySelectorAll('[data-feature="property"]').forEach(button=>{
+    button.classList.toggle("has-property-action",propertyPermits>0);
+    if(propertyPermits>0)button.dataset.propertyActionCount=String(propertyPermits);
+    else delete button.dataset.propertyActionCount;
+  });
+
   const players=document.getElementById("players");
   players.innerHTML=state.players.map((player,index)=>{
     const kindAsset=player.kind==="ai"?UI_ASSETS.badges.ai:UI_ASSETS.badges.player;
