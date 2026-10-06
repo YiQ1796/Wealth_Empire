@@ -19,9 +19,11 @@ assert.ok(
 );
 
 assert.match(ui,/data-minigame-close>關閉<\/button>/);
-assert.match(main,/action-toast__divider-mask/);
-assert.match(css,/V20 Alpha 29\.2 — phone notice seam mask \+ minigame completion hotfix/);
-assert.match(css,/\.action-toast__divider-mask\{[\s\S]*?display:none/);
-assert.match(css,/@media \(orientation:landscape\) and \(max-height:650px\) and \(max-width:1180px\)\{[\s\S]*?\.action-toast__divider-mask\{[\s\S]*?display:block/);
+assert.doesNotMatch(main,/action-toast__divider-mask/);
+assert.doesNotMatch(main,/action-toast__card-bg/);
+assert.match(css,/V20 Alpha 32\.2 — single-surface notifications/);
+assert.match(css,/\.action-toast\.leaving/);
+assert.match(css,/\.action-toast__card-bg,[\s\S]*?display:none!important/);
+assert.doesNotMatch(css,/V20 Alpha 29\.2 — phone notice seam mask/);
 
-console.log("V20 Alpha 29.2 UI hotfix regression PASS");
+console.log("V20 Alpha 32.2 UI hotfix regression PASS");
