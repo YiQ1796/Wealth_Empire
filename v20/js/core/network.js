@@ -18,6 +18,7 @@ export const NETWORK_ACTION_TYPES=Object.freeze([
   "buy_property",
   "decline_property",
   "upgrade_property",
+  "decline_upgrade",
   "buy_stock",
   "sell_stock",
   "minigame_result",
