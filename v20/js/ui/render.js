@@ -9,6 +9,7 @@ import{
 import{CENTER_BACKGROUND,TILE_ART_BY_INDEX}from"../data/assets.js";
 import{UI_ASSETS}from"../data/ui-assets.js";
 import{groupProgress,propertyValue,rentFor,upgradeCost}from"../core/property-economy.js";
+import{canUseDevelopmentPermit}from"../core/property-events.js";
 
 function money(value){return"$"+Math.round(value).toLocaleString()}
 
@@ -135,7 +136,36 @@ function renderRentHistory(state,currentPlayer){
   container.innerHTML=summary+history;
 }
 
+function renderPropertyEventActions(state,viewerPlayer,canControl){
+  const container=document.getElementById("propertyEventActions");
+  if(!container)return;
+  const permits=Math.max(0,Math.floor(Number(viewerPlayer.developmentPermits)||0));
+  const eligible=(viewerPlayer.properties??[])
+    .filter(index=>{
+      const tile=state.tiles?.[index];
+      return tile?.type==="property"&&tile.owner===viewerPlayer.seat&&tile.level<MAX_PROPERTY_LEVEL;
+    }).length;
+  const ownTurn=Boolean(
+    canControl&&
+    state.gameStatus==="playing"&&
+    state.currentPlayer===viewerPlayer.seat
+  );
+  container.innerHTML=
+    '<article class="property-event-card '+(permits>0?"active":"")+'">'+
+      '<div><strong>建案許可 ×'+permits+'</strong>'+
+      '<small>'+(permits>0
+        ?'可在下方指定一塊未滿級地產免費升級 1 級。'
+        :'可由機會、命運或特殊格事件取得；一般升級規則不變。')+'</small></div>'+
+      '<span>'+(permits>0
+        ? eligible>0
+          ? ownTurn?'可操作 '+eligible+' 塊':'等待自己的回合'
+          :'目前沒有可升級地產'
+        :'尚未取得特殊經營權')+'</span>'+
+    '</article>';
+}
+
 function renderProperties(state,viewerPlayer,canControl){
+  renderPropertyEventActions(state,viewerPlayer,canControl);
   renderRegionSummary(state,viewerPlayer);
   renderRentHistory(state,viewerPlayer);
 
@@ -171,6 +201,13 @@ function renderProperties(state,viewerPlayer,canControl){
           ?"需再次走到此地產"
           :"升級費 "+money(cost)+"｜現金不足";
 
+    const permits=Math.max(0,Math.floor(Number(viewerPlayer.developmentPermits)||0));
+    const permitUsable=permits>0&&canUseDevelopmentPermit(state,viewerPlayer.seat,tileIndex);
+    const permitButton=permits>0&&!maxLevel
+      ?'<button class="property-permit-upgrade" data-property-permit-upgrade="'+tileIndex+'" '+(permitUsable?'':'disabled')+'>'+
+        (permitUsable?'使用建案許可':'特殊升級待命')+'</button>'
+      :"";
+
     return '<article class="property-row">'+
       regionBadge(tile.group)+
       '<div class="property-row__main">'+
@@ -187,7 +224,10 @@ function renderProperties(state,viewerPlayer,canControl){
           (maxLevel?badge(UI_ASSETS.badges.propertyMax,"房產滿級")+badge(UI_ASSETS.badges.noAcquisition,"不可強制收購"):"")+
         '</div>'+
       '</div>'+
-      '<span class="property-upgrade property-upgrade--status '+(landedForUpgrade?"ready":"")+'">'+upgradeStatus+'</span>'+
+      '<div class="property-row__actions">'+
+        '<span class="property-upgrade property-upgrade--status '+(landedForUpgrade?"ready":"")+'">'+upgradeStatus+'</span>'+
+        permitButton+
+      '</div>'+
     '</article>';
   }).join("");
 }
