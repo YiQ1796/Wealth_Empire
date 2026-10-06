@@ -5,6 +5,7 @@ import{rentFor}from"../js/core/property-economy.js";
 import{normalizeRemoteAction}from"../js/core/network.js";
 
 const state=createInitialState();
+state.gameStatus="playing";
 state.currentPlayer=0;
 state.phase="await-roll";
 const player=state.players[0];
