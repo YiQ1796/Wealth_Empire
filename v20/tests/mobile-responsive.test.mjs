@@ -32,7 +32,9 @@ assert.match(render,/mobileRollButton\.disabled=rollDisabled/);
 
 console.log("V20 Alpha19 mobile responsive static regression PASS");
 
-assert.match(main,/orientation:landscape.*max-height:650px.*max-width:1180px.*max-width:760px/);
+assert.doesNotMatch(main,/action-toast__card-bg/);
+assert.doesNotMatch(main,/action-toast__divider-mask/);
+assert.match(css,/@media \(orientation:landscape\) and \(max-height:650px\) and \(max-width:1180px\)/);
 assert.match(css,/Alpha 19 mobile notification correction/);
 assert.match(css,/width:min\(68%,560px\)/);
 assert.match(css,/grid-template-columns:48px minmax\(0,1fr\) 78px/);
