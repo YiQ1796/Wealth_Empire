@@ -4556,3 +4556,46 @@ body.entry-pending .app-shell{
   .network-status{padding:7px 9px;font-size:9px}
   .network-seat-row{min-height:42px;padding:5px 8px}
 }
+
+
+/* V20 Alpha 28 deploy recovery — CSS status badges replace missing badge-art tail. */
+.central-facility__glow{
+  inset:-6%;
+  width:112%;
+  height:112%;
+  border:3px solid rgba(255,207,83,.78);
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(255,239,168,.28) 0%,rgba(255,220,105,.12) 48%,rgba(255,255,255,0) 72%);
+  box-shadow:0 0 18px rgba(255,199,67,.34);
+  box-sizing:border-box
+}
+.central-facility__status{
+  right:-4%;
+  top:0;
+  width:auto;
+  height:auto;
+  min-width:50px;
+  padding:4px 7px;
+  border:1px solid rgba(255,255,255,.9);
+  border-radius:999px;
+  color:#fff;
+  background:#7d8a96;
+  box-shadow:0 2px 6px rgba(0,0,0,.2);
+  font-size:10px;
+  font-weight:900;
+  line-height:1.1;
+  letter-spacing:.02em;
+  text-align:center;
+  white-space:nowrap
+}
+.central-facility__status[data-status="ready"]{background:#24895f}
+.central-facility__status[data-status="active"]{background:#2f76c9}
+.central-facility__status[data-status="cooldown"]{background:#7d8a96}
+@media (orientation:landscape) and (max-height:650px) and (max-width:1180px){
+  .central-facility__status{
+    min-width:34px;
+    padding:2px 5px;
+    font-size:6px
+  }
+  .central-facility__glow{border-width:2px}
+}
