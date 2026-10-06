@@ -691,7 +691,7 @@ jobs:
           set -euo pipefail
           mkdir -p v20/assets/audio
           cat v20/assets/audio/alley-wind-preview/part*.b64 | base64 --decode > v20/assets/audio/alley-wind-preview.m4a
-          echo "d12613fd05ed02c15f6d60d670ec752aa5df41c9afc0ee896f9f569253c07b14  v20/assets/audio/alley-wind-preview.m4a" | sha256sum -c -
+          echo "51db34a1920ee2a98d0b54dd0804c325a54d33ecd37d802dcbe44b25c4b332f8  v20/assets/audio/alley-wind-preview.m4a" | sha256sum -c -
           test -s v20/assets/audio/alley-wind-preview.m4a
           node --experimental-default-type=module v20/tests/bgm-controller.test.mjs
           rm -rf v20/assets/audio/alley-wind-preview
