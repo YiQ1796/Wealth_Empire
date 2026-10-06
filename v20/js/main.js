@@ -27,6 +27,9 @@ import{
   CENTRAL_TEST_TUNING
 }from"./data/central-features.js";
 import{centralDevelopmentOptions,centralFacilityStatus}from"./core/central-features.js";
+import{initBgmController}from"./ui/bgm-controller.js";
+
+try{initBgmController()}catch(error){console.warn("BGM controller unavailable",error)}
 
 const board=document.getElementById("board");
 mountStaticBoard(board);

@@ -1,0 +1,32 @@
+name: V20 BGM Preview CI
+
+on:
+  push:
+    branches:
+      - work-v20-alpha32-bgm-preview-20261006
+  pull_request:
+    paths:
+      - "v20/assets/audio/**"
+      - "v20/js/ui/bgm-controller.js"
+      - "v20/index.html"
+      - "v20/styles/app.css"
+      - "v20/tests/bgm-controller.test.mjs"
+      - ".github/workflows/v20-bgm-preview-ci.yml"
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rebuild preview audio
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat v20/assets/audio/alley-wind-preview/part*.b64 | tr -d '\\r\\n' | base64 --decode > /tmp/alley-wind-preview.m4a
+          echo "d12613fd05ed02c15f6d60d670ec752aa5df41c9afc0ee896f9f569253c07b14  /tmp/alley-wind-preview.m4a" | sha256sum -c -
+      - name: Validate BGM controller
+        run: |
+          node --experimental-default-type=module v20/tests/bgm-controller.test.mjs
+          node --experimental-default-type=module v20/tests/mobile-responsive.test.mjs
+          node --experimental-default-type=module v20/tests/items-system.test.mjs
