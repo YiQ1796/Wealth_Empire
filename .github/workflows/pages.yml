@@ -31,8 +31,18 @@ jobs:
           set -euo pipefail
           rm -rf v20/assets/center-v1
           mkdir -p v20/assets/center-v1
-          cat .asset-packs/central-five-v1/part*.b64 | tr -d '\r\n ' > /tmp/central-five-v1.b64
-          base64 --decode /tmp/central-five-v1.b64 > /tmp/central-five-v1.zip
+          python - <<'PY'
+          from pathlib import Path
+          import base64
+          parts = sorted(Path(".asset-packs/central-five-v1").glob("part*.b64"))
+          if not parts:
+              raise SystemExit("central five asset pack parts missing")
+          payload = "".join(p.read_text(encoding="utf-8") for p in parts)
+          payload = "".join(payload.split())
+          payload += "=" * (-len(payload) % 4)
+          Path("/tmp/central-five-v1.zip").write_bytes(base64.b64decode(payload, validate=True))
+          print(f"Central pack decoded: {len(parts)} parts -> {len(payload)} base64 chars")
+          PY
           unzip -oq /tmp/central-five-v1.zip -d v20/assets/center-v1
 
           for asset in             CENTRAL_BANK.webp             CENTRAL_MISSION.webp             CENTRAL_TRANSIT.webp             CENTRAL_INSURANCE.webp             CENTRAL_DEVELOPMENT.webp             TITLE_BANK.webp             TITLE_MISSION.webp             TITLE_TRANSIT.webp             TITLE_INSURANCE.webp             TITLE_DEVELOPMENT.webp             CENTRAL_GLOW.webp             STATUS_READY.webp             STATUS_COOLDOWN.webp             STATUS_ACTIVE.webp; do
