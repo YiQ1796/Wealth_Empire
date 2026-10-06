@@ -4685,3 +4685,50 @@ body.entry-pending .app-shell{
     border-radius:8px
   }
 }
+
+
+/* V20 Alpha 29.2 — phone notice seam mask + minigame completion hotfix. */
+.action-toast__divider-mask{
+  display:none
+}
+@media (orientation:landscape) and (max-height:650px) and (max-width:1180px){
+  .action-toast__content{
+    isolation:isolate
+  }
+  .action-toast__divider-mask{
+    position:absolute;
+    left:55px;
+    top:12px;
+    bottom:12px;
+    z-index:2;
+    display:block;
+    width:12px;
+    border-radius:999px;
+    background:#fffaf1;
+    pointer-events:none
+  }
+  .action-toast__icon,
+  .action-toast__copy,
+  .action-toast__metric{
+    position:relative;
+    z-index:3
+  }
+  .action-toast--market .action-toast__divider-mask{
+    left:49px;
+    top:10px;
+    bottom:10px;
+    width:10px
+  }
+}
+@media (orientation:landscape) and (max-height:430px) and (max-width:1180px){
+  .action-toast__divider-mask{
+    left:51px;
+    top:10px;
+    bottom:10px;
+    width:11px
+  }
+  .action-toast--market .action-toast__divider-mask{
+    left:44px;
+    width:9px
+  }
+}
