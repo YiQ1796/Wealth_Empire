@@ -3,6 +3,7 @@ import{createInitialState,hydrateState}from"../js/core/state.js";
 import{grantItem,inventoryCount,listValidTargets,useItem}from"../js/core/items.js";
 import{rentFor}from"../js/core/property-economy.js";
 import{normalizeRemoteAction}from"../js/core/network.js";
+import{GameEngine}from"../js/core/game.js";
 
 const state=createInitialState();
 state.gameStatus="playing";
@@ -49,6 +50,27 @@ const restored=hydrateState(saved);
 assert.equal(restored.players[0].forcedDiceTotal,11);
 assert.equal(restored.tiles[1].permanentRentBoost,0.2);
 assert.equal(restored.tiles[2].rentBlockedCharges,1);
+
+// Rent block must prevent payment without consuming the payer's active rent insurance.
+restored.players[0].position=2;
+restored.players[0].rentInsuranceActive=true;
+restored.currentPlayer=0;
+restored.phase="landed";
+const restoredEngine=new GameEngine(restored,()=>{});
+const ownerCashBefore=restored.players[1].cash;
+restoredEngine.resolveLanding(restored.players[0]);
+assert.equal(restored.players[1].cash,ownerCashBefore);
+assert.equal(restored.players[0].rentInsuranceActive,true);
+assert.equal(restored.tiles[2].rentBlockedCharges,0);
+
+// Remote dice is authoritative state and is consumed by the next legal roll.
+restored.players[0].forcedDiceTotal=11;
+restored.players[0].position=0;
+restored.currentPlayer=0;
+restored.phase="await-roll";
+assert.equal(restoredEngine.roll(0),true);
+assert.equal(restored.dice.total,11);
+assert.equal(restored.players[0].forcedDiceTotal,null);
 
 const remote=normalizeRemoteAction({
   type:"item_use",
