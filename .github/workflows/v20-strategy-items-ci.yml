@@ -1,0 +1,55 @@
+name: V20 Strategy Items CI
+
+on:
+  push:
+    branches:
+      - "work-v20-alpha32-strategy-items-20261006"
+  pull_request:
+    branches:
+      - "main"
+    paths:
+      - "v20/**"
+      - ".github/workflows/v20-strategy-items-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  strategy-items:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate module syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in $(find v20/js -name '*.js' -type f | sort); do
+            node --input-type=module --check < "$file"
+          done
+
+      - name: Validate strategy item integration
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'ITEM_DEFINITIONS' v20/js/data/items.js
+          grep -q 'inventory:{}' v20/js/core/state.js
+          grep -q '"item_use"' v20/js/core/network.js
+          grep -q 'useStrategyItem' v20/js/core/game.js
+          grep -q 'grant_item' v20/js/core/special-events.js
+          grep -q 'id="itemInventoryList"' v20/index.html
+          grep -q 'id="itemPromptDialog"' v20/index.html
+          grep -q 'alpha32-217' v20/index.html
+          node --experimental-default-type=module v20/tests/items-system.test.mjs
+
+      - name: Run affected regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --experimental-default-type=module v20/tests/property-economy.test.mjs
+          node --experimental-default-type=module v20/tests/property-tile-info.test.mjs
+          node --experimental-default-type=module v20/tests/event-property-system.test.mjs
+          node --experimental-default-type=module v20/tests/gameplay-systems.test.mjs
+          node --experimental-default-type=module v20/tests/network-mobile-resilience.test.mjs
+          node --experimental-default-type=module v20/tests/mobile-responsive.test.mjs
