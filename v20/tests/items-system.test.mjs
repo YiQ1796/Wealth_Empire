@@ -18,11 +18,17 @@ state.gameStatus="playing";
 state.currentPlayer=0;
 state.phase="await-roll";
 const player=state.players[0];
+const propertyIndexes=state.tiles
+  .map((tile,index)=>tile.type==="property"?index:null)
+  .filter(index=>index!=null);
+const ownedTileIndex=propertyIndexes[0];
+const opponentTileIndex=propertyIndexes[1];
+assert.ok(Number.isInteger(ownedTileIndex)&&Number.isInteger(opponentTileIndex));
 
-state.tiles[1].owner=0;
-player.properties=[1];
-state.tiles[2].owner=1;
-state.players[1].properties=[2];
+state.tiles[ownedTileIndex].owner=0;
+player.properties=[ownedTileIndex];
+state.tiles[opponentTileIndex].owner=1;
+state.players[1].properties=[opponentTileIndex];
 
 assert.equal(grantItem(state,0,"rent_boost",1).ok,true);
 assert.equal(grantItem(state,0,"remote_dice",1).ok,true);
@@ -47,11 +53,11 @@ assert.ok(
   "hydration must enforce the total six-item inventory cap"
 );
 
-const baseRent=rentFor(state,state.tiles[1]);
-const rentBoost=useItem(state,0,"rent_boost",{tileIndex:1});
+const baseRent=rentFor(state,state.tiles[ownedTileIndex]);
+const rentBoost=useItem(state,0,"rent_boost",{tileIndex:ownedTileIndex});
 assert.equal(rentBoost.ok,true);
-assert.equal(state.tiles[1].permanentRentBoost,0.2);
-assert.equal(rentFor(state,state.tiles[1]),Math.round(baseRent*1.2));
+assert.equal(state.tiles[ownedTileIndex].permanentRentBoost,0.2);
+assert.equal(rentFor(state,state.tiles[ownedTileIndex]),Math.round(baseRent*1.2));
 
 const dice=useItem(state,0,"remote_dice",{value:11});
 assert.equal(dice.ok,true);
@@ -64,19 +70,19 @@ assert.equal(stockUp.ok,true);
 assert.ok(stock.price>beforeStock);
 
 const blockTargets=listValidTargets(state,0,"rent_block");
-assert.ok(blockTargets.some(target=>Number(target.value)===2));
-const block=useItem(state,0,"rent_block",{tileIndex:2});
+assert.ok(blockTargets.some(target=>Number(target.value)===opponentTileIndex));
+const block=useItem(state,0,"rent_block",{tileIndex:opponentTileIndex});
 assert.equal(block.ok,true);
-assert.equal(state.tiles[2].rentBlockedCharges,1);
+assert.equal(state.tiles[opponentTileIndex].rentBlockedCharges,1);
 
 const saved=JSON.parse(JSON.stringify(state));
 const restored=hydrateState(saved);
 assert.equal(restored.players[0].forcedDiceTotal,11);
-assert.equal(restored.tiles[1].permanentRentBoost,0.2);
-assert.equal(restored.tiles[2].rentBlockedCharges,1);
+assert.equal(restored.tiles[ownedTileIndex].permanentRentBoost,0.2);
+assert.equal(restored.tiles[opponentTileIndex].rentBlockedCharges,1);
 
 // Rent block must prevent payment without consuming the payer's active rent insurance.
-restored.players[0].position=2;
+restored.players[0].position=opponentTileIndex;
 restored.players[0].rentInsuranceActive=true;
 restored.currentPlayer=0;
 restored.phase="landed";
@@ -85,7 +91,7 @@ const ownerCashBefore=restored.players[1].cash;
 restoredEngine.resolveLanding(restored.players[0]);
 assert.equal(restored.players[1].cash,ownerCashBefore);
 assert.equal(restored.players[0].rentInsuranceActive,true);
-assert.equal(restored.tiles[2].rentBlockedCharges,0);
+assert.equal(restored.tiles[opponentTileIndex].rentBlockedCharges,0);
 
 // Remote dice is authoritative state and is consumed by the next legal roll.
 restored.players[0].forcedDiceTotal=11;
@@ -99,12 +105,12 @@ assert.equal(restored.players[0].forcedDiceTotal,null);
 const remote=normalizeRemoteAction({
   type:"item_use",
   itemId:"rent_block",
-  target:{tileIndex:2}
+  target:{tileIndex:opponentTileIndex}
 });
 assert.deepEqual(remote,{
   type:"item_use",
   itemId:"rent_block",
-  target:{tileIndex:2}
+  target:{tileIndex:opponentTileIndex}
 });
 
 console.log("V20 Alpha32 strategy items core PASS");
