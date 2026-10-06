@@ -9,7 +9,7 @@ import{
 import{CENTER_BACKGROUND,TILE_ART_BY_INDEX}from"../data/assets.js";
 import{UI_ASSETS}from"../data/ui-assets.js";
 import{groupProgress,propertyValue,rentFor,upgradeCost}from"../core/property-economy.js";
-import{canUseDevelopmentPermit}from"../core/property-events.js";
+import{canUseDevelopmentPermit,canUsePropertyProtectionPermit}from"../core/property-events.js";
 
 function money(value){return"$"+Math.round(value).toLocaleString()}
 
@@ -140,28 +140,55 @@ function renderPropertyEventActions(state,viewerPlayer,canControl){
   const container=document.getElementById("propertyEventActions");
   if(!container)return;
   const permits=Math.max(0,Math.floor(Number(viewerPlayer.developmentPermits)||0));
-  const eligible=(viewerPlayer.properties??[])
+  const protectionPermits=Math.max(0,Math.floor(Number(viewerPlayer.propertyProtectionPermits)||0));
+  const eligibleUpgrade=(viewerPlayer.properties??[])
     .filter(index=>{
       const tile=state.tiles?.[index];
       return tile?.type==="property"&&tile.owner===viewerPlayer.seat&&tile.level<MAX_PROPERTY_LEVEL;
+    }).length;
+  const eligibleProtection=(viewerPlayer.properties??[])
+    .filter(index=>{
+      const tile=state.tiles?.[index];
+      return(
+        tile?.type==="property"&&
+        tile.owner===viewerPlayer.seat&&
+        tile.level<MAX_PROPERTY_LEVEL&&
+        Number(tile.acquisitionProtectedUntilRound)<Number(state.round)
+      );
     }).length;
   const ownTurn=Boolean(
     canControl&&
     state.gameStatus==="playing"&&
     state.currentPlayer===viewerPlayer.seat
   );
-  container.innerHTML=
+
+  const developmentCard=
     '<article class="property-event-card '+(permits>0?"active":"")+'">'+
       '<div><strong>建案許可 ×'+permits+'</strong>'+
       '<small>'+(permits>0
         ?'可在下方指定一塊未滿級地產免費升級 1 級。'
         :'可由機會、命運或特殊格事件取得；一般升級規則不變。')+'</small></div>'+
       '<span>'+(permits>0
-        ? eligible>0
-          ? ownTurn?'可操作 '+eligible+' 塊':'等待自己的回合'
+        ? eligibleUpgrade>0
+          ? ownTurn?'可操作 '+eligibleUpgrade+' 塊':'等待自己的回合'
           :'目前沒有可升級地產'
-        :'尚未取得特殊經營權')+'</span>'+
+        :'尚未取得')+'</span>'+
     '</article>';
+
+  const protectionCard=
+    '<article class="property-event-card property-event-card--protection '+(protectionPermits>0?"active":"")+'">'+
+      '<div><strong>產權保全券 ×'+protectionPermits+'</strong>'+
+      '<small>'+(protectionPermits>0
+        ?'可指定一塊未滿級地產，保護 2 ROUND 不被強制收購。'
+        :'可由法院、城市更新、收購中心或拍賣行事件取得。')+'</small></div>'+
+      '<span>'+(protectionPermits>0
+        ? eligibleProtection>0
+          ? ownTurn?'可保護 '+eligibleProtection+' 塊':'等待自己的回合'
+          :'目前沒有可保護地產'
+        :'尚未取得')+'</span>'+
+    '</article>';
+
+  container.innerHTML=developmentCard+protectionCard;
 }
 
 function renderProperties(state,viewerPlayer,canControl){
@@ -208,6 +235,15 @@ function renderProperties(state,viewerPlayer,canControl){
         (permitUsable?'使用建案許可':'特殊升級待命')+'</button>'
       :"";
 
+    const protectionPermits=Math.max(0,Math.floor(Number(viewerPlayer.propertyProtectionPermits)||0));
+    const protectedUntil=Math.max(0,Number(tile.acquisitionProtectedUntilRound)||0);
+    const isProtected=protectedUntil>=Number(state.round);
+    const protectionUsable=protectionPermits>0&&canUsePropertyProtectionPermit(state,viewerPlayer.seat,tileIndex);
+    const protectionButton=protectionPermits>0&&!maxLevel&&!isProtected
+      ?'<button class="property-protection-action" data-property-protection="'+tileIndex+'" '+(protectionUsable?'':'disabled')+'>'+
+        (protectionUsable?'啟用產權保全':'產權保全待命')+'</button>'
+      :"";
+
     return '<article class="property-row">'+
       regionBadge(tile.group)+
       '<div class="property-row__main">'+
@@ -222,11 +258,13 @@ function renderProperties(state,viewerPlayer,canControl){
             ).replace(/0$/,"")
           ):"")+
           (maxLevel?badge(UI_ASSETS.badges.propertyMax,"房產滿級")+badge(UI_ASSETS.badges.noAcquisition,"不可強制收購"):"")+
+          (isProtected?'<span class="property-protection-badge">保全至 R'+protectedUntil+'</span>':"")+
         '</div>'+
       '</div>'+
       '<div class="property-row__actions">'+
         '<span class="property-upgrade property-upgrade--status '+(landedForUpgrade?"ready":"")+'">'+upgradeStatus+'</span>'+
         permitButton+
+        protectionButton+
       '</div>'+
     '</article>';
   }).join("");
@@ -248,9 +286,11 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
   const canControl=networkMode!=="guest"||localPlayer.kind==="human";
 
   const propertyPermits=Math.max(0,Math.floor(Number(localPlayer.developmentPermits)||0));
+  const propertyProtectionPermits=Math.max(0,Math.floor(Number(localPlayer.propertyProtectionPermits)||0));
+  const propertyActionCount=propertyPermits+propertyProtectionPermits;
   document.querySelectorAll('[data-feature="property"]').forEach(button=>{
-    button.classList.toggle("has-property-action",propertyPermits>0);
-    if(propertyPermits>0)button.dataset.propertyActionCount=String(propertyPermits);
+    button.classList.toggle("has-property-action",propertyActionCount>0);
+    if(propertyActionCount>0)button.dataset.propertyActionCount=String(propertyActionCount);
     else delete button.dataset.propertyActionCount;
   });
 
