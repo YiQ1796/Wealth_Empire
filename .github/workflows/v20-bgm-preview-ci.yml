@@ -23,7 +23,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cat v20/assets/audio/alley-wind-preview/part*.b64 | tr -d '\\r\\n' | base64 --decode > /tmp/alley-wind-preview.m4a
+          cat v20/assets/audio/alley-wind-preview/part*.b64 | base64 --decode > /tmp/alley-wind-preview.m4a
           echo "d12613fd05ed02c15f6d60d670ec752aa5df41c9afc0ee896f9f569253c07b14  /tmp/alley-wind-preview.m4a" | sha256sum -c -
       - name: Validate BGM controller
         run: |
