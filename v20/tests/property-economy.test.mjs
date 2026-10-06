@@ -107,6 +107,11 @@ for(const tileIndex of testIndexes){
   const tile=state.tiles[tileIndex];
   buyer.cash=Math.max(buyer.cash,tile.price+50000);
   assert.equal(engine.buyCurrentProperty(),true,"property purchase should succeed");
+  assert.equal(
+    engine.upgradeProperty(tileIndex),
+    false,
+    "newly purchased property must not be upgradeable on the purchase landing"
+  );
 }
 
 const progress=groupProgress(state,buyer.seat,testGroup);
@@ -118,6 +123,7 @@ assert.equal(rentFor(state,upgradedTile),completeGroupBaseRent,"4-property regio
 
 state.phase="await-roll";
 state.pendingPurchase=null;
+state.pendingUpgrade=null;
 buyer.cash=100000;
 const expectedUpgradeCost=Math.round(upgradedTile.price*0.5);
 assert.equal(upgradeCost(upgradedTile),expectedUpgradeCost,"upgrade cost must equal 50% of property price");
@@ -127,9 +133,29 @@ assert.equal(
   "suggested acquisition offer must equal 125% of current property asset value"
 );
 
-assert.equal(engine.upgradeProperty(testIndexes[0]),true,"LV0 -> LV1 upgrade should succeed");
+assert.equal(
+  engine.upgradeProperty(testIndexes[0]),
+  false,
+  "owned property must not be upgradeable at arbitrary times"
+);
+
+buyer.position=(testIndexes[0]-2+state.tiles.length)%state.tiles.length;
+assert.equal(engine.roll(0,{d1:1,d2:1}),true,"player must be able to land on owned property");
+assert.equal(state.pendingUpgrade,testIndexes[0],"landing on owned property must create an upgrade opportunity");
+assert.equal(engine.upgradeProperty(testIndexes[0]),true,"first return visit should allow LV0 -> LV1");
 assert.equal(upgradedTile.level,1);
-assert.equal(engine.upgradeProperty(testIndexes[0]),true,"LV1 -> LV2 upgrade should succeed");
+assert.equal(state.pendingUpgrade,null,"successful landing upgrade must consume the opportunity");
+assert.equal(
+  engine.upgradeProperty(testIndexes[0]),
+  false,
+  "same landing must not allow an immediate second upgrade"
+);
+
+state.phase="await-roll";
+buyer.position=(testIndexes[0]-2+state.tiles.length)%state.tiles.length;
+assert.equal(engine.roll(0,{d1:1,d2:1}),true,"player must revisit the owned property for another upgrade");
+assert.equal(state.pendingUpgrade,testIndexes[0]);
+assert.equal(engine.upgradeProperty(testIndexes[0]),true,"second return visit should allow LV1 -> LV2");
 assert.equal(upgradedTile.level,MAX_PROPERTY_LEVEL);
 assert.equal(engine.upgradeProperty(testIndexes[0]),false,"upgrading past LV2 must be rejected");
 assert.equal(
