@@ -4622,12 +4622,22 @@ body.entry-pending .app-shell{
 
 /* V20 Alpha 29 — stronger actionable states and smaller central buildings. */
 
+.central-facility::before{
+  content:"";
+  position:absolute;
+  left:-5%;
+  right:-5%;
+  top:-36%;
+  bottom:-5%;
+  z-index:10;
+  background:transparent;
+}
 .central-facility__sign{
   position:absolute;
   left:50%;
   top:9%;
   z-index:7;
-  width:78%;
+  width:74%;
   height:auto;
   display:block;
   object-fit:contain;
@@ -4638,7 +4648,7 @@ body.entry-pending .app-shell{
 }
 .central-facility--bank .central-facility__sign{
   top:8%;
-  width:72%
+  width:70%
 }
 .central-facility:hover .central-facility__sign,
 .central-facility:focus-visible .central-facility__sign{
@@ -4654,11 +4664,11 @@ body.entry-pending .app-shell{
 @media (orientation:landscape) and (max-height:650px) and (max-width:1180px){
   .central-facility__sign{
     top:10%;
-    width:74%
+    width:70%
   }
   .central-facility--bank .central-facility__sign{
     top:9%;
-    width:70%
+    width:68%
   }
   .central-facility__status{top:15%}
   .central-facility--mission{top:20%}
