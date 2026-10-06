@@ -18,6 +18,7 @@ export const NETWORK_ACTION_TYPES=Object.freeze([
   "buy_property",
   "decline_property",
   "upgrade_property",
+  "property_permit_upgrade",
   "decline_upgrade",
   "buy_stock",
   "sell_stock",
@@ -84,6 +85,12 @@ export function normalizeRemoteAction(raw){
   const action={type:raw.type};
 
   if(raw.type==="upgrade_property"){
+    const tileIndex=Math.floor(Number(raw.tileIndex));
+    if(!Number.isFinite(tileIndex)||tileIndex<0||tileIndex>43)return null;
+    action.tileIndex=tileIndex;
+  }
+
+  if(raw.type==="property_permit_upgrade"){
     const tileIndex=Math.floor(Number(raw.tileIndex));
     if(!Number.isFinite(tileIndex)||tileIndex<0||tileIndex>43)return null;
     action.tileIndex=tileIndex;
