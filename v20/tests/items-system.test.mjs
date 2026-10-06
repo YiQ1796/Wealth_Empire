@@ -4,6 +4,14 @@ import{grantItem,inventoryCount,listValidTargets,useItem}from"../js/core/items.j
 import{rentFor}from"../js/core/property-economy.js";
 import{normalizeRemoteAction}from"../js/core/network.js";
 import{GameEngine}from"../js/core/game.js";
+import{CHANCE_EVENTS,FATE_EVENTS}from"../js/data/special-events.js";
+
+const rewardedItems=new Set(
+  [...CHANCE_EVENTS,...FATE_EVENTS]
+    .filter(event=>event.effect?.kind==="grant_item")
+    .map(event=>event.effect.itemId)
+);
+assert.ok(rewardedItems.size>=5,"chance/fate pools must award at least five strategy-item types");
 
 const state=createInitialState();
 state.gameStatus="playing";
@@ -22,6 +30,22 @@ assert.equal(grantItem(state,0,"stock_boost",1).ok,true);
 assert.equal(grantItem(state,0,"stock_drop",1).ok,true);
 assert.equal(grantItem(state,0,"rent_block",1).ok,true);
 assert.equal(inventoryCount(player,"rent_boost"),1);
+
+const overflowState=createInitialState();
+overflowState.players[0].inventory={
+  rent_boost:9,
+  rent_burst:9,
+  remote_dice:9,
+  stock_boost:9,
+  stock_drop:9,
+  rent_block:9,
+  property_guard:9
+};
+const overflowHydrated=hydrateState(JSON.parse(JSON.stringify(overflowState)));
+assert.ok(
+  Object.values(overflowHydrated.players[0].inventory).reduce((sum,count)=>sum+count,0)<=6,
+  "hydration must enforce the total six-item inventory cap"
+);
 
 const baseRent=rentFor(state,state.tiles[1]);
 const rentBoost=useItem(state,0,"rent_boost",{tileIndex:1});
