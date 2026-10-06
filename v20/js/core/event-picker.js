@@ -25,8 +25,14 @@ export function pickEventFromPool(pool,history=[],type,random=Math.random,rareRa
   const categoryVariety=candidates.filter(event=>event.category!==lastCategory);
   if(categoryVariety.length)candidates=categoryVariety;
 
-  const index=Math.floor(normalizedRandom(random)*candidates.length);
-  return candidates[index]??candidates[0]??null;
+  const weights=candidates.map(event=>Math.max(0.01,Number(event.weight)||1));
+  const totalWeight=weights.reduce((sum,weight)=>sum+weight,0);
+  let cursor=normalizedRandom(random)*totalWeight;
+  for(let index=0;index<candidates.length;index++){
+    cursor-=weights[index];
+    if(cursor<0)return candidates[index];
+  }
+  return candidates.at(-1)??candidates[0]??null;
 }
 
 export function appendEventHistory(state,{type,event}){
