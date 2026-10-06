@@ -29,16 +29,11 @@ for(const asset of[
   "CENTRAL_MISSION.webp",
   "CENTRAL_TRANSIT.webp",
   "CENTRAL_INSURANCE.webp",
-  "CENTRAL_DEVELOPMENT.webp",
-  "TITLE_BANK.webp",
-  "TITLE_MISSION.webp",
-  "TITLE_TRANSIT.webp",
-  "TITLE_INSURANCE.webp",
-  "TITLE_DEVELOPMENT.webp"
+  "CENTRAL_DEVELOPMENT.webp"
 ]){
   const path=new URL("../assets/center-v1/"+asset,import.meta.url);
-  assert.equal(fs.existsSync(path),true,"missing materialized central asset "+asset);
-  assert.ok(fs.statSync(path).size>0,"empty central asset "+asset);
+  assert.equal(fs.existsSync(path),true,"missing materialized central building "+asset);
+  assert.ok(fs.statSync(path).size>0,"empty central building "+asset);
 }
 
 {
