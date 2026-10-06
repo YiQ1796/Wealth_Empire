@@ -459,6 +459,8 @@ export class GameEngine{
           property:resolved.property,
           permitDelta:resolved.permitDelta,
           permitsTotal:resolved.permitsTotal,
+          protectionPermitDelta:resolved.protectionPermitDelta,
+          protectionPermitsTotal:resolved.protectionPermitsTotal,
           amount:resolved.amount,
           delta:resolved.delta,
           from:resolved.from,
