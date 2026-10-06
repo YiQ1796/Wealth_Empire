@@ -4227,13 +4227,13 @@ body.entry-pending .app-shell{
 .central-facility-modal__title{
   min-width:0
 }
-.central-facility-modal__title>img{
-  display:block;
-  width:min(300px,68vw);
-  height:auto;
-  max-height:86px;
-  object-fit:contain;
-  object-position:left center
+.central-facility-modal__title>h2{
+  margin:0;
+  color:#18324c;
+  font-size:clamp(22px,2.3vw,34px);
+  font-weight:950;
+  letter-spacing:.02em;
+  line-height:1.08
 }
 .central-facility-modal__title p{
   margin:4px 0 0;
