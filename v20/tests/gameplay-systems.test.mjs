@@ -255,7 +255,7 @@ function withMockRandom(values,callback){
   state.players[0].position=(acquisitionIndex-2+state.tiles.length)%state.tiles.length;
 
   const sellerCashBefore=state.players[1].cash;
-  assert.equal(engine.roll(0,{d1:1,d2:1}),true);
+  assert.equal(withMockRandom([0.5,0],()=>engine.roll(0,{d1:1,d2:1})),true);
   assert.equal(state.players[0].position,acquisitionIndex);
   assert.equal(state.phase,"acquisition","acquisition center must open a real decision phase");
   const option=state.pendingAcquisition.options.find(entry=>entry.tileIndex===targetIndex);
@@ -280,10 +280,13 @@ function withMockRandom(values,callback){
   const engine=new GameEngine(state,()=>{});
   const acquisitionIndex=state.tiles.findIndex(tile=>tile.type==="acquisition");
   state.players[0].position=(acquisitionIndex-2+state.tiles.length)%state.tiles.length;
-  assert.equal(engine.roll(0,{d1:1,d2:1}),true);
+  const cashBefore=state.players[0].cash;
+  assert.equal(withMockRandom([0.5,0],()=>engine.roll(0,{d1:1,d2:1})),true);
   assert.equal(state.phase,"landed","acquisition center without eligible opponent property must not deadlock");
   assert.equal(state.pendingAcquisition,null);
-  assert.equal(state.events[0].kind,"acquisition_empty");
+  assert.equal(state.players[0].cash,cashBefore+600,"empty standard acquisition event should pay market research subsidy");
+  assert.equal(state.events[0].kind,"special_grid");
+  assert.equal(state.events[0].data.fallback,"no_acquisition_target");
 }
 
 {
@@ -387,9 +390,9 @@ function withMockRandom(values,callback){
   const engine=new GameEngine(state,()=>{});
   const auctionIndex=state.tiles.findIndex(tile=>tile.type==="auction");
   state.players[0].position=(auctionIndex-2+state.tiles.length)%state.tiles.length;
-  assert.equal(engine.roll(0,{d1:1,d2:1}),true);
+  assert.equal(withMockRandom([0.5,0],()=>engine.roll(0,{d1:1,d2:1})),true);
   assert.equal(state.phase,"minigame");
-  assert.equal(state.minigame.id,"auction","auction tile must open the auction minigame");
+  assert.equal(state.minigame.id,"auction","auction standard event must open the auction minigame");
 }
 
 assert.deepEqual(
