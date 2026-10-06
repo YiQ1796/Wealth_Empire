@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#eef3f7">
 <title>財富帝國 V20 Alpha 29</title>
-<link rel="stylesheet" href="./styles/app.css?v=alpha29-213">
+<link rel="stylesheet" href="./styles/app.css?v=alpha29-214">
 </head>
 <body class="entry-pending">
 <section id="entryGate" class="entry-gate" aria-label="遊戲模式選擇">
@@ -182,6 +182,22 @@
   </div>
 </dialog>
 
+<dialog id="upgradeDialog" class="purchase-dialog">
+  <div class="purchase-card">
+    <img class="purchase-card__icon" src="./assets/v5/ui/modal/MODAL_PROPERTY_ICON.webp" alt="">
+    <h2 id="upgradeTitle">升級地產？</h2>
+    <p id="upgradeSubtitle">再次走到自己的地產才會出現此選項。</p>
+    <div class="purchase-summary">
+      <div><span>升級費用</span><strong id="upgradePrice">—</strong></div>
+      <div><span>目前現金</span><strong id="upgradeCash">—</strong></div>
+    </div>
+    <div class="purchase-actions">
+      <button id="declineUpgradeButton" class="purchase-button secondary">暫不升級</button>
+      <button id="confirmUpgradeButton" class="purchase-button confirm">升級</button>
+    </div>
+  </div>
+</dialog>
+
 <dialog id="propertyInfoDialog" class="property-info-dialog">
   <div class="property-info-card">
     <header class="property-info-card__header">
@@ -234,7 +250,7 @@
 
     <section class="feature-modal__body">
       <div class="feature-modal__pane" data-feature-panel="property">
-        <div class="feature-heading"><div><h3>我的房產</h3><p>24 塊地產｜8 區域｜最高 LV.2</p></div></div>
+        <div class="feature-heading"><div><h3>我的房產</h3><p>24 塊地產｜8 區域｜最高 LV.2｜一般升級需再次走到自己的地產</p></div></div>
         <div id="propertyRegionSummary" class="region-summary" aria-label="區域完成度"></div>
         <div class="property-section-title">持有地產</div>
         <div id="propertyTabList" class="property-list"></div>
@@ -389,6 +405,6 @@
 </dialog>
 
 <div id="actionToastStack" class="action-toast-stack" aria-live="polite" aria-atomic="false"></div>
-<script type="module" src="./js/main.js?v=alpha29-213"></script>
+<script type="module" src="./js/main.js?v=alpha29-214"></script>
 </body>
 </html>
