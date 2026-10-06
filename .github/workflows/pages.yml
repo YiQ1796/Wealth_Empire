@@ -209,8 +209,8 @@ jobs:
           grep -q '.stock-holding-row{' v20/styles/app.css
           grep -q '.stock-pnl-row{' v20/styles/app.css
           grep -q 'grid-template-columns:repeat(2,minmax(0,1fr))' v20/styles/app.css
-          grep -q 'app.css?v=alpha28-209' v20/index.html
-          grep -q 'main.js?v=alpha28-209' v20/index.html
+          grep -q 'app.css?v=alpha29-210' v20/index.html
+          grep -q 'main.js?v=alpha29-210' v20/index.html
 
           if grep -q 'data-feature="stock"' v20/index.html; then
             echo "Desktop stock market must not return as a shortcut"
@@ -417,10 +417,11 @@ jobs:
           grep -q 'central_development' v20/js/core/network.js
           grep -q 'function renderCentralFacilities' v20/js/main.js
           grep -q 'V20 Alpha 28 — central five facilities' v20/styles/app.css
+          grep -q 'V20 Alpha 29 — stronger actionable states and smaller central buildings' v20/styles/app.css
           test -s v20/assets/center-v1/CENTRAL_BANK.webp
           node --experimental-default-type=module v20/tests/central-features.test.mjs
           node --experimental-default-type=module v20/tests/network-mobile-regression.test.mjs
-          echo "V20 Alpha28 central five facilities, assets and mobile relay PASS"
+          echo "V20 Alpha29 central five facilities, bank plans, assets and mobile relay PASS"
 
       - name: Validate V20 character ownership and contiguous regions
         shell: bash
@@ -504,8 +505,8 @@ jobs:
           grep -q 'Alpha 19 mobile notification correction' v20/styles/app.css
           grep -q 'width:min(68%,560px)' v20/styles/app.css
           grep -q 'grid-template-columns:48px minmax(0,1fr) 78px' v20/styles/app.css
-          grep -q 'app.css?v=alpha28-209' v20/index.html
-          grep -q 'main.js?v=alpha28-209' v20/index.html
+          grep -q 'app.css?v=alpha29-210' v20/index.html
+          grep -q 'main.js?v=alpha29-210' v20/index.html
           echo "V20 phone notification sizing and mobile-art selection PASS"
 
       - name: Validate V20 mobile pass 2 composition
@@ -516,8 +517,8 @@ jobs:
           grep -q 'grid-template-rows:auto auto auto' v20/styles/app.css
           grep -q 'width:min(58%,460px)' v20/styles/app.css
           grep -q 'grid-template-columns:42px minmax(0,1fr) 68px' v20/styles/app.css
-          grep -q 'app.css?v=alpha28-209' v20/index.html
-          grep -q 'main.js?v=alpha28-209' v20/index.html
+          grep -q 'app.css?v=alpha29-210' v20/index.html
+          grep -q 'main.js?v=alpha29-210' v20/index.html
           echo "V20 phone composition pass 2 PASS"
 
       - name: Validate V20 mobile scroll and viewport authority
@@ -532,8 +533,8 @@ jobs:
           grep -q 'function syncPhoneViewportHeight' v20/js/main.js
           grep -q -- '--phone-app-height' v20/js/main.js
           grep -q 'resetScrollPosition()' v20/js/ui/minigame-ui.js
-          grep -q 'app.css?v=alpha28-209' v20/index.html
-          grep -q 'main.js?v=alpha28-209' v20/index.html
+          grep -q 'app.css?v=alpha29-210' v20/index.html
+          grep -q 'main.js?v=alpha29-210' v20/index.html
           node --experimental-default-type=module v20/tests/mobile-responsive.test.mjs
           echo "V20 mobile scroll and first-entry viewport authority PASS"
 
@@ -547,8 +548,8 @@ jobs:
           grep -q 'width:13px' v20/styles/app.css
           grep -q 'height:14px' v20/styles/app.css
           grep -q 'grid-template-rows:repeat(4,minmax(0,1fr))' v20/styles/app.css
-          grep -q 'app.css?v=alpha28-209' v20/index.html
-          grep -q 'main.js?v=alpha28-209' v20/index.html
+          grep -q 'app.css?v=alpha29-210' v20/index.html
+          grep -q 'main.js?v=alpha29-210' v20/index.html
           node --experimental-default-type=module v20/tests/mobile-responsive.test.mjs
           echo "V20 mobile-only pawn/house/HUD fill PASS"
 
@@ -561,8 +562,8 @@ jobs:
           grep -q 'tile__tokens:has(.pawn-token:nth-child(3))' v20/styles/app.css
           grep -q 'function settlePhoneLandscapeLayout' v20/js/main.js
           grep -q 'visualViewport?.addEventListener("resize",settlePhoneLandscapeLayout)' v20/js/main.js
-          grep -q 'app.css?v=alpha28-209' v20/index.html
-          grep -q 'main.js?v=alpha28-209' v20/index.html
+          grep -q 'app.css?v=alpha29-210' v20/index.html
+          grep -q 'main.js?v=alpha29-210' v20/index.html
           echo "V20 first-entry phone landscape stabilization PASS"
 
       - name: Validate V20 property tile info card
