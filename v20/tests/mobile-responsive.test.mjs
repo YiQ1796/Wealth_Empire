@@ -11,8 +11,8 @@ assert.match(html,/class="mobile-primary-actions"/);
 assert.match(html,/id="mobileRollButton"/);
 assert.match(html,/data-feature="market"/);
 assert.match(html,/id="stockMarketMobileGrid"/);
-assert.match(html,/app\.css\?v=alpha32-219/);
-assert.match(html,/main\.js\?v=alpha32-219/);
+assert.match(html,/app\.css\?v=alpha32-220/);
+assert.match(html,/main\.js\?v=alpha32-220/);
 
 assert.match(css,/V20 Alpha 19 — phone landscape authority/);
 assert.match(css,/@media \(orientation:landscape\) and \(max-height:650px\) and \(max-width:1180px\)/);
@@ -94,3 +94,11 @@ assert.match(css,/grid-template-columns:minmax\(0,1fr\) clamp\(320px,22vw,390px\
 assert.match(css,/Network dialog: keep room information readable on short mobile landscape screens/);
 
 console.log("V20 Alpha 31 central/mobile layout regression PASS");
+
+assert.match(css,/V20 Alpha 32\.2 — single-surface notifications/);
+assert.match(css,/\.action-toast__card-bg,[\s\S]*?display:none!important/);
+assert.match(css,/\.action-toast\.leaving/);
+assert.match(main,/function isLocalRoomHost/);
+assert.match(main,/function canStartRoomGame/);
+assert.match(main,/只有房主可以開始遊戲/);
+console.log("V20 Alpha32.2 lobby + notification hotfix regression PASS");
