@@ -26,4 +26,4 @@ assert.match(css,/\.action-toast\.leaving/);
 assert.match(css,/\.action-toast__card-bg,[\s\S]*?display:none!important/);
 assert.doesNotMatch(css,/V20 Alpha 29\.2 — phone notice seam mask/);
 
-console.log("V20 Alpha 32.2 UI hotfix regression PASS");
+console.log("V20 Alpha 32.3 UI hotfix regression PASS");
