@@ -19,6 +19,7 @@ export const NETWORK_ACTION_TYPES=Object.freeze([
   "decline_property",
   "upgrade_property",
   "property_permit_upgrade",
+  "property_protection_apply",
   "decline_upgrade",
   "buy_stock",
   "sell_stock",
@@ -90,7 +91,7 @@ export function normalizeRemoteAction(raw){
     action.tileIndex=tileIndex;
   }
 
-  if(raw.type==="property_permit_upgrade"){
+  if(raw.type==="property_permit_upgrade"||raw.type==="property_protection_apply"){
     const tileIndex=Math.floor(Number(raw.tileIndex));
     if(!Number.isFinite(tileIndex)||tileIndex<0||tileIndex>43)return null;
     action.tileIndex=tileIndex;
