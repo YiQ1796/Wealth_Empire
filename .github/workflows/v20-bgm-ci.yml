@@ -42,7 +42,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          grep -q '財富帝國 V20 Alpha 32.1' v20/index.html
+          grep -q '財富帝國 V20 Alpha 32.2' v20/index.html
           grep -q 'app.css?v=alpha32-220' v20/index.html
           grep -q 'main.js?v=alpha32-220' v20/index.html
           grep -q '巷仔口的風' v20/index.html
