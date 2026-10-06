@@ -13,6 +13,7 @@ export const CIVIC_EVENT_POOLS=Object.freeze({
     {id:"court_settlement",name:"和解金入帳",description:"訴訟和解，收到一筆賠償金。",rarity:"common",category:"cash_gain",effect:{kind:"cash",amount:750}},
     {id:"court_fine",name:"行政裁罰",description:"違規案件成立，支付裁罰金。",rarity:"common",category:"cash_loss",effect:{kind:"cash",amount:-650}},
     {id:"court_extended",name:"延長保全",description:"法院延長財產保全期間。",rarity:"common",category:"shield",effect:{kind:"court_shield",rounds:2}},
+    {id:"court_title_guard",name:"產權保全券",description:"取得一張產權保全券，可到「我的房產」指定保護一塊地產。",rarity:"common",category:"property_guard",effect:{kind:"grant_property_protection",count:1}},
     {id:"court_rare_permit",name:"建案爭議勝訴",description:"建案訴訟勝訴，獲得一張建案許可。",rarity:"rare",category:"property_permit",effect:{kind:"grant_permit",count:1}},
     {id:"court_rare_award",name:"高額賠償",description:"重大案件勝訴，收到高額賠償。",rarity:"rare",category:"cash_gain",effect:{kind:"cash",amount:1900}}
   ]),
@@ -37,8 +38,27 @@ export const CIVIC_EVENT_POOLS=Object.freeze({
     {id:"urban_redeploy",name:"重新部署",description:"可選擇一塊自己持有的地產作為新的棋盤位置。",rarity:"common",category:"movement",effect:{kind:"urban_redeploy"}},
     {id:"urban_subsidy",name:"更新補助",description:"取得城市更新補助金。",rarity:"common",category:"cash_gain",effect:{kind:"cash",amount:800}},
     {id:"urban_permit",name:"建案許可",description:"取得一張建案許可，可在「我的房產」指定升級。",rarity:"common",category:"property_permit",effect:{kind:"grant_permit",count:1}},
+    {id:"urban_title_guard",name:"產權更新保護",description:"取得一張產權保全券，可在「我的房產」指定保護地產。",rarity:"common",category:"property_guard",effect:{kind:"grant_property_protection",count:1}},
     {id:"urban_planning",name:"規劃獎勵",description:"城市規劃案通過，獲得一筆獎勵。",rarity:"common",category:"cash_gain",effect:{kind:"cash",amount:550}},
     {id:"urban_rare_upgrade",name:"重點改建區",description:"隨機一塊未滿級地產免費升級 1 級。",rarity:"rare",category:"property_upgrade",effect:{kind:"random_upgrade",fallbackAmount:1600}},
     {id:"urban_rare_permits",name:"重大建設核准",description:"一次取得兩張建案許可。",rarity:"rare",category:"property_permit",effect:{kind:"grant_permit",count:2}}
+  ]),
+  acquisition:Object.freeze([
+    {id:"acquisition_standard",name:"正常收購案",description:"本次開放正常強制收購流程。",rarity:"common",category:"acquisition",effect:{kind:"acquisition_offer"}},
+    {id:"acquisition_broker_rebate",name:"仲介回饋",description:"收購中心返還一筆仲介服務回饋。",rarity:"common",category:"cash_gain",effect:{kind:"cash",amount:650}},
+    {id:"acquisition_due_diligence",name:"盡職調查費",description:"支付本次資產查核與估值費用。",rarity:"common",category:"cash_loss",effect:{kind:"cash",amount:-450}},
+    {id:"acquisition_permit",name:"整合開發許可",description:"取得一張建案許可，可到「我的房產」指定升級。",rarity:"common",category:"property_permit",effect:{kind:"grant_permit",count:1}},
+    {id:"acquisition_guard",name:"產權顧問方案",description:"取得一張產權保全券，可到「我的房產」指定保護地產。",rarity:"common",category:"property_guard",effect:{kind:"grant_property_protection",count:1}},
+    {id:"acquisition_rare_upgrade",name:"併購重整成功",description:"隨機一塊自己未滿級地產免費升級 1 級。",rarity:"rare",category:"property_upgrade",effect:{kind:"random_upgrade",fallbackAmount:1700}},
+    {id:"acquisition_rare_bonus",name:"併購顧問紅利",description:"重大交易案結案，獲得一筆顧問紅利。",rarity:"rare",category:"cash_gain",effect:{kind:"cash",amount:2100}}
+  ]),
+  auction:Object.freeze([
+    {id:"auction_standard",name:"公開競標",description:"進入地產拍賣挑戰，由四位玩家一起暗標競爭。",rarity:"common",category:"auction",effect:{kind:"auction_game"}},
+    {id:"auction_commission",name:"拍賣佣金回饋",description:"拍賣行返還一筆成交佣金。",rarity:"common",category:"cash_gain",effect:{kind:"cash",amount:700}},
+    {id:"auction_listing_fee",name:"委託上架費",description:"支付一筆拍賣上架與鑑價費用。",rarity:"common",category:"cash_loss",effect:{kind:"cash",amount:-500}},
+    {id:"auction_permit",name:"建案標售券",description:"取得一張建案許可，可在「我的房產」指定升級。",rarity:"common",category:"property_permit",effect:{kind:"grant_permit",count:1}},
+    {id:"auction_guard",name:"產權保全標",description:"取得一張產權保全券，可在「我的房產」指定保護地產。",rarity:"common",category:"property_guard",effect:{kind:"grant_property_protection",count:1}},
+    {id:"auction_rare_upgrade",name:"珍稀改建標案",description:"意外拍得改建權，隨機一塊未滿級地產免費升級 1 級。",rarity:"rare",category:"property_upgrade",effect:{kind:"random_upgrade",fallbackAmount:1800}},
+    {id:"auction_rare_windfall",name:"收藏品高價成交",description:"珍稀標的超預期成交，獲得一筆收益。",rarity:"rare",category:"cash_gain",effect:{kind:"cash",amount:2200}}
   ])
 });
