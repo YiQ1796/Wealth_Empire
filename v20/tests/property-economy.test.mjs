@@ -170,6 +170,18 @@ assert.equal(
   true,
   "property below LV2 must remain eligible for forced acquisition"
 );
+state.tiles[normalAcquireIndex].acquisitionProtectedUntilRound=state.round+1;
+assert.equal(
+  canForceAcquireProperty(state,normalAcquireIndex,1),
+  false,
+  "property-specific protection must block forced acquisition"
+);
+state.tiles[normalAcquireIndex].acquisitionProtectedUntilRound=0;
+assert.equal(
+  canForceAcquireProperty(state,normalAcquireIndex,1),
+  true,
+  "property becomes acquirable again after protection is cleared/expired"
+);
 const transfer=transferPropertyOwnership(state,normalAcquireIndex,1);
 assert.equal(transfer.ok,true);
 assert.equal(state.tiles[normalAcquireIndex].owner,1);
