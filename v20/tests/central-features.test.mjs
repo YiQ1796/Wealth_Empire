@@ -36,16 +36,23 @@ for(const asset of[
   assert.ok(fs.statSync(path).size>0,"empty central building "+asset);
 }
 
-{
+assert.deepEqual(
+  CENTRAL_TEST_TUNING.bankPlans.map(plan=>[plan.principal,plan.returnAmount]),
+  [[5000,6000],[10000,12000],[20000,23000]]
+);
+
+for(const plan of CENTRAL_TEST_TUNING.bankPlans){
   const state=createInitialState();
   const engine=new GameEngine(state,()=>{});
   const player=state.players[0];
   const cashBefore=player.cash;
 
   assert.equal(centralFacilityStatus(state,0,"bank"),"ready");
-  assert.equal(engine.centralBankDeposit(0),true);
-  assert.equal(player.cash,cashBefore-CENTRAL_TEST_TUNING.bankPrincipal);
+  assert.equal(engine.centralBankDeposit(0,plan.principal),true);
+  assert.equal(player.cash,cashBefore-plan.principal);
   assert.ok(player.centralBankDeposit);
+  assert.equal(player.centralBankDeposit.principal,plan.principal);
+  assert.equal(player.centralBankDeposit.returnAmount,plan.returnAmount);
   assert.equal(player.centralBankDeposit.maturesRound,state.round+CENTRAL_TEST_TUNING.bankRounds);
 
   state.round=player.centralBankDeposit.maturesRound;
@@ -54,7 +61,7 @@ for(const asset of[
   assert.equal(player.centralBankDeposit,null);
   assert.equal(
     player.cash,
-    cashBefore-CENTRAL_TEST_TUNING.bankPrincipal+CENTRAL_TEST_TUNING.bankReturn
+    cashBefore-plan.principal+plan.returnAmount
   );
 }
 
@@ -123,7 +130,19 @@ for(const asset of[
   assert.ok(state.events.some(event=>event.kind==="central_development"));
 }
 
-assert.deepEqual(normalizeRemoteAction({type:"central_bank_deposit"}),{type:"central_bank_deposit"});
+assert.deepEqual(
+  normalizeRemoteAction({type:"central_bank_deposit",principal:5000}),
+  {type:"central_bank_deposit",principal:5000}
+);
+assert.deepEqual(
+  normalizeRemoteAction({type:"central_bank_deposit",principal:10000}),
+  {type:"central_bank_deposit",principal:10000}
+);
+assert.deepEqual(
+  normalizeRemoteAction({type:"central_bank_deposit",principal:20000}),
+  {type:"central_bank_deposit",principal:20000}
+);
+assert.equal(normalizeRemoteAction({type:"central_bank_deposit",principal:7000}),null);
 assert.deepEqual(normalizeRemoteAction({type:"central_insurance"}),{type:"central_insurance"});
 assert.deepEqual(normalizeRemoteAction({type:"central_transit",distance:6}),{type:"central_transit",distance:6});
 assert.equal(normalizeRemoteAction({type:"central_transit",distance:5}),null);
@@ -132,4 +151,4 @@ assert.deepEqual(
   {type:"central_mission_accept",missionId:"buy_property"}
 );
 
-console.log("V20 Alpha 28 central five facilities test PASS");
+console.log("V20 Alpha 29 central five facilities test PASS");
