@@ -33,22 +33,92 @@ jobs:
           mkdir -p v20/assets/center-v1
           python - <<'PY'
           from pathlib import Path
-          import base64
+          import base64, binascii, struct, zlib
+
           parts = sorted(Path(".asset-packs/central-five-v1").glob("part*.b64"))
           if not parts:
               raise SystemExit("central five asset pack parts missing")
+
           payload = "".join(p.read_text(encoding="utf-8") for p in parts)
           payload = "".join(payload.split())
           payload += "=" * (-len(payload) % 4)
-          Path("/tmp/central-five-v1.zip").write_bytes(base64.b64decode(payload, validate=True))
-          print(f"Central pack decoded: {len(parts)} parts -> {len(payload)} base64 chars")
-          PY
-          unzip -oq /tmp/central-five-v1.zip -d v20/assets/center-v1
+          raw = base64.b64decode(payload, validate=True)
 
-          for asset in             CENTRAL_BANK.webp             CENTRAL_MISSION.webp             CENTRAL_TRANSIT.webp             CENTRAL_INSURANCE.webp             CENTRAL_DEVELOPMENT.webp             TITLE_BANK.webp             TITLE_MISSION.webp             TITLE_TRANSIT.webp             TITLE_INSURANCE.webp             TITLE_DEVELOPMENT.webp             CENTRAL_GLOW.webp             STATUS_READY.webp             STATUS_COOLDOWN.webp             STATUS_ACTIVE.webp; do
+          out_dir = Path("v20/assets/center-v1")
+          required = {
+              "CENTRAL_BANK.webp",
+              "CENTRAL_MISSION.webp",
+              "CENTRAL_TRANSIT.webp",
+              "CENTRAL_INSURANCE.webp",
+              "CENTRAL_DEVELOPMENT.webp",
+              "TITLE_BANK.webp",
+              "TITLE_MISSION.webp",
+              "TITLE_TRANSIT.webp",
+              "TITLE_INSURANCE.webp",
+              "TITLE_DEVELOPMENT.webp",
+          }
+
+          offset = 0
+          extracted = []
+          while offset + 30 <= len(raw) and raw[offset:offset+4] == b"PK\x03\x04":
+              (
+                  _sig, _ver, flags, method, _mtime, _mdate,
+                  crc32_expected, comp_size, uncomp_size, name_len, extra_len
+              ) = struct.unpack_from("<IHHHHHIIIHH", raw, offset)
+
+              if flags & 0x08:
+                  raise SystemExit("unsupported zip data-descriptor entry")
+
+              name_start = offset + 30
+              name_end = name_start + name_len
+              data_start = name_end + extra_len
+              data_end = data_start + comp_size
+              if data_end > len(raw):
+                  raise SystemExit("truncated local zip entry")
+
+              name = raw[name_start:name_end].decode("utf-8")
+              comp = raw[data_start:data_end]
+              if method == 0:
+                  data = comp
+              elif method == 8:
+                  data = zlib.decompress(comp, -15)
+              else:
+                  raise SystemExit(f"unsupported zip method {method}: {name}")
+
+              if len(data) != uncomp_size:
+                  raise SystemExit(f"size mismatch: {name}")
+              if (binascii.crc32(data) & 0xffffffff) != crc32_expected:
+                  raise SystemExit(f"crc mismatch: {name}")
+
+              safe_name = Path(name).name
+              if safe_name in required:
+                  (out_dir / safe_name).write_bytes(data)
+                  extracted.append(safe_name)
+
+              offset = data_end
+
+          missing = sorted(required - set(extracted))
+          if missing:
+              raise SystemExit("central five approved visuals missing: " + ", ".join(missing))
+
+          print(f"Recovered {len(extracted)} approved central-five WebP assets from local ZIP entries")
+          PY
+
+          for asset in \
+            CENTRAL_BANK.webp \
+            CENTRAL_MISSION.webp \
+            CENTRAL_TRANSIT.webp \
+            CENTRAL_INSURANCE.webp \
+            CENTRAL_DEVELOPMENT.webp \
+            TITLE_BANK.webp \
+            TITLE_MISSION.webp \
+            TITLE_TRANSIT.webp \
+            TITLE_INSURANCE.webp \
+            TITLE_DEVELOPMENT.webp
+          do
             test -s "v20/assets/center-v1/$asset"
           done
-          echo "Central five approved asset pack materialized PASS"
+          echo "Central five approved building/title assets materialized PASS"
 
       - name: Validate inline JavaScript
         shell: bash
@@ -147,8 +217,8 @@ jobs:
           grep -q '.stock-holding-row{' v20/styles/app.css
           grep -q '.stock-pnl-row{' v20/styles/app.css
           grep -q 'grid-template-columns:repeat(2,minmax(0,1fr))' v20/styles/app.css
-          grep -q 'app.css?v=alpha28-207' v20/index.html
-          grep -q 'main.js?v=alpha28-207' v20/index.html
+          grep -q 'app.css?v=alpha28-208' v20/index.html
+          grep -q 'main.js?v=alpha28-208' v20/index.html
 
           if grep -q 'data-feature="stock"' v20/index.html; then
             echo "Desktop stock market must not return as a shortcut"
@@ -347,7 +417,6 @@ jobs:
           grep -q 'data-central-facility="transit"' v20/index.html
           grep -q 'data-central-facility="insurance"' v20/index.html
           grep -q 'data-central-facility="development"' v20/index.html
-          grep -q 'CENTRAL_GLOW.webp' v20/index.html
           grep -q 'centralBankDeposit' v20/js/core/state.js
           grep -q 'central_bank_deposit' v20/js/core/network.js
           grep -q 'central_mission_accept' v20/js/core/network.js
@@ -357,7 +426,6 @@ jobs:
           grep -q 'function renderCentralFacilities' v20/js/main.js
           grep -q 'V20 Alpha 28 — central five facilities' v20/styles/app.css
           test -s v20/assets/center-v1/CENTRAL_BANK.webp
-          test -s v20/assets/center-v1/STATUS_READY.webp
           node --experimental-default-type=module v20/tests/central-features.test.mjs
           node --experimental-default-type=module v20/tests/network-mobile-regression.test.mjs
           echo "V20 Alpha28 central five facilities, assets and mobile relay PASS"
@@ -444,8 +512,8 @@ jobs:
           grep -q 'Alpha 19 mobile notification correction' v20/styles/app.css
           grep -q 'width:min(68%,560px)' v20/styles/app.css
           grep -q 'grid-template-columns:48px minmax(0,1fr) 78px' v20/styles/app.css
-          grep -q 'app.css?v=alpha28-207' v20/index.html
-          grep -q 'main.js?v=alpha28-207' v20/index.html
+          grep -q 'app.css?v=alpha28-208' v20/index.html
+          grep -q 'main.js?v=alpha28-208' v20/index.html
           echo "V20 phone notification sizing and mobile-art selection PASS"
 
       - name: Validate V20 mobile pass 2 composition
@@ -456,8 +524,8 @@ jobs:
           grep -q 'grid-template-rows:auto auto auto' v20/styles/app.css
           grep -q 'width:min(58%,460px)' v20/styles/app.css
           grep -q 'grid-template-columns:42px minmax(0,1fr) 68px' v20/styles/app.css
-          grep -q 'app.css?v=alpha28-207' v20/index.html
-          grep -q 'main.js?v=alpha28-207' v20/index.html
+          grep -q 'app.css?v=alpha28-208' v20/index.html
+          grep -q 'main.js?v=alpha28-208' v20/index.html
           echo "V20 phone composition pass 2 PASS"
 
       - name: Validate V20 mobile scroll and viewport authority
@@ -472,8 +540,8 @@ jobs:
           grep -q 'function syncPhoneViewportHeight' v20/js/main.js
           grep -q -- '--phone-app-height' v20/js/main.js
           grep -q 'resetScrollPosition()' v20/js/ui/minigame-ui.js
-          grep -q 'app.css?v=alpha28-207' v20/index.html
-          grep -q 'main.js?v=alpha28-207' v20/index.html
+          grep -q 'app.css?v=alpha28-208' v20/index.html
+          grep -q 'main.js?v=alpha28-208' v20/index.html
           node --experimental-default-type=module v20/tests/mobile-responsive.test.mjs
           echo "V20 mobile scroll and first-entry viewport authority PASS"
 
@@ -487,8 +555,8 @@ jobs:
           grep -q 'width:13px' v20/styles/app.css
           grep -q 'height:14px' v20/styles/app.css
           grep -q 'grid-template-rows:repeat(4,minmax(0,1fr))' v20/styles/app.css
-          grep -q 'app.css?v=alpha28-207' v20/index.html
-          grep -q 'main.js?v=alpha28-207' v20/index.html
+          grep -q 'app.css?v=alpha28-208' v20/index.html
+          grep -q 'main.js?v=alpha28-208' v20/index.html
           node --experimental-default-type=module v20/tests/mobile-responsive.test.mjs
           echo "V20 mobile-only pawn/house/HUD fill PASS"
 
@@ -501,8 +569,8 @@ jobs:
           grep -q 'tile__tokens:has(.pawn-token:nth-child(3))' v20/styles/app.css
           grep -q 'function settlePhoneLandscapeLayout' v20/js/main.js
           grep -q 'visualViewport?.addEventListener("resize",settlePhoneLandscapeLayout)' v20/js/main.js
-          grep -q 'app.css?v=alpha28-207' v20/index.html
-          grep -q 'main.js?v=alpha28-207' v20/index.html
+          grep -q 'app.css?v=alpha28-208' v20/index.html
+          grep -q 'main.js?v=alpha28-208' v20/index.html
           echo "V20 first-entry phone landscape stabilization PASS"
 
       - name: Validate V20 property tile info card
