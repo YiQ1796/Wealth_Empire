@@ -8,12 +8,12 @@ const controller=readFileSync(new URL("../js/ui/bgm-controller.js",import.meta.u
 assert.match(html,/id="desktopBgmControls"/);
 assert.match(html,/id="bgmMuteButton"/);
 assert.match(html,/id="bgmVolumeSlider"/);
-assert.match(html,/alpha32-218/);
+assert.match(html,/alpha32-219/);
 assert.match(css,/V20 Alpha 32\.1 — local BGM preview controls/);
 assert.match(css,/@media \(hover:none\) and \(pointer:coarse\)/);
 assert.match(css,/\.desktop-bgm-controls\{display:none!important\}/);
 assert.match(main,/initBgmController/);
-assert.match(controller,/alley-wind-preview\.m4a\?v=alpha32-218/);
+assert.match(controller,/alley-wind-preview\.m4a\?v=alpha32-219/);
 assert.match(controller,/audio\.loop=true/);
 assert.match(controller,/audio\.preload="none"/);
 assert.match(controller,/document\.addEventListener\("pointerdown",tryStart,true\)/);
