@@ -31,6 +31,7 @@ export function createPlayer(seat,name,kind="ai"){
     centralTransitUsedRound:0,
     centralDevelopmentUsedRound:0,
     developmentPermits:0,
+    propertyProtectionPermits:0,
     bankrupt:false
   };
 }
@@ -122,11 +123,19 @@ export function hydrateState(raw){
       rentInsuranceUsedRound:Math.max(0,Number(saved.rentInsuranceUsedRound)||0),
       centralTransitUsedRound:Math.max(0,Number(saved.centralTransitUsedRound)||0),
       centralDevelopmentUsedRound:Math.max(0,Number(saved.centralDevelopmentUsedRound)||0),
-      developmentPermits:Math.max(0,Math.min(3,Math.floor(Number(saved.developmentPermits)||0)))
+      developmentPermits:Math.max(0,Math.min(3,Math.floor(Number(saved.developmentPermits)||0))),
+      propertyProtectionPermits:Math.max(0,Math.min(2,Math.floor(Number(saved.propertyProtectionPermits)||0)))
     };
   });
 
-  state.tiles=fallback.tiles.map((base,index)=>({...base,...(raw.tiles?.[index]??{})}));
+  state.tiles=fallback.tiles.map((base,index)=>{
+    const saved=raw.tiles?.[index]??{};
+    return{
+      ...base,
+      ...saved,
+      acquisitionProtectedUntilRound:Math.max(0,Number(saved.acquisitionProtectedUntilRound)||0)
+    };
+  });
   state.market=raw.market??createInitialMarket();
   state.events=Array.isArray(raw.events)?raw.events:fallback.events;
   state.minigameHistory=Array.isArray(raw.minigameHistory)?raw.minigameHistory:[];
