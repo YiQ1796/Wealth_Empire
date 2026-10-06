@@ -4752,3 +4752,118 @@ body.entry-pending .app-shell{
   background:#e7f6ee;
   color:#23724f!important
 }
+
+
+/* V20 Alpha 30 — event-driven property operations and rare events. */
+.property-event-actions{
+  margin:0 0 8px
+}
+.property-event-card{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:9px 10px;
+  border:1px solid #d8e3ec;
+  border-radius:11px;
+  background:#f7fafc
+}
+.property-event-card>div{
+  min-width:0
+}
+.property-event-card strong{
+  display:block;
+  color:#29465e;
+  font-size:13px
+}
+.property-event-card small{
+  display:block;
+  margin-top:2px;
+  color:#6f8192;
+  font-size:9px;
+  font-weight:800;
+  line-height:1.35
+}
+.property-event-card>span{
+  flex:0 0 auto;
+  padding:5px 8px;
+  border-radius:999px;
+  background:#e8eef4;
+  color:#647587;
+  font-size:9px;
+  font-weight:1000
+}
+.property-event-card.active{
+  border-color:#d7ad48;
+  background:#fff9e8;
+  box-shadow:0 0 0 2px rgba(217,171,62,.08) inset
+}
+.property-event-card.active strong{color:#8b6112}
+.property-event-card.active>span{
+  background:#1f846b;
+  color:#fff
+}
+.property-row__actions{
+  display:grid;
+  gap:5px;
+  justify-items:stretch;
+  min-width:116px
+}
+.property-permit-upgrade{
+  min-width:104px;
+  border:1px solid #166c5a;
+  border-radius:9px;
+  padding:7px 8px;
+  background:#1f846b;
+  color:#fff;
+  font-size:10px;
+  font-weight:1000;
+  cursor:pointer
+}
+.property-permit-upgrade:hover:not(:disabled){background:#176e5b}
+.property-permit-upgrade:disabled{
+  border-color:#d8e0e8;
+  background:#edf2f6;
+  color:#8796a4;
+  cursor:not-allowed
+}
+.feature-tab,
+.mobile-primary-action{
+  position:relative
+}
+.feature-tab.has-property-action,
+.mobile-primary-action.has-property-action{
+  border-color:#d6a62f!important;
+  box-shadow:0 0 0 2px rgba(226,177,57,.16) inset,0 0 12px rgba(226,177,57,.22)
+}
+.feature-tab.has-property-action::after,
+.mobile-primary-action.has-property-action::after{
+  content:attr(data-property-action-count);
+  position:absolute;
+  top:2px;
+  right:4px;
+  min-width:16px;
+  height:16px;
+  padding:0 4px;
+  display:grid;
+  place-items:center;
+  border-radius:999px;
+  background:#e3a91f;
+  color:#fff;
+  font-size:9px;
+  font-weight:1000;
+  line-height:1
+}
+@media (orientation:landscape) and (max-height:650px) and (max-width:1180px){
+  .property-event-card{
+    padding:6px 8px
+  }
+  .property-event-card strong{font-size:11px}
+  .property-event-card small{font-size:8px}
+  .property-row__actions{min-width:98px}
+  .property-permit-upgrade,
+  .property-upgrade--status{
+    min-width:92px!important;
+    font-size:9px
+  }
+}
