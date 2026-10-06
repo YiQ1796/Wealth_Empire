@@ -40,7 +40,7 @@ jobs:
           grep -q 'grant_item' v20/js/core/special-events.js
           grep -q 'id="itemInventoryList"' v20/index.html
           grep -q 'id="itemPromptDialog"' v20/index.html
-          grep -q 'alpha32-220' v20/index.html
+          grep -q 'alpha32-221' v20/index.html
           node --experimental-default-type=module v20/tests/items-system.test.mjs
 
       - name: Run affected regressions
