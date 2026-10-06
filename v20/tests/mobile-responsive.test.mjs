@@ -11,8 +11,8 @@ assert.match(html,/class="mobile-primary-actions"/);
 assert.match(html,/id="mobileRollButton"/);
 assert.match(html,/data-feature="market"/);
 assert.match(html,/id="stockMarketMobileGrid"/);
-assert.match(html,/app\.css\?v=alpha28-209/);
-assert.match(html,/main\.js\?v=alpha28-209/);
+assert.match(html,/app\.css\?v=alpha29-210/);
+assert.match(html,/main\.js\?v=alpha29-210/);
 
 assert.match(css,/V20 Alpha 19 — phone landscape authority/);
 assert.match(css,/@media \(orientation:landscape\) and \(max-height:650px\) and \(max-width:1180px\)/);
@@ -85,8 +85,9 @@ assert.match(html,/data-central-facility="insurance"/);
 assert.match(html,/data-central-facility="development"/);
 assert.doesNotMatch(html,/都會核心/);
 assert.match(css,/V20 Alpha 28 — central five facilities/);
+assert.match(css,/V20 Alpha 29 — stronger actionable states and smaller central buildings/);
 assert.match(css,/width:100vw;[\s\S]*?padding:2px/);
 assert.match(css,/grid-template-columns:minmax\(0,1fr\) clamp\(320px,22vw,390px\)/);
 assert.match(css,/Network dialog: keep room information readable on short mobile landscape screens/);
 
-console.log("V20 Alpha 28 central/mobile layout regression PASS");
+console.log("V20 Alpha 29 central/mobile layout regression PASS");
