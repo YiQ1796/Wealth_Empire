@@ -400,20 +400,18 @@ jobs:
           grep -q 'name:"高低骰對決"' v20/js/data/minigames.js
           grep -q 'randomEligible:false' v20/js/data/minigames.js
           grep -q 'highlow:()=>this.startHighLow(session)' v20/js/ui/minigame-ui.js
-          grep -q 'applyTaxOffice' v20/js/core/game.js
-          grep -q 'applyCourt' v20/js/core/game.js
-          grep -q 'applyHospital' v20/js/core/game.js
-          grep -q 'applyMarketEvent' v20/js/core/game.js
+          grep -q 'resolveCivicEvent' v20/js/core/game.js
+          grep -q 'CIVIC_EVENT_POOLS' v20/js/data/civic-events.js
           grep -q 'state.phase="urban"' v20/js/core/game.js
           grep -q 'useUrban(destinationIndex' v20/js/core/game.js
           grep -q '"urban_move"' v20/js/core/network.js
           grep -q '"urban_skip"' v20/js/core/network.js
-          grep -q 'taxEventShield' v20/js/core/special-events.js
-          grep -q 'medicalMoveShield' v20/js/core/special-events.js
-          grep -q 'courtShieldUntilRound' v20/js/core/property-economy.js
+          grep -q 'taxEventShield' v20/js/core/civic-specials.js
+          grep -q 'medicalMoveShield' v20/js/core/civic-specials.js
+          grep -q 'courtShieldUntilRound' v20/js/core/civic-specials.js
           grep -q 'V20 Alpha 27 — remaining special-grid completion' v20/styles/app.css
           node --experimental-default-type=module v20/tests/gameplay-systems.test.mjs
-          echo "V20 Alpha27 high-low, tax, court, hospital, market and urban special grids PASS"
+          echo "V20 Alpha30 high-low and varied civic special grids PASS"
 
       - name: Validate V20 central five facilities
         shell: bash
