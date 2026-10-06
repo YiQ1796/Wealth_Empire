@@ -224,8 +224,8 @@ jobs:
           grep -q '.stock-holding-row{' v20/styles/app.css
           grep -q '.stock-pnl-row{' v20/styles/app.css
           grep -q 'grid-template-columns:repeat(2,minmax(0,1fr))' v20/styles/app.css
-          grep -q 'app.css?v=alpha32-217' v20/index.html
-          grep -q 'main.js?v=alpha32-217' v20/index.html
+          grep -q 'app.css?v=alpha32-219' v20/index.html
+          grep -q 'main.js?v=alpha32-219' v20/index.html
 
           if grep -q 'data-feature="stock"' v20/index.html; then
             echo "Desktop stock market must not return as a shortcut"
@@ -528,8 +528,8 @@ jobs:
           grep -q 'Alpha 19 mobile notification correction' v20/styles/app.css
           grep -q 'width:min(68%,560px)' v20/styles/app.css
           grep -q 'grid-template-columns:48px minmax(0,1fr) 78px' v20/styles/app.css
-          grep -q 'app.css?v=alpha32-217' v20/index.html
-          grep -q 'main.js?v=alpha32-217' v20/index.html
+          grep -q 'app.css?v=alpha32-219' v20/index.html
+          grep -q 'main.js?v=alpha32-219' v20/index.html
           echo "V20 phone notification sizing and mobile-art selection PASS"
 
       - name: Validate V20 mobile pass 2 composition
@@ -540,8 +540,8 @@ jobs:
           grep -q 'grid-template-rows:auto auto auto' v20/styles/app.css
           grep -q 'width:min(58%,460px)' v20/styles/app.css
           grep -q 'grid-template-columns:42px minmax(0,1fr) 68px' v20/styles/app.css
-          grep -q 'app.css?v=alpha32-217' v20/index.html
-          grep -q 'main.js?v=alpha32-217' v20/index.html
+          grep -q 'app.css?v=alpha32-219' v20/index.html
+          grep -q 'main.js?v=alpha32-219' v20/index.html
           echo "V20 phone composition pass 2 PASS"
 
       - name: Validate V20 mobile scroll and viewport authority
@@ -556,8 +556,8 @@ jobs:
           grep -q 'function syncPhoneViewportHeight' v20/js/main.js
           grep -q -- '--phone-app-height' v20/js/main.js
           grep -q 'resetScrollPosition()' v20/js/ui/minigame-ui.js
-          grep -q 'app.css?v=alpha32-217' v20/index.html
-          grep -q 'main.js?v=alpha32-217' v20/index.html
+          grep -q 'app.css?v=alpha32-219' v20/index.html
+          grep -q 'main.js?v=alpha32-219' v20/index.html
           node --experimental-default-type=module v20/tests/mobile-responsive.test.mjs
           echo "V20 mobile scroll and first-entry viewport authority PASS"
 
@@ -571,8 +571,8 @@ jobs:
           grep -q 'width:13px' v20/styles/app.css
           grep -q 'height:14px' v20/styles/app.css
           grep -q 'grid-template-rows:repeat(4,minmax(0,1fr))' v20/styles/app.css
-          grep -q 'app.css?v=alpha32-217' v20/index.html
-          grep -q 'main.js?v=alpha32-217' v20/index.html
+          grep -q 'app.css?v=alpha32-219' v20/index.html
+          grep -q 'main.js?v=alpha32-219' v20/index.html
           node --experimental-default-type=module v20/tests/mobile-responsive.test.mjs
           echo "V20 mobile-only pawn/house/HUD fill PASS"
 
@@ -585,8 +585,8 @@ jobs:
           grep -q 'tile__tokens:has(.pawn-token:nth-child(3))' v20/styles/app.css
           grep -q 'function settlePhoneLandscapeLayout' v20/js/main.js
           grep -q 'visualViewport?.addEventListener("resize",settlePhoneLandscapeLayout)' v20/js/main.js
-          grep -q 'app.css?v=alpha32-217' v20/index.html
-          grep -q 'main.js?v=alpha32-217' v20/index.html
+          grep -q 'app.css?v=alpha32-219' v20/index.html
+          grep -q 'main.js?v=alpha32-219' v20/index.html
           echo "V20 first-entry phone landscape stabilization PASS"
 
       - name: Validate V20 property tile info card
@@ -675,8 +675,8 @@ jobs:
           grep -q 'id="itemInventoryList"' v20/index.html
           grep -q 'id="itemPromptDialog"' v20/index.html
           grep -q 'V20 Alpha 32 — strategy item system' v20/styles/app.css
-          grep -q 'app.css?v=alpha32-217' v20/index.html
-          grep -q 'main.js?v=alpha32-217' v20/index.html
+          grep -q 'app.css?v=alpha32-219' v20/index.html
+          grep -q 'main.js?v=alpha32-219' v20/index.html
           node --experimental-default-type=module v20/tests/items-system.test.mjs
           echo "V20 Alpha32 strategy item state/effect/network/UI PASS"
 
@@ -684,6 +684,18 @@ jobs:
         shell: bash
         run: |
           node --experimental-default-type=module v20/tests/gameplay-systems.test.mjs
+
+      - name: Build and validate V20 BGM preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p v20/assets/audio
+          cat v20/assets/audio/bgm-src/part_*.b64 | base64 --decode > v20/assets/audio/alley-wind.m4a
+          echo "4986dcd3fd5ccfd9a5284ed0dc01a1a93f5261c2a82905af242704ce7dbc2ade  v20/assets/audio/alley-wind.m4a" | sha256sum -c -
+          test "$(wc -c < v20/assets/audio/alley-wind.m4a)" -eq 988842
+          node --experimental-default-type=module v20/tests/bgm-controller.test.mjs
+          rm -rf v20/assets/audio/bgm-src v20/assets/audio/alley-wind-preview v20/assets/audio/alley_wind_preview
+          echo "V20 Alpha32.1 complete BGM build PASS"
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5

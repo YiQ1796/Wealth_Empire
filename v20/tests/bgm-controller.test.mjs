@@ -1,0 +1,28 @@
+import assert from"node:assert/strict";
+import{readFileSync}from"node:fs";
+const html=readFileSync(new URL("../index.html",import.meta.url),"utf8");
+const css=readFileSync(new URL("../styles/app.css",import.meta.url),"utf8");
+const main=readFileSync(new URL("../js/main.js",import.meta.url),"utf8");
+const controller=readFileSync(new URL("../js/ui/bgm-controller.js",import.meta.url),"utf8");
+
+assert.match(html,/id="desktopBgmControls"/);
+assert.match(html,/id="bgmMuteButton"/);
+assert.match(html,/id="bgmVolumeSlider"/);
+assert.match(html,/巷仔口的風/);
+assert.match(html,/alpha32-219/);
+assert.match(css,/V20 Alpha 32\.1 — local BGM preview controls/);
+assert.match(css,/@media \(hover:none\) and \(pointer:coarse\)/);
+assert.match(css,/\.desktop-bgm-controls\{display:none!important\}/);
+assert.match(main,/initBgmController/);
+assert.match(controller,/alley-wind\.m4a\?v=alpha32-219/);
+assert.match(controller,/audio\.loop=true/);
+assert.match(controller,/audio\.preload="none"/);
+assert.match(controller,/PHONE_AUDIO_QUERY/);
+assert.match(controller,/phoneUsesDeviceVolume/);
+assert.match(controller,/audio\.volume=1/);
+assert.match(controller,/audio\.muted=false/);
+assert.match(controller,/document\.addEventListener\("pointerdown",tryStart,true\)/);
+assert.match(controller,/localStorage\.setItem/);
+assert.doesNotMatch(controller,/PeerNetwork|GameEngine|networkMode|dispatchRemote/);
+assert.doesNotMatch(controller,/audio\.autoplay=true/);
+console.log("V20 Alpha32.1 BGM controller regression PASS");

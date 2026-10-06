@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#eef3f7">
-<title>財富帝國 V20 Alpha 32</title>
-<link rel="stylesheet" href="./styles/app.css?v=alpha32-217">
+<title>財富帝國 V20 Alpha 32.1</title>
+<link rel="stylesheet" href="./styles/app.css?v=alpha32-219">
 </head>
 <body class="entry-pending">
 <section id="entryGate" class="entry-gate" aria-label="遊戲模式選擇">
@@ -122,6 +122,14 @@
           </div>
         </div>
       </header>
+
+      <div id="desktopBgmControls" class="desktop-bgm-controls" aria-label="背景音樂控制">
+        <span class="desktop-bgm-controls__title">巷仔口的風</span>
+        <button id="bgmMuteButton" type="button" class="desktop-bgm-controls__mute" aria-pressed="false" aria-label="靜音背景音樂">聲音</button>
+        <input id="bgmVolumeSlider" class="desktop-bgm-controls__slider" type="range" min="0" max="1" step="0.05" value="0.45" aria-label="背景音樂音量">
+        <output id="bgmVolumeValue" class="desktop-bgm-controls__value" for="bgmVolumeSlider">45%</output>
+        <span id="bgmStatus" class="desktop-bgm-controls__status" aria-live="polite">首次操作後播放</span>
+      </div>
 
       <section id="players" class="players" aria-label="玩家資訊"></section>
 
@@ -417,6 +425,6 @@
 </dialog>
 
 <div id="actionToastStack" class="action-toast-stack" aria-live="polite" aria-atomic="false"></div>
-<script type="module" src="./js/main.js?v=alpha32-217"></script>
+<script type="module" src="./js/main.js?v=alpha32-219"></script>
 </body>
 </html>
