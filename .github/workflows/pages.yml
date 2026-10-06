@@ -524,13 +524,20 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          grep -q 'orientation:landscape) and (max-height:650px) and (max-width:1180px), (max-width:760px)' v20/js/main.js
-          grep -q 'Alpha 19 mobile notification correction' v20/styles/app.css
-          grep -q 'width:min(68%,560px)' v20/styles/app.css
-          grep -q 'grid-template-columns:48px minmax(0,1fr) 78px' v20/styles/app.css
+          grep -q 'V20 Alpha 32.2 — single-surface notifications' v20/styles/app.css
+          grep -q '.action-toast.leaving' v20/styles/app.css
+          grep -q 'overflow:hidden!important' v20/styles/app.css
+          if grep -q 'action-toast__card-bg' v20/js/main.js; then
+            echo "Legacy notification background image render source must not return"
+            exit 1
+          fi
+          if grep -q 'action-toast__divider-mask' v20/js/main.js; then
+            echo "Legacy notification seam mask must not return"
+            exit 1
+          fi
           grep -q 'app.css?v=alpha32-220' v20/index.html
           grep -q 'main.js?v=alpha32-220' v20/index.html
-          echo "V20 phone notification sizing and mobile-art selection PASS"
+          echo "V20 phone single-surface notification fit PASS"
 
       - name: Validate V20 mobile pass 2 composition
         shell: bash
