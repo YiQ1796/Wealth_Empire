@@ -4455,3 +4455,104 @@ body.entry-pending .app-shell{
     padding:5px 7px
   }
 }
+
+
+/* V20 Alpha 28 — central five desktop fill + friend dialog fit. */
+@media (min-width:1181px) and (min-height:651px){
+  .app-shell{
+    padding:2px 2px 1px 2px
+  }
+  .game-layout{
+    grid-template-columns:minmax(0,1fr) clamp(330px,23vw,390px);
+    gap:3px
+  }
+  .board-panel,
+  .board{
+    border-radius:9px
+  }
+}
+
+@media (max-width:700px){
+  .network-dialog{
+    width:calc(100vw - 20px);
+    max-width:none;
+    max-height:calc(100dvh - 24px)
+  }
+  .network-modal{
+    max-height:calc(100dvh - 24px);
+    overflow:auto;
+    padding:12px;
+    border-radius:18px
+  }
+  .network-modal .feature-modal__header{
+    position:sticky;
+    top:-12px;
+    z-index:8;
+    margin:-12px -12px 10px;
+    padding:12px;
+    background:rgba(255,255,255,.97)
+  }
+  .room-code-hero{
+    min-height:104px;
+    padding:12px 14px;
+    grid-template-columns:minmax(0,1fr) auto;
+    grid-template-areas:
+      "label copy"
+      "code copy";
+    gap:3px 10px
+  }
+  .room-code-hero>span{grid-area:label}
+  .room-code-hero>strong{
+    grid-area:code;
+    font-size:clamp(28px,9vw,44px);
+    letter-spacing:.12em
+  }
+  .room-code-hero>button{grid-area:copy}
+  .network-form-grid{gap:8px}
+  .network-actions{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:7px
+  }
+  .network-actions button{
+    min-height:44px;
+    padding:7px;
+    font-size:14px
+  }
+  .network-seat-list{gap:6px}
+  .network-seat-row{
+    min-height:58px;
+    padding:8px 10px
+  }
+}
+
+@media (orientation:landscape) and (max-height:650px) and (max-width:1180px){
+  .network-dialog{
+    width:min(920px,calc(100vw - 20px));
+    max-height:calc(var(--phone-app-height,100dvh) - 12px)
+  }
+  .network-modal{
+    max-height:calc(var(--phone-app-height,100dvh) - 12px);
+    padding:8px;
+    overflow:auto
+  }
+  .network-modal .feature-modal__header{
+    position:sticky;
+    top:-8px;
+    z-index:8;
+    margin:-8px -8px 6px;
+    padding:8px;
+    background:rgba(255,255,255,.97)
+  }
+  .room-code-hero{
+    min-height:64px;
+    padding:7px 10px
+  }
+  .room-code-hero>strong{font-size:28px}
+  .network-form-grid{gap:6px}
+  .network-form-grid label{font-size:9px}
+  .network-form-grid input{min-height:36px;padding:6px 9px}
+  .network-actions{gap:5px}
+  .network-actions button{min-height:36px;font-size:11px}
+  .network-status{padding:7px 9px;font-size:9px}
+  .network-seat-row{min-height:42px;padding:5px 8px}
+}
