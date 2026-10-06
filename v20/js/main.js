@@ -353,7 +353,13 @@ function noticeView(event){
             ? noticeSignedMoney(data.amount)
             : data.effectKind==="move"
               ? ((Number(data.delta)>=0?"前進 ":"後退 ")+Math.abs(Number(data.delta)||0)+" 格")
-              : "事件";
+              : data.effectKind==="random_upgrade"&&data.property
+                ?"LV."+data.property.level
+                : data.effectKind==="grant_permit"
+                  ?"建案券 +"+Math.max(0,Number(data.permitDelta)||0)
+                  : data.effectKind==="grant_property_protection"
+                    ?"保全券 +"+Math.max(0,Number(data.protectionPermitDelta)||0)
+                    :"事件";
       const details=[];
       if(data.effectKind==="cash"&&Number.isFinite(Number(data.cashAfter))){
         details.push("事件後現金 "+noticeMoney(data.cashAfter));
@@ -361,20 +367,45 @@ function noticeView(event){
       if(data.effectKind==="move"){
         details.push("位置 "+(Number(data.from)+1)+" → "+(Number(data.to)+1));
       }
+      if(data.effectKind==="random_upgrade"&&data.property){
+        details.push("免費升級 "+data.property.tileName+" → LV."+data.property.level);
+      }
+      if(data.effectKind==="grant_permit"&&Number(data.permitDelta)>0){
+        details.push("目前建案許可 "+data.permitsTotal+" 張");
+      }
+      if(data.effectKind==="grant_property_protection"&&Number(data.protectionPermitDelta)>0){
+        details.push("目前產權保全券 "+data.protectionPermitsTotal+" 張");
+      }
       return{message:event.text,metric,details};
     }
 
     case"special_grid":{
       const labels={
-        tax:"稅務抵免",
-        court:"財產保全",
-        hospital:"醫療保護"
+        tax:"稅務事件",
+        court:"法院事件",
+        hospital:"醫療事件",
+        urban:"城市更新",
+        acquisition:"收購事件",
+        auction:"拍賣事件",
+        property_protection:"產權保全"
       };
-      return{
-        message:event.text,
-        metric:labels[data.type]??"特殊效果",
-        details:data.untilRound?["保護至 ROUND "+data.untilRound]:[]
-      };
+      let metric=labels[data.type]??"特殊效果";
+      const details=[];
+      if(data.effectKind==="cash")metric=noticeSignedMoney(data.amount);
+      if(data.effectKind==="random_upgrade"&&data.property){
+        metric="LV."+data.property.level;
+        details.push("免費升級 "+data.property.tileName+" → LV."+data.property.level);
+      }
+      if(data.effectKind==="grant_permit"){
+        metric="建案券 +"+Math.max(0,Number(data.permitDelta)||0);
+        if(Number(data.permitDelta)>0)details.push("目前建案許可 "+data.permitsTotal+" 張");
+      }
+      if(data.effectKind==="grant_property_protection"){
+        metric="保全券 +"+Math.max(0,Number(data.protectionPermitDelta)||0);
+        if(Number(data.protectionPermitDelta)>0)details.push("目前產權保全券 "+data.protectionPermitsTotal+" 張");
+      }
+      if(data.untilRound)details.push("保護至 ROUND "+data.untilRound);
+      return{message:event.text,metric,details};
     }
 
     case"urban_complete":
