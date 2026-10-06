@@ -12,6 +12,21 @@ import{resolveSpecialEvent}from"../js/core/special-events.js";
 import{MINIGAME_DEFINITIONS}from"../js/data/minigames.js";
 import{TRANSPORT_NODE_INDEXES}from"../js/data/transport.js";
 
+function sequenceRandom(values){
+  let index=0;
+  return()=>{
+    const value=values[Math.min(index,values.length-1)]??0;
+    index+=1;
+    return value;
+  };
+}
+
+function withMockRandom(values,callback){
+  const previous=Math.random;
+  Math.random=sequenceRandom(values);
+  try{return callback()}finally{Math.random=previous}
+}
+
 {
   assert.equal(TILE_ART_BY_INDEX.length,44);
   assert.ok(TILE_ART_BY_INDEX.every(path=>path.includes("/assets/v5/tiles/TILE_")));
@@ -128,14 +143,16 @@ import{TRANSPORT_NODE_INDEXES}from"../js/data/transport.js";
   const state=createInitialState();
   const player=state.players[0];
   const cashBefore=player.cash;
-  const chance=resolveSpecialEvent(state,player,"chance",()=>0);
+  const chance=resolveSpecialEvent(state,player,"chance",sequenceRandom([0.5,0]));
   assert.equal(chance.event.id,"chance_bonus");
+  assert.equal(chance.rarity,"common");
   assert.equal(chance.amount,1200);
   assert.equal(player.cash,cashBefore+1200);
   assert.equal(state.specialEventHistory.at(-1).type,"chance");
 
-  const fate=resolveSpecialEvent(state,player,"fate",()=>0);
+  const fate=resolveSpecialEvent(state,player,"fate",sequenceRandom([0.5,0]));
   assert.equal(fate.event.id,"fate_patron");
+  assert.equal(fate.rarity,"common");
   assert.equal(fate.amount,1500);
   assert.equal(state.specialEventHistory.at(-1).type,"fate");
 }
@@ -395,12 +412,12 @@ assert.deepEqual(
   const engine=new GameEngine(state,()=>{});
   const taxIndex=state.tiles.findIndex(tile=>tile.type==="tax");
   state.players[0].position=(taxIndex-2+state.tiles.length)%state.tiles.length;
-  assert.equal(engine.roll(0,{d1:1,d2:1}),true);
+  assert.equal(withMockRandom([0.5,0],()=>engine.roll(0,{d1:1,d2:1})),true);
   assert.equal(state.phase,"landed");
   assert.equal(state.players[0].taxEventShield,true);
 
   const cashBefore=state.players[0].cash;
-  const blocked=resolveSpecialEvent(state,state.players[0],"chance",()=>0.34);
+  const blocked=resolveSpecialEvent(state,state.players[0],"chance",sequenceRandom([0.5,0.32]));
   assert.equal(blocked.event.id,"chance_repair");
   assert.equal(blocked.blockedBy,"tax");
   assert.equal(blocked.amount,0);
@@ -413,11 +430,11 @@ assert.deepEqual(
   const engine=new GameEngine(state,()=>{});
   const hospitalIndex=state.tiles.findIndex(tile=>tile.type==="hospital");
   state.players[0].position=(hospitalIndex-2+state.tiles.length)%state.tiles.length;
-  assert.equal(engine.roll(0,{d1:1,d2:1}),true);
+  assert.equal(withMockRandom([0.5,0],()=>engine.roll(0,{d1:1,d2:1})),true);
   assert.equal(state.players[0].medicalMoveShield,true);
 
   const positionBefore=state.players[0].position;
-  const blocked=resolveSpecialEvent(state,state.players[0],"fate",()=>0.34);
+  const blocked=resolveSpecialEvent(state,state.players[0],"fate",sequenceRandom([0.5,0.32]));
   assert.equal(blocked.event.id,"fate_blocked");
   assert.equal(blocked.blockedBy,"hospital");
   assert.equal(blocked.moved,false);
@@ -433,7 +450,7 @@ assert.deepEqual(
   state.tiles[protectedProperty].owner=0;
   state.players[0].properties.push(protectedProperty);
   state.players[0].position=(courtIndex-2+state.tiles.length)%state.tiles.length;
-  assert.equal(engine.roll(0,{d1:1,d2:1}),true);
+  assert.equal(withMockRandom([0.5,0],()=>engine.roll(0,{d1:1,d2:1})),true);
   assert.ok(state.players[0].courtShieldUntilRound>=state.round+1);
   assert.equal(canForceAcquireProperty(state,protectedProperty,1),false,"court protection must block acquisition center eligibility");
 }
@@ -444,9 +461,9 @@ assert.deepEqual(
   const marketIndex=state.tiles.findIndex(tile=>tile.type==="market");
   const tickBefore=state.market.tick;
   state.players[0].position=(marketIndex-2+state.tiles.length)%state.tiles.length;
-  assert.equal(engine.roll(0,{d1:1,d2:1}),true);
+  assert.equal(withMockRandom([0.5,0],()=>engine.roll(0,{d1:1,d2:1})),true);
   assert.equal(state.phase,"landed");
-  assert.equal(state.market.tick,tickBefore+1,"market tile must immediately refresh the existing stock market");
+  assert.equal(state.market.tick,tickBefore+1,"deterministic market event must refresh the existing stock market");
   assert.equal(state.events[0].kind,"market_tick");
 }
 
@@ -459,7 +476,7 @@ assert.deepEqual(
   state.players[0].properties.push(ownedIndex);
   state.players[0].position=(urbanIndex-2+state.tiles.length)%state.tiles.length;
 
-  assert.equal(engine.roll(0,{d1:1,d2:1}),true);
+  assert.equal(withMockRandom([0.5,0],()=>engine.roll(0,{d1:1,d2:1})),true);
   assert.equal(state.phase,"urban");
   assert.ok(state.pendingUrban.destinationIndexes.includes(ownedIndex));
   assert.equal(engine.endTurn(0),false);
@@ -483,4 +500,4 @@ assert.deepEqual(
   assert.ok(session.results["0"].score>0,"auction score must be host-resolved after all bids arrive");
 }
 
-console.log("V20 Alpha 27 gameplay systems test PASS");
+console.log("V20 Alpha 30 gameplay systems test PASS");
