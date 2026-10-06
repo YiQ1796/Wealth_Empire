@@ -794,6 +794,31 @@ export class GameEngine{
     return true;
   }
 
+  usePropertyPermit(tileIndex,seat=this.state.currentPlayer){
+    if(!this.isCurrentSeat(seat)||!canUseDevelopmentPermit(this.state,seat,tileIndex))return false;
+    const result=useDevelopmentPermit(this.state,seat,tileIndex);
+    if(!result.ok)return false;
+    const player=this.state.players[Number(seat)];
+    const tile=this.state.tiles[result.tileIndex];
+    this.log(
+      player.name+" 使用建案許可，將「"+tile.name+"」免費升級至 LV."+tile.level+"。",
+      "property_permit_upgrade",
+      {
+        seat:Number(seat),
+        playerName:player.name,
+        tile:result.tileIndex,
+        tileName:tile.name,
+        group:tile.group,
+        level:tile.level,
+        permitsLeft:result.permitsLeft,
+        rentAfter:rentFor(this.state,tile)
+      }
+    );
+    this.handleCentralMissionAction(player.seat,"upgrade_property");
+    this.notify();
+    return true;
+  }
+
   buyStock(stockId,shares,seat=this.state.currentPlayer){
     const result=executeBuyStock(this.state,seat,stockId,shares);
     if(!result.ok){
@@ -904,6 +929,17 @@ export class GameEngine{
     const player=this.currentPlayer;
     if(player.kind!=="ai"||this.state.aiPreparedTurnToken===this.state.turnToken)return false;
     this.state.aiPreparedTurnToken=this.state.turnToken;
+
+    if(Math.floor(Number(player.developmentPermits)||0)>0){
+      const permitTarget=eligibleOwnedPropertyIndexes(this.state,player)
+        .map(index=>({index,tile:this.state.tiles[index]}))
+        .sort((a,b)=>
+          Number(b.tile.level)-Number(a.tile.level)||
+          Number(b.tile.price)-Number(a.tile.price)||
+          a.index-b.index
+        )[0]?.index??null;
+      if(permitTarget!=null)this.usePropertyPermit(permitTarget,player.seat);
+    }
 
     for(const order of chooseStockOrders(this.state,player.seat)){
       if(order.type==="buy")this.buyStock(order.stockId,order.shares,player.seat);
@@ -1044,6 +1080,37 @@ export class GameEngine{
     this.state.phase="await-roll";
     this.notify();
     return true;
+  }
+
+  describeEventEffect(result){
+    if(!result)return"沒有額外效果";
+    if(result.blockedBy==="tax")return"稅務抵免生效，本次負面金錢事件取消";
+    if(result.blockedBy==="hospital")return"醫療保護生效，本次後退事件取消";
+    if(result.kind==="cash"){
+      return result.amount>=0
+        ?"獲得 "+this.formatMoney(result.amount)
+        :"支付 "+this.formatMoney(Math.abs(result.amount));
+    }
+    if(result.kind==="move"){
+      return(result.delta>=0?"前進 ":"後退 ")+Math.abs(result.delta)+" 格";
+    }
+    if(result.kind==="grant_permit"){
+      return result.permitDelta>0
+        ?"獲得建案許可 ×"+result.permitDelta+"（目前 "+result.permitsTotal+" 張）"
+        :"建案許可已達上限，改為替代獎勵";
+    }
+    if(result.kind==="random_upgrade"&&result.property){
+      return"「"+result.property.tileName+"」免費升級至 LV."+result.property.level;
+    }
+    if(result.kind==="tax_shield")return"取得一次稅務抵免";
+    if(result.kind==="medical_shield")return"取得一次行動保護";
+    if(result.kind==="dual_shield")return"同時取得行動保護與稅務抵免";
+    if(result.kind==="court_shield")return"財產保全至 ROUND "+result.untilRound;
+    if(result.kind==="market_tick"){
+      return"市場重新報價 "+Math.max(1,Number(result.marketTicks)||1)+" 次";
+    }
+    if(result.kind==="urban_redeploy")return"可重新部署至自己的地產";
+    return"沒有額外效果";
   }
 
   formatMoney(value){return"$"+Math.round(value).toLocaleString()}
