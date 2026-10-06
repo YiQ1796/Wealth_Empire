@@ -4912,3 +4912,189 @@ body.entry-pending .app-shell{
 
 
 /* V20 Alpha 31 — expanded special-grid pools and property protection operations. */
+
+
+/* V20 Alpha 32 — strategy item system */
+.item-inventory{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  margin-top:10px
+}
+.item-card{
+  min-width:0;
+  padding:11px;
+  border:1px solid #dce5ed;
+  border-radius:14px;
+  background:#f8fbfd
+}
+.item-card.is-usable{
+  border-color:#d6a62f;
+  box-shadow:0 0 0 2px rgba(226,177,57,.12) inset,0 8px 20px rgba(65,86,105,.08)
+}
+.item-card__head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:8px
+}
+.item-card__head strong{
+  display:block;
+  color:#173b5b;
+  font-size:15px
+}
+.item-card__head small{
+  display:block;
+  margin-top:2px;
+  color:#71869a;
+  font-size:10px;
+  font-weight:900
+}
+.item-card__status{
+  flex:0 0 auto;
+  padding:4px 7px;
+  border-radius:999px;
+  background:#e9eef3;
+  color:#667b8d;
+  font-size:9px;
+  font-weight:1000
+}
+.item-card.is-usable .item-card__status{
+  background:#e3a91f;
+  color:#fff
+}
+.item-card>p{
+  min-height:34px;
+  margin:8px 0;
+  color:#536b80;
+  font-size:11px;
+  line-height:1.45;
+  font-weight:800
+}
+.item-card__actions{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:7px
+}
+.item-target-select,
+.item-use-button{
+  min-width:0;
+  min-height:36px;
+  border:1px solid #ccd9e4;
+  border-radius:9px;
+  font-size:11px;
+  font-weight:900
+}
+.item-target-select{
+  padding:0 8px;
+  background:#fff;
+  color:#28465f
+}
+.item-use-button{
+  padding:0 12px;
+  border-color:#d6a62f;
+  background:#e3a91f;
+  color:#fff;
+  cursor:pointer
+}
+.item-use-button:disabled,
+.item-target-select:disabled{
+  opacity:.5;
+  cursor:not-allowed
+}
+.feature-tab.has-item-action,
+.mobile-primary-action.has-item-action{
+  border-color:#b28ae0!important;
+  box-shadow:0 0 0 2px rgba(141,94,193,.14) inset,0 0 14px rgba(141,94,193,.24)
+}
+.feature-tab.has-item-count::after,
+.mobile-primary-action.has-item-count::after{
+  content:attr(data-item-count);
+  position:absolute;
+  top:2px;
+  right:4px;
+  min-width:17px;
+  height:17px;
+  padding:0 4px;
+  display:grid;
+  place-items:center;
+  border-radius:999px;
+  background:#7d55b3;
+  color:#fff;
+  font-size:9px;
+  font-weight:1000;
+  line-height:1
+}
+.item-prompt-dialog{
+  width:min(420px,calc(100vw - 24px));
+  padding:0;
+  border:0;
+  background:transparent
+}
+.item-prompt-dialog::backdrop{
+  background:rgba(18,34,49,.42);
+  backdrop-filter:blur(3px)
+}
+.item-prompt-card{
+  padding:18px;
+  border:1px solid #dfe6ee;
+  border-radius:18px;
+  background:#fff;
+  box-shadow:0 24px 70px rgba(18,36,56,.3)
+}
+.item-prompt-card h2{
+  margin:0;
+  color:#2d4660;
+  font-size:21px
+}
+.item-prompt-card p{
+  margin:7px 0 14px;
+  color:#63798d;
+  font-size:13px;
+  font-weight:800
+}
+.item-prompt-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px
+}
+.item-prompt-actions button{
+  min-height:40px;
+  border:0;
+  border-radius:10px;
+  font-weight:1000;
+  cursor:pointer
+}
+#openItemPromptButton{
+  background:#7d55b3;
+  color:#fff
+}
+#dismissItemPromptButton{
+  background:#edf2f7;
+  color:#405a72
+}
+@media (orientation:landscape) and (max-height:650px) and (max-width:1180px){
+  .item-inventory{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:6px
+  }
+  .item-card{
+    padding:8px
+  }
+  .item-card>p{
+    min-height:0;
+    margin:5px 0;
+    font-size:9px
+  }
+  .item-target-select,
+  .item-use-button{
+    min-height:32px;
+    font-size:10px
+  }
+  .item-prompt-dialog{
+    width:min(480px,calc(100vw - 20px))
+  }
+  .item-prompt-card{
+    padding:14px
+  }
+}
