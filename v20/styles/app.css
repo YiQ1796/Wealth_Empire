@@ -4756,6 +4756,8 @@ body.entry-pending .app-shell{
 
 /* V20 Alpha 30 — event-driven property operations and rare events. */
 .property-event-actions{
+  display:grid;
+  gap:6px;
   margin:0 0 8px
 }
 .property-event-card{
@@ -4827,6 +4829,45 @@ body.entry-pending .app-shell{
   color:#8796a4;
   cursor:not-allowed
 }
+.property-protection-action{
+  min-width:104px;
+  border:1px solid #6c5aa6;
+  border-radius:9px;
+  padding:7px 8px;
+  background:#7563b7;
+  color:#fff;
+  font-size:10px;
+  font-weight:1000;
+  cursor:pointer
+}
+.property-protection-action:hover:not(:disabled){background:#6654a5}
+.property-protection-action:disabled{
+  border-color:#d8e0e8;
+  background:#edf2f6;
+  color:#8796a4;
+  cursor:not-allowed
+}
+.property-protection-badge{
+  display:inline-grid;
+  place-items:center;
+  min-height:20px;
+  padding:2px 7px;
+  border-radius:999px;
+  background:#eee9ff;
+  color:#6654a5;
+  font-size:9px;
+  font-weight:1000
+}
+.property-event-card--protection.active{
+  border-color:#8f7bd0;
+  background:#f7f3ff;
+  box-shadow:0 0 0 2px rgba(117,99,183,.08) inset
+}
+.property-event-card--protection.active strong{color:#6654a5}
+.property-event-card--protection.active>span{
+  background:#7563b7;
+  color:#fff
+}
 .feature-tab,
 .mobile-primary-action{
   position:relative
@@ -4862,8 +4903,12 @@ body.entry-pending .app-shell{
   .property-event-card small{font-size:8px}
   .property-row__actions{min-width:98px}
   .property-permit-upgrade,
+  .property-protection-action,
   .property-upgrade--status{
     min-width:92px!important;
     font-size:9px
   }
 }
+
+
+/* V20 Alpha 31 — expanded special-grid pools and property protection operations. */
