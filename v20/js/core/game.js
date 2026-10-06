@@ -6,7 +6,7 @@ import{advanceStockMarket,buyStock as executeBuyStock,getMarketStock,sellStock a
 import{resolveSpecialEvent}from"./special-events.js";
 import{canUseTransport,chooseAiTransportDestination,createPendingTransport,transportNode}from"./transport.js";
 import{chooseAiAcquisition,createPendingAcquisition,executeAcquisition}from"./acquisition-center.js";
-import{applyCourt,applyHospital,applyMarketEvent,applyTaxOffice,canUseUrban,chooseAiUrbanDestination,createPendingUrban}from"./civic-specials.js";
+import{canUseUrban,chooseAiUrbanDestination,createPendingUrban,resolveCivicEvent}from"./civic-specials.js";
 import{
   acceptMission,
   activateInsurance,
@@ -23,6 +23,7 @@ import{
   settleBankDeposits,
   startBankDeposit
 }from"./central-features.js";
+import{canUseDevelopmentPermit,eligibleOwnedPropertyIndexes,useDevelopmentPermit}from"./property-events.js";
 
 export class GameEngine{
   constructor(state,onChange){
@@ -256,20 +257,28 @@ export class GameEngine{
 
     if(tile.type==="tax"||tile.type==="court"||tile.type==="hospital"||tile.type==="market"){
       this.state.phase="landed";
-      const result=tile.type==="tax"
-        ?applyTaxOffice(this.state,player)
-        :tile.type==="court"
-          ?applyCourt(this.state,player)
-          :tile.type==="hospital"
-            ?applyHospital(this.state,player)
-            :applyMarketEvent(this.state,player);
+      const result=resolveCivicEvent(this.state,player,tile.type);
+      if(!result){
+        this.log(player.name+" 抵達「"+tile.name+"」，但事件池目前無可用事件。","warning",{seat:player.seat,type:tile.type});
+        return;
+      }
+      const rare=result.rarity==="rare";
       this.log(
-        player.name+"｜"+result.title+"："+result.text,
+        player.name+"｜"+(rare?"【稀有】":"")+tile.name+"「"+result.event.name+"」："+result.event.description+
+          "（"+this.describeEventEffect(result)+"）",
         tile.type==="market"?"market_tick":"special_grid",
         {
           seat:player.seat,
           playerName:player.name,
           type:tile.type,
+          eventId:result.event.id,
+          eventName:result.event.name,
+          rarity:result.rarity,
+          effectKind:result.kind,
+          amount:result.amount,
+          property:result.property,
+          permitDelta:result.permitDelta,
+          permitsTotal:result.permitsTotal,
           untilRound:result.untilRound,
           tick:result.tick,
           movers:result.movers??[]
@@ -279,18 +288,59 @@ export class GameEngine{
     }
 
     if(tile.type==="urban"){
-      const pending=createPendingUrban(this.state,player);
-      if(!pending){
+      const result=resolveCivicEvent(this.state,player,"urban");
+      if(!result){
         this.state.phase="landed";
-        this.log(player.name+" 抵達「城市更新局」，但目前沒有自己持有的地產可重新部署。","urban_empty",{seat:player.seat});
+        this.log(player.name+" 抵達「城市更新局」，但事件池目前無可用事件。","warning",{seat:player.seat,type:"urban"});
         return;
       }
-      this.state.pendingUrban=pending;
-      this.state.phase="urban";
+
+      if(result.kind==="urban_redeploy"){
+        const pending=createPendingUrban(this.state,player);
+        if(pending){
+          this.state.pendingUrban=pending;
+          this.state.phase="urban";
+          this.log(
+            player.name+"｜城市更新局「"+result.event.name+"」：可選擇一塊自己的地產作為重新部署位置。",
+            "urban_offer",
+            {
+              seat:player.seat,
+              eventId:result.event.id,
+              rarity:result.rarity,
+              sourceIndex:pending.sourceIndex,
+              destinationIndexes:pending.destinationIndexes
+            }
+          );
+          return;
+        }
+        player.cash+=700;
+        this.state.phase="landed";
+        this.log(
+          player.name+"｜城市更新局「重新部署」：目前沒有自己的地產，改領更新補助 $700。",
+          "special_grid",
+          {seat:player.seat,type:"urban",fallback:"no_property",amount:700,cashAfter:player.cash}
+        );
+        return;
+      }
+
+      this.state.phase="landed";
       this.log(
-        player.name+" 抵達「城市更新局」，可選擇一塊自己的地產作為重新部署位置。",
-        "urban_offer",
-        {seat:player.seat,sourceIndex:pending.sourceIndex,destinationIndexes:pending.destinationIndexes}
+        player.name+"｜"+(result.rarity==="rare"?"【稀有】":"")+"城市更新局「"+result.event.name+"」："+
+          result.event.description+"（"+this.describeEventEffect(result)+"）",
+        "special_grid",
+        {
+          seat:player.seat,
+          playerName:player.name,
+          type:"urban",
+          eventId:result.event.id,
+          eventName:result.event.name,
+          rarity:result.rarity,
+          effectKind:result.kind,
+          amount:result.amount,
+          property:result.property,
+          permitDelta:result.permitDelta,
+          permitsTotal:result.permitsTotal
+        }
       );
       return;
     }
@@ -314,20 +364,10 @@ export class GameEngine{
 
       const isChance=tile.type==="chance";
       const label=isChance?"機會":"命運";
-      const effectText=resolved.blockedBy==="tax"
-        ?"稅務抵免生效，本次負面金錢事件取消"
-        :resolved.blockedBy==="hospital"
-          ?"醫療保護生效，本次後退事件取消"
-        :resolved.kind==="cash"
-        ? (resolved.amount>=0
-          ?"獲得 "+this.formatMoney(resolved.amount)
-          :"支付 "+this.formatMoney(Math.abs(resolved.amount)))
-        : resolved.kind==="move"
-          ? ((resolved.delta>=0?"前進 ":"後退 ")+Math.abs(resolved.delta)+" 格")
-          : "沒有額外效果";
+      const effectText=this.describeEventEffect(resolved);
 
       this.log(
-        player.name+"｜"+label+"「"+resolved.event.name+"」："+resolved.event.description+"（"+effectText+"）",
+        player.name+"｜"+(resolved.rarity==="rare"?"【稀有】":"")+label+"「"+resolved.event.name+"」："+resolved.event.description+"（"+effectText+"）",
         "special_event",
         {
           seat:player.seat,
@@ -335,7 +375,11 @@ export class GameEngine{
           type:tile.type,
           eventId:resolved.event.id,
           eventName:resolved.event.name,
+          rarity:resolved.rarity,
           effectKind:resolved.kind,
+          property:resolved.property,
+          permitDelta:resolved.permitDelta,
+          permitsTotal:resolved.permitsTotal,
           amount:resolved.amount,
           delta:resolved.delta,
           from:resolved.from,
