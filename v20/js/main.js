@@ -756,6 +756,8 @@ function executeAction(action,seat=currentLocalSeat()){
       return engine.upgradeProperty(action.tileIndex,seat);
     case"property_permit_upgrade":
       return engine.usePropertyPermit(action.tileIndex,seat);
+    case"property_protection_apply":
+      return engine.usePropertyProtection(action.tileIndex,seat);
     case"decline_upgrade":
       return engine.declineUpgrade(seat);
     case"buy_stock":
@@ -1341,12 +1343,15 @@ function openPropertyInfo(tileIndex){
     acquisitionNote.textContent="不需要收購。";
   }else{
     const courtProtected=Number(owner?.courtShieldUntilRound)>=Number(state.round);
+    const titleProtected=Number(tile.acquisitionProtectedUntilRound)>=Number(state.round);
     acquisitionValue.textContent=noticeMoney(estimatedOffer);
     acquisitionNote.textContent=forceEligible
       ?"預估報價＝目前資產估值 ×1.25；LV."+tile.level+" 可強制收購。實際交易仍依收購/協商流程。"
       :courtProtected
         ?"法院財產保全生效中（至 ROUND "+owner.courtShieldUntilRound+"），目前不可強制收購。"
-        :"預估報價＝目前資產估值 ×1.25；LV."+tile.level+" 已受滿級保護，不可強制收購，仍可一般協商。";
+        :titleProtected
+          ?"產權保全生效中（至 ROUND "+tile.acquisitionProtectedUntilRound+"），目前不可強制收購。"
+          :"預估報價＝目前資產估值 ×1.25；LV."+tile.level+" 已受滿級保護，不可強制收購，仍可一般協商。";
   }
 
   if(!propertyInfoDialog.open)propertyInfoDialog.showModal();
@@ -1354,7 +1359,7 @@ function openPropertyInfo(tileIndex){
 
 function openFeature(name){
   const meta={
-    property:["我的房產","查看地產與收租；事件取得的建案許可會在這裡解鎖指定升級。"],
+    property:["我的房產","地產經營中心：查看地產與收租，並使用事件取得的建案許可與產權保全券。"],
     item:["策略道具","符合使用條件時會主動提示。"],
     market:["市場操作","查看即時行情、持股損益並進行買賣。"],
     info:["遊戲資訊","目前格子與事件紀錄。"]
@@ -1417,12 +1422,22 @@ propertyInfoDialog.addEventListener("click",event=>{
 });
 
 document.getElementById("propertyTabList").addEventListener("click",event=>{
-  const button=event.target.closest("[data-property-permit-upgrade]");
-  if(!button||button.disabled)return;
-  dispatchAction({
-    type:"property_permit_upgrade",
-    tileIndex:Number(button.dataset.propertyPermitUpgrade)
-  });
+  const permitButton=event.target.closest("[data-property-permit-upgrade]");
+  if(permitButton&&!permitButton.disabled){
+    dispatchAction({
+      type:"property_permit_upgrade",
+      tileIndex:Number(permitButton.dataset.propertyPermitUpgrade)
+    });
+    return;
+  }
+
+  const protectionButton=event.target.closest("[data-property-protection]");
+  if(protectionButton&&!protectionButton.disabled){
+    dispatchAction({
+      type:"property_protection_apply",
+      tileIndex:Number(protectionButton.dataset.propertyProtection)
+    });
+  }
 });
 
 document.querySelectorAll("[data-feature]").forEach(button=>{
