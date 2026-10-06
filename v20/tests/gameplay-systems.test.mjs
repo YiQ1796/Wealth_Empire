@@ -10,6 +10,7 @@ import{chooseMinigame,fillAiMinigameResults,finalizeMinigame,startMinigame,submi
 import{createRoomCode,normalizeRemoteAction,sanitizePlayerName,sanitizeRoomCode}from"../js/core/network.js";
 import{resolveSpecialEvent}from"../js/core/special-events.js";
 import{MINIGAME_DEFINITIONS}from"../js/data/minigames.js";
+import{CHANCE_EVENTS,FATE_EVENTS}from"../js/data/special-events.js";
 import{TRANSPORT_NODE_INDEXES}from"../js/data/transport.js";
 
 function sequenceRandom(values){
@@ -25,6 +26,13 @@ function withMockRandom(values,callback){
   const previous=Math.random;
   Math.random=sequenceRandom(values);
   try{return callback()}finally{Math.random=previous}
+}
+
+function commonPickValue(pool,eventId){
+  const candidates=pool.filter(event=>(event.rarity??"common")==="common");
+  const index=candidates.findIndex(event=>event.id===eventId);
+  assert.ok(index>=0,"missing common event "+eventId);
+  return(index+0.5)/candidates.length;
 }
 
 {
@@ -420,7 +428,7 @@ assert.deepEqual(
   assert.equal(state.players[0].taxEventShield,true);
 
   const cashBefore=state.players[0].cash;
-  const blocked=resolveSpecialEvent(state,state.players[0],"chance",sequenceRandom([0.5,0.32]));
+  const blocked=resolveSpecialEvent(state,state.players[0],"chance",sequenceRandom([0.5,commonPickValue(CHANCE_EVENTS,"chance_repair")]));
   assert.equal(blocked.event.id,"chance_repair");
   assert.equal(blocked.blockedBy,"tax");
   assert.equal(blocked.amount,0);
@@ -437,7 +445,7 @@ assert.deepEqual(
   assert.equal(state.players[0].medicalMoveShield,true);
 
   const positionBefore=state.players[0].position;
-  const blocked=resolveSpecialEvent(state,state.players[0],"fate",sequenceRandom([0.5,0.32]));
+  const blocked=resolveSpecialEvent(state,state.players[0],"fate",sequenceRandom([0.5,commonPickValue(FATE_EVENTS,"fate_blocked")]));
   assert.equal(blocked.event.id,"fate_blocked");
   assert.equal(blocked.blockedBy,"hospital");
   assert.equal(blocked.moved,false);
