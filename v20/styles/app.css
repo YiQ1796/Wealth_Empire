@@ -4124,7 +4124,7 @@ body.entry-pending .app-shell{
 }
 .central-facility{
   position:absolute;
-  width:clamp(112px,17.5%,190px);
+  width:clamp(96px,15.2%,166px);
   aspect-ratio:1;
   padding:0;
   border:0;
@@ -4138,13 +4138,13 @@ body.entry-pending .app-shell{
 .central-facility--bank{
   left:50%;
   top:50%;
-  width:clamp(140px,21.5%,230px);
+  width:clamp(122px,18.8%,202px);
   z-index:4
 }
-.central-facility--mission{left:50%;top:17%;z-index:3}
-.central-facility--insurance{left:24%;top:50%;z-index:3}
-.central-facility--transit{left:76%;top:50%;z-index:3}
-.central-facility--development{left:50%;top:83%;z-index:3}
+.central-facility--mission{left:50%;top:18.5%;z-index:3}
+.central-facility--insurance{left:25%;top:50%;z-index:3}
+.central-facility--transit{left:75%;top:50%;z-index:3}
+.central-facility--development{left:50%;top:81.5%;z-index:3}
 .central-facility__building,
 .central-facility__glow,
 .central-facility__status{
@@ -4299,11 +4299,12 @@ body.entry-pending .app-shell{
   padding:10px;
   border:1px solid #d7e1e9;
   border-radius:13px;
-  background:#fff;
-  color:#27445b;
+  background:#eef2f5;
+  color:#6d7a86;
   text-align:left;
   font-weight:900;
-  cursor:pointer
+  cursor:pointer;
+  transition:transform .14s ease,background .14s ease,border-color .14s ease,box-shadow .14s ease
 }
 .central-feature-action strong,
 .central-mission-card strong,
@@ -4316,22 +4317,40 @@ body.entry-pending .app-shell{
 .central-development-card small{
   display:block;
   margin-top:4px;
-  color:#718396;
+  color:inherit;
+  opacity:.82;
   font-size:9px;
   line-height:1.35;
   font-weight:800
 }
+.central-feature-action:not(:disabled),
+.central-mission-card:not(:disabled),
+.central-development-card:not(:disabled){
+  border-color:#166c5a;
+  background:#1f846b;
+  color:#fff;
+  box-shadow:0 5px 12px rgba(20,102,84,.2)
+}
 .central-feature-action:not(:disabled):hover,
 .central-mission-card:not(:disabled):hover,
 .central-development-card:not(:disabled):hover{
-  border-color:#7fa9c6;
-  background:#f2f8fc
+  border-color:#0f5c4c;
+  background:#176e5b;
+  transform:translateY(-1px);
+  box-shadow:0 7px 16px rgba(20,102,84,.27)
+}
+.central-feature-action:not(:disabled):active,
+.central-mission-card:not(:disabled):active,
+.central-development-card:not(:disabled):active{
+  transform:translateY(0);
+  background:#115f4e
 }
 .central-feature-action:disabled,
 .central-mission-card:disabled,
 .central-development-card:disabled{
-  opacity:.48;
-  cursor:not-allowed
+  opacity:.62;
+  cursor:not-allowed;
+  box-shadow:none
 }
 .central-feature-active{
   padding:12px;
@@ -4350,13 +4369,13 @@ body.entry-pending .app-shell{
 
 @media (orientation:landscape) and (max-height:650px) and (max-width:1180px){
   .central-facility{
-    width:clamp(70px,17%,118px)
+    width:clamp(64px,15%,104px)
   }
   .central-facility--bank{
-    width:clamp(88px,21%,142px)
+    width:clamp(80px,18.5%,128px)
   }
-  .central-facility--mission{top:16%}
-  .central-facility--development{top:84%}
+  .central-facility--mission{top:18%}
+  .central-facility--development{top:82%}
   .central-facility-dialog{
     width:min(690px,calc(100vw - max(14px,env(safe-area-inset-left)) - max(14px,env(safe-area-inset-right))))
   }
@@ -4599,3 +4618,6 @@ body.entry-pending .app-shell{
   }
   .central-facility__glow{border-width:2px}
 }
+
+
+/* V20 Alpha 29 — stronger actionable states and smaller central buildings. */
