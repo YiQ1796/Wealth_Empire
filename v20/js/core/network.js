@@ -20,6 +20,7 @@ export const NETWORK_ACTION_TYPES=Object.freeze([
   "upgrade_property",
   "property_permit_upgrade",
   "property_protection_apply",
+  "item_use",
   "decline_upgrade",
   "buy_stock",
   "sell_stock",
@@ -95,6 +96,31 @@ export function normalizeRemoteAction(raw){
     const tileIndex=Math.floor(Number(raw.tileIndex));
     if(!Number.isFinite(tileIndex)||tileIndex<0||tileIndex>43)return null;
     action.tileIndex=tileIndex;
+  }
+
+  if(raw.type==="item_use"){
+    const itemId=String(raw.itemId??"").replace(/[^a-z0-9_]/g,"").slice(0,40);
+    if(!itemId)return null;
+    const source=raw.target&&typeof raw.target==="object"?raw.target:{};
+    const target={};
+    if(source.tileIndex!=null){
+      const tileIndex=Math.floor(Number(source.tileIndex));
+      if(!Number.isFinite(tileIndex)||tileIndex<0||tileIndex>43)return null;
+      target.tileIndex=tileIndex;
+    }
+    if(source.stockId!=null){
+      const stockId=String(source.stockId).replace(/[^A-Za-z0-9_-]/g,"").slice(0,24);
+      if(!stockId)return null;
+      target.stockId=stockId;
+    }
+    if(source.value!=null){
+      const value=Math.floor(Number(source.value));
+      if(!Number.isFinite(value)||value<2||value>12)return null;
+      target.value=value;
+    }
+    if(Object.keys(target).length!==1)return null;
+    action.itemId=itemId;
+    action.target=target;
   }
 
   if(raw.type==="buy_stock"||raw.type==="sell_stock"){
