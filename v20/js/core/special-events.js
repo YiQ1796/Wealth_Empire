@@ -1,6 +1,8 @@
 import{SPECIAL_EVENT_POOLS}from"../data/special-events.js";
 import{appendEventHistory,pickEventFromPool,RARE_EVENT_RATE}from"./event-picker.js";
 import{applyRandomPropertyUpgrade,grantDevelopmentPermits,grantPropertyProtectionPermits}from"./property-events.js";
+import{grantItem,inventoryCount}from"./items.js";
+import{ITEM_BY_ID}from"../data/items.js";
 
 function wrappedPosition(position,delta,size){
   return((position+delta)%size+size)%size;
@@ -40,7 +42,11 @@ export function resolveSpecialEvent(state,player,type,random=Math.random){
     permitDelta:0,
     permitsTotal:Math.max(0,Math.floor(Number(player.developmentPermits)||0)),
     protectionPermitDelta:0,
-    protectionPermitsTotal:Math.max(0,Math.floor(Number(player.propertyProtectionPermits)||0))
+    protectionPermitsTotal:Math.max(0,Math.floor(Number(player.propertyProtectionPermits)||0)),
+    itemId:null,
+    itemName:null,
+    itemDelta:0,
+    itemTotal:0
   };
 
   if(effect.kind==="cash"){
@@ -78,6 +84,20 @@ export function resolveSpecialEvent(state,player,type,random=Math.random){
     if(granted.added===0){
       const fallback=applyCash(player,700);
       result={...result,kind:"cash",...fallback,fallback:"property_protection_cap"};
+    }
+  }else if(effect.kind==="grant_item"){
+    const definition=ITEM_BY_ID[effect.itemId];
+    const granted=grantItem(state,player.seat,effect.itemId,effect.count??1);
+    result={
+      ...result,
+      itemId:effect.itemId,
+      itemName:definition?.name??effect.itemId,
+      itemDelta:granted.added??0,
+      itemTotal:inventoryCount(player,effect.itemId)
+    };
+    if(!granted.ok){
+      const fallback=applyCash(player,900);
+      result={...result,kind:"cash",...fallback,fallback:"item_cap"};
     }
   }else if(effect.kind==="random_upgrade"){
     const upgraded=applyRandomPropertyUpgrade(state,player,random);
