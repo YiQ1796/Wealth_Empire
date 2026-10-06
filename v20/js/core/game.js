@@ -24,6 +24,7 @@ import{
   startBankDeposit
 }from"./central-features.js";
 import{canUseDevelopmentPermit,canUsePropertyProtectionPermit,eligibleOwnedPropertyIndexes,eligibleProtectionPropertyIndexes,useDevelopmentPermit,usePropertyProtectionPermit}from"./property-events.js";
+import{chooseAiItemAction,useItem as executeItemUse}from"./items.js";
 
 export class GameEngine{
   constructor(state,onChange){
@@ -73,12 +74,22 @@ export class GameEngine{
       !this.isCurrentSeat(seat)
     )return false;
 
-    const d1=forcedDice?.d1??1+Math.floor(Math.random()*6);
-    const d2=forcedDice?.d2??1+Math.floor(Math.random()*6);
-    const total=d1+d2;
-    this.state.dice={d1,d2,total};
-
     const player=this.currentPlayer;
+    const forcedTotal=forcedDice==null
+      ? Math.max(0,Math.floor(Number(player.forcedDiceTotal)||0))
+      : 0;
+    const itemForcedDice=forcedTotal>=2&&forcedTotal<=12
+      ? {
+          d1:Math.max(1,Math.min(6,forcedTotal-1)),
+          d2:forcedTotal-Math.max(1,Math.min(6,forcedTotal-1))
+        }
+      : null;
+    const diceSource=forcedDice??itemForcedDice;
+    const d1=diceSource?.d1??1+Math.floor(Math.random()*6);
+    const d2=diceSource?.d2??1+Math.floor(Math.random()*6);
+    const total=d1+d2;
+    if(itemForcedDice)player.forcedDiceTotal=null;
+    this.state.dice={d1,d2,total};
     const from=player.position;
     let passedStart=false;
     const path=[];
@@ -121,7 +132,17 @@ export class GameEngine{
 
       if(tile.owner!==player.seat){
         const owner=this.state.players[tile.owner];
-        const requestedRent=rentFor(this.state,tile);
+        let requestedRent=rentFor(this.state,tile);
+        let strategyRentEffect=null;
+        if(Math.floor(Number(tile.rentBlockedCharges)||0)>0){
+          tile.rentBlockedCharges=Math.max(0,Math.floor(Number(tile.rentBlockedCharges)||0)-1);
+          requestedRent=0;
+          strategyRentEffect="rent_block";
+        }else if(Math.floor(Number(tile.rentBurstCharges)||0)>0){
+          tile.rentBurstCharges=Math.max(0,Math.floor(Number(tile.rentBurstCharges)||0)-1);
+          requestedRent=Math.round(requestedRent*2);
+          strategyRentEffect="rent_burst";
+        }
         const insurance=applyRentInsurance(player,requestedRent);
         const rent=insurance.rent;
         const paid=Math.min(player.cash,rent);
@@ -148,7 +169,8 @@ export class GameEngine{
             insured:insurance.protected,
             group:tile.group,
             payerCashAfter:player.cash,
-            ownerCashAfter:owner.cash
+            ownerCashAfter:owner.cash,
+            strategyRentEffect
           }
         );
         if(insurance.protected){
@@ -926,6 +948,38 @@ export class GameEngine{
     return true;
   }
 
+  useStrategyItem(itemId,target,seat=this.state.currentPlayer){
+    const result=executeItemUse(this.state,seat,itemId,target);
+    if(!result.ok)return false;
+
+    const player=this.state.players[Number(seat)];
+    const effect=result.effect??{};
+    let detail="效果已生效";
+    if(itemId==="rent_boost")detail="「"+effect.tileName+"」永久過路費 +20%";
+    if(itemId==="rent_burst")detail="「"+effect.tileName+"」下一次收租 ×2";
+    if(itemId==="remote_dice")detail="下一次擲骰固定總點數 "+effect.forcedDiceTotal;
+    if(itemId==="stock_boost"||itemId==="stock_drop"){
+      detail="「"+effect.stockName+"」 $"+effect.previousPrice+" → $"+effect.price;
+    }
+    if(itemId==="rent_block")detail="封鎖「"+effect.tileName+"」下一次收租";
+    if(itemId==="property_guard")detail="「"+effect.tileName+"」保全至 ROUND "+effect.untilRound;
+
+    this.log(
+      player.name+" 使用「"+result.definition.name+"」："+detail+"。",
+      "item_use",
+      {
+        seat:Number(seat),
+        playerName:player.name,
+        itemId,
+        itemName:result.definition.name,
+        remaining:result.remaining,
+        ...effect
+      }
+    );
+    this.notify();
+    return true;
+  }
+
   buyStock(stockId,shares,seat=this.state.currentPlayer){
     const result=executeBuyStock(this.state,seat,stockId,shares);
     if(!result.ok){
@@ -1036,6 +1090,11 @@ export class GameEngine{
     const player=this.currentPlayer;
     if(player.kind!=="ai"||this.state.aiPreparedTurnToken===this.state.turnToken)return false;
     this.state.aiPreparedTurnToken=this.state.turnToken;
+
+    const strategyItem=chooseAiItemAction(this.state,player.seat);
+    if(strategyItem){
+      this.useStrategyItem(strategyItem.itemId,strategyItem.target,player.seat);
+    }
 
     if(Math.floor(Number(player.developmentPermits)||0)>0){
       const permitTarget=eligibleOwnedPropertyIndexes(this.state,player)
