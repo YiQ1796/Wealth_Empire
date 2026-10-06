@@ -51,6 +51,11 @@ jobs:
               "CENTRAL_TRANSIT.webp",
               "CENTRAL_INSURANCE.webp",
               "CENTRAL_DEVELOPMENT.webp",
+              "TITLE_BANK.webp",
+              "TITLE_MISSION.webp",
+              "TITLE_TRANSIT.webp",
+              "TITLE_INSURANCE.webp",
+              "TITLE_DEVELOPMENT.webp",
           }
 
           offset = 0
@@ -106,11 +111,16 @@ jobs:
             CENTRAL_MISSION.webp \
             CENTRAL_TRANSIT.webp \
             CENTRAL_INSURANCE.webp \
-            CENTRAL_DEVELOPMENT.webp
+            CENTRAL_DEVELOPMENT.webp \
+            TITLE_BANK.webp \
+            TITLE_MISSION.webp \
+            TITLE_TRANSIT.webp \
+            TITLE_INSURANCE.webp \
+            TITLE_DEVELOPMENT.webp
           do
             test -s "v20/assets/center-v1/$asset"
           done
-          echo "Central five approved building assets materialized PASS"
+          echo "Central five approved building + sign assets materialized PASS"
 
       - name: Validate inline JavaScript
         shell: bash
@@ -416,6 +426,13 @@ jobs:
           grep -q 'central_insurance' v20/js/core/network.js
           grep -q 'central_development' v20/js/core/network.js
           grep -q 'function renderCentralFacilities' v20/js/main.js
+          grep -q 'central-facility__sign' v20/index.html
+          grep -q 'TITLE_BANK.webp' v20/index.html
+          grep -q 'TITLE_MISSION.webp' v20/index.html
+          grep -q 'TITLE_TRANSIT.webp' v20/index.html
+          grep -q 'TITLE_INSURANCE.webp' v20/index.html
+          grep -q 'TITLE_DEVELOPMENT.webp' v20/index.html
+          grep -q 'V20 Alpha 29 — stronger actionable states and smaller central buildings' v20/styles/app.css
           grep -q 'V20 Alpha 28 — central five facilities' v20/styles/app.css
           grep -q 'V20 Alpha 29 — stronger actionable states and smaller central buildings' v20/styles/app.css
           test -s v20/assets/center-v1/CENTRAL_BANK.webp
