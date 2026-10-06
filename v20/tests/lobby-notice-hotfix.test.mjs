@@ -38,11 +38,11 @@ assert.match(main,/好友與 AI 補位已同步進入棋盤/);
 assert.doesNotMatch(main,/action-toast__divider-mask/);
 assert.doesNotMatch(main,/action-toast__card-bg/);
 
-assert.match(css,/V20 Alpha 32\.2 — single-surface notifications/);
+assert.match(css,/V20 Alpha 32\.3 — single-surface notifications/);
 assert.match(css,/\.action-toast\.leaving/);
 assert.match(css,/\.action-toast__card-bg,[\s\S]*?display:none!important/);
 assert.match(css,/overflow:hidden!important/);
-assert.match(html,/財富帝國 V20 Alpha 32\.2/);
+assert.match(html,/財富帝國 V20 Alpha 32\.3/);
 assert.match(html,/alpha32-221/);
 
 console.log("V20 Alpha32.3 lobby start and single-surface notification regression PASS");
