@@ -227,8 +227,12 @@ export class MinigameUI{
     this.finished=true;
     this.cleanup();
     const finalScore=clamp(Math.round(Number(score)||0),0,10000);
-    this.onSubmit?.({score:finalScore,detail});
+
+    // Render the provisional waiting state BEFORE dispatching the result.
+    // In solo/host games dispatch is synchronous and can finalize immediately;
+    // rendering waiting afterwards would overwrite the completed ranking + close button.
     this.arena.innerHTML='<div class="minigame-waiting"><strong>'+finalScore.toLocaleString()+' 分</strong><span>結果已送出，等待其他玩家。</span></div>';
+    this.onSubmit?.({score:finalScore,detail});
   }
 
   randomFor(session,salt){
