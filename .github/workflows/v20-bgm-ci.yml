@@ -1,0 +1,59 @@
+name: V20 BGM Preview CI
+
+on:
+  push:
+    branches:
+      - "work-v20-alpha32-bgm-preview-20261006"
+  pull_request:
+    paths:
+      - "v20/**"
+      - ".github/workflows/v20-bgm-ci.yml"
+      - ".github/workflows/pages.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  bgm-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Rebuild complete BGM asset
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p v20/assets/audio
+          test "$(find v20/assets/audio/bgm-src -name 'part_*.b64' -type f | wc -l)" -eq 17
+          cat v20/assets/audio/bgm-src/part_*.b64 | base64 --decode > v20/assets/audio/alley-wind.m4a
+          echo "4986dcd3fd5ccfd9a5284ed0dc01a1a93f5261c2a82905af242704ce7dbc2ade  v20/assets/audio/alley-wind.m4a" | sha256sum -c -
+          test "$(wc -c < v20/assets/audio/alley-wind.m4a)" -eq 988842
+
+      - name: Validate module syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in $(find v20/js -name '*.js' -type f | sort); do
+            node --input-type=module --check < "$file"
+          done
+
+      - name: Validate BGM controller
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q '財富帝國 V20 Alpha 32.1' v20/index.html
+          grep -q 'app.css?v=alpha32-219' v20/index.html
+          grep -q 'main.js?v=alpha32-219' v20/index.html
+          grep -q '巷仔口的風' v20/index.html
+          grep -q 'alley-wind.m4a?v=alpha32-219' v20/js/ui/bgm-controller.js
+          node --experimental-default-type=module v20/tests/bgm-controller.test.mjs
+
+      - name: Run affected regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --experimental-default-type=module v20/tests/items-system.test.mjs
+          node --experimental-default-type=module v20/tests/network-mobile-resilience.test.mjs
+          node --experimental-default-type=module v20/tests/mobile-responsive.test.mjs
+          node --experimental-default-type=module v20/tests/gameplay-systems.test.mjs
