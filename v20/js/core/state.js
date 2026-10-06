@@ -71,7 +71,7 @@ export function createInitialState(){
     events:[{
       id:1,
       kind:"system",
-      text:"V20 Alpha 30：事件系統、稀有事件與地產經營權整合。",
+      text:"V20 Alpha 31：特殊格事件池擴充、稀有事件與地產保全經營整合。",
       data:{},
       round:1
     }],
