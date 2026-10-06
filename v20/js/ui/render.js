@@ -156,13 +156,20 @@ function renderProperties(state,viewerPlayer,canControl){
     const progress=groupProgress(state,viewerPlayer.seat,tile.group);
     const maxLevel=tile.level>=MAX_PROPERTY_LEVEL;
     const canAfford=viewerPlayer.cash>=cost;
-    const canUse=
+    const landedForUpgrade=Boolean(
       canControl&&
       state.currentPlayer===viewerPlayer.seat&&
-      state.pendingPurchase==null&&
-      ["await-roll","landed"].includes(state.phase);
-    const disabled=maxLevel||!canAfford||!canUse;
-    const buttonText=maxLevel?"已滿級":canAfford?"升級 "+money(cost):"現金不足";
+      state.pendingUpgrade===tileIndex&&
+      viewerPlayer.position===tileIndex&&
+      state.phase==="landed"
+    );
+    const upgradeStatus=maxLevel
+      ?"已滿級"
+      : landedForUpgrade
+        ?"本回合可升級 "+money(cost)
+        : canAfford
+          ?"需再次走到此地產"
+          :"升級費 "+money(cost)+"｜現金不足";
 
     return '<article class="property-row">'+
       regionBadge(tile.group)+
@@ -180,7 +187,7 @@ function renderProperties(state,viewerPlayer,canControl){
           (maxLevel?badge(UI_ASSETS.badges.propertyMax,"房產滿級")+badge(UI_ASSETS.badges.noAcquisition,"不可強制收購"):"")+
         '</div>'+
       '</div>'+
-      '<button class="property-upgrade" data-upgrade-property="'+tileIndex+'" '+(disabled?'disabled':'')+'>'+buttonText+'</button>'+
+      '<span class="property-upgrade property-upgrade--status '+(landedForUpgrade?"ready":"")+'">'+upgradeStatus+'</span>'+
     '</article>';
   }).join("");
 }
@@ -331,10 +338,36 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
     purchaseDialog.close();
   }
 
+  const pendingUpgrade=state.pendingUpgrade!=null?state.tiles[state.pendingUpgrade]:null;
+  const upgradeDialog=document.getElementById("upgradeDialog");
+  const confirmUpgradeButton=document.getElementById("confirmUpgradeButton");
+  const shouldShowUpgrade=Boolean(
+    isLocalTurn&&
+    pendingUpgrade&&
+    pendingUpgrade.owner===current.seat&&
+    current.position===state.pendingUpgrade&&
+    state.phase==="landed"
+  );
+
+  if(shouldShowUpgrade){
+    const cost=upgradeCost(pendingUpgrade);
+    const canUpgradeNow=current.cash>=cost&&pendingUpgrade.level<MAX_PROPERTY_LEVEL;
+    document.getElementById("upgradeTitle").textContent="是否升級「"+pendingUpgrade.name+"」？";
+    document.getElementById("upgradeSubtitle").textContent="再次走到自己的地產｜LV."+pendingUpgrade.level+" → LV."+(pendingUpgrade.level+1);
+    document.getElementById("upgradePrice").textContent=money(cost);
+    document.getElementById("upgradeCash").textContent=money(current.cash);
+    confirmUpgradeButton.disabled=!canUpgradeNow;
+    confirmUpgradeButton.textContent=canUpgradeNow?"升級":"現金不足";
+    if(!upgradeDialog.open)upgradeDialog.showModal();
+  }else if(upgradeDialog?.open){
+    upgradeDialog.close();
+  }
+
   document.getElementById("endTurnButton").disabled=
     !isLocalTurn||
     state.phase!=="landed"||
-    state.pendingPurchase!=null;
+    state.pendingPurchase!=null||
+    state.pendingUpgrade!=null;
 
   renderProperties(state,localPlayer,canControl);
 }
