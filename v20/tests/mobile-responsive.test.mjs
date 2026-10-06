@@ -11,8 +11,8 @@ assert.match(html,/class="mobile-primary-actions"/);
 assert.match(html,/id="mobileRollButton"/);
 assert.match(html,/data-feature="market"/);
 assert.match(html,/id="stockMarketMobileGrid"/);
-assert.match(html,/app\.css\?v=alpha30-215/);
-assert.match(html,/main\.js\?v=alpha30-215/);
+assert.match(html,/app\.css\?v=alpha31-216/);
+assert.match(html,/main\.js\?v=alpha31-216/);
 
 assert.match(css,/V20 Alpha 19 — phone landscape authority/);
 assert.match(css,/@media \(orientation:landscape\) and \(max-height:650px\) and \(max-width:1180px\)/);
@@ -22,7 +22,7 @@ assert.match(css,/\.mobile-primary-actions\{[\s\S]*?display:grid/);
 assert.match(css,/env\(safe-area-inset-left\)/);
 assert.match(css,/\.entry-gate\{[\s\S]*?overflow:auto/);
 assert.match(css,/V20 Alpha 29\.1 — phone board fill tuning/);
-assert.match(css,/V20 Alpha 30 — event-driven property operations and rare events/);
+assert.match(css,/V20 Alpha 30 — event-driven property operations and rare events/);\nassert.match(css,/V20 Alpha 31 — expanded special-grid pools and property protection operations/);
 
 assert.match(main,/stockMarketMobileGrid/);
 assert.match(main,/market:\["市場操作"/);
@@ -92,4 +92,4 @@ assert.match(css,/width:100vw;[\s\S]*?padding:2px/);
 assert.match(css,/grid-template-columns:minmax\(0,1fr\) clamp\(320px,22vw,390px\)/);
 assert.match(css,/Network dialog: keep room information readable on short mobile landscape screens/);
 
-console.log("V20 Alpha 30 central/mobile layout regression PASS");
+console.log("V20 Alpha 31 central/mobile layout regression PASS");
