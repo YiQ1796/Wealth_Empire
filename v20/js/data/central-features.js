@@ -32,7 +32,7 @@ export const CENTRAL_FEATURES=Object.freeze([
     name:"城市建案中心",
     position:"bottom",
     building:"./assets/center-v1/CENTRAL_DEVELOPMENT.webp",
-    description:"使用既有升級價格與等級規則，直接執行一項持有地產建案。"
+    description:"特殊建案通道：可不受一般「必須再次走到自己地產」限制，每 ROUND 最多執行一次。"
   }
 ]);
 
