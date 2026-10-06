@@ -237,18 +237,6 @@ function noticeConfig(event){
   return map[event.kind]??{title:"遊戲動態",icon:N.icons.marketTick,effect:N.effects.blue,tone:"blue"};
 }
 
-function noticeCardSources(config){
-  const cards=UI_ASSETS.notification.cards;
-  const market=UI_ASSETS.notification.market;
-  if(config.market){
-    return{desktop:market.desktop,mobile:market.mobile};
-  }
-  if(config.major||config.metric){
-    return{desktop:cards.majorDesktop,mobile:cards.majorMobile};
-  }
-  return{desktop:cards.standardDesktop,mobile:cards.standardMobile};
-}
-
 function noticeMoney(value){
   const number=Number(value);
   if(!Number.isFinite(number))return"—";
