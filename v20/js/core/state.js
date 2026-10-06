@@ -74,7 +74,7 @@ export function createInitialState(){
     events:[{
       id:1,
       kind:"system",
-      text:"V20 Alpha 31：特殊格事件池擴充、稀有事件與地產保全經營整合。",
+      text:"V20 Alpha 32：策略道具正式實裝，加入 inventory、效果、AI、事件掉落與多人同步。",
       data:{},
       round:1
     }],
