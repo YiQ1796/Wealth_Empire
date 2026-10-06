@@ -12,6 +12,7 @@ import{
   saveHostSnapshot
 }from"./core/network.js";
 import{characterAsset,mountStaticBoard,render}from"./ui/render.js";
+import{itemUiSummary}from"./ui/item-render.js";
 import{renderStockMarket}from"./ui/stock-render.js";
 import{UI_ASSETS}from"./data/ui-assets.js";
 import{MinigameUI}from"./ui/minigame-ui.js";
@@ -43,6 +44,7 @@ let noticeQueue=[];
 let noticeActive=false;
 let movementQueue=Promise.resolve();
 let selectedCharacterIndex=0;
+let lastItemPromptKey="";
 const disconnectTimers=new Map();
 const ACTION_TOAST_KINDS=new Set([
   "property_buy",
@@ -57,6 +59,7 @@ const ACTION_TOAST_KINDS=new Set([
   "network_reconnect",
   "network_ai_takeover",
   "property_acquisition",
+  "item_use",
   "bankruptcy",
   "cash",
   "special_event",
@@ -77,6 +80,7 @@ const uiContext={
 };
 
 const featureDialog=document.getElementById("featureDialog");
+const itemPromptDialog=document.getElementById("itemPromptDialog");
 const centralFacilityDialog=document.getElementById("centralFacilityDialog");
 const networkDialog=document.getElementById("networkDialog");
 const purchaseDialog=document.getElementById("purchaseDialog");
@@ -789,6 +793,8 @@ function executeAction(action,seat=currentLocalSeat()){
       return engine.usePropertyPermit(action.tileIndex,seat);
     case"property_protection_apply":
       return engine.usePropertyProtection(action.tileIndex,seat);
+    case"item_use":
+      return engine.useStrategyItem(action.itemId,action.target,seat);
     case"decline_upgrade":
       return engine.declineUpgrade(seat);
     case"buy_stock":
@@ -1286,6 +1292,30 @@ function renderTransportDialog(){
   if(!transportDialog.open)transportDialog.showModal();
 }
 
+function maybePromptStrategyItems(){
+  if(!itemPromptDialog||itemPromptDialog.open||featureDialog?.open)return;
+  const seat=currentLocalSeat();
+  const player=state.players?.[seat];
+  if(
+    !player||
+    player.kind!=="human"||
+    player.connected===false||
+    state.gameStatus!=="playing"||
+    state.currentPlayer!==seat
+  )return;
+
+  const summary=itemUiSummary(state,player);
+  if(summary.usable.length===0)return;
+  const key=state.turnToken+":"+state.phase+":"+summary.usable.map(item=>item.id).join(",");
+  if(lastItemPromptKey===key)return;
+
+  lastItemPromptKey=key;
+  const names=summary.usable.slice(0,3).map(item=>item.name).join("、");
+  document.getElementById("itemPromptText").textContent=
+    "目前可使用："+names+(summary.usable.length>3?" 等 "+summary.usable.length+" 種":"")+"。";
+  itemPromptDialog.showModal();
+}
+
 function renderAll(){
   uiContext.networkMode=network.mode;
   render(state,{
@@ -1301,6 +1331,7 @@ function renderAll(){
   minigameUi.sync(state,currentLocalSeat());
   processMoveAnimations();
   processActionToasts();
+  maybePromptStrategyItems();
 }
 
 function scheduleAi(){
@@ -1473,6 +1504,32 @@ document.getElementById("propertyTabList").addEventListener("click",event=>{
 
 document.querySelectorAll("[data-feature]").forEach(button=>{
   button.addEventListener("click",()=>openFeature(button.dataset.feature));
+});
+
+document.getElementById("itemInventoryList").addEventListener("click",event=>{
+  const button=event.target.closest("[data-item-use]");
+  if(!button||button.disabled)return;
+  const itemId=button.dataset.itemUse;
+  const select=document.querySelector('[data-item-target="'+CSS.escape(itemId)+'"]');
+  const raw=String(select?.value??"");
+  const [kind,...parts]=raw.split(":");
+  const value=parts.join(":");
+  let target=null;
+  if(kind==="tile")target={tileIndex:Number(value)};
+  if(kind==="stock")target={stockId:value};
+  if(kind==="value")target={value:Number(value)};
+  if(!target)return;
+  dispatchAction({type:"item_use",itemId,target});
+});
+
+document.getElementById("openItemPromptButton").addEventListener("click",()=>{
+  itemPromptDialog.close();
+  openFeature("item");
+});
+document.getElementById("dismissItemPromptButton").addEventListener("click",()=>itemPromptDialog.close());
+itemPromptDialog.addEventListener("cancel",event=>{
+  event.preventDefault();
+  itemPromptDialog.close();
 });
 
 document.getElementById("closeFeatureDialog").addEventListener("click",()=>featureDialog.close());
