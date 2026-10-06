@@ -23,7 +23,7 @@ import{
   settleBankDeposits,
   startBankDeposit
 }from"./central-features.js";
-import{canUseDevelopmentPermit,eligibleOwnedPropertyIndexes,useDevelopmentPermit}from"./property-events.js";
+import{canUseDevelopmentPermit,canUsePropertyProtectionPermit,eligibleOwnedPropertyIndexes,eligibleProtectionPropertyIndexes,useDevelopmentPermit,usePropertyProtectionPermit}from"./property-events.js";
 
 export class GameEngine{
   constructor(state,onChange){
@@ -189,27 +189,62 @@ export class GameEngine{
     }
 
     if(tile.type==="acquisition"){
-      const pending=createPendingAcquisition(this.state,player.seat,player.position);
-      if(!pending.options.length){
+      const result=resolveCivicEvent(this.state,player,"acquisition");
+      if(!result){
         this.state.phase="landed";
+        this.log(player.name+" 抵達「收購中心」，但事件池目前無可用事件。","warning",{seat:player.seat,type:"acquisition"});
+        return;
+      }
+
+      if(result.kind==="acquisition_offer"){
+        const pending=createPendingAcquisition(this.state,player.seat,player.position);
+        if(!pending.options.length){
+          player.cash+=600;
+          this.state.phase="landed";
+          this.log(
+            player.name+"｜收購中心「"+result.event.name+"」：目前沒有符合收購條件的地產，改領市場調查補助 $600。",
+            "special_grid",
+            {seat:player.seat,type:"acquisition",eventId:result.event.id,rarity:result.rarity,amount:600,cashAfter:player.cash,fallback:"no_acquisition_target"}
+          );
+          return;
+        }
+
+        this.state.pendingAcquisition=pending;
+        this.state.phase="acquisition";
         this.log(
-          player.name+" 抵達「收購中心」，目前沒有符合既有收購條件的其他玩家地產。",
-          "acquisition_empty",
-          {seat:player.seat,tile:player.position}
+          player.name+"｜"+(result.rarity==="rare"?"【稀有】":"")+"收購中心「"+result.event.name+"」：可依既有 125% 資產估值規則選擇一塊符合條件的對手地產收購。",
+          "acquisition_offer",
+          {
+            seat:player.seat,
+            playerName:player.name,
+            tile:player.position,
+            eventId:result.event.id,
+            rarity:result.rarity,
+            optionCount:pending.options.length
+          }
         );
         return;
       }
 
-      this.state.pendingAcquisition=pending;
-      this.state.phase="acquisition";
+      this.state.phase="landed";
       this.log(
-        player.name+" 抵達「收購中心」，可依既有 125% 資產估值規則選擇一塊符合條件的對手地產收購。",
-        "acquisition_offer",
+        player.name+"｜"+(result.rarity==="rare"?"【稀有】":"")+"收購中心「"+result.event.name+"」："+
+          result.event.description+"（"+this.describeEventEffect(result)+"）",
+        "special_grid",
         {
           seat:player.seat,
           playerName:player.name,
-          tile:player.position,
-          optionCount:pending.options.length
+          type:"acquisition",
+          eventId:result.event.id,
+          eventName:result.event.name,
+          rarity:result.rarity,
+          effectKind:result.kind,
+          amount:result.amount,
+          property:result.property,
+          permitDelta:result.permitDelta,
+          permitsTotal:result.permitsTotal,
+          protectionPermitDelta:result.protectionPermitDelta,
+          protectionPermitsTotal:result.protectionPermitsTotal
         }
       );
       return;
@@ -238,12 +273,52 @@ export class GameEngine{
       return;
     }
 
-    if(tile.type==="highlow"||tile.type==="horse"||tile.type==="auction"){
-      const forcedGameId=tile.type==="horse"
-        ?"horse"
-        : tile.type==="auction"
-          ?"auction"
-          :"highlow";
+    if(tile.type==="auction"){
+      const result=resolveCivicEvent(this.state,player,"auction");
+      if(!result){
+        this.state.phase="landed";
+        this.log(player.name+" 抵達「地產拍賣行」，但事件池目前無可用事件。","warning",{seat:player.seat,type:"auction"});
+        return;
+      }
+
+      if(result.kind==="auction_game"){
+        const session=startMinigame(this.state,player.seat,Date.now(),"auction");
+        fillAiMinigameResults(this.state);
+        this.log(
+          player.name+"｜"+(result.rarity==="rare"?"【稀有】":"")+"地產拍賣行「"+result.event.name+"」：進入 "+session.name+"。",
+          "minigame_start",
+          {seat:player.seat,gameId:session.id,tileType:"auction",eventId:result.event.id,rarity:result.rarity}
+        );
+        this.tryFinalizeMinigame();
+        return;
+      }
+
+      this.state.phase="landed";
+      this.log(
+        player.name+"｜"+(result.rarity==="rare"?"【稀有】":"")+"地產拍賣行「"+result.event.name+"」："+
+          result.event.description+"（"+this.describeEventEffect(result)+"）",
+        "special_grid",
+        {
+          seat:player.seat,
+          playerName:player.name,
+          type:"auction",
+          eventId:result.event.id,
+          eventName:result.event.name,
+          rarity:result.rarity,
+          effectKind:result.kind,
+          amount:result.amount,
+          property:result.property,
+          permitDelta:result.permitDelta,
+          permitsTotal:result.permitsTotal,
+          protectionPermitDelta:result.protectionPermitDelta,
+          protectionPermitsTotal:result.protectionPermitsTotal
+        }
+      );
+      return;
+    }
+
+    if(tile.type==="highlow"||tile.type==="horse"){
+      const forcedGameId=tile.type==="horse"?"horse":"highlow";
       const session=startMinigame(this.state,player.seat,Date.now(),forcedGameId);
       fillAiMinigameResults(this.state);
       this.log(
@@ -279,6 +354,8 @@ export class GameEngine{
           property:result.property,
           permitDelta:result.permitDelta,
           permitsTotal:result.permitsTotal,
+          protectionPermitDelta:result.protectionPermitDelta,
+          protectionPermitsTotal:result.protectionPermitsTotal,
           untilRound:result.untilRound,
           tick:result.tick,
           movers:result.movers??[]
@@ -339,7 +416,9 @@ export class GameEngine{
           amount:result.amount,
           property:result.property,
           permitDelta:result.permitDelta,
-          permitsTotal:result.permitsTotal
+          permitsTotal:result.permitsTotal,
+          protectionPermitDelta:result.protectionPermitDelta,
+          protectionPermitsTotal:result.protectionPermitsTotal
         }
       );
       return;
@@ -819,6 +898,32 @@ export class GameEngine{
     return true;
   }
 
+  usePropertyProtection(tileIndex,seat=this.state.currentPlayer){
+    if(!this.isCurrentSeat(seat)||!canUsePropertyProtectionPermit(this.state,seat,tileIndex))return false;
+    const result=usePropertyProtectionPermit(this.state,seat,tileIndex);
+    if(!result.ok)return false;
+    const player=this.state.players[Number(seat)];
+    const tile=this.state.tiles[result.tileIndex];
+    this.log(
+      player.name+" 使用產權保全券，保護「"+tile.name+"」至 ROUND "+result.untilRound+"，期間不可被強制收購。",
+      "special_grid",
+      {
+        seat:Number(seat),
+        playerName:player.name,
+        type:"property_protection",
+        eventName:"產權保全啟用",
+        effectKind:"property_protection",
+        tile:result.tileIndex,
+        tileName:tile.name,
+        group:tile.group,
+        untilRound:result.untilRound,
+        protectionPermitsLeft:result.permitsLeft
+      }
+    );
+    this.notify();
+    return true;
+  }
+
   buyStock(stockId,shares,seat=this.state.currentPlayer){
     const result=executeBuyStock(this.state,seat,stockId,shares);
     if(!result.ok){
@@ -939,6 +1044,17 @@ export class GameEngine{
           a.index-b.index
         )[0]?.index??null;
       if(permitTarget!=null)this.usePropertyPermit(permitTarget,player.seat);
+    }
+
+    if(Math.floor(Number(player.propertyProtectionPermits)||0)>0){
+      const protectionTarget=eligibleProtectionPropertyIndexes(this.state,player)
+        .map(index=>({index,tile:this.state.tiles[index]}))
+        .sort((a,b)=>
+          Number(b.tile.price)-Number(a.tile.price)||
+          Number(b.tile.level)-Number(a.tile.level)||
+          a.index-b.index
+        )[0]?.index??null;
+      if(protectionTarget!=null)this.usePropertyProtection(protectionTarget,player.seat);
     }
 
     for(const order of chooseStockOrders(this.state,player.seat)){
@@ -1099,6 +1215,11 @@ export class GameEngine{
         ?"獲得建案許可 ×"+result.permitDelta+"（目前 "+result.permitsTotal+" 張）"
         :"建案許可已達上限，改為替代獎勵";
     }
+    if(result.kind==="grant_property_protection"){
+      return result.protectionPermitDelta>0
+        ?"獲得產權保全券 ×"+result.protectionPermitDelta+"（目前 "+result.protectionPermitsTotal+" 張）"
+        :"產權保全券已達上限，改為替代獎勵";
+    }
     if(result.kind==="random_upgrade"&&result.property){
       return"「"+result.property.tileName+"」免費升級至 LV."+result.property.level;
     }
@@ -1110,6 +1231,9 @@ export class GameEngine{
       return"市場重新報價 "+Math.max(1,Number(result.marketTicks)||1)+" 次";
     }
     if(result.kind==="urban_redeploy")return"可重新部署至自己的地產";
+    if(result.kind==="acquisition_offer")return"開放本次強制收購選擇";
+    if(result.kind==="auction_game")return"進入多人地產拍賣挑戰";
+    if(result.kind==="property_protection")return"指定地產獲得強制收購保護";
     return"沒有額外效果";
   }
 
