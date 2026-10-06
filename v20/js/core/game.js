@@ -104,6 +104,7 @@ export class GameEngine{
 
   resolveLanding(player,{specialChainDepth=0}={}){
     this.state.pendingPurchase=null;
+    this.state.pendingUpgrade=null;
     this.state.pendingTransport=null;
     this.state.pendingAcquisition=null;
     this.state.pendingUrban=null;
@@ -161,7 +162,25 @@ export class GameEngine{
           this.log(player.name+" 現金不足，實際支付可用現金 "+this.formatMoney(paid)+"。","warning",{seat:player.seat});
         }
       }else{
-        this.log(player.name+" 回到自己的「"+tile.name+"」。","property_owned",{seat:player.seat,tile:player.position});
+        const cost=upgradeCost(tile);
+        const upgradeable=canUpgradeProperty(player.seat,tile);
+        const affordable=player.cash>=cost;
+        if(upgradeable&&affordable){
+          this.state.pendingUpgrade=player.position;
+          this.log(
+            player.name+" 再次走到自己的「"+tile.name+"」，可選擇升級。",
+            "property_upgrade_offer",
+            {seat:player.seat,tile:player.position,tileName:tile.name,level:tile.level,cost}
+          );
+        }else if(!upgradeable){
+          this.log(player.name+" 回到自己的「"+tile.name+"」，目前已無法再升級。","property_owned",{seat:player.seat,tile:player.position});
+        }else{
+          this.log(
+            player.name+" 回到自己的「"+tile.name+"」，但目前現金不足以升級。",
+            "property_owned",
+            {seat:player.seat,tile:player.position,tileName:tile.name,cost,cash:player.cash}
+          );
+        }
       }
 
       this.state.phase="landed";
@@ -421,9 +440,9 @@ export class GameEngine{
 
   centralDevelopmentUpgrade(tileIndex,seat=this.state.currentPlayer){
     if(!this.isCurrentSeat(seat)||!canUseCentralDevelopment(this.state,seat,tileIndex))return false;
-    markCentralDevelopmentUsed(this.state,seat);
-    const success=this.upgradeProperty(tileIndex,seat);
+    const success=this.upgradeProperty(tileIndex,seat,{source:"central_development"});
     if(!success)return false;
+    markCentralDevelopmentUsed(this.state,seat);
     const player=this.state.players[Number(seat)];
     const tile=this.state.tiles[Number(tileIndex)];
     this.log(
@@ -661,26 +680,35 @@ export class GameEngine{
     return true;
   }
 
-  upgradeProperty(tileIndex,seat=this.state.currentPlayer){
+  upgradeProperty(tileIndex,seat=this.state.currentPlayer,{source="landing"}={}){
     if(!this.isCurrentSeat(seat))return false;
     const player=this.currentPlayer;
-    const tile=this.state.tiles[Number(tileIndex)];
+    const index=Number(tileIndex);
+    const tile=this.state.tiles[index];
     const cost=tile?upgradeCost(tile):0;
-    const validPhase=["await-roll","landed"].includes(this.state.phase)&&this.state.pendingPurchase==null;
+    const specialUpgrade=source==="central_development";
+    const validLandingUpgrade=Boolean(
+      source==="landing"&&
+      this.state.phase==="landed"&&
+      this.state.pendingPurchase==null&&
+      this.state.pendingUpgrade===index&&
+      player.position===index
+    );
     const canUpgrade=Boolean(
-      validPhase&&
+      (specialUpgrade||validLandingUpgrade)&&
       canUpgradeProperty(player.seat,tile)&&
       player.cash>=cost
     );
 
     if(!canUpgrade){
-      this.log("目前無法升級這塊地產。","warning",{seat:player.seat,tile:Number(tileIndex)});
+      this.log("目前無法升級這塊地產。","warning",{seat:player.seat,tile:index,source});
       this.notify();
       return false;
     }
 
     player.cash-=cost;
     tile.level+=1;
+    if(validLandingUpgrade)this.state.pendingUpgrade=null;
     const rentAfter=rentFor(this.state,tile);
     this.log(
       player.name+" 花費 "+this.formatMoney(cost)+" 將「"+tile.name+"」升級至 LV."+tile.level+"，目前過路費 "+this.formatMoney(rentAfter)+"。",
@@ -688,16 +716,36 @@ export class GameEngine{
       {
         seat:player.seat,
         playerName:player.name,
-        tile:Number(tileIndex),
+        tile:index,
         tileName:tile.name,
         group:tile.group,
         level:tile.level,
         amount:cost,
         rentAfter,
-        cashAfter:player.cash
+        cashAfter:player.cash,
+        source
       }
     );
     this.handleCentralMissionAction(player.seat,"upgrade_property");
+    this.notify();
+    return true;
+  }
+
+  declineUpgrade(seat=this.state.currentPlayer){
+    const tileIndex=this.state.pendingUpgrade;
+    if(
+      !this.isCurrentSeat(seat)||
+      this.state.phase!=="landed"||
+      tileIndex==null||
+      this.currentPlayer.position!==tileIndex
+    )return false;
+    const tile=this.state.tiles[tileIndex];
+    this.state.pendingUpgrade=null;
+    this.log(
+      this.currentPlayer.name+" 本次不升級「"+(tile?.name??"地產")+"」。",
+      "property_upgrade_decline",
+      {seat:this.currentPlayer.seat,tile:tileIndex,tileName:tile?.name??"地產"}
+    );
     this.notify();
     return true;
   }
@@ -818,8 +866,6 @@ export class GameEngine{
       if(order.type==="sell")this.sellStock(order.stockId,order.shares,player.seat);
     }
 
-    const upgradeIndex=chooseUpgrade(this.state,player.seat);
-    if(upgradeIndex!=null)this.upgradeProperty(upgradeIndex,player.seat);
     return true;
   }
 
@@ -861,6 +907,12 @@ export class GameEngine{
       return true;
     }
 
+    if(this.state.phase==="landed"&&this.state.pendingUpgrade!=null){
+      const upgradeIndex=chooseUpgrade(this.state,player.seat);
+      if(upgradeIndex!=null)return this.upgradeProperty(upgradeIndex,player.seat);
+      return this.declineUpgrade(player.seat);
+    }
+
     if(this.state.phase==="landed"){
       return this.endTurn(player.seat);
     }
@@ -881,6 +933,7 @@ export class GameEngine{
       !this.isCurrentSeat(seat)||
       this.state.phase!=="landed"||
       this.state.pendingPurchase!=null||
+      this.state.pendingUpgrade!=null||
       this.state.pendingTransport!=null||
       this.state.pendingAcquisition!=null||
       this.state.pendingUrban!=null
@@ -943,6 +996,7 @@ export class GameEngine{
     this.state.turnToken+=1;
     this.state.aiPreparedTurnToken=null;
     this.state.dice=null;
+    this.state.pendingUpgrade=null;
     this.state.phase="await-roll";
     this.notify();
     return true;
