@@ -1,0 +1,63 @@
+import assert from"node:assert/strict";
+import{createInitialState,hydrateState}from"../js/core/state.js";
+import{grantItem,inventoryCount,listValidTargets,useItem}from"../js/core/items.js";
+import{rentFor}from"../js/core/property-economy.js";
+import{normalizeRemoteAction}from"../js/core/network.js";
+
+const state=createInitialState();
+state.currentPlayer=0;
+state.phase="await-roll";
+const player=state.players[0];
+
+state.tiles[1].owner=0;
+player.properties=[1];
+state.tiles[2].owner=1;
+state.players[1].properties=[2];
+
+assert.equal(grantItem(state,0,"rent_boost",1).ok,true);
+assert.equal(grantItem(state,0,"remote_dice",1).ok,true);
+assert.equal(grantItem(state,0,"stock_boost",1).ok,true);
+assert.equal(grantItem(state,0,"stock_drop",1).ok,true);
+assert.equal(grantItem(state,0,"rent_block",1).ok,true);
+assert.equal(inventoryCount(player,"rent_boost"),1);
+
+const baseRent=rentFor(state,state.tiles[1]);
+const rentBoost=useItem(state,0,"rent_boost",{tileIndex:1});
+assert.equal(rentBoost.ok,true);
+assert.equal(state.tiles[1].permanentRentBoost,0.2);
+assert.equal(rentFor(state,state.tiles[1]),Math.round(baseRent*1.2));
+
+const dice=useItem(state,0,"remote_dice",{value:11});
+assert.equal(dice.ok,true);
+assert.equal(player.forcedDiceTotal,11);
+
+const stock=state.market.stocks[0];
+const beforeStock=stock.price;
+const stockUp=useItem(state,0,"stock_boost",{stockId:stock.id});
+assert.equal(stockUp.ok,true);
+assert.ok(stock.price>beforeStock);
+
+const blockTargets=listValidTargets(state,0,"rent_block");
+assert.ok(blockTargets.some(target=>Number(target.value)===2));
+const block=useItem(state,0,"rent_block",{tileIndex:2});
+assert.equal(block.ok,true);
+assert.equal(state.tiles[2].rentBlockedCharges,1);
+
+const saved=JSON.parse(JSON.stringify(state));
+const restored=hydrateState(saved);
+assert.equal(restored.players[0].forcedDiceTotal,11);
+assert.equal(restored.tiles[1].permanentRentBoost,0.2);
+assert.equal(restored.tiles[2].rentBlockedCharges,1);
+
+const remote=normalizeRemoteAction({
+  type:"item_use",
+  itemId:"rent_block",
+  target:{tileIndex:2}
+});
+assert.deepEqual(remote,{
+  type:"item_use",
+  itemId:"rent_block",
+  target:{tileIndex:2}
+});
+
+console.log("V20 Alpha32 strategy items core PASS");
