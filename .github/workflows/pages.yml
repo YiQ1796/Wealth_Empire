@@ -423,6 +423,7 @@ jobs:
           grep -q '.desktop-stock-panel{' v20/styles/app.css
           grep -q 'env(safe-area-inset-left)' v20/styles/app.css
           node --experimental-default-type=module v20/tests/mobile-responsive.test.mjs
+          node --experimental-default-type=module v20/tests/network-mobile-resilience.test.mjs
           echo "V20 mobile landscape responsive authority PASS"
 
       - name: Validate V20 mobile notification fit
