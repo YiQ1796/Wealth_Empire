@@ -62,14 +62,17 @@ export function suggestedAcquisitionOffer(tile){
 export function canForceAcquireProperty(state,tileIndex,buyerSeat){
   const tile=state?.tiles?.[Number(tileIndex)];
   const owner=tile?.owner!=null?state?.players?.[tile.owner]:null;
-  const courtProtected=Boolean(owner&&Number(owner.courtShieldUntilRound)>=Number(state?.round??1));
+  const round=Number(state?.round??1);
+  const courtProtected=Boolean(owner&&Number(owner.courtShieldUntilRound)>=round);
+  const titleProtected=Boolean(Number(tile?.acquisitionProtectedUntilRound)>=round);
   return Boolean(
     tile&&
     tile.type==="property"&&
     tile.owner!=null&&
     tile.owner!==buyerSeat&&
     tile.level<MAX_PROPERTY_LEVEL&&
-    !courtProtected
+    !courtProtected&&
+    !titleProtected
   );
 }
 
