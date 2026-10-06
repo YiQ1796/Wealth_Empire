@@ -1,7 +1,8 @@
-const AUDIO_SRC="./assets/audio/alley-wind-preview.m4a?v=alpha32-218";
+const AUDIO_SRC="./assets/audio/alley-wind.m4a?v=alpha32-219";
 const VOLUME_KEY="wealth-empire-bgm-volume-v1";
 const MUTED_KEY="wealth-empire-bgm-muted-v1";
 const DEFAULT_VOLUME=.45;
+const PHONE_AUDIO_QUERY="(hover:none) and (pointer:coarse)";
 
 function clampVolume(value){
   const number=Number(value);
@@ -35,20 +36,31 @@ export function initBgmController(){
   audio.autoplay=false;
   audio.playsInline=true;
 
+  const phoneUsesDeviceVolume=window.matchMedia?.(PHONE_AUDIO_QUERY)?.matches===true;
   let volume=clampVolume(readSetting(VOLUME_KEY,DEFAULT_VOLUME));
   let muted=readSetting(MUTED_KEY,"false")==="true";
   let playPending=false;
   let started=false;
 
-  const render=()=>{
+  const applyAudioSettings=()=>{
+    if(phoneUsesDeviceVolume){
+      audio.volume=1;
+      audio.muted=false;
+      return;
+    }
     audio.volume=volume;
     audio.muted=muted;
+  };
+
+  const render=()=>{
+    applyAudioSettings();
     volumeSlider.value=String(volume);
     volumeValue.value=`${Math.round(volume*100)}%`;
     volumeValue.textContent=volumeValue.value;
     muteButton.setAttribute("aria-pressed",String(muted));
     muteButton.textContent=muted?"靜音":"聲音";
     muteButton.setAttribute("aria-label",muted?"恢復背景音樂":"靜音背景音樂");
+    controls.dataset.deviceVolume=phoneUsesDeviceVolume?"true":"false";
   };
 
   const disarmGestureStart=()=>{
@@ -81,6 +93,7 @@ export function initBgmController(){
   document.addEventListener("touchend",tryStart,true);
 
   muteButton.addEventListener("click",()=>{
+    if(phoneUsesDeviceVolume)return;
     muted=!muted;
     writeSetting(MUTED_KEY,muted);
     render();
@@ -88,6 +101,7 @@ export function initBgmController(){
   });
 
   volumeSlider.addEventListener("input",()=>{
+    if(phoneUsesDeviceVolume)return;
     volume=clampVolume(volumeSlider.value);
     writeSetting(VOLUME_KEY,volume);
     render();
@@ -104,5 +118,5 @@ export function initBgmController(){
   });
 
   window.addEventListener("pagehide",()=>audio.pause(),{once:true});
-  return{audio,tryStart};
+  return{audio,tryStart,phoneUsesDeviceVolume};
 }
