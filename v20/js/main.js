@@ -495,6 +495,7 @@ function pumpActionNotice(){
     (config.major&&config.tone==="gold"?'<img class="action-toast__sparkle" src="'+UI_ASSETS.notification.effects.sparkleGold+'" alt="">':"")+
     '<div class="action-toast__content">'+
       '<img class="action-toast__icon" src="'+config.icon+'" alt="">'+
+      '<span class="action-toast__divider-mask" aria-hidden="true"></span>'+
       '<div class="action-toast__copy">'+
         '<strong></strong>'+
         '<p></p>'+
