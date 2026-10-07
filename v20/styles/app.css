@@ -318,7 +318,53 @@ button:focus-visible{outline:3px solid rgba(47,114,196,.28);outline-offset:2px}
 .empty-state--compact{padding:10px;font-size:10px}
 .tile-info{padding:8px 9px;margin-bottom:7px;border-radius:10px;background:#fff;font-size:13px;line-height:1.55}
 .event-log{display:flex;flex-direction:column;gap:5px}
-.event-entry{padding:7px 8px;border-radius:9px;background:#eef3f8;font-size:12px;line-height:1.35}
+.event-entry{
+  padding:8px 10px;
+  border:1px solid #dfe7ef;
+  border-left:4px solid var(--event-player-color,#718096);
+  border-radius:10px;
+  background:#eef3f8;
+  font-size:12px;
+  line-height:1.4
+}
+.event-entry__meta{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin-bottom:4px;
+  min-width:0
+}
+.event-entry__round{
+  flex:0 0 auto;
+  padding:2px 6px;
+  border-radius:999px;
+  background:#dfe9f2;
+  color:#49647d;
+  font-size:9px;
+  font-weight:1000
+}
+.event-entry__actor{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#20384e;
+  font-size:12px
+}
+.event-entry__kind{
+  flex:0 0 auto;
+  margin-left:auto;
+  color:#6b7f91;
+  font-size:9px;
+  font-style:normal;
+  font-weight:1000
+}
+.event-entry p{
+  margin:0;
+  color:#30475d;
+  font-size:11px;
+  font-weight:800
+}
 .event-entry--rent{background:#eef8f2}
 .event-entry--group_complete{background:#fff5d7}
 .event-entry--warning{background:#fff0ee}
@@ -1944,7 +1990,6 @@ body.entry-pending .app-shell{
 
 
 .board-motion-active #rollButton,
-.board-motion-active #endTurnButton,
 .board-motion-active .property-upgrade{
   pointer-events:none;
   opacity:.58
@@ -6113,7 +6158,7 @@ body.entry-pending .app-shell{
   .hud-turn-tools--compact{
     grid-template-columns:58px minmax(0,1fr)
   }
-  .mobile-header-end-turn{
+  .mobile-header-event-log{
     display:none!important
   }
   .hud-market-button{
@@ -6147,7 +6192,7 @@ body.entry-pending .app-shell{
     grid-column:span 2
   }
   .desktop-command-dock #rollButton,
-  .desktop-command-dock #desktopEndTurnButton{
+  .desktop-command-dock #desktopEventLogButton{
     grid-column:span 3
   }
   .desktop-command-dock .feature-tab,
@@ -6483,7 +6528,7 @@ body.entry-pending .app-shell{
     grid-column:span 2
   }
   .desktop-command-dock #rollButton,
-  .desktop-command-dock #desktopEndTurnButton{
+  .desktop-command-dock #desktopEventLogButton{
     grid-column:span 3
   }
 }
@@ -6932,5 +6977,42 @@ body.entry-pending .app-shell{
   .desktop-command-dock .action-button img{
     width:31px;
     height:31px
+  }
+}
+
+
+/* V20 Alpha 32.3.13 — event history replaces manual end-turn controls. */
+#desktopEventLogButton,
+#mobileEventLogButton{
+  background:#f4f0ff;
+  color:#5b4592;
+  border:1px solid #cfc1ee
+}
+#desktopEventLogButton:hover,
+#mobileEventLogButton:hover{
+  background:#ece5fb
+}
+@media (orientation:landscape) and (max-height:650px) and (max-width:1180px){
+  #mobileEventLogButton{
+    min-height:38px;
+    padding:4px 6px;
+    font-size:10px
+  }
+  #mobileEventLogButton img{
+    width:20px;
+    height:20px;
+    flex-basis:20px
+  }
+  .event-entry{
+    padding:6px 8px
+  }
+  .event-entry__meta{
+    gap:4px
+  }
+  .event-entry__actor{
+    font-size:11px
+  }
+  .event-entry p{
+    font-size:10px
   }
 }

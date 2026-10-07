@@ -61,6 +61,6 @@ assert.match(cssSource,/-webkit-overflow-scrolling:touch/);
 assert.match(cssSource,/\.stock-selection-bar\{[\s\S]*?position:sticky/);
 assert.match(cssSource,/\.stock-trade-card\.is-active-trade/);
 assert.match(html,/財富帝國 V20 Alpha 32\.3\.13/);
-assert.match(html,/alpha32-236/);
+assert.match(html,/alpha32-237/);
 
 console.log("V20 Alpha32.3.13 reliable multiplayer + anytime stock UX regression PASS");

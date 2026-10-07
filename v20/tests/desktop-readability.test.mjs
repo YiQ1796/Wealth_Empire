@@ -8,10 +8,10 @@ const stock=readFileSync(new URL("../js/ui/stock-render.js",import.meta.url),"ut
 const render=readFileSync(new URL("../js/ui/render.js",import.meta.url),"utf8");
 
 assert.match(html,/財富帝國 V20 Alpha 32\.3\.13/);
-assert.match(html,/app\.css\?v=alpha32-236/);
-assert.match(html,/main\.js\?v=alpha32-236/);
-assert.match(main,/\.\/ui\/stock-render\.js\?v=alpha32-236/);
-assert.match(main,/\.\/core\/game\.js\?v=alpha32-236/);
+assert.match(html,/app\.css\?v=alpha32-237/);
+assert.match(html,/main\.js\?v=alpha32-237/);
+assert.match(main,/\.\/ui\/stock-render\.js\?v=alpha32-237/);
+assert.match(main,/\.\/core\/game\.js\?v=alpha32-237/);
 
 assert.match(stock,/const cardsPerRow=2/);
 assert.doesNotMatch(stock,/currentPlayer===localSeat/);
@@ -48,7 +48,7 @@ const regionBlock=css.slice(regionStart);
 assert.match(regionBlock,/\.tile\.tile--region-complete::before/);
 assert.match(regionBlock,/content:"連區 " attr\(data-region-bonus\)/);
 assert.match(regionBlock,/\.property-rent-breakdown\{/);
-assert.match(main,/\.\/ui\/render\.js\?v=alpha32-230/);
+assert.match(main,/\.\/ui\/render\.js\?v=alpha32-237/);
 
 const rankingMarker="/* V20 Alpha 32.3.7 — desktop wealth ranking + forced-acquisition visibility. */";
 const rankingStart=css.indexOf(rankingMarker);
@@ -68,11 +68,11 @@ assert.doesNotMatch(html,/class="desktop-stock-panel"/);
 assert.match(html,/id="desktopMarketButton"[\s\S]*?data-feature="market"/);
 assert.match(marketPopupBlock,/\.players\{[\s\S]*?grid-template-rows:auto repeat\(4,minmax\(0,1fr\)\)/);
 assert.match(html,/class="feature-tabs feature-tabs--secondary desktop-command-dock"/);
-assert.match(html,/我的房產[\s\S]*?道具[\s\S]*?資訊[\s\S]*?id="rollButton"[\s\S]*?id="desktopEndTurnButton"/);
+assert.match(html,/我的房產[\s\S]*?道具[\s\S]*?市場操作[\s\S]*?id="rollButton"[\s\S]*?id="desktopEventLogButton"/);
 assert.doesNotMatch(html,/desktop-command-dock[\s\S]{0,900}feature-tab--market/);
 assert.match(css,/\.desktop-command-dock\{[\s\S]*?grid-template-columns:repeat\(6,minmax\(0,1fr\)\)/);
 assert.match(css,/desktop-command-dock__feature:nth-of-type\(1\),[\s\S]*?grid-column:span 2/);
-assert.match(css,/\.desktop-command-dock #rollButton,[\s\S]*?#desktopEndTurnButton\{[\s\S]*?grid-column:span 3/);
+assert.match(css,/\.desktop-command-dock #rollButton,[\s\S]*?#desktopEventLogButton\{[\s\S]*?grid-column:span 3/);
 assert.match(render,/player-card__details/);
 assert.match(render,/所在地/);
 assert.match(render,/持股/);

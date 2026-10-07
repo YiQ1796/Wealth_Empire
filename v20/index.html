@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#eef3f7">
 <title>財富帝國 V20 Alpha 32.3.13</title>
-<link rel="stylesheet" href="./styles/app.css?v=alpha32-236">
+<link rel="stylesheet" href="./styles/app.css?v=alpha32-237">
 </head>
 <body class="entry-pending">
 <section id="entryGate" class="entry-gate" aria-label="遊戲模式選擇">
@@ -110,10 +110,10 @@
             <span class="dice-result__faces" id="diceFacesValue">🎲 —</span>
             <strong class="dice-result__total" id="diceTotalValue">= —</strong>
           </div>
-          <div class="control-actions control-actions--turn mobile-header-end-turn">
-            <button id="endTurnButton" class="action-button">
-              <img src="./assets/ui/ACTION_END_TURN.webp" alt="">
-              <span>結束回合</span>
+          <div class="control-actions control-actions--turn mobile-header-event-log">
+            <button id="mobileEventLogButton" type="button" class="action-button" data-feature="info">
+              <img src="./assets/v5/ui/modal/MODAL_INFO_ICON.webp" alt="">
+              <span>事件紀錄</span>
             </button>
           </div>
           <button id="desktopMarketButton" type="button" class="hud-market-button" data-feature="market">
@@ -158,14 +158,14 @@
         <button class="feature-tab desktop-command-dock__feature" data-feature="item">
           <img src="./assets/v5/ui/modal/MODAL_ITEMS_ICON.webp" alt=""><span>道具</span>
         </button>
-        <button class="feature-tab desktop-command-dock__feature" data-feature="info">
-          <img src="./assets/v5/ui/modal/MODAL_INFO_ICON.webp" alt=""><span>資訊</span>
+        <button class="feature-tab desktop-command-dock__feature" data-feature="market">
+          <img src="./assets/v5/ui/modal/MODAL_STOCK_ICON.webp" alt=""><span>市場操作</span>
         </button>
         <button id="rollButton" class="action-button action-button--primary desktop-command-dock__turn">
           <img src="./assets/ui/ACTION_ROLL.webp" alt=""><span>擲骰子</span>
         </button>
-        <button id="desktopEndTurnButton" class="action-button desktop-command-dock__turn">
-          <img src="./assets/ui/ACTION_END_TURN.webp" alt=""><span>結束</span>
+        <button id="desktopEventLogButton" type="button" class="action-button desktop-command-dock__turn" data-feature="info">
+          <img src="./assets/v5/ui/modal/MODAL_INFO_ICON.webp" alt=""><span>事件紀錄</span>
         </button>
       </nav>
     </aside>
@@ -277,9 +277,9 @@
       </div>
 
       <div class="feature-modal__pane" data-feature-panel="info">
-        <div class="feature-heading"><div><h3>遊戲資訊</h3><p>目前格子、事件與系統紀錄。</p></div></div>
+        <div class="feature-heading"><div><h3>事件紀錄</h3><p>依時間列出每位玩家與系統做過的操作，最新紀錄在最上方。</p></div></div>
         <div id="currentTileInfo" class="tile-info">—</div>
-        <div id="eventLog" class="event-log"></div>
+        <div id="eventLog" class="event-log" aria-live="polite"></div>
       </div>
     </section>
   </div>
@@ -455,6 +455,6 @@
 </dialog>
 
 <div id="actionToastStack" class="action-toast-stack" aria-live="polite" aria-atomic="false"></div>
-<script type="module" src="./js/main.js?v=alpha32-236"></script>
+<script type="module" src="./js/main.js?v=alpha32-237"></script>
 </body>
 </html>
