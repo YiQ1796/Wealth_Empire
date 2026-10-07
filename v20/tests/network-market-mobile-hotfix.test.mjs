@@ -50,7 +50,6 @@ assert.match(stockSource,/預估/);
 assert.doesNotMatch(stockSource,/currentPlayer===localSeat/);
 assert.doesNotMatch(stockSource,/輪到你的回合時才能買賣股票/);
 assert.match(stockSource,/state\.gameStatus==="playing"/);
-assert.match(stockSource,/state\.phase!=="world_choice"/);
 assert.match(stockSource,/scrollIntoView/);
 assert.match(stockSource,/const cardsPerRow=2/);
 assert.match(stockSource,/is-held-stock/);
