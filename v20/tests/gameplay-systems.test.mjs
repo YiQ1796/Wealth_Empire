@@ -1,6 +1,7 @@
 import assert from"node:assert/strict";
 import{createInitialState,setPlayerCharacter}from"../js/core/state.js";
 import{TILE_ART_BY_INDEX}from"../js/data/assets.js";
+import{BOARD_TILES,MAX_PROPERTY_LEVEL}from"../js/data/board.js";
 import{UI_ASSETS}from"../js/data/ui-assets.js";
 import{GameEngine}from"../js/core/game.js";
 import{chooseUpgrade,shouldBuyProperty}from"../js/core/ai.js";
@@ -33,6 +34,17 @@ function commonPickValue(pool,eventId){
   const index=candidates.findIndex(event=>event.id===eventId);
   assert.ok(index>=0,"missing common event "+eventId);
   return(index+0.5)/candidates.length;
+}
+
+{
+  const supportedTypes=new Set([
+    "start","chance","fate","property","tax","station","highlow",
+    "acquisition","horse","market","court","auction","urban","hospital"
+  ]);
+  assert.equal(BOARD_TILES.length,44);
+  for(const tile of BOARD_TILES){
+    assert.ok(supportedTypes.has(tile.type),"unsupported board tile type: "+tile.type);
+  }
 }
 
 {
@@ -248,6 +260,47 @@ function commonPickValue(pool,eventId){
   assert.equal(state.gameStatus,"finished");
   assert.equal(state.phase,"finished");
   assert.equal(state.round,30);
+}
+
+{
+  const state=createInitialState();
+  const engine=new GameEngine(state,()=>{});
+  const targetIndex=state.tiles.findIndex(tile=>tile.type==="property");
+  const target=state.tiles[targetIndex];
+  target.owner=1;
+  target.level=1;
+  state.players[1].properties.push(targetIndex);
+  state.players[0].cash=50000;
+  state.players[0].position=targetIndex;
+
+  const buyerCashBefore=state.players[0].cash;
+  const sellerCashBefore=state.players[1].cash;
+  engine.resolveLanding(state.players[0]);
+
+  assert.equal(state.phase,"acquisition","landing on an eligible opponent property must offer forced acquisition");
+  assert.equal(state.pendingAcquisition?.source,"landing");
+  assert.deepEqual(state.pendingAcquisition?.options.map(option=>option.tileIndex),[targetIndex]);
+  assert.ok(state.players[0].cash<buyerCashBefore,"rent must be paid before the acquisition offer");
+  assert.ok(state.players[1].cash>sellerCashBefore,"property owner must receive rent before the acquisition offer");
+
+  assert.equal(engine.acquireFromCenter(targetIndex,0),true);
+  assert.equal(state.tiles[targetIndex].owner,0);
+  assert.equal(state.pendingAcquisition,null);
+  assert.equal(state.phase,"landed");
+}
+
+{
+  const state=createInitialState();
+  const engine=new GameEngine(state,()=>{});
+  const targetIndex=state.tiles.findIndex(tile=>tile.type==="property");
+  state.tiles[targetIndex].owner=1;
+  state.tiles[targetIndex].level=MAX_PROPERTY_LEVEL;
+  state.players[1].properties.push(targetIndex);
+  state.players[0].position=targetIndex;
+  engine.resolveLanding(state.players[0]);
+
+  assert.equal(state.pendingAcquisition,null,"max-level opponent property must stay protected from forced acquisition");
+  assert.equal(state.phase,"landed");
 }
 
 {
