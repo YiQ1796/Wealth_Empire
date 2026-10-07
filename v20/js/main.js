@@ -163,10 +163,73 @@ function friendlyNetworkError(error){
 
 const phoneLandscapeQuery=window.matchMedia("(orientation: landscape) and (max-height: 650px) and (max-width: 1180px)");
 let phoneLayoutSettleTimers=[];
+let stockKeyboardActive=false;
+let stockKeyboardBlurTimer=null;
+
+function isPhoneStockQuantityInput(target){
+  return Boolean(
+    phoneLandscapeQuery.matches&&
+    target instanceof HTMLInputElement&&
+    target.matches("[data-stock-qty]")&&
+    target.closest("#stockMarketMobileGrid")
+  );
+}
+
+function syncStockKeyboardViewport(){
+  if(!stockKeyboardActive){
+    document.documentElement.style.removeProperty("--stock-keyboard-height");
+    return;
+  }
+  const visualHeight=Math.round(window.visualViewport?.height||0);
+  const innerHeight=Math.round(window.innerHeight||0);
+  const height=Math.max(160,visualHeight||innerHeight);
+  document.documentElement.style.setProperty("--stock-keyboard-height",height+"px");
+
+  const active=document.activeElement;
+  if(isPhoneStockQuantityInput(active)){
+    requestAnimationFrame(()=>{
+      try{active.closest(".stock-trade-card")?.scrollIntoView({block:"nearest",behavior:"smooth"})}catch{}
+    });
+  }
+}
+
+function enterStockKeyboardMode(input){
+  if(!isPhoneStockQuantityInput(input))return;
+  clearTimeout(stockKeyboardBlurTimer);
+  stockKeyboardActive=true;
+
+  const frozenHeight=Math.max(
+    1,
+    Math.round(window.visualViewport?.height||0),
+    Math.round(window.innerHeight||0)
+  );
+  document.documentElement.style.setProperty("--phone-app-height",frozenHeight+"px");
+  document.body.classList.add("stock-keyboard-active");
+  syncStockKeyboardViewport();
+  [80,180,350].forEach(delay=>setTimeout(syncStockKeyboardViewport,delay));
+}
+
+function exitStockKeyboardMode(){
+  clearTimeout(stockKeyboardBlurTimer);
+  stockKeyboardBlurTimer=setTimeout(()=>{
+    if(isPhoneStockQuantityInput(document.activeElement))return;
+    stockKeyboardActive=false;
+    document.body.classList.remove("stock-keyboard-active");
+    document.documentElement.style.removeProperty("--stock-keyboard-height");
+    settlePhoneLandscapeLayout();
+  },90);
+}
 
 function syncPhoneViewportHeight(){
   if(!phoneLandscapeQuery.matches){
+    stockKeyboardActive=false;
+    document.body.classList.remove("stock-keyboard-active");
+    document.documentElement.style.removeProperty("--stock-keyboard-height");
     document.documentElement.style.removeProperty("--phone-app-height");
+    return;
+  }
+  if(stockKeyboardActive){
+    syncStockKeyboardViewport();
     return;
   }
   const visualHeight=Math.round(window.visualViewport?.height||0);
@@ -177,6 +240,10 @@ function syncPhoneViewportHeight(){
 
 function settlePhoneLandscapeLayout(){
   if(!phoneLandscapeQuery.matches)return;
+  if(stockKeyboardActive){
+    syncStockKeyboardViewport();
+    return;
+  }
   phoneLayoutSettleTimers.forEach(clearTimeout);
   phoneLayoutSettleTimers=[];
   const settle=()=>{
@@ -201,10 +268,28 @@ function setEntryVisible(visible){
   entryGate.hidden=!visible;
   if(!visible)settlePhoneLandscapeLayout();
 }
-window.visualViewport?.addEventListener("resize",settlePhoneLandscapeLayout);
-window.visualViewport?.addEventListener("scroll",syncPhoneViewportHeight);
+document.addEventListener("focusin",event=>{
+  if(isPhoneStockQuantityInput(event.target))enterStockKeyboardMode(event.target);
+});
+document.addEventListener("focusout",event=>{
+  if(isPhoneStockQuantityInput(event.target))exitStockKeyboardMode();
+});
+
+window.visualViewport?.addEventListener("resize",()=>{
+  if(stockKeyboardActive)syncStockKeyboardViewport();
+  else settlePhoneLandscapeLayout();
+});
+window.visualViewport?.addEventListener("scroll",()=>{
+  if(stockKeyboardActive)syncStockKeyboardViewport();
+  else syncPhoneViewportHeight();
+});
 window.addEventListener("resize",settlePhoneLandscapeLayout);
-window.addEventListener("orientationchange",settlePhoneLandscapeLayout);
+window.addEventListener("orientationchange",()=>{
+  stockKeyboardActive=false;
+  document.body.classList.remove("stock-keyboard-active");
+  document.documentElement.style.removeProperty("--stock-keyboard-height");
+  settlePhoneLandscapeLayout();
+});
 syncPhoneViewportHeight();
 
 function selectEntryCharacter(index){
