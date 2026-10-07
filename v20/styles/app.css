@@ -6579,3 +6579,186 @@ body.entry-pending .app-shell{
     z-index:2!important
   }
 }
+
+
+/* V20 Alpha 32.4.0 — distinct transport hubs + persistent strategic world events. */
+.transport-destination:disabled{
+  opacity:.48;
+  cursor:not-allowed;
+  background:#f3f5f7;
+  border-color:#d8e0e7
+}
+.transport-destination:disabled:hover{
+  background:#f3f5f7;
+  border-color:#d8e0e7
+}
+.transport-destination--action .transport-destination__copy strong{
+  color:#153b58
+}
+.world-event-status{
+  display:grid;
+  gap:7px;
+  margin-bottom:8px;
+  padding:9px 10px;
+  border:1px solid #dce5ed;
+  border-radius:11px;
+  background:#f7fafc
+}
+.world-event-status>strong{
+  color:#3e5d75;
+  font-size:12px
+}
+.world-event-status__empty{
+  color:#80909e;
+  font-size:11px;
+  font-weight:800
+}
+.world-event-status.active{
+  border-color:#e2c780;
+  background:#fff9e8
+}
+.world-event-status__list{
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px
+}
+.world-event-status__list span{
+  padding:5px 8px;
+  border:1px solid #ead59f;
+  border-radius:999px;
+  background:#fff;
+  color:#765821;
+  font-size:10px;
+  line-height:1.2;
+  font-weight:900
+}
+.world-choice-dialog{
+  width:min(690px,calc(100vw - 24px));
+  max-height:calc(100dvh - 24px);
+  padding:0;
+  border:0;
+  background:transparent;
+  overflow:visible
+}
+.world-choice-dialog::backdrop{
+  background:rgba(18,34,49,.58);
+  backdrop-filter:blur(3px)
+}
+.world-choice-modal{
+  max-height:calc(100dvh - 32px);
+  overflow:auto;
+  padding:18px;
+  border:1px solid #dbe5ed;
+  border-radius:20px;
+  background:#fff;
+  box-shadow:0 24px 70px rgba(18,36,56,.36)
+}
+.world-choice-modal__header{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:12px
+}
+.world-choice-modal__eyebrow{
+  display:block;
+  margin-bottom:3px;
+  color:#9a6716;
+  font-size:10px;
+  font-weight:1000;
+  letter-spacing:.1em
+}
+.world-choice-modal__header h2{
+  margin:0;
+  color:#183953;
+  font-size:25px
+}
+.world-choice-modal__header p{
+  margin:4px 0 0;
+  color:#63798c;
+  font-size:12px;
+  font-weight:800
+}
+.world-choice-summary{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:2px 12px;
+  align-items:center;
+  padding:11px 13px;
+  border:1px solid #e4d2a6;
+  border-radius:13px;
+  background:#fff9e8
+}
+.world-choice-summary span{
+  color:#7e6b45;
+  font-size:10px;
+  font-weight:1000
+}
+.world-choice-summary strong{
+  color:#1d4666;
+  font-size:20px
+}
+.world-choice-summary small{
+  grid-column:1/-1;
+  color:#7a6a4d;
+  font-size:10px;
+  font-weight:800
+}
+.world-choice-options{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px;
+  margin-top:12px
+}
+.world-choice-option{
+  min-height:108px;
+  display:grid;
+  align-content:center;
+  gap:5px;
+  padding:13px;
+  border:1px solid #cfdde7;
+  border-radius:14px;
+  background:#fff;
+  color:#183953;
+  text-align:left;
+  cursor:pointer
+}
+.world-choice-option:hover,
+.world-choice-option:focus-visible{
+  border-color:#d2a441;
+  background:#fffbef;
+  outline:none
+}
+.world-choice-option strong{
+  font-size:16px
+}
+.world-choice-option span{
+  color:#536f84;
+  font-size:11px;
+  line-height:1.45;
+  font-weight:800
+}
+.world-choice-option small{
+  color:#9a6716;
+  font-size:10px;
+  font-weight:1000
+}
+.world-choice-option:disabled{
+  opacity:.46;
+  cursor:not-allowed;
+  background:#f4f6f8
+}
+@media (orientation:landscape) and (max-height:650px) and (max-width:1180px){
+  .world-choice-dialog{
+    width:min(620px,calc(100vw - max(16px,env(safe-area-inset-left)) - max(16px,env(safe-area-inset-right))))
+  }
+  .world-choice-modal{padding:10px;border-radius:14px}
+  .world-choice-modal__header{margin-bottom:7px}
+  .world-choice-modal__header h2{font-size:18px}
+  .world-choice-modal__header p{font-size:9px}
+  .world-choice-summary{padding:7px 9px}
+  .world-choice-summary strong{font-size:15px}
+  .world-choice-options{gap:6px;margin-top:7px}
+  .world-choice-option{min-height:70px;padding:8px;border-radius:10px}
+  .world-choice-option strong{font-size:11px}
+  .world-choice-option span,.world-choice-option small{font-size:8px}
+}
