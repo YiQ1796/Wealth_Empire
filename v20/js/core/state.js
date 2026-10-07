@@ -34,6 +34,7 @@ export function createPlayer(seat,name,kind="ai"){
     centralDevelopmentUsedRound:0,
     developmentPermits:0,
     propertyProtectionPermits:0,
+    governmentContract:null,
     forcedDiceTotal:null,
     bankrupt:false
   };
@@ -55,6 +56,8 @@ export function createInitialState(){
     pendingTransport:null,
     pendingAcquisition:null,
     pendingUrban:null,
+    pendingWorldChoice:null,
+    worldEvents:{globalRent:null,groupRent:{},bankRate:null,transport:null,sectorVolatility:{},marketCircuitBreakerUntilRound:0},
     minigame:null,
     minigameHistory:[],
     lastMinigame:null,
@@ -135,7 +138,8 @@ export function hydrateState(raw){
       centralTransitUsedRound:Math.max(0,Number(saved.centralTransitUsedRound)||0),
       centralDevelopmentUsedRound:Math.max(0,Number(saved.centralDevelopmentUsedRound)||0),
       developmentPermits:Math.max(0,Math.min(3,Math.floor(Number(saved.developmentPermits)||0))),
-      propertyProtectionPermits:Math.max(0,Math.min(2,Math.floor(Number(saved.propertyProtectionPermits)||0)))
+      propertyProtectionPermits:Math.max(0,Math.min(2,Math.floor(Number(saved.propertyProtectionPermits)||0))),
+      governmentContract:saved.governmentContract&&typeof saved.governmentContract==="object"?saved.governmentContract:null
     };
   });
 
@@ -147,7 +151,12 @@ export function hydrateState(raw){
       acquisitionProtectedUntilRound:Math.max(0,Number(saved.acquisitionProtectedUntilRound)||0),
       permanentRentBoost:Math.max(0,Math.min(0.2,Number(saved.permanentRentBoost)||0)),
       rentBurstCharges:Math.max(0,Math.min(1,Math.floor(Number(saved.rentBurstCharges)||0))),
-      rentBlockedCharges:Math.max(0,Math.min(1,Math.floor(Number(saved.rentBlockedCharges)||0)))
+      rentBlockedCharges:Math.max(0,Math.min(1,Math.floor(Number(saved.rentBlockedCharges)||0))),
+      rentPenaltyCharges:Math.max(0,Math.min(1,Math.floor(Number(saved.rentPenaltyCharges)||0))),
+      rentPenaltyMultiplier:Math.max(.1,Math.min(1,Number(saved.rentPenaltyMultiplier)||.70)),
+      leaseBonusCharges:Math.max(0,Math.min(2,Math.floor(Number(saved.leaseBonusCharges)||0))),
+      leaseBonusMultiplier:Math.max(1,Math.min(1.5,Number(saved.leaseBonusMultiplier)||1.15)),
+      assetValueMultiplier:Math.max(.6,Math.min(1.6,Number(saved.assetValueMultiplier)||1))
     };
   });
   state.market=raw.market??createInitialMarket();
@@ -158,6 +167,8 @@ export function hydrateState(raw){
   state.pendingTransport=raw.pendingTransport&&typeof raw.pendingTransport==="object"?raw.pendingTransport:null;
   state.pendingAcquisition=raw.pendingAcquisition&&typeof raw.pendingAcquisition==="object"?raw.pendingAcquisition:null;
   state.pendingUrban=raw.pendingUrban&&typeof raw.pendingUrban==="object"?raw.pendingUrban:null;
+  state.pendingWorldChoice=raw.pendingWorldChoice&&typeof raw.pendingWorldChoice==="object"?raw.pendingWorldChoice:null;
+  state.worldEvents=raw.worldEvents&&typeof raw.worldEvents==="object"?raw.worldEvents:fallback.worldEvents;
   state.turnToken=Math.max(1,Number(raw.turnToken)||1);
   state.version=BOARD_VERSION;
   return state;
