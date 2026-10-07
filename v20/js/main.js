@@ -7,6 +7,7 @@ import{
   getOrCreateClientId,
   loadHostSnapshot,
   loadNetworkSession,
+  prewarmNetworkTransport,
   sanitizePlayerName,
   sanitizeRoomCode,
   saveHostSnapshot
@@ -120,6 +121,41 @@ function isLocalRoomHost(){
 
 function canStartRoomGame(){
   return isLocalRoomHost()&&(state.gameStatus==="lobby"||state.phase==="lobby");
+}
+
+function uniqueLobbyPlayerName(requestedName,clientId){
+  const base=sanitizePlayerName(requestedName);
+  const normalized=value=>String(value??"").trim().toLocaleLowerCase();
+  const usedNames=new Set(
+    (state.players??[])
+      .filter(player=>player.kind==="human"&&player.clientId!==clientId)
+      .map(player=>normalized(player.name))
+      .filter(Boolean)
+  );
+  if(!usedNames.has(normalized(base)))return base;
+
+  for(let index=2;index<=9;index++){
+    const suffix=" ("+index+")";
+    const candidate=base.slice(0,Math.max(1,20-suffix.length))+suffix;
+    if(!usedNames.has(normalized(candidate)))return candidate;
+  }
+
+  const suffix="-"+String(clientId??"").slice(-4);
+  return base.slice(0,Math.max(1,20-suffix.length))+suffix;
+}
+
+function friendlyNetworkError(error){
+  const message=String(error?.message??error??"unknown");
+  if(/unavailable-id|is taken|ID is taken|duplicate/i.test(message)){
+    return"房間識別暫時衝突，系統不會用玩家名稱判定身份；請直接再試一次。";
+  }
+  if(/relay_join_timeout|relay_timeout|join_timeout|peer_timeout/i.test(message)){
+    return"連線逾時，已嘗試中繼與備援連線；請確認房號後再試一次。";
+  }
+  if(/room_unavailable|invalid_room|invalid_room_code/i.test(message)){
+    return"找不到可加入的房間，請確認 6 位數房號。";
+  }
+  return message;
 }
 
 const phoneLandscapeQuery=window.matchMedia("(orientation: landscape) and (max-height: 650px) and (max-width: 1180px)");
@@ -720,6 +756,7 @@ const network=new PeerNetwork({
   },
   onJoin:({clientId,playerName,characterIndex})=>{
     const existing=state.players.find(player=>player.kind==="human"&&player.clientId===clientId);
+    const displayName=existing?.name??uniqueLobbyPlayerName(playerName,clientId);
     let seat=existing?.seat??null;
 
     if(seat==null){
@@ -739,20 +776,20 @@ const network=new PeerNetwork({
       if(!available)return{ok:false,error:"房間已滿。"};
       seat=available.seat;
       setHumanSeat(state,seat,{
-        name:playerName,
+        name:displayName,
         clientId,
         connected:true,
         characterIndex:chosenCharacter
       });
-      engine.log(playerName+" 加入房間，座位 "+(seat+1)+"。","network_join",{seat});
+      engine.log(displayName+" 加入房間，座位 "+(seat+1)+"。","network_join",{seat});
     }else{
       setHumanSeat(state,seat,{
-        name:playerName,
+        name:displayName,
         clientId,
         connected:true,
         characterIndex:existing.characterIndex
       });
-      engine.log(playerName+" 已重新連回座位 "+(seat+1)+"。","network_reconnect",{seat});
+      engine.log(displayName+" 已重新連回座位 "+(seat+1)+"。","network_reconnect",{seat});
       const timer=disconnectTimers.get(seat);
       if(timer){
         clearTimeout(timer);
@@ -928,6 +965,29 @@ function renderNetworkUi(){
   }else{
     roomDisplay.textContent="------";
     roomHero.hidden=true;
+  }
+
+  const lobbyCard=document.getElementById("networkLobbyCard");
+  const lobbyRoomCode=document.getElementById("networkLobbyRoomCode");
+  const lobbySummary=document.getElementById("networkLobbySummary");
+  const lobbyStartButton=document.getElementById("networkLobbyStartButton");
+  const lobbyActive=network.mode!=="offline"&&(state.gameStatus==="lobby"||state.phase==="lobby");
+  document.querySelector(".hud-panel")?.classList.toggle("has-network-lobby",lobbyActive);
+  if(lobbyCard){
+    lobbyCard.hidden=!lobbyActive;
+    if(lobbyActive){
+      const humanCount=(state.players??[]).filter(player=>player.kind==="human").length;
+      const aiCount=Math.max(0,(state.players?.length??4)-humanCount);
+      if(lobbyRoomCode)lobbyRoomCode.textContent=network.roomCode??"------";
+      if(lobbySummary){
+        lobbySummary.textContent=humanCount+" 真人＋"+aiCount+" AI｜"+
+          (isLocalRoomHost()?"你是房主，可直接開始":"已進房，等待房主開始");
+      }
+      if(lobbyStartButton){
+        lobbyStartButton.disabled=!canStartRoomGame();
+        lobbyStartButton.textContent=isLocalRoomHost()?"開始遊戲":"等待房主";
+      }
+    }
   }
 }
 
@@ -1610,7 +1670,12 @@ document.getElementById("startSoloButton").addEventListener("click",async()=>{
   scheduleAi();
 });
 
-document.getElementById("startFriendButton").addEventListener("click",()=>{
+const startFriendButton=document.getElementById("startFriendButton");
+const warmFriendNetwork=()=>{void prewarmNetworkTransport()};
+startFriendButton.addEventListener("pointerenter",warmFriendNetwork,{once:true});
+startFriendButton.addEventListener("focus",warmFriendNetwork,{once:true});
+startFriendButton.addEventListener("click",()=>{
+  warmFriendNetwork();
   renderNetworkUi();
   if(!networkDialog.open)networkDialog.showModal();
 });
@@ -1648,8 +1713,10 @@ document.getElementById("createRoomButton").addEventListener("click",async()=>{
     engine.replaceState(state);
     document.getElementById("networkRoomCode").value=finalCode;
     setEntryVisible(false);
+    renderNetworkUi();
+    if(networkDialog.open)networkDialog.close();
   }catch(error){
-    setNetworkStatus("建立房間失敗："+(error?.message??"unknown"),"error");
+    setNetworkStatus("建立房間失敗："+friendlyNetworkError(error),"error");
   }
 });
 
@@ -1672,13 +1739,15 @@ document.getElementById("joinRoomButton").addEventListener("click",async()=>{
     uiContext.networkMode="guest";
     setEntryVisible(false);
     renderAll();
+    renderNetworkUi();
+    if(networkDialog.open)networkDialog.close();
   }catch(error){
     initialGuestStatePending=false;
-    setNetworkStatus("加入房間失敗："+(error?.message??"unknown"),"error");
+    setNetworkStatus("加入房間失敗："+friendlyNetworkError(error),"error");
   }
 });
 
-document.getElementById("startRoomGameButton").addEventListener("click",()=>{
+function startRoomGameFromUi(){
   if(!isLocalRoomHost()){
     setNetworkStatus("只有房主可以開始遊戲。","warning");
     renderNetworkUi();
@@ -1690,12 +1759,20 @@ document.getElementById("startRoomGameButton").addEventListener("click",()=>{
   const hostSeat=Number(state.network?.hostSeat??0);
   const started=engine.startGame(hostSeat);
   if(!started){
-    setNetworkStatus("目前房間狀態無法開始，請重新開啟好友連線視窗再試一次。","error");
+    setNetworkStatus("目前房間狀態無法開始，請重新同步房間後再試一次。","error");
     renderNetworkUi();
     return;
   }
   if(networkDialog.open)networkDialog.close();
   setNetworkStatus("遊戲已開始，好友與 AI 補位已同步進入棋盤。","success");
+  renderNetworkUi();
+}
+
+document.getElementById("startRoomGameButton").addEventListener("click",startRoomGameFromUi);
+document.getElementById("networkLobbyStartButton").addEventListener("click",startRoomGameFromUi);
+document.getElementById("networkLobbyManageButton").addEventListener("click",()=>{
+  renderNetworkUi();
+  if(!networkDialog.open)networkDialog.showModal();
 });
 
 document.getElementById("leaveRoomButton").addEventListener("click",async()=>{
@@ -1767,7 +1844,7 @@ async function restorePreviousSession(){
   }catch(error){
     initialGuestStatePending=false;
     setNetworkStatus(
-      "恢復失敗，可重新建立或加入房間："+(error?.message??"unknown"),
+      "恢復失敗，可重新建立或加入房間："+friendlyNetworkError(error),
       "warning"
     );
     uiContext.networkMode="offline";

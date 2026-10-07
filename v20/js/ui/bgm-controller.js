@@ -1,4 +1,4 @@
-const AUDIO_SRC="./assets/audio/alley-wind.m4a?v=alpha32-221";
+const AUDIO_SRC="./assets/audio/alley-wind.m4a?v=alpha32-222";
 const VOLUME_KEY="wealth-empire-bgm-volume-v1";
 const MUTED_KEY="wealth-empire-bgm-muted-v1";
 const DEFAULT_VOLUME=.45;

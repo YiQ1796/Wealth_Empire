@@ -832,6 +832,75 @@ button:focus-visible{outline:3px solid rgba(47,114,196,.28);outline-offset:2px}
   font-weight:800
 }
 
+/* V20 Alpha 32.3.1 — connected players return to the board; lobby state stays compact. */
+.network-lobby-card{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:8px;
+  padding:8px 9px;
+  border:1px solid #d8b45b;
+  border-radius:12px;
+  background:linear-gradient(135deg,#fff9e8,#fffdf7);
+  box-shadow:0 5px 14px rgba(76,58,24,.08)
+}
+.network-lobby-card[hidden]{
+  display:none
+}
+.network-lobby-card__copy{
+  min-width:0;
+  display:grid;
+  gap:2px
+}
+.network-lobby-card__copy span{
+  color:#6d531d;
+  font-size:11px;
+  font-weight:1000;
+  white-space:nowrap
+}
+.network-lobby-card__copy span strong{
+  margin-left:4px;
+  color:#173b5b;
+  font-size:15px;
+  letter-spacing:.08em;
+  font-variant-numeric:tabular-nums
+}
+.network-lobby-card__copy small{
+  overflow:hidden;
+  color:#6d8092;
+  font-size:9px;
+  font-weight:800;
+  text-overflow:ellipsis;
+  white-space:nowrap
+}
+.network-lobby-card__actions{
+  display:flex;
+  align-items:center;
+  gap:5px
+}
+.network-lobby-card__actions button{
+  min-height:31px;
+  padding:0 9px;
+  border:0;
+  border-radius:8px;
+  font-size:10px;
+  font-weight:1000;
+  cursor:pointer
+}
+.network-lobby-card__start{
+  background:#2f78c8;
+  color:#fff
+}
+.network-lobby-card__start:disabled{
+  background:#d9e2ea;
+  color:#718295;
+  cursor:default
+}
+.network-lobby-card__manage{
+  background:#eef3f7;
+  color:#36536b
+}
+
 .minigame-modal{
   min-height:460px
 }
@@ -4545,6 +4614,24 @@ body.entry-pending .app-shell{
 }
 
 @media (orientation:landscape) and (max-height:650px) and (max-width:1180px){
+  .hud-panel.has-network-lobby{
+    grid-template-rows:auto auto minmax(0,1fr) auto
+  }
+  .network-lobby-card{
+    grid-template-columns:minmax(0,1fr) auto;
+    gap:5px;
+    padding:5px 6px;
+    border-radius:9px
+  }
+  .network-lobby-card__copy span{font-size:9px}
+  .network-lobby-card__copy span strong{font-size:12px}
+  .network-lobby-card__copy small{font-size:8px}
+  .network-lobby-card__actions{gap:3px}
+  .network-lobby-card__actions button{
+    min-height:28px;
+    padding:0 6px;
+    font-size:8px
+  }
   .network-dialog{
     width:min(920px,calc(100vw - 20px));
     max-height:calc(var(--phone-app-height,100dvh) - 12px)

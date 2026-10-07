@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#eef3f7">
-<title>財富帝國 V20 Alpha 32.3</title>
-<link rel="stylesheet" href="./styles/app.css?v=alpha32-221">
+<title>財富帝國 V20 Alpha 32.3.1</title>
+<link rel="stylesheet" href="./styles/app.css?v=alpha32-222">
 </head>
 <body class="entry-pending">
 <section id="entryGate" class="entry-gate" aria-label="遊戲模式選擇">
@@ -130,6 +130,17 @@
         <output id="bgmVolumeValue" class="desktop-bgm-controls__value" for="bgmVolumeSlider">45%</output>
         <span id="bgmStatus" class="desktop-bgm-controls__status" aria-live="polite">首次操作後播放</span>
       </div>
+
+      <section id="networkLobbyCard" class="network-lobby-card" aria-label="好友房等待狀態" hidden>
+        <div class="network-lobby-card__copy">
+          <span>好友房 <strong id="networkLobbyRoomCode">------</strong></span>
+          <small id="networkLobbySummary">已進房，等待開始</small>
+        </div>
+        <div class="network-lobby-card__actions">
+          <button id="networkLobbyStartButton" type="button" class="network-lobby-card__start">開始遊戲</button>
+          <button id="networkLobbyManageButton" type="button" class="network-lobby-card__manage">房間設定</button>
+        </div>
+      </section>
 
       <section id="players" class="players" aria-label="玩家資訊"></section>
 
@@ -316,8 +327,8 @@
   <div class="network-modal">
     <header class="feature-modal__header">
       <div>
-        <h2>好友連線 / AI 補位</h2>
-        <p>真人不足 4 位時，由 AI 自動補滿；房主保存正式遊戲狀態。</p>
+        <h2>建立或加入好友房</h2>
+        <p>連線成功後會直接回到棋盤；等待開局改由右側小房間卡顯示，不再用大視窗擋住遊戲。</p>
       </div>
       <button id="closeNetworkDialog" type="button" class="modal-close" aria-label="關閉"><img src="./assets/v5/ui/modal/MODAL_CLOSE.webp" alt=""></button>
     </header>
@@ -425,6 +436,6 @@
 </dialog>
 
 <div id="actionToastStack" class="action-toast-stack" aria-live="polite" aria-atomic="false"></div>
-<script type="module" src="./js/main.js?v=alpha32-221"></script>
+<script type="module" src="./js/main.js?v=alpha32-222"></script>
 </body>
 </html>
