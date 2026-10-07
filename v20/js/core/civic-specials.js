@@ -1,8 +1,8 @@
 import{advanceStockMarket}from"./stock-market.js";
-import{CIVIC_EVENT_POOLS}from"../data/civic-events.js?v=alpha32-233";
+import{CIVIC_EVENT_POOLS}from"../data/civic-events.js?v=alpha32-240";
 import{appendEventHistory,pickEventFromPool,RARE_EVENT_RATE}from"./event-picker.js";
-import{applyRandomPropertyUpgrade,grantDevelopmentPermits,grantPropertyProtectionPermits}from"./property-events.js?v=alpha32-233";
-import{resolveExtendedEventEffect}from"./world-events.js?v=alpha32-233";
+import{applyRandomPropertyUpgrade,grantDevelopmentPermits,grantPropertyProtectionPermits}from"./property-events.js?v=alpha32-240";
+import{resolveExtendedEventEffect}from"./world-events.js?v=alpha32-240";
 
 function nextPropertyOpportunityScore(state,startIndex,steps=6){
   const size=state.tiles?.length??44;
