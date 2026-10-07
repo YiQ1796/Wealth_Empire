@@ -952,8 +952,16 @@ function renderNetworkUi(){
     ?(startable?"開始遊戲":state.gameStatus==="playing"?"遊戲進行中":"開始遊戲")
     :(state.gameStatus==="lobby"||state.phase==="lobby"?"等待房主開始":"遊戲進行中");
 
+  const connected=network.mode!=="offline";
+  const createButton=document.getElementById("createRoomButton");
+  const joinButton=document.getElementById("joinRoomButton");
   const leaveButton=document.getElementById("leaveRoomButton");
-  leaveButton.disabled=network.mode==="offline";
+  if(createButton)createButton.disabled=connected;
+  if(joinButton)joinButton.disabled=connected;
+  leaveButton.disabled=!connected;
+
+  const activeRoomPlaying=connected&&state.gameStatus==="playing"&&Boolean(state.network?.roomCode);
+  if(activeRoomPlaying&&networkDialog.open)networkDialog.close();
 
   const roomInput=document.getElementById("networkRoomCode");
   const roomHero=document.getElementById("roomCodeHero");

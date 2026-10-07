@@ -20,6 +20,10 @@ assert.match(main,/if\(networkDialog\.open\)networkDialog\.close\(\)/);
 assert.match(main,/function startRoomGameFromUi/);
 assert.match(main,/networkLobbyStartButton/);
 assert.match(main,/networkLobbyManageButton/);
+assert.match(main,/const activeRoomPlaying=connected&&state\.gameStatus==="playing"&&Boolean\(state\.network\?\.roomCode\)/);
+assert.match(main,/if\(activeRoomPlaying&&networkDialog\.open\)networkDialog\.close\(\)/);
+assert.match(main,/if\(createButton\)createButton\.disabled=connected/);
+assert.match(main,/if\(joinButton\)joinButton\.disabled=connected/);
 
 assert.match(network,/RELAY_PREF_KEY/);
 assert.match(network,/orderedRelayBrokerUrls/);
