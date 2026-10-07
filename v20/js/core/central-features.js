@@ -3,8 +3,8 @@ import{
   CENTRAL_MISSION_BY_ID,
   CENTRAL_TEST_TUNING
 }from"../data/central-features.js";
-import{bankReturnAmount}from"./world-events.js?v=alpha32-233";
-import{canUpgradeProperty,upgradeCost}from"./property-economy.js?v=alpha32-233";
+import{bankReturnAmount}from"./world-events.js?v=alpha32-240";
+import{canUpgradeProperty,upgradeCost}from"./property-economy.js?v=alpha32-240";
 
 function currentRound(state){
   return Math.max(1,Number(state?.round)||1);
