@@ -1,9 +1,9 @@
-import{SPECIAL_EVENT_POOLS}from"../data/special-events.js";
+import{SPECIAL_EVENT_POOLS}from"../data/special-events.js?v=alpha32-233";
 import{appendEventHistory,pickEventFromPool,RARE_EVENT_RATE}from"./event-picker.js";
-import{applyRandomPropertyUpgrade,grantDevelopmentPermits,grantPropertyProtectionPermits}from"./property-events.js";
-import{grantItem,inventoryCount}from"./items.js";
+import{applyRandomPropertyUpgrade,grantDevelopmentPermits,grantPropertyProtectionPermits}from"./property-events.js?v=alpha32-233";
+import{grantItem,inventoryCount}from"./items.js?v=alpha32-233";
 import{ITEM_BY_ID}from"../data/items.js";
-import{resolveExtendedEventEffect}from"./world-events.js";
+import{resolveExtendedEventEffect}from"./world-events.js?v=alpha32-233";
 
 function wrappedPosition(position,delta,size){
   return((position+delta)%size+size)%size;
