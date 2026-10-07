@@ -5943,3 +5943,28 @@ body.entry-pending .app-shell{
     font-size:17px
   }
 }
+
+
+/* V20 Alpha 32.3.8 — explicit yes/no forced-acquisition choice. */
+@media (min-width:1181px){
+  .acquisition-dialog.is-landing-acquisition .acquisition-option--confirm:not(:disabled){
+    border-color:#2d9a67;
+    background:#eefaf3;
+    box-shadow:0 5px 14px rgba(45,154,103,.15)
+  }
+  .acquisition-dialog.is-landing-acquisition .acquisition-option--confirm:not(:disabled):hover,
+  .acquisition-dialog.is-landing-acquisition .acquisition-option--confirm:not(:disabled):focus-visible{
+    border-color:#18784e;
+    background:#e5f8ed
+  }
+  .acquisition-dialog.is-landing-acquisition .acquisition-option--confirm .acquisition-option__offer{
+    color:#126a43
+  }
+  .acquisition-dialog.is-landing-acquisition .acquisition-skip{
+    min-height:46px;
+    border:2px solid #bf5b50;
+    background:#fff4f2;
+    color:#9a352d;
+    font-size:13px
+  }
+}
