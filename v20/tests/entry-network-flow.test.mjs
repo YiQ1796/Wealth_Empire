@@ -6,8 +6,8 @@ const css=readFileSync(new URL("../styles/app.css",import.meta.url),"utf8");
 const main=readFileSync(new URL("../js/main.js",import.meta.url),"utf8");
 const network=readFileSync(new URL("../js/core/network.js",import.meta.url),"utf8");
 
-assert.match(html,/財富帝國 V20 Alpha 32\.3\.11/);
-assert.match(html,/alpha32-233/);
+assert.match(html,/財富帝國 V20 Alpha 32\.4\.0/);
+assert.match(html,/alpha32-240/);
 assert.match(html,/id="networkLobbyCard"/);
 assert.match(html,/id="networkLobbyStartButton"/);
 assert.match(html,/id="networkLobbyManageButton"/);
@@ -59,4 +59,4 @@ assert.match(css,/V20 Alpha 32\.3\.3 — the connection dialog becomes a real wa
 assert.match(css,/\.network-dialog\.is-room-lobby \.network-form-grid/);
 assert.match(css,/\.network-lobby-card\[hidden\]/);
 
-console.log("V20 Alpha32.3.11 explicit friend lobby regression PASS");
+console.log("V20 Alpha32.4.0 explicit friend lobby regression PASS");
