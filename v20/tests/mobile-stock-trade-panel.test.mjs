@@ -6,9 +6,9 @@ const main=readFileSync(new URL("../js/main.js",import.meta.url),"utf8");
 const stock=readFileSync(new URL("../js/ui/stock-render.js",import.meta.url),"utf8");
 const css=readFileSync(new URL("../styles/app.css",import.meta.url),"utf8");
 
-assert.match(html,/app\.css\?v=alpha32-238/);
-assert.match(html,/main\.js\?v=alpha32-238/);
-assert.match(main,/\.\/ui\/stock-render\.js\?v=alpha32-238/);
+assert.match(html,/app\.css\?v=alpha32-239/);
+assert.match(html,/main\.js\?v=alpha32-239/);
+assert.match(main,/\.\/ui\/stock-render\.js\?v=alpha32-239/);
 assert.match(main,/stock-mobile-trade-dock/);
 
 assert.match(stock,/function stockMobileCardMarkup/);
@@ -28,8 +28,11 @@ assert.match(stock,/stockCardMarkup\(stock,player,canTrade,draft\)/,"desktop car
 assert.match(css,/phone stock trading uses one dedicated trade panel/);
 assert.match(css,/\.stock-mobile-trade-dock\{/);
 assert.match(css,/\.stock-card-list--mobile-compact\{/);
-assert.match(css,/body\.stock-keyboard-active \.feature-modal__header,[\s\S]*?#stockMarketMobileGrid>\.stock-card-list\{[\s\S]*?display:none!important/);
+assert.match(css,/body\.stock-keyboard-active \.feature-modal__header\{[\s\S]*?display:flex!important/);
+assert.match(stock,/data-stock-mobile-close/);
+assert.match(stock,/draft\.stockId=collapse\?null:nextStockId/);
+assert.match(css,/\.stock-mobile-pair-row\.has-active-trade/);
 assert.match(css,/body\.stock-keyboard-active #stockMarketMobileGrid\{[\s\S]*?overflow:hidden!important/);
 assert.match(css,/body\.stock-keyboard-active \.stock-mobile-trade-dock__actions button\{[\s\S]*?min-height:37px/);
 
-console.log("V20 phone dedicated stock trade panel regression PASS");
+console.log("V20 phone collapsible inline stock trade panel regression PASS");
