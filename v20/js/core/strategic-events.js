@@ -18,13 +18,13 @@ function ensureEffects(state){
   const effects=state.strategicEffects;
   effects.globalRent=effects.globalRent&&typeof effects.globalRent==="object"
     ?effects.globalRent
-    :{multiplier:1,activeFromRound:0,untilRound:0,label:""};
+    :{multiplier:1,untilRound:0,label:""};
   effects.groupRents=effects.groupRents&&typeof effects.groupRents==="object"
     ?effects.groupRents
     :{};
   effects.bank=effects.bank&&typeof effects.bank==="object"
     ?effects.bank
-    :{multiplier:1,untilRound:0,label:""};
+    :{multiplier:1,activeFromRound:0,untilRound:0,label:""};
   effects.transport=effects.transport&&typeof effects.transport==="object"
     ?effects.transport
     :{blockedNodeIndex:null,blockedUntilRound:0,freeUntilRound:0,freeDayBonus:0};
