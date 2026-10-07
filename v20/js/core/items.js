@@ -1,5 +1,5 @@
 import{ITEM_BY_ID,ITEM_DEFINITIONS,ITEM_INVENTORY_LIMIT}from"../data/items.js";
-import{isMarketItemBlocked}from"./world-events.js?v=alpha32-233";
+import{isMarketItemBlocked}from"./world-events.js?v=alpha32-240";
 
 const HISTORY_LIMIT=40;
 
