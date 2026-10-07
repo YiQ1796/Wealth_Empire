@@ -2,7 +2,7 @@ import{
   canForceAcquireProperty,
   suggestedAcquisitionOffer,
   transferPropertyOwnership
-}from"./property-economy.js";
+}from"./property-economy.js?v=alpha32-233";
 
 export function acquisitionOptions(state,buyerSeat){
   const buyer=state.players?.[Number(buyerSeat)];
