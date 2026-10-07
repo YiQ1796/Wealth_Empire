@@ -271,7 +271,6 @@ export function renderStockMarket(container,state,localSeat,{onBuy=()=>{},onSell
         input.value=value>0?String(value):"";
         syncTradeState();
         input.focus();
-        input.setSelectionRange?.(0,input.value.length);
       });
     });
 
