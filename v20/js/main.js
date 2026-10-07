@@ -266,7 +266,11 @@ function noticeConfig(event){
     network_join:{title:"好友加入",icon:N.icons.network,effect:N.effects.blue,tone:"blue"},
     network_reconnect:{title:"重新連線",icon:N.icons.network,effect:N.effects.green,tone:"green"},
     network_ai_takeover:{title:"AI 接手",icon:N.icons.aiTakeover,effect:N.effects.purple,tone:"purple"},
-    transport_complete:{title:"快速通車",icon:N.icons.network,effect:N.effects.blue,tone:"blue",major:true},
+    transport_complete:{title:"交通樞紐",icon:N.icons.network,effect:N.effects.blue,tone:"blue",major:true},
+    transport_event:{title:"交通事件",icon:N.icons.network,effect:N.effects.gold,tone:"gold",major:true},
+    world_event_choice:{title:"城市事件決策",icon:N.icons.minigameResult,effect:N.effects.gold,tone:"gold",major:true},
+    government_contract_complete:{title:"政府標案完成",icon:N.icons.minigameResult,effect:N.effects.green,tone:"green",major:true},
+    government_contract_expired:{title:"政府標案逾期",icon:N.icons.minigameResult,effect:N.effects.red,tone:"red",major:true},
     urban_complete:{title:"城市更新",icon:N.icons.propertyUpgrade,effect:N.effects.green,tone:"green",major:true},
     special_grid:{title:"特殊設施",icon:N.icons.minigameResult,effect:N.effects.purple,tone:"purple",major:true},
     central_bank_active:{title:"都會銀行",icon:N.icons.marketTick,effect:N.effects.gold,tone:"gold",major:true},
@@ -512,19 +516,52 @@ function noticeView(event){
 
     case"transport_complete":
       return{
-        message:(data.playerName??"玩家")+" 完成交通轉乘",
-        metric:"抵達",
+        message:event.text,
+        metric:data.actionLabel??"已完成",
         details:[
-          (data.sourceName??"交通設施")+" → "+(data.destinationName??"目的地"),
-          "本次轉乘不連鎖觸發第二次交通"
-        ]
+          data.sourceName?"樞紐 "+data.sourceName:null,
+          Number(data.cost)>0?"費用 "+noticeMoney(data.cost):"本次不收費",
+          Number.isInteger(Number(data.destinationIndex))
+            ?"抵達 #"+(Number(data.destinationIndex)+1)+" "+(state.tiles?.[Number(data.destinationIndex)]?.name??"")
+            :null
+        ].filter(Boolean)
+      };
+
+    case"transport_event":
+      return{
+        message:event.text,
+        metric:Number.isFinite(Number(data.amount))?noticeSignedMoney(data.amount):"交通事件",
+        details:[data.sourceName??""].filter(Boolean)
+      };
+
+    case"world_event_choice":
+      return{
+        message:event.text,
+        metric:"已選擇",
+        details:[data.eventName??""].filter(Boolean)
+      };
+
+    case"government_contract_complete":
+      return{
+        message:event.text,
+        metric:"+"+noticeMoney(data.reward),
+        details:[data.taskName??"政府標案"]
+      };
+
+    case"government_contract_expired":
+      return{
+        message:event.text,
+        metric:"逾期",
+        details:[data.taskName??"政府標案"]
       };
 
     case"market_tick":{
       const movers=Array.isArray(data.movers)?data.movers:[];
+      const isMarketGrid=data.type==="market";
+      const repriced=data.effectKind==="market_tick"||!isMarketGrid;
       return{
-        message:data.type==="market"
-          ?"股市事件｜全市場立即重新漲跌"
+        message:isMarketGrid
+          ?(repriced?"股市事件｜全市場立即重新漲跌":event.text)
           :"輪到 "+(data.playerName??"下一位玩家")+"｜全市場重新漲跌",
         metric:null,
         details:movers.map(stock=>stock.name+" "+(stock.changePercent>0?"+":"")+Number(stock.changePercent).toFixed(1)+"%")
