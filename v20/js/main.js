@@ -20,7 +20,7 @@ import{MinigameUI}from"./ui/minigame-ui.js";
 import{GROUP_SIZES,MAX_PROPERTY_LEVEL,groupRentMultiplier}from"./data/board.js";
 import{canForceAcquireProperty,groupProgress,propertyValue,rentFor,suggestedAcquisitionOffer,upgradeCost}from"./core/property-economy.js";
 import{TRANSPORT_NODE_BY_INDEX}from"./data/transport.js";
-import{worldStatusSummary}from"./core/world-events.js?v=alpha32-233";
+import{bankReturnAmount,worldStatusSummary}from"./core/world-events.js?v=alpha32-233";
 import{
   CENTRAL_FEATURE_BY_ID,
   CENTRAL_MISSIONS,
@@ -1138,9 +1138,13 @@ function renderCentralFacilityBody(id){
       const actions=document.createElement("div");
       actions.className="central-feature-actions";
       for(const plan of CENTRAL_TEST_TUNING.bankPlans){
+        const adjustedReturn=bankReturnAmount(state,plan.principal,plan.returnAmount);
+        const rateNote=adjustedReturn===plan.returnAmount
+          ?""
+          :"｜城市利率事件後 "+noticeMoney(adjustedReturn);
         actions.appendChild(centralButton(
           "存入 "+noticeMoney(plan.principal),
-          "2 ROUND 後返還 "+noticeMoney(plan.returnAmount),
+          "2 ROUND 後返還 "+noticeMoney(adjustedReturn)+rateNote,
           !usable||player.cash<plan.principal,
           ()=>dispatchAction({type:"central_bank_deposit",principal:plan.principal})
         ));
