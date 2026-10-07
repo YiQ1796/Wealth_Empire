@@ -32,8 +32,8 @@ jobs:
         run: |
           set -euo pipefail
           grep -q '財富帝國 V20 Alpha 32.3.13' v20/index.html
-          grep -q 'app.css?v=alpha32-234' v20/index.html
-          grep -q 'main.js?v=alpha32-234' v20/index.html
+          grep -q 'app.css?v=alpha32-235' v20/index.html
+          grep -q 'main.js?v=alpha32-235' v20/index.html
           node --experimental-default-type=module v20/tests/bgm-controller.test.mjs
 
       - name: Run affected regressions

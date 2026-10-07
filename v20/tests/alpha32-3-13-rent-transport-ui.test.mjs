@@ -48,4 +48,14 @@ assert.match(html,/id="strategicChoiceDialog"/);
 assert.match(main,/case"strategic_choice"/);
 assert.match(main,/strategicChoiceDialog\.addEventListener\("cancel",event=>event\.preventDefault\(\)\)/);
 
-console.log("V20 Alpha32.3.13 rent, transport, settlement, stock-input and BGM-removal regression PASS");
+
+// Phone stock keyboard must resize only the market dialog, never the game board.
+assert.match(main,/stockKeyboardActive/);
+assert.match(main,/isPhoneStockQuantityInput/);
+assert.match(main,/--stock-keyboard-height/);
+assert.match(main,/if\(stockKeyboardActive\)\{[\s\S]*?syncStockKeyboardViewport\(\);[\s\S]*?return;/);
+assert.match(css,/body\.stock-keyboard-active \.app-shell/);
+assert.match(css,/body\.stock-keyboard-active \.feature-dialog/);
+assert.match(css,/var\(--stock-keyboard-height,100dvh\)/);
+
+console.log("V20 Alpha32.3.13 rent, transport, settlement, stock-input, keyboard-fit and BGM-removal regression PASS");
