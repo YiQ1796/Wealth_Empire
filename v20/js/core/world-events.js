@@ -215,7 +215,15 @@ export function resolveExtendedEventEffect(state,player,effect,event,random=Math
     player.cash+=1200;
     const before=Math.max(0,Math.floor(Number(player.developmentPermits)||0));
     player.developmentPermits=Math.min(3,before+1);
-    return{kind:effect.kind,group,amount:1200,permitDelta:player.developmentPermits-before,permitsTotal:player.developmentPermits,summary:group+"完整連區補助｜+$1,200＋建案許可 ×1"};
+    const permitDelta=player.developmentPermits-before;
+    return{
+      kind:effect.kind,
+      group,
+      amount:1200,
+      permitDelta,
+      permitsTotal:player.developmentPermits,
+      summary:group+"完整連區補助｜+$1,200"+(permitDelta>0?"＋建案許可 ×1":"｜建案許可已滿")
+    };
   }
 
   if(effect.kind==="transport_day"){
@@ -272,6 +280,15 @@ export function resolveExtendedEventEffect(state,player,effect,event,random=Math
   }
 
   if(effect.kind==="government_contract"){
+    if(player.governmentContract){
+      player.cash+=500;
+      return{
+        kind:"cash",
+        amount:500,
+        cashAfter:player.cash,
+        summary:"已有政府標案進行中，改領履約支援金 $500"
+      };
+    }
     const tasks=[
       {id:"buy_property",name:"購買 1 塊地產"},
       {id:"upgrade_property",name:"完成 1 次地產升級"},
@@ -352,7 +369,7 @@ export function resolveWorldChoice(state,seat,optionId){
         target:1,
         reward:2400,
         acceptedRound:currentRound(state),
-        expiresRound:currentRound(state)+2
+        expiresRound:currentRound(state)+1
       };
       summary="已投入 $700 承接標案："+pending.meta.taskName+"；期限 ROUND "+player.governmentContract.expiresRound+"。";
     }else{
