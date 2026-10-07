@@ -402,7 +402,7 @@ jobs:
           grep -q '"world_choice_select"' v20/js/core/network.js
           grep -q 'function renderWorldChoiceDialog' v20/js/main.js
           grep -q 'function renderWorldEventStatus' v20/js/main.js
-          node --check v20/js/core/world-events.js
+          node --experimental-default-type=module --check v20/js/core/world-events.js
           node --experimental-default-type=module v20/tests/world-events.test.mjs
           echo "V20 Alpha32.4.0 P1-P3 strategic world events PASS"
 
