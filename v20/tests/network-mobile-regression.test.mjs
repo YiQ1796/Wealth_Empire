@@ -31,4 +31,4 @@ assert.doesNotMatch(
   "post-join relay heartbeat must ping instead of repeatedly re-sending join_request"
 );
 
-console.log("V20 Alpha 32.3.5 dual-relay regression test PASS");
+console.log("V20 Alpha 32.3.6 dual-relay regression test PASS");
