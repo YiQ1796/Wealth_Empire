@@ -1,5 +1,5 @@
 import{createInitialState,createLobbyState,hydrateState,setAiSeat,setHumanSeat,setPlayerCharacter}from"./core/state.js";
-import{GameEngine}from"./core/game.js?v=alpha32-233";
+import{GameEngine}from"./core/game.js?v=alpha32-234";
 import{
   PeerNetwork,
   clearNetworkSession,
@@ -14,20 +14,20 @@ import{
 }from"./core/network.js?v=alpha32-224";
 import{characterAsset,mountStaticBoard,render}from"./ui/render.js?v=alpha32-230";
 import{itemUiSummary}from"./ui/item-render.js";
-import{renderStockMarket}from"./ui/stock-render.js?v=alpha32-233";
+import{renderStockMarket}from"./ui/stock-render.js?v=alpha32-234";
 import{UI_ASSETS}from"./data/ui-assets.js";
 import{MinigameUI}from"./ui/minigame-ui.js";
 import{GROUP_SIZES,MAX_PROPERTY_LEVEL,groupRentMultiplier}from"./data/board.js";
-import{canForceAcquireProperty,groupProgress,propertyValue,rentFor,suggestedAcquisitionOffer,upgradeCost}from"./core/property-economy.js";
-import{TRANSPORT_NODE_BY_INDEX}from"./data/transport.js";
-import{transportDestinationPreview}from"./core/transport.js";
+import{canForceAcquireProperty,groupProgress,propertyValue,rentFor,suggestedAcquisitionOffer,upgradeCost}from"./core/property-economy.js?v=alpha32-234";
+import{TRANSPORT_NODE_BY_INDEX}from"./data/transport.js?v=alpha32-234";
+import{transportDestinationPreview}from"./core/transport.js?v=alpha32-234";
 import{
   CENTRAL_FEATURE_BY_ID,
   CENTRAL_MISSIONS,
   CENTRAL_MISSION_BY_ID,
   CENTRAL_TEST_TUNING
-}from"./data/central-features.js";
-import{centralDevelopmentOptions,centralFacilityStatus,insuranceCooldownRemaining,insurancePremium}from"./core/central-features.js";
+}from"./data/central-features.js?v=alpha32-234";
+import{centralDevelopmentOptions,centralFacilityStatus,insuranceCooldownRemaining,insurancePremium}from"./core/central-features.js?v=alpha32-234";
 const board=document.getElementById("board");
 mountStaticBoard(board);
 const boardCharacterLayer=document.createElement("div");
