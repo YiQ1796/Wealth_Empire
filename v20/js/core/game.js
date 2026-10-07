@@ -167,7 +167,7 @@ export class GameEngine{
         const regionMessage=rentDetail.completeGroup
           ?"（"+tile.group+"連區 ×"+rentDetail.groupMultiplier+
             "：連區加成 +"+this.formatMoney(rentDetail.groupBonus)+
-            "，連區後 "+this.formatMoney(rentDetail.finalRent)+"）"
+            "，連區後 "+this.formatMoney(rentDetail.afterGroupRent??rentDetail.finalRent)+"）"
           :"";
         const extraRentEffects=[
           rentDetail.leaseMultiplier>1?"租賃契約 ×"+rentDetail.leaseMultiplier.toFixed(2):"",
