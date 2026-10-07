@@ -48,7 +48,7 @@ const regionBlock=css.slice(regionStart);
 assert.match(regionBlock,/\.tile\.tile--region-complete::before/);
 assert.match(regionBlock,/content:"連區 " attr\(data-region-bonus\)/);
 assert.match(regionBlock,/\.property-rent-breakdown\{/);
-assert.match(main,/\.\/ui\/render\.js\?v=alpha32-230/);
+assert.match(main,/\.\/ui\/render\.js\?v=alpha32-237/);
 
 const rankingMarker="/* V20 Alpha 32.3.7 — desktop wealth ranking + forced-acquisition visibility. */";
 const rankingStart=css.indexOf(rankingMarker);
