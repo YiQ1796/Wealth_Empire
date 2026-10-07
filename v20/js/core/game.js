@@ -6,7 +6,7 @@ import{advanceStockMarket,buyStock as executeBuyStock,getMarketStock,sellStock a
 import{playerAssetRankings}from"./player-assets.js?v=alpha32-228";
 import{resolveSpecialEvent}from"./special-events.js";
 import{canUseTransport,chooseAiTransportDestination,createPendingTransport,transportNode}from"./transport.js";
-import{chooseAiAcquisition,createPendingAcquisition,executeAcquisition}from"./acquisition-center.js?v=alpha32-226";
+import{chooseAiAcquisition,createPendingAcquisition,executeAcquisition}from"./acquisition-center.js?v=alpha32-233";
 import{canUseUrban,chooseAiUrbanDestination,createPendingUrban,resolveCivicEvent}from"./civic-specials.js?v=alpha32-226";
 import{
   acceptMission,
@@ -709,7 +709,7 @@ export class GameEngine{
     this.log(
       buyer.name+(acquisitionSource==="landing"?" 行使踩地後的強制收購權":" 透過收購中心")+
         "以 "+this.formatMoney(result.offer)+" 收購「"+result.tileName+
-        "」，原持有人 "+(seller?.name??result.previousOwnerName)+"。",
+        "」，並自動升級至 LV."+result.levelAfter+"；原持有人 "+(seller?.name??result.previousOwnerName)+"。",
       "property_acquisition",
       {
         seat,
@@ -720,7 +720,9 @@ export class GameEngine{
         tile:Number(tileIndex),
         tileName:result.tileName,
         group:result.group,
-        level:result.level,
+        level:result.levelAfter,
+        levelBefore:result.levelBefore,
+        levelAfter:result.levelAfter,
         amount:result.offer,
         buyerCashAfter:result.buyerCashAfter,
         sellerCashAfter:result.sellerCashAfter
