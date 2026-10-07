@@ -56,7 +56,8 @@ jobs:
           node --experimental-default-type=module v20/tests/items-system.test.mjs
           node --experimental-default-type=module v20/tests/network-mobile-resilience.test.mjs
           node --experimental-default-type=module v20/tests/network-market-mobile-hotfix.test.mjs
-          node --experimental-default-type=module v20/tests/entry-network-flow.test.mjs\n          node --experimental-default-type=module v20/tests/desktop-readability.test.mjs
+          node --experimental-default-type=module v20/tests/entry-network-flow.test.mjs
+          node --experimental-default-type=module v20/tests/desktop-readability.test.mjs
           node --experimental-default-type=module v20/tests/dual-relay-host.test.mjs
           node --experimental-default-type=module v20/tests/mobile-responsive.test.mjs
           node --experimental-default-type=module v20/tests/gameplay-systems.test.mjs
