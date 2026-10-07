@@ -1139,12 +1139,12 @@ function renderCentralFacilityBody(id){
       actions.className="central-feature-actions";
       for(const plan of CENTRAL_TEST_TUNING.bankPlans){
         const adjustedReturn=bankReturnAmount(state,plan.principal,plan.returnAmount);
-        const rateNote=adjustedReturn===plan.returnAmount
-          ?""
-          :"｜城市利率事件後 "+noticeMoney(adjustedReturn);
+        const returnDetail=adjustedReturn===plan.returnAmount
+          ?"2 ROUND 後返還 "+noticeMoney(adjustedReturn)
+          :"原方案 "+noticeMoney(plan.returnAmount)+"｜本次城市利率後返還 "+noticeMoney(adjustedReturn);
         actions.appendChild(centralButton(
           "存入 "+noticeMoney(plan.principal),
-          "2 ROUND 後返還 "+noticeMoney(adjustedReturn)+rateNote,
+          returnDetail,
           !usable||player.cash<plan.principal,
           ()=>dispatchAction({type:"central_bank_deposit",principal:plan.principal})
         ));
