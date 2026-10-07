@@ -31,4 +31,13 @@ assert.match(desktopBlock,/#leaveRoomButton:not\(:disabled\)/);
 assert.match(css,/@media \(orientation:landscape\) and \(max-height:650px\) and \(max-width:1180px\)/);
 assert.match(css,/\.stock-market-grid--mobile \.stock-pair-row\{[\s\S]*?grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
 
-console.log("V20 Alpha32.3.4 desktop-only readability regression PASS");
+const propertyMarker="/* V20 Alpha 32.3.5 — desktop property readability only; mobile remains unchanged. */";
+const propertyStart=css.indexOf(propertyMarker);
+assert.ok(propertyStart>=0,"desktop property readability marker missing");
+const propertyBlock=css.slice(propertyStart);
+assert.match(propertyBlock,/@media \(min-width:1181px\)/);
+assert.match(propertyBlock,/\.property-event-card strong\{[\s\S]*?font-size:15px/);
+assert.match(propertyBlock,/\.property-row__title strong\{[\s\S]*?font-size:15px/);
+assert.match(propertyBlock,/\.property-row span,[\s\S]*?font-size:11px/);
+
+console.log("V20 Alpha32.3.5 desktop-only readability regression PASS");
