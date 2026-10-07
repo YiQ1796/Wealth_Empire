@@ -4614,6 +4614,9 @@ body.entry-pending .app-shell{
 }
 
 @media (orientation:landscape) and (max-height:650px) and (max-width:1180px){
+  .hud-panel.has-network-lobby{
+    grid-template-rows:auto auto minmax(0,1fr) auto
+  }
   .network-lobby-card{
     grid-template-columns:minmax(0,1fr) auto;
     gap:5px;
