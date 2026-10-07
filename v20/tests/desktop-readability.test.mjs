@@ -8,10 +8,10 @@ const stock=readFileSync(new URL("../js/ui/stock-render.js",import.meta.url),"ut
 const render=readFileSync(new URL("../js/ui/render.js",import.meta.url),"utf8");
 
 assert.match(html,/財富帝國 V20 Alpha 32\.3\.13/);
-assert.match(html,/app\.css\?v=alpha32-234/);
-assert.match(html,/main\.js\?v=alpha32-234/);
-assert.match(main,/\.\/ui\/stock-render\.js\?v=alpha32-234/);
-assert.match(main,/\.\/core\/game\.js\?v=alpha32-234/);
+assert.match(html,/app\.css\?v=alpha32-235/);
+assert.match(html,/main\.js\?v=alpha32-235/);
+assert.match(main,/\.\/ui\/stock-render\.js\?v=alpha32-235/);
+assert.match(main,/\.\/core\/game\.js\?v=alpha32-235/);
 
 assert.match(stock,/const cardsPerRow=2/);
 assert.doesNotMatch(stock,/currentPlayer===localSeat/);
