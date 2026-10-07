@@ -171,7 +171,7 @@ export function resolveExtendedEventEffect(state,player,effect,event,random=Math
     const sectors=[...new Set((state.market?.stocks??[]).map(stock=>stock.sector))].filter(Boolean);
     const sector=pick(sectors,random);
     const up=Number(random())>=.5;
-    const percent=up?.08:-.06;
+    const percent=up ? .08:-.06;
     const movers=applySectorPercent(state,sector,percent);
     return{kind:effect.kind,sector,percent,movers,summary:sector+"產業新聞｜"+(up?"利多":"利空")+" "+signedPercent(percent)};
   }
@@ -196,9 +196,9 @@ export function resolveExtendedEventEffect(state,player,effect,event,random=Math
       player.cash+=300;
       return{kind:"cash",amount:300,cashAfter:player.cash,summary:"目前無持有地產，改領維護補助 $300"};
     }
-    const cost=Math.min(600,player.cash);
+    const cost=600;
     const options=[
-      {id:"repair_now",label:"立即維修",description:"支付 $"+cost.toLocaleString()+"，維持正常租金。",cost,enabled:player.cash>=600},
+      {id:"repair_now",label:"立即維修",description:"支付 $600，維持正常租金。",cost,enabled:player.cash>=600},
       {id:"defer_maintenance",label:"延後維修",description:"不支付現金；「"+target.tile.name+"」下一次收租 -30%。",cost:0,enabled:true}
     ];
     const pending=makeChoice(state,player,event,effect.kind,"房產維修抉擇","「"+target.tile.name+"」需要維修，請選擇處理方式。",options,{tileIndex:target.index,repairCost:600});
