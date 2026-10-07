@@ -292,8 +292,39 @@ function commonPickValue(pool,eventId){
   assert.ok(state.players[0].cash<buyerCashBefore,"rent must be paid before the acquisition offer");
   assert.ok(state.players[1].cash>sellerCashBefore,"property owner must receive rent before the acquisition offer");
 
+  const buyerCashAfterRent=state.players[0].cash;
+  const sellerCashAfterRent=state.players[1].cash;
+  assert.equal(state.tiles[targetIndex].owner,1,"landing must never auto-transfer the property");
+  assert.ok(state.players[1].properties.includes(targetIndex),"seller must keep the property until buyer confirms");
+  assert.equal(state.players[0].properties.includes(targetIndex),false);
+  assert.equal(state.players[0].cash,buyerCashAfterRent,"no acquisition payment may happen before confirmation");
+  assert.equal(state.players[1].cash,sellerCashAfterRent,"seller may only receive acquisition money after confirmation");
+
   assert.equal(engine.acquireFromCenter(targetIndex,0),true);
   assert.equal(state.tiles[targetIndex].owner,0);
+  assert.equal(state.pendingAcquisition,null);
+  assert.equal(state.phase,"landed");
+}
+
+{
+  const state=createInitialState();
+  const engine=new GameEngine(state,()=>{});
+  const targetIndex=state.tiles.findIndex(tile=>tile.type==="property");
+  const target=state.tiles[targetIndex];
+  target.owner=1;
+  target.level=1;
+  state.players[1].properties.push(targetIndex);
+  state.players[0].cash=50000;
+  state.players[0].position=targetIndex;
+
+  engine.resolveLanding(state.players[0]);
+  const buyerCashAfterRent=state.players[0].cash;
+  const sellerCashAfterRent=state.players[1].cash;
+  assert.equal(state.phase,"acquisition");
+  assert.equal(engine.skipAcquisition(0),true,"buyer must be able to decline the landing acquisition right");
+  assert.equal(state.tiles[targetIndex].owner,1,"declining must keep the original owner");
+  assert.equal(state.players[0].cash,buyerCashAfterRent,"declining must not charge the acquisition offer");
+  assert.equal(state.players[1].cash,sellerCashAfterRent,"declining must not pay an acquisition offer to seller");
   assert.equal(state.pendingAcquisition,null);
   assert.equal(state.phase,"landed");
 }
