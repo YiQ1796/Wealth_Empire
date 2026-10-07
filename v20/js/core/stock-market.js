@@ -119,6 +119,7 @@ export function canTradeStock(state,seat){
     !player.bankrupt&&
     state.gameStatus==="playing"&&
     state.phase!=="minigame"&&
+    state.phase!=="world_choice"&&
     state.phase!=="finished"
   );
 }
