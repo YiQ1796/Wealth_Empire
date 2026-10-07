@@ -17,7 +17,8 @@ assert.match(network,/connection\.send\(\{type:"ping",at:Date\.now\(\)\}\)/);
 assert.match(network,/this\.roomCode=createRoomCode\(\)/);
 assert.match(network,/const finalCode=this\.roomCode/);
 assert.match(main,/const finalCode=result\.roomCode/);
-assert.match(main,/next\.network\.roomCode=finalCode/);
+assert.match(main,/lobbyState\.network\.roomCode=code/);
+assert.match(main,/state\.network\.roomCode=finalCode/);
 assert.match(main,/\.\/core\/network\.js\?v=alpha32-224/);
 assert.match(network,/this\.connections\.set\(seat,connection\);[\s\S]*?if\(previous&&previous!==connection\)/);
 
