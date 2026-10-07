@@ -8,7 +8,7 @@ import{
 }from"../data/board.js";
 import{CENTER_BACKGROUND,TILE_ART_BY_INDEX}from"../data/assets.js";
 import{UI_ASSETS}from"../data/ui-assets.js";
-import{groupProgress,propertyValue,rentFor,upgradeCost}from"../core/property-economy.js";
+import{groupProgress,propertyValue,rentBreakdown,rentFor,upgradeCost}from"../core/property-economy.js?v=alpha32-227";
 import{canUseDevelopmentPermit,canUsePropertyProtectionPermit}from"../core/property-events.js";
 import{itemUiSummary,renderStrategyItems}from"./item-render.js";
 
@@ -109,8 +109,8 @@ function renderRegionSummary(state,currentPlayer){
       regionBadge(group)+
       '<div class="region-card__copy"><strong>'+group+'</strong>'+
       '<small>'+(progress.complete
-        ?"完成連區｜過路費 "+multiplierLabel
-        :"集滿 "+progress.total+" 塊｜過路費 "+multiplierLabel)+'</small></div>'+
+        ?"完成連區｜本區過路費已套用 "+multiplierLabel
+        :"集滿 "+progress.total+" 塊即可啟用過路費 "+multiplierLabel)+'</small></div>'+
       '<span>'+progress.owned+' / '+progress.total+'</span>'+
       (progress.complete?badge(UI_ASSETS.badges.regionBonus,"連區完成 "+multiplierLabel,"region-bonus-badge"):"")+
     '</article>';
@@ -208,7 +208,8 @@ function renderProperties(state,viewerPlayer,canControl){
   container.innerHTML=viewerPlayer.properties.map(tileIndex=>{
     const tile=state.tiles[tileIndex];
     if(!tile)return"";
-    const rent=rentFor(state,tile);
+    const rentDetail=rentBreakdown(state,tile);
+    const rent=rentDetail.finalRent;
     const value=propertyValue(tile);
     const cost=upgradeCost(tile);
     const progress=groupProgress(state,viewerPlayer.seat,tile.group);
@@ -251,6 +252,12 @@ function renderProperties(state,viewerPlayer,canControl){
         '<div class="property-row__title"><strong>'+tile.name+'</strong><em>LV.'+tile.level+'</em></div>'+
         '<span>'+tile.group+'｜區域 '+progress.owned+'/'+progress.total+'</span>'+
         '<small>資產 '+money(value)+'｜目前過路費 '+money(rent)+'</small>'+
+        (progress.complete
+          ?'<small class="property-rent-breakdown">基本 '+money(rentDetail.baseRent)+
+            ' → LV.'+tile.level+' '+money(rentDetail.beforeGroupRent)+
+            ' → 連區 ×'+rentDetail.groupMultiplier+
+            '（+'+money(rentDetail.groupBonus)+'）→ 最終 '+money(rentDetail.finalRent)+'</small>'
+          :"")+
         '<div class="property-row__badges">'+
           (progress.complete?badge(
             UI_ASSETS.badges.regionBonus,
@@ -342,16 +349,26 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
     const tokens=node.querySelector(".tile__tokens");
 
     if(tile.owner==null){
-      node.classList.remove("tile--owned");
+      node.classList.remove("tile--owned","tile--region-complete");
       node.style.removeProperty("--owner-color");
       node.removeAttribute("data-owner-seat");
+      node.removeAttribute("data-region-bonus");
       houses.innerHTML="";
       badges.innerHTML="";
     }else{
       const ownerPlayer=state.players[tile.owner];
+      const completeRegion=Boolean(
+        tile.type==="property"&&groupProgress(state,tile.owner,tile.group).complete
+      );
       node.classList.add("tile--owned");
+      node.classList.toggle("tile--region-complete",completeRegion);
       node.style.setProperty("--owner-color",ownerPlayer?.color??"#377bd1");
       node.dataset.ownerSeat=String(tile.owner);
+      if(completeRegion){
+        node.dataset.regionBonus="×"+groupRentMultiplier(tile.group);
+      }else{
+        node.removeAttribute("data-region-bonus");
+      }
       houses.innerHTML=houseMarkup(ownerPlayer,tile.level);
       const titleProtected=Number(tile.acquisitionProtectedUntilRound)>=Number(state.round);
       badges.innerHTML=tile.level>=MAX_PROPERTY_LEVEL
@@ -376,16 +393,16 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
 
   const currentTileInfo=document.getElementById("currentTileInfo");
   if(currentTileInfo){
+    const currentRent=tile.type==="property"?rentBreakdown(state,tile):null;
     currentTileInfo.innerHTML=
       '<strong>#'+tile.number+" "+tile.name+"</strong><br>"+
       (tile.type==="property"
-        ? tile.group+"<br>售價 "+money(tile.price)+"｜目前過路費 "+money(rentFor(state,tile))+
+        ? tile.group+"<br>售價 "+money(tile.price)+"｜目前過路費 "+money(currentRent.finalRent)+
           (owner
             ? "<br>持有者 "+owner.name+
               (groupBonus
-                ? "｜連區 ×"+groupRentMultiplier(tile.group).toFixed(
-                    groupRentMultiplier(tile.group)%1===0?0:2
-                  ).replace(/0$/,"")
+                ? "｜連區 ×"+currentRent.groupMultiplier+
+                  "（+"+money(currentRent.groupBonus)+"）"
                 : "")
             : "")
         : "特殊事件格");
