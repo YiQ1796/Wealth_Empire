@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#eef3f7">
-<title>財富帝國 V20 Alpha 32.3.4</title>
-<link rel="stylesheet" href="./styles/app.css?v=alpha32-225">
+<title>財富帝國 V20 Alpha 32.3.5</title>
+<link rel="stylesheet" href="./styles/app.css?v=alpha32-226">
 </head>
 <body class="entry-pending">
 <section id="entryGate" class="entry-gate" aria-label="遊戲模式選擇">
@@ -381,9 +381,9 @@
   <div class="acquisition-modal">
     <header class="acquisition-modal__header">
       <div>
-        <span class="acquisition-modal__eyebrow">收購中心</span>
+        <span id="acquisitionEyebrow" class="acquisition-modal__eyebrow">收購中心</span>
         <h2>強制收購</h2>
-        <p>使用既有規則：符合條件的對手地產，以目前資產估值的 125% 報價收購。</p>
+        <p id="acquisitionDescription">使用既有規則：符合條件的對手地產，以目前資產估值的 125% 報價收購。</p>
       </div>
       <button id="skipAcquisitionIconButton" type="button" class="modal-close" aria-label="放棄收購">
         <img src="./assets/v5/ui/modal/MODAL_CLOSE.webp" alt="">
@@ -392,7 +392,7 @@
     <div class="acquisition-summary">
       <span>目前現金</span>
       <strong id="acquisitionCash">—</strong>
-      <small>滿級 LV.2 地產依既有保護規則不可強制收購。</small>
+      <small id="acquisitionSummaryNote">滿級 LV.2 或受保護地產依既有規則不可強制收購。</small>
     </div>
     <div id="acquisitionOptionList" class="acquisition-options" aria-label="可收購地產"></div>
     <button id="skipAcquisitionButton" type="button" class="acquisition-skip">這次不收購</button>
@@ -436,6 +436,6 @@
 </dialog>
 
 <div id="actionToastStack" class="action-toast-stack" aria-live="polite" aria-atomic="false"></div>
-<script type="module" src="./js/main.js?v=alpha32-225"></script>
+<script type="module" src="./js/main.js?v=alpha32-226"></script>
 </body>
 </html>
