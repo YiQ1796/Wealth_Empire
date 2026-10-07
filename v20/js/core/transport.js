@@ -85,7 +85,7 @@ export function chooseAiTransportAction(state,seat){
     .filter(action=>player.cash>=Math.max(0,Number(action.cost)||0))
     .map(action=>({
       action,
-      score:Number(action.aiValue)||0-(Math.max(0,Number(action.cost)||0)/500)
+      score:(Number(action.aiValue)||0)-(Math.max(0,Number(action.cost)||0)/500)
     }))
     .sort((a,b)=>b.score-a.score)[0]?.action?.id??null;
 }
