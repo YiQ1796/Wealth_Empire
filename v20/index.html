@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#eef3f7">
-<title>財富帝國 V20 Alpha 32.3.12</title>
-<link rel="stylesheet" href="./styles/app.css?v=alpha32-233">
+<title>財富帝國 V20 Alpha 32.4.0</title>
+<link rel="stylesheet" href="./styles/app.css?v=alpha32-240">
 </head>
 <body class="entry-pending">
 <section id="entryGate" class="entry-gate" aria-label="遊戲模式選擇">
@@ -279,13 +279,14 @@
       </div>
 
       <div class="feature-modal__pane feature-modal__pane--market" data-feature-panel="market">
-        <div class="feature-heading"><div><h3>市場操作</h3><p>查看即時行情、持股與損益；桌機版改用大視窗一列一檔操作。</p></div></div>
+        <div class="feature-heading"><div><h3>市場操作</h3><p>查看即時行情、持股與損益；桌機版使用大視窗雙欄操作，一排可同時查看兩檔股票。</p></div></div>
         <div id="stockMarketDesktopGrid" class="stock-market-grid stock-market-grid--desktop-popup"></div>
         <div id="stockMarketMobileGrid" class="stock-market-grid stock-market-grid--mobile"></div>
       </div>
 
       <div class="feature-modal__pane" data-feature-panel="info">
-        <div class="feature-heading"><div><h3>遊戲資訊</h3><p>目前格子、事件與系統紀錄。</p></div></div>
+        <div class="feature-heading"><div><h3>遊戲資訊</h3><p>目前格子、進行中的城市事件與系統紀錄。</p></div></div>
+        <div id="worldEventStatus" class="world-event-status" aria-live="polite"></div>
         <div id="currentTileInfo" class="tile-info">—</div>
         <div id="eventLog" class="event-log"></div>
       </div>
@@ -399,21 +400,39 @@
   <div class="transport-modal">
     <header class="transport-modal__header">
       <div>
-        <span class="transport-modal__eyebrow">快速通車</span>
-        <h2 id="transportTitle">交通轉乘</h2>
-        <p id="transportSubtitle">選擇要前往的交通節點，或留在原地。</p>
+        <span class="transport-modal__eyebrow">城市交通樞紐</span>
+        <h2 id="transportTitle">交通功能</h2>
+        <p id="transportSubtitle">四個交通節點各自有不同功能。</p>
       </div>
-      <button id="skipTransportIconButton" type="button" class="modal-close" aria-label="放棄轉乘">
+      <button id="skipTransportIconButton" type="button" class="modal-close" aria-label="本次不使用交通功能">
         <img src="./assets/v5/ui/modal/MODAL_CLOSE.webp" alt="">
       </button>
     </header>
     <div class="transport-current">
       <span>目前位置</span>
       <strong id="transportSourceName">—</strong>
-      <small>本版轉乘不收費；抵達另一個交通節點後不會再次連鎖觸發交通。</small>
+      <small id="transportSourceNote">依目前交通節點選擇一項功能，也可以本次不用。</small>
     </div>
-    <div id="transportDestinationList" class="transport-destinations" aria-label="交通目的地"></div>
-    <button id="skipTransportButton" type="button" class="transport-skip">留在原地，不轉乘</button>
+    <div id="transportDestinationList" class="transport-destinations" aria-label="交通樞紐功能"></div>
+    <button id="skipTransportButton" type="button" class="transport-skip">本次不用交通功能</button>
+  </div>
+</dialog>
+
+<dialog id="worldChoiceDialog" class="world-choice-dialog">
+  <div class="world-choice-modal">
+    <header class="world-choice-modal__header">
+      <div>
+        <span class="world-choice-modal__eyebrow">城市事件決策</span>
+        <h2 id="worldChoiceTitle">事件選擇</h2>
+        <p id="worldChoiceDescription">請選擇本次事件的處理方式。</p>
+      </div>
+    </header>
+    <div class="world-choice-summary">
+      <span>目前現金</span>
+      <strong id="worldChoiceCash">—</strong>
+      <small>此事件需要做出選擇後才能繼續回合。</small>
+    </div>
+    <div id="worldChoiceOptionList" class="world-choice-options" aria-label="事件選項"></div>
   </div>
 </dialog>
 
@@ -432,6 +451,6 @@
 </dialog>
 
 <div id="actionToastStack" class="action-toast-stack" aria-live="polite" aria-atomic="false"></div>
-<script type="module" src="./js/main.js?v=alpha32-233"></script>
+<script type="module" src="./js/main.js?v=alpha32-240"></script>
 </body>
 </html>
