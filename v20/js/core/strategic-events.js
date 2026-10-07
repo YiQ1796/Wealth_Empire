@@ -207,10 +207,11 @@ export function resolveStrategicEvent(state,player,event,random=Math.random){
     const positive=random()>=0.5;
     effects.bank={
       multiplier:positive?1.10:0.90,
+      activeFromRound:round+1,
       untilRound:round+1,
       label:positive?"升息優惠":"利率降溫"
     };
-    return{...base,summary:"下一個 ROUND 前新開定存到期金額 "+(positive?"+10%":"-10%"),data:{...effects.bank}};
+    return{...base,summary:"下一個 ROUND 新開定存的到期金額 "+(positive?"+10%":"-10%"),data:{...effects.bank}};
   }
 
   if(id==="housing_hot_zone"){
