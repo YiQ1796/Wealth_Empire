@@ -1,4 +1,4 @@
-import{createInitialState,createLobbyState,hydrateState,setAiSeat,setHumanSeat,setPlayerCharacter}from"./core/state.js";
+import{createInitialState,createLobbyState,hydrateState,setAiSeat,setHumanSeat,setPlayerCharacter}from"./core/state.js?v=alpha32-236";
 import{GameEngine}from"./core/game.js?v=alpha32-236";
 import{
   PeerNetwork,
