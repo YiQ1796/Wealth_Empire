@@ -496,9 +496,9 @@ jobs:
           grep -q '"科技區":3' v20/js/data/board.js
           grep -q '"豪宅區":4' v20/js/data/board.js
           grep -q '"帝王區":2' v20/js/data/board.js
-          grep -q '"商業區":2.00' v20/js/data/board.js
-          grep -q '"科技區":1.50' v20/js/data/board.js
-          grep -q '"海港區":1.25' v20/js/data/board.js
+          grep -q '"商業區":2.25' v20/js/data/board.js
+          grep -q '"科技區":1.75' v20/js/data/board.js
+          grep -q '"海港區":1.50' v20/js/data/board.js
           grep -q 'cornerTilesAreSpecial' v20/js/data/board.js
           grep -q 'duplicateAdjacentEventTypes' v20/js/data/board.js
           echo "V20 mixed 2/3/4 regions, special corners and separated event types PASS"
