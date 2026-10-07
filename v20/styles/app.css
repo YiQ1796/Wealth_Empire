@@ -221,8 +221,7 @@ button:focus-visible{outline:3px solid rgba(47,114,196,.28);outline-offset:2px}
 .player-card__body{min-width:0}
 .player-card__headline{display:flex;align-items:center;justify-content:space-between;gap:6px;min-width:0}
 .player-rank-badge,
-.player-wealth,
-.wealth-ranking-heading{display:none}
+.player-wealth{display:none}
 .player-card h3{margin:0 0 3px;font-size:16px;line-height:1.05;white-space:nowrap}
 .player-stats{display:flex;flex-wrap:wrap;gap:5px 11px;color:var(--muted);font-size:12px;font-weight:800}
 .player-stats span{white-space:nowrap}
@@ -5840,22 +5839,15 @@ body.entry-pending .app-shell{
 
 /* V20 Alpha 32.3.7 — desktop wealth ranking + forced-acquisition visibility. */
 @media (min-width:1181px){
-  .wealth-ranking-heading{
-    display:flex;
-    align-items:end;
-    justify-content:space-between;
-    gap:8px;
-    margin:-1px 1px -1px;
-    padding:3px 2px 1px
-  }
-  .wealth-ranking-heading strong{
-    color:#17324d;
-    font-size:14px
-  }
-  .wealth-ranking-heading span{
-    color:#718096;
+  .players::before{
+    content:"即時總資產排名｜現金＋地產＋股票＋定存本金";
+    display:block;
+    grid-column:1/-1;
+    margin:0 1px -1px;
+    color:#526b80;
     font-size:10px;
-    font-weight:800
+    font-weight:900;
+    line-height:1.2
   }
   .player-card{
     position:relative
