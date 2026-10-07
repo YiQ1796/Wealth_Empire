@@ -17,6 +17,18 @@ const RELAY_STALE_MS=35000;
 const ROOM_RE=/^\d{6}$/;
 const RELIABLE_RELAY_TYPES=new Set(["join_request","join_ack","join_reject","state","action","action_ack"]);
 
+const TRANSPORT_ACTION_IDS=new Set([
+  "station_chance_line","station_fate_line","station_commuter_bonus",
+  "airport_acquisition","airport_auction","airport_urban",
+  "port_export_order","port_shipping_market","port_material_import",
+  "bridge_shortcut_6","bridge_shortcut_11","bridge_rebate"
+]);
+const WORLD_CHOICE_OPTION_IDS=new Set([
+  "repair_now","defer_maintenance",
+  "accept_contract","decline_contract",
+  "sign_lease","decline_lease"
+]);
+
 function relayQos(message){
   return RELIABLE_RELAY_TYPES.has(message?.type)?1:0;
 }
@@ -172,13 +184,13 @@ export function normalizeRemoteAction(raw){
 
   if(raw.type==="transport_action"){
     const actionId=String(raw.actionId??"").replace(/[^a-z0-9_]/g,"").slice(0,64);
-    if(!actionId)return null;
+    if(!TRANSPORT_ACTION_IDS.has(actionId))return null;
     action.actionId=actionId;
   }
 
   if(raw.type==="world_choice_select"){
     const optionId=String(raw.optionId??"").replace(/[^a-z0-9_]/g,"").slice(0,64);
-    if(!optionId)return null;
+    if(!WORLD_CHOICE_OPTION_IDS.has(optionId))return null;
     action.optionId=optionId;
   }
 
