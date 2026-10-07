@@ -5,6 +5,16 @@ import{rentBreakdown,propertyValue}from"../js/core/property-economy.js";
 import{resolveStrategicEvent,resolvePendingStrategicChoice,recordStrategicAction}from"../js/core/strategic-events.js";
 import{getItemUseStatus}from"../js/core/items.js";
 import{startBankDeposit}from"../js/core/central-features.js";
+import{normalizeRemoteAction}from"../js/core/network.js";
+
+assert.deepEqual(
+  normalizeRemoteAction({type:"strategic_choice",choiceId:"sign",targetValue:7}),
+  {type:"strategic_choice",choiceId:"sign",targetValue:7}
+);
+assert.deepEqual(
+  normalizeRemoteAction({type:"strategic_choice",choiceId:"decline",targetValue:null}),
+  {type:"strategic_choice",choiceId:"decline",targetValue:null}
+);
 
 const requiredIds=[
   "city_cycle","industry_news","dividend_season","property_maintenance_choice",
