@@ -111,6 +111,7 @@ export class GameEngine{
       "move",
       {seat:player.seat,from,to:player.position,path,d1,d2,total}
     );
+    this.state.autoEndTurnSeat=player.seat;
     this.resolveLanding(player);
     this.notify();
     return true;
@@ -699,6 +700,7 @@ export class GameEngine{
       "move",
       {seat:player.seat,from,to:player.position,path,centralTransit:true,distance:Number(distance)}
     );
+    this.state.autoEndTurnSeat=player.seat;
     this.resolveLanding(player);
     this.notify();
     return true;
@@ -1409,6 +1411,26 @@ export class GameEngine{
     return false;
   }
 
+  tryAutoEndTurn(){
+    const seat=Number(this.state.autoEndTurnSeat);
+    if(
+      !Number.isInteger(seat)||
+      !this.isCurrentSeat(seat)||
+      this.state.gameStatus!=="playing"||
+      this.state.phase!=="landed"||
+      this.state.pendingPurchase!=null||
+      this.state.pendingUpgrade!=null||
+      this.state.pendingTransport!=null||
+      this.state.pendingAcquisition!=null||
+      this.state.pendingUrban!=null||
+      this.state.pendingStrategicChoice!=null||
+      this.state.minigame!=null
+    )return false;
+
+    this.state.autoEndTurnSeat=null;
+    return this.endTurn(seat);
+  }
+
   endTurn(seat=this.state.currentPlayer){
     if(
       !this.isCurrentSeat(seat)||
@@ -1421,6 +1443,7 @@ export class GameEngine{
       this.state.pendingStrategicChoice!=null
     )return false;
 
+    this.state.autoEndTurnSeat=null;
     const previousSeat=this.state.currentPlayer;
     let nextSeat=previousSeat;
     do{
