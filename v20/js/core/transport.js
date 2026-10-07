@@ -4,8 +4,8 @@ import{
   isTransportNodeIndex,
   transportActions,
   transportDestinations
-}from"../data/transport.js";
-import{transportWorldStatus}from"./world-events.js";
+}from"../data/transport.js?v=alpha32-233";
+import{transportWorldStatus}from"./world-events.js?v=alpha32-233";
 
 export function transportDestinationPreview(state,startIndex,steps=6){
   const size=state.tiles?.length??44;
