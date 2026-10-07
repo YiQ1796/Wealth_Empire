@@ -5,7 +5,7 @@ import{
   PROPERTY_LEVEL_RENT_BONUS,
   PROPERTY_UPGRADE_COST_RATE
 }from"../data/board.js";
-import{worldRentMultiplier}from"./world-events.js?v=alpha32-233";
+import{worldRentMultiplier}from"./world-events.js?v=alpha32-240";
 
 export function propertyTilesForGroup(state,group){
   return state.tiles.filter(tile=>tile.type==="property"&&tile.group===group);
