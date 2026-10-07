@@ -7,10 +7,10 @@ const main=readFileSync(new URL("../js/main.js",import.meta.url),"utf8");
 const stock=readFileSync(new URL("../js/ui/stock-render.js",import.meta.url),"utf8");
 const render=readFileSync(new URL("../js/ui/render.js",import.meta.url),"utf8");
 
-assert.match(html,/財富帝國 V20 Alpha 32\.3\.9/);
-assert.match(html,/app\.css\?v=alpha32-230/);
-assert.match(html,/main\.js\?v=alpha32-230/);
-assert.match(main,/\.\/ui\/stock-render\.js\?v=alpha32-230/);
+assert.match(html,/財富帝國 V20 Alpha 32\.3\.10/);
+assert.match(html,/app\.css\?v=alpha32-231/);
+assert.match(html,/main\.js\?v=alpha32-231/);
+assert.match(main,/\.\/ui\/stock-render\.js\?v=alpha32-231/);
 assert.match(main,/\.\/core\/game\.js\?v=alpha32-229/);
 
 assert.match(stock,/const desktopTradeSurface=/);
@@ -92,4 +92,16 @@ assert.match(alpha329Block,/\.player-card h3\{[\s\S]*?font-size:18px/);
 assert.match(alpha329Block,/border-left:4px solid var\(--player-accent/);
 assert.match(render,/--player-accent/);
 
-console.log("V20 Alpha32.3.9 desktop-only readability regression PASS");
+const heldStockMarker="/* V20 Alpha 32.3.10 — desktop held-stock visibility. */";
+const heldStockStart=css.indexOf(heldStockMarker);
+assert.ok(heldStockStart>=0,"Alpha 32.3.10 held-stock marker missing");
+const heldStockBlock=css.slice(heldStockStart);
+assert.match(stock,/is-held-stock/);
+assert.match(stock,/stock-owned-badge/);
+assert.match(stock,/持有 '\+position\.shares\+' 股/);
+assert.match(heldStockBlock,/\.stock-trade-card\.is-held-stock\{/);
+assert.match(heldStockBlock,/inset 6px 0 0 #2f78c8/);
+assert.match(heldStockBlock,/\.stock-owned-badge\{/);
+assert.match(css,/\.stock-owned-badge\{display:none\}/);
+
+console.log("V20 Alpha32.3.10 desktop-only readability regression PASS");
