@@ -40,7 +40,9 @@ export const NETWORK_ACTION_TYPES=Object.freeze([
   "sell_stock",
   "minigame_result",
   "transport_travel",
+  "transport_action",
   "transport_skip",
+  "world_choice_select",
   "acquisition_buy",
   "acquisition_skip",
   "urban_move",
@@ -166,6 +168,18 @@ export function normalizeRemoteAction(raw){
     const destinationIndex=Math.floor(Number(raw.destinationIndex));
     if(!Number.isFinite(destinationIndex)||destinationIndex<0||destinationIndex>43)return null;
     action.destinationIndex=destinationIndex;
+  }
+
+  if(raw.type==="transport_action"){
+    const actionId=String(raw.actionId??"").replace(/[^a-z0-9_]/g,"").slice(0,64);
+    if(!actionId)return null;
+    action.actionId=actionId;
+  }
+
+  if(raw.type==="world_choice_select"){
+    const optionId=String(raw.optionId??"").replace(/[^a-z0-9_]/g,"").slice(0,64);
+    if(!optionId)return null;
+    action.optionId=optionId;
   }
 
   if(raw.type==="acquisition_buy"){
