@@ -1,5 +1,5 @@
 import{createInitialState,createLobbyState,hydrateState,setAiSeat,setHumanSeat,setPlayerCharacter}from"./core/state.js";
-import{GameEngine}from"./core/game.js?v=alpha32-228";
+import{GameEngine}from"./core/game.js?v=alpha32-229";
 import{
   PeerNetwork,
   clearNetworkSession,
@@ -1358,6 +1358,7 @@ function renderAcquisitionDialog(){
     const button=document.createElement("button");
     button.type="button";
     button.className="acquisition-option";
+    if(landingOffer)button.classList.add("acquisition-option--confirm");
     button.disabled=!option.affordable;
     button.dataset.tileIndex=String(option.tileIndex);
 
