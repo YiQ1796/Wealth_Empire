@@ -60,10 +60,13 @@ function stockCardMarkup(stock,player,canTrade,draft){
   const shares=normalizeShares(draft.quantities.get(stock.id)??1);
   const active=draft.stockId===stock.id;
 
-  return '<article class="stock-trade-card '+(active?"is-active-trade":"")+'" data-stock-id="'+stock.id+'" data-stock-name="'+stock.name+'" data-stock-price="'+stock.price+'">'+
+  const held=position.shares>0;
+  return '<article class="stock-trade-card '+(held?"is-held-stock ":"")+(active?"is-active-trade":"")+'" data-stock-id="'+stock.id+'" data-stock-name="'+stock.name+'" data-stock-price="'+stock.price+'">'+
     '<div class="stock-trade-card__head">'+
       '<div class="stock-title">'+
-        '<strong>'+stock.name+'</strong>'+
+        '<div class="stock-title__line"><strong>'+stock.name+'</strong>'+
+          (held?'<span class="stock-owned-badge">持有 '+position.shares+' 股</span>':"")+
+        '</div>'+
         '<small>'+stock.id+'｜'+stock.sector+'</small>'+
       '</div>'+
       '<div class="stock-quote">'+
