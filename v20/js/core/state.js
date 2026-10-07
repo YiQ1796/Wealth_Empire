@@ -1,7 +1,7 @@
 import{BOARD_TILES,BOARD_VERSION,MAX_ROUNDS}from"../data/board.js";
 import{assignAiProfile,aiDisplayName}from"./ai.js";
-import{createInitialMarket}from"./stock-market.js";
-import{normalizeInventory}from"./items.js";
+import{createInitialMarket}from"./stock-market.js?v=alpha32-233";
+import{normalizeInventory}from"./items.js?v=alpha32-233";
 
 export const PLAYER_COLORS=Object.freeze(["#377bd1","#e44f55","#25a978","#8a63d2"]);
 
