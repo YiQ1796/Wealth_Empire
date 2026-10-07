@@ -55,4 +55,4 @@ assert.equal(disconnectCount,0,"replacing one relay path must not mark the playe
 assert.equal(sent[0]?.type,"join_ack");
 assert.equal(sent[0]?.seat,1);
 
-console.log("V20 Alpha 32.3.4 dual relay host replacement regression PASS");
+console.log("V20 Alpha 32.3.5 dual relay host replacement regression PASS");
