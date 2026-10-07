@@ -122,6 +122,7 @@ export class GameEngine{
     this.state.pendingTransport=null;
     this.state.pendingAcquisition=null;
     this.state.pendingUrban=null;
+    this.state.pendingWorldChoice=null;
     const tile=this.state.tiles[player.position];
 
     if(tile.type==="property"){
@@ -146,6 +147,14 @@ export class GameEngine{
           requestedRent=Math.round(requestedRent*2);
           strategyRentEffect="rent_burst";
         }
+        if(requestedRent>0){
+          if(Math.floor(Number(tile.leaseBonusCharges)||0)>0){
+            tile.leaseBonusCharges=Math.max(0,Math.floor(Number(tile.leaseBonusCharges)||0)-1);
+          }
+          if(Math.floor(Number(tile.rentPenaltyCharges)||0)>0){
+            tile.rentPenaltyCharges=Math.max(0,Math.floor(Number(tile.rentPenaltyCharges)||0)-1);
+          }
+        }
         const insurance=requestedRent>0
           ? applyRentInsurance(player,requestedRent)
           : {rent:0,discount:0,protected:false};
@@ -160,12 +169,19 @@ export class GameEngine{
             "：連區加成 +"+this.formatMoney(rentDetail.groupBonus)+
             "，連區後 "+this.formatMoney(rentDetail.finalRent)+"）"
           :"";
+        const extraRentEffects=[
+          rentDetail.leaseMultiplier>1?"租賃契約 ×"+rentDetail.leaseMultiplier.toFixed(2):"",
+          rentDetail.maintenanceMultiplier<1?"維修延後 ×"+rentDetail.maintenanceMultiplier.toFixed(2):"",
+          Math.abs(rentDetail.worldMultiplier-1)>.001?"城市事件 ×"+rentDetail.worldMultiplier.toFixed(2):""
+        ].filter(Boolean);
+        const extraRentMessage=extraRentEffects.length?"（"+extraRentEffects.join("、")+"）":"";
         const rentMessage=strategyRentEffect==="rent_block"
           ? player.name+" 踩到「"+tile.name+"」，租金封鎖卡生效，本次免收過路費。"+
             regionMessage
           : player.name+" 支付「"+tile.name+"」過路費 "+this.formatMoney(paid)+" 給 "+owner.name+"。"+
             regionMessage+
-            (strategyRentEffect==="rent_burst"?"（過路費爆發 ×2）":"");
+            (strategyRentEffect==="rent_burst"?"（過路費爆發 ×2）":"")+
+            extraRentMessage;
         this.log(
           rentMessage,
           "rent",
@@ -190,6 +206,9 @@ export class GameEngine{
               beforeGroupRent:rentDetail.beforeGroupRent,
               groupMultiplier:rentDetail.groupMultiplier,
               groupBonus:rentDetail.groupBonus,
+              leaseMultiplier:rentDetail.leaseMultiplier,
+              maintenanceMultiplier:rentDetail.maintenanceMultiplier,
+              worldMultiplier:rentDetail.worldMultiplier,
               finalRent:rentDetail.finalRent,
               completeGroup:rentDetail.completeGroup
             }
