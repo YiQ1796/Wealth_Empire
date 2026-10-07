@@ -12,7 +12,7 @@ assert.match(network,/Promise\.allSettled/);
 assert.match(network,/brokerUrls\.map\(brokerUrl=>this\.startHostRelay\(brokerUrl\)\)/);
 assert.match(network,/this\.hostRelayClients=new Map\(\)/);
 assert.match(network,/this\.hostRelayClients\.set\(brokerUrl,client\)/);
-assert.match(network,/const relayKey=brokerUrl+"\\|"+clientId/);
+assert.ok(network.includes('const relayKey=brokerUrl+"|"+clientId;'));
 assert.match(network,/connection\.send\(\{type:"ping",at:Date\.now\(\)\}\)/);
 assert.match(network,/this\.roomCode=createRoomCode\(\)/);
 assert.match(network,/const finalCode=this\.roomCode/);
