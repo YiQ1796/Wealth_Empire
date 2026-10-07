@@ -7,9 +7,9 @@ const main=readFileSync(new URL("../js/main.js",import.meta.url),"utf8");
 const stock=readFileSync(new URL("../js/ui/stock-render.js",import.meta.url),"utf8");
 const render=readFileSync(new URL("../js/ui/render.js",import.meta.url),"utf8");
 
-assert.match(html,/財富帝國 V20 Alpha 32\.3\.10/);
-assert.match(html,/app\.css\?v=alpha32-231/);
-assert.match(html,/main\.js\?v=alpha32-231/);
+assert.match(html,/財富帝國 V20 Alpha 32\.3\.11/);
+assert.match(html,/app\.css\?v=alpha32-232/);
+assert.match(html,/main\.js\?v=alpha32-232/);
 assert.match(main,/\.\/ui\/stock-render\.js\?v=alpha32-231/);
 assert.match(main,/\.\/core\/game\.js\?v=alpha32-229/);
 
@@ -104,4 +104,16 @@ assert.match(heldStockBlock,/inset 6px 0 0 #2f78c8/);
 assert.match(heldStockBlock,/\.stock-owned-badge\{/);
 assert.match(css,/\.stock-owned-badge\{display:none\}/);
 
-console.log("V20 Alpha32.3.10 desktop-only readability regression PASS");
+const noticeFrameMarker="/* V20 Alpha 32.3.11 — restore desktop notification frame artwork. */";
+const noticeFrameStart=css.indexOf(noticeFrameMarker);
+assert.ok(noticeFrameStart>=0,"Alpha 32.3.11 notification frame marker missing");
+const noticeFrameBlock=css.slice(noticeFrameStart);
+assert.match(main,/function noticeCardSources\(config\)/);
+assert.match(main,/UI_ASSETS\.notification\.cards/);
+assert.match(main,/class="action-toast__card-bg"/);
+assert.match(main,/src="'\+source\.desktop\+'"/);
+assert.match(noticeFrameBlock,/@media \(min-width:1181px\)/);
+assert.match(noticeFrameBlock,/\.action-toast__card-bg\{[\s\S]*?display:block!important/);
+assert.match(noticeFrameBlock,/\.action-toast\{[\s\S]*?background:transparent!important/);
+
+console.log("V20 Alpha32.3.11 desktop-only readability regression PASS");
