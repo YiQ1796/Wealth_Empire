@@ -972,6 +972,7 @@ function renderNetworkUi(){
   const lobbySummary=document.getElementById("networkLobbySummary");
   const lobbyStartButton=document.getElementById("networkLobbyStartButton");
   const lobbyActive=network.mode!=="offline"&&(state.gameStatus==="lobby"||state.phase==="lobby");
+  document.querySelector(".hud-panel")?.classList.toggle("has-network-lobby",lobbyActive);
   if(lobbyCard){
     lobbyCard.hidden=!lobbyActive;
     if(lobbyActive){
