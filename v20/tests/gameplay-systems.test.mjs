@@ -260,6 +260,15 @@ function commonPickValue(pool,eventId){
   assert.equal(state.gameStatus,"finished");
   assert.equal(state.phase,"finished");
   assert.equal(state.round,30);
+  const gameComplete=state.events.find(event=>event.kind==="game_complete");
+  assert.ok(gameComplete);
+  assert.equal(gameComplete.data?.rankings?.length,4);
+  assert.deepEqual(
+    gameComplete.data.rankings.map(item=>item.rank),
+    [1,2,3,4],
+    "final game standings must be based on the live total-asset ranking"
+  );
+  assert.ok(gameComplete.data.rankings.every(item=>Number.isFinite(Number(item.total))));
 }
 
 {
