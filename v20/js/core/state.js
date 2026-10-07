@@ -30,6 +30,7 @@ export function createPlayer(seat,name,kind="ai"){
     centralMissionUsedRound:0,
     rentInsuranceActive:false,
     rentInsuranceUsedRound:0,
+    portLogistics:null,
     centralTransitUsedRound:0,
     centralDevelopmentUsedRound:0,
     developmentPermits:0,
@@ -132,6 +133,13 @@ export function hydrateState(raw){
       centralMissionUsedRound:Math.max(0,Number(saved.centralMissionUsedRound)||0),
       rentInsuranceActive:Boolean(saved.rentInsuranceActive),
       rentInsuranceUsedRound:Math.max(0,Number(saved.rentInsuranceUsedRound)||0),
+      portLogistics:saved.portLogistics&&typeof saved.portLogistics==="object"&&Number(saved.portLogistics.remainingCharges)>0
+        ?{
+            group:String(saved.portLogistics.group??""),
+            remainingCharges:Math.max(0,Math.min(2,Math.floor(Number(saved.portLogistics.remainingCharges)||0))),
+            bonus:Math.max(0,Math.min(0.15,Number(saved.portLogistics.bonus)||0.15))
+          }
+        :null,
       centralTransitUsedRound:Math.max(0,Number(saved.centralTransitUsedRound)||0),
       centralDevelopmentUsedRound:Math.max(0,Number(saved.centralDevelopmentUsedRound)||0),
       developmentPermits:Math.max(0,Math.min(3,Math.floor(Number(saved.developmentPermits)||0))),
