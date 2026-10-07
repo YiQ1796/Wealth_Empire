@@ -57,7 +57,7 @@ const rankingBlock=css.slice(rankingStart);
 assert.match(rankingBlock,/\.wealth-ranking-heading\{/);
 assert.match(rankingBlock,/\.player-rank-badge--1\{/);
 assert.match(rankingBlock,/\.player-wealth\{/);
-assert.match(html,/即時總資產排名/);
+assert.match(rankingBlock,/\.players::before\{[\s\S]*?即時總資產排名/);
 assert.match(render,/playerAssetRankings/);
 
 console.log("V20 Alpha32.3.7 desktop-only readability regression PASS");
