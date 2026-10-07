@@ -6914,3 +6914,23 @@ body.entry-pending .app-shell{
     scroll-margin-block:60px 18px
   }
 }
+
+
+/* V20 Alpha 32.3.14 — clearer desktop command dock labels. */
+@media (min-width:1181px){
+  .desktop-command-dock .feature-tab span{
+    font-size:16px;
+    line-height:1.1;
+    font-weight:1000
+  }
+  .desktop-command-dock .action-button span{
+    font-size:17px;
+    line-height:1.1;
+    font-weight:1000
+  }
+  .desktop-command-dock .feature-tab img,
+  .desktop-command-dock .action-button img{
+    width:31px;
+    height:31px
+  }
+}
