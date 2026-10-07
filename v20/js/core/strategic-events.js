@@ -18,7 +18,7 @@ function ensureEffects(state){
   const effects=state.strategicEffects;
   effects.globalRent=effects.globalRent&&typeof effects.globalRent==="object"
     ?effects.globalRent
-    :{multiplier:1,untilRound:0,label:""};
+    :{multiplier:1,activeFromRound:0,untilRound:0,label:""};
   effects.groupRents=effects.groupRents&&typeof effects.groupRents==="object"
     ?effects.groupRents
     :{};
@@ -427,7 +427,7 @@ export function settleStrategicRound(state){
     if(Number(effect?.untilRound)<round)delete effects.groupRents[group];
   }
   if(Number(effects.bank.untilRound)<round){
-    effects.bank={multiplier:1,untilRound:0,label:""};
+    effects.bank={multiplier:1,activeFromRound:0,untilRound:0,label:""};
   }
   if(Number(effects.transport.blockedUntilRound)<round){
     effects.transport.blockedNodeIndex=null;
