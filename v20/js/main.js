@@ -1463,45 +1463,144 @@ function renderTransportDialog(){
   }
 
   const source=TRANSPORT_NODE_BY_INDEX[pending.sourceIndex];
-  document.getElementById("transportTitle").textContent=source?.name??"交通轉乘";
-  document.getElementById("transportSubtitle").textContent="選擇另一個交通節點作為本回合轉乘目的地。";
+  document.getElementById("transportTitle").textContent=source?.name??"交通樞紐";
+  document.getElementById("transportSubtitle").textContent=source?.description??"選擇本交通樞紐的一項功能。";
   document.getElementById("transportSourceName").textContent=(source?.icon?source.icon+" ":"")+(source?.name??"交通設施");
+  const note=document.getElementById("transportSourceNote");
+  if(note){
+    note.textContent=pending.status==="free_day"
+      ?"交通免費日生效：本次所有原本需要付費的交通選項皆免費。"
+      :"每個交通節點功能不同；選擇後會立即結算，也可以本次不用。";
+  }
 
   const list=document.getElementById("transportDestinationList");
   list.replaceChildren();
 
-  for(const destinationIndex of pending.destinationIndexes??[]){
-    const node=TRANSPORT_NODE_BY_INDEX[destinationIndex];
-    if(!node)continue;
+  for(const action of pending.actions??[]){
     const button=document.createElement("button");
     button.type="button";
-    button.className="transport-destination";
-    button.dataset.destinationIndex=String(destinationIndex);
+    button.className="transport-destination transport-destination--action";
+    button.dataset.actionId=String(action.id);
+    const cost=Math.max(0,Math.round(Number(action.cost)||0));
+    button.disabled=player.cash<cost;
 
     const icon=document.createElement("span");
     icon.className="transport-destination__icon";
-    icon.textContent=node.icon;
+    icon.textContent=action.icon??source?.icon??"🚇";
 
     const copy=document.createElement("span");
     copy.className="transport-destination__copy";
     const title=document.createElement("strong");
-    title.textContent=node.name;
+    title.textContent=action.label;
     const meta=document.createElement("small");
-    meta.textContent=node.mode+"｜第 "+(destinationIndex+1)+" 格";
-    const preview=transportDestinationPreview(state,destinationIndex);
+    if(action.freeDay&&Number(action.originalCost)>0){
+      meta.textContent="原價 "+noticeMoney(action.originalCost)+"｜交通免費日：免費";
+    }else{
+      meta.textContent=cost>0?"費用 "+noticeMoney(cost):"本次免費";
+    }
     const strategy=document.createElement("small");
     strategy.className="transport-destination__strategy";
-    strategy.textContent="前方6格｜可買地產 "+preview.unownedProperties+"｜機會命運 "+preview.chanceOrFate;
+    strategy.textContent=action.description+(button.disabled?"｜現金不足":"");
     copy.append(title,meta,strategy);
 
     button.append(icon,copy);
-    button.addEventListener("click",()=>{
-      dispatchAction({type:"transport_travel",destinationIndex});
-    },{once:true});
+    if(!button.disabled){
+      button.addEventListener("click",()=>{
+        dispatchAction({type:"transport_action",actionId:action.id});
+      },{once:true});
+    }
     list.appendChild(button);
   }
 
   if(!transportDialog.open)transportDialog.showModal();
+}
+
+function renderWorldEventStatus(){
+  const container=document.getElementById("worldEventStatus");
+  if(!container)return;
+  const items=worldStatusSummary(state);
+  container.replaceChildren();
+
+  const heading=document.createElement("strong");
+  heading.textContent="進行中的城市效果";
+  container.appendChild(heading);
+
+  if(items.length===0){
+    const empty=document.createElement("span");
+    empty.className="world-event-status__empty";
+    empty.textContent="目前沒有持續中的城市事件或限時標案。";
+    container.appendChild(empty);
+    container.classList.remove("active");
+    return;
+  }
+
+  container.classList.add("active");
+  const list=document.createElement("div");
+  list.className="world-event-status__list";
+  for(const item of items){
+    const badge=document.createElement("span");
+    badge.textContent=item;
+    list.appendChild(badge);
+  }
+  container.appendChild(list);
+}
+
+function renderWorldChoiceDialog(){
+  const pending=state.pendingWorldChoice;
+  const localSeat=currentLocalSeat();
+  const player=state.players?.[localSeat];
+  const shouldShow=Boolean(
+    worldChoiceDialog&&
+    state.phase==="world_choice"&&
+    pending&&
+    pending.seat===localSeat&&
+    player?.kind==="human"&&
+    player.connected!==false
+  );
+
+  if(!shouldShow){
+    if(worldChoiceDialog?.open)worldChoiceDialog.close();
+    return;
+  }
+
+  if(itemPromptDialog?.open)itemPromptDialog.close();
+  if(featureDialog?.open)featureDialog.close();
+  if(propertyInfoDialog?.open)propertyInfoDialog.close();
+
+  document.getElementById("worldChoiceTitle").textContent=pending.title??pending.eventName??"事件選擇";
+  document.getElementById("worldChoiceDescription").textContent=pending.description??"請選擇本次事件的處理方式。";
+  document.getElementById("worldChoiceCash").textContent=noticeMoney(player.cash);
+
+  const list=document.getElementById("worldChoiceOptionList");
+  list.replaceChildren();
+  for(const option of pending.options??[]){
+    const cost=Math.max(0,Math.round(Number(option.cost)||0));
+    const button=document.createElement("button");
+    button.type="button";
+    button.className="world-choice-option";
+    button.dataset.optionId=String(option.id);
+    button.disabled=option.enabled===false||player.cash<cost;
+
+    const title=document.createElement("strong");
+    title.textContent=option.label;
+    const description=document.createElement("span");
+    description.textContent=option.description??"";
+    const meta=document.createElement("small");
+    meta.textContent=button.disabled
+      ? "目前條件不足"
+      : cost>0
+        ? "確認後支付 "+noticeMoney(cost)
+        : "不需支付現金";
+    button.append(title,description,meta);
+    if(!button.disabled){
+      button.addEventListener("click",()=>{
+        dispatchAction({type:"world_choice_select",optionId:option.id});
+      },{once:true});
+    }
+    list.appendChild(button);
+  }
+
+  if(!worldChoiceDialog.open)worldChoiceDialog.showModal();
 }
 
 function maybePromptStrategyItems(){
@@ -1512,12 +1611,15 @@ function maybePromptStrategyItems(){
     state.pendingAcquisition||
     state.pendingUrban||
     state.pendingTransport||
+    state.pendingWorldChoice||
+    state.phase==="world_choice"||
     state.phase==="minigame"||
     purchaseDialog?.open||
     upgradeDialog?.open||
     acquisitionDialog?.open||
     urbanDialog?.open||
-    transportDialog?.open
+    transportDialog?.open||
+    worldChoiceDialog?.open
   )return;
   const seat=currentLocalSeat();
   const player=state.players?.[seat];
@@ -1550,9 +1652,11 @@ function renderAll(){
   renderStocks();
   renderNetworkUi();
   renderCentralFacilities();
+  renderWorldEventStatus();
   renderUrbanDialog();
   renderAcquisitionDialog();
   renderTransportDialog();
+  renderWorldChoiceDialog();
   minigameUi.sync(state,currentLocalSeat());
   processMoveAnimations();
   processActionToasts();
