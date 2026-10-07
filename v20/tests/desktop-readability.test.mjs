@@ -6,10 +6,11 @@ const css=readFileSync(new URL("../styles/app.css",import.meta.url),"utf8");
 const main=readFileSync(new URL("../js/main.js",import.meta.url),"utf8");
 const stock=readFileSync(new URL("../js/ui/stock-render.js",import.meta.url),"utf8");
 
-assert.match(html,/財富帝國 V20 Alpha 32\.3\.4/);
-assert.match(html,/app\.css\?v=alpha32-225/);
-assert.match(html,/main\.js\?v=alpha32-225/);
+assert.match(html,/財富帝國 V20 Alpha 32\.3\.5/);
+assert.match(html,/app\.css\?v=alpha32-226/);
+assert.match(html,/main\.js\?v=alpha32-226/);
 assert.match(main,/\.\/ui\/stock-render\.js\?v=alpha32-225/);
+assert.match(main,/\.\/core\/game\.js\?v=alpha32-226/);
 
 assert.match(stock,/const desktopPersistent=container\.classList\.contains\("stock-market-grid--persistent"\)/);
 assert.match(stock,/\(desktopPersistent\|\|state\.currentPlayer===localSeat\)/);
