@@ -1310,9 +1310,14 @@ export class GameEngine{
     }
 
     if(this.state.phase==="transport"){
-      const destinationIndex=chooseAiTransportDestination(this.state,player.seat);
-      if(destinationIndex!=null)return this.useTransport(destinationIndex,player.seat);
+      const actionId=chooseAiTransportAction(this.state,player.seat);
+      if(actionId)return this.useTransportAction(actionId,player.seat);
       return this.skipTransport(player.seat);
+    }
+
+    if(this.state.phase==="world_choice"){
+      const optionId=chooseAiWorldChoice(this.state,player.seat);
+      return optionId?this.resolveWorldChoice(optionId,player.seat):false;
     }
 
     if(this.state.phase==="acquisition"){
@@ -1366,7 +1371,8 @@ export class GameEngine{
       this.state.pendingUpgrade!=null||
       this.state.pendingTransport!=null||
       this.state.pendingAcquisition!=null||
-      this.state.pendingUrban!=null
+      this.state.pendingUrban!=null||
+      this.state.pendingWorldChoice!=null
     )return false;
 
     const previousSeat=this.state.currentPlayer;
@@ -1407,6 +1413,15 @@ export class GameEngine{
         return true;
       }
       this.state.round+=1;
+      const worldAdvance=advanceWorldRound(this.state);
+      for(const expired of worldAdvance.expiredContracts){
+        const contractPlayer=this.state.players[expired.seat];
+        this.log(
+          contractPlayer.name+" 的政府標案「"+expired.taskName+"」已逾期，未取得獎勵。",
+          "government_contract_expired",
+          {seat:expired.seat,playerName:contractPlayer.name,taskName:expired.taskName,round:this.state.round}
+        );
+      }
       for(const settled of settleBankDeposits(this.state)){
         const player=this.state.players[settled.seat];
         this.log(
