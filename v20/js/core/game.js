@@ -189,15 +189,21 @@ export class GameEngine{
               beforeGroupRent:rentDetail.beforeGroupRent,
               groupMultiplier:rentDetail.groupMultiplier,
               groupBonus:rentDetail.groupBonus,
+              logisticsMultiplier:rentDetail.logisticsMultiplier,
+              logisticsBonus:rentDetail.logisticsBonus,
               finalRent:rentDetail.finalRent,
               completeGroup:rentDetail.completeGroup
             }
           }
         );
+        if(rentDetail.logisticsMultiplier>1&&requestedRent>0&&owner.portLogistics?.group===tile.group){
+          owner.portLogistics.remainingCharges=Math.max(0,Number(owner.portLogistics.remainingCharges)-1);
+          if(owner.portLogistics.remainingCharges===0)owner.portLogistics=null;
+        }
         if(insurance.protected){
           this.log(
             player.name+" 的租金保險生效，本次原租金 "+this.formatMoney(requestedRent)+
-              "，減壓後為 "+this.formatMoney(rent)+"。",
+              "，保險吸收 "+this.formatMoney(insurance.discount)+"，實付 "+this.formatMoney(rent)+"。",
             "central_insurance_used",
             {seat:player.seat,requested:requestedRent,amount:rent,discount:insurance.discount}
           );
@@ -332,14 +338,23 @@ export class GameEngine{
       }
       this.state.pendingTransport=pending;
       this.state.phase="transport";
+      const transportRole=
+        pending.kind==="station"?"低成本城市轉乘":
+        pending.kind==="airport"?"精準跨區航班":
+        pending.kind==="port_logistics"?"區域物流加成":
+        "免費跨海快速通道";
       this.log(
-        player.name+" 抵達「"+tile.name+"」，可免費轉乘至其他交通節點，或留在原地。",
+        player.name+" 抵達「"+tile.name+"」，啟動「"+transportRole+"」。"+
+          (Number(pending.fee)>0?" 使用費 "+this.formatMoney(pending.fee)+"。":"")+
+          (pending.destinationIndexes.length===0?" 目前沒有可用目標，可選擇留在原地。":""),
         "transport_offer",
         {
           seat:player.seat,
           playerName:player.name,
           sourceIndex:pending.sourceIndex,
           sourceName:tile.name,
+          transportKind:pending.kind,
+          fee:pending.fee,
           destinationIndexes:pending.destinationIndexes
         }
       );
@@ -607,9 +622,14 @@ export class GameEngine{
     if(!result.ok)return false;
     const player=this.state.players[Number(seat)];
     this.log(
-      player.name+" 啟動租金保險，下一次踩到他人地產時租金壓力降低。",
+      player.name+" 支付 "+this.formatMoney(result.premium)+" 啟動租金保險；下一次過路費降低 40%，使用後進入 3 ROUND 冷卻。",
       "central_insurance_active",
-      {seat:Number(seat),playerName:player.name}
+      {
+        seat:Number(seat),
+        playerName:player.name,
+        premium:result.premium,
+        cashAfter:result.cashAfter
+      }
     );
     this.notify();
     return true;
@@ -757,7 +777,7 @@ export class GameEngine{
   useTransport(destinationIndex,seat=this.state.currentPlayer){
     const player=this.currentPlayer;
     if(!this.isCurrentSeat(seat)||!canUseTransport(this.state,seat,destinationIndex)){
-      this.log("目前無法使用這條交通路線。","warning",{seat,destinationIndex:Number(destinationIndex)});
+      this.log("目前無法使用這個交通選項。","warning",{seat,destinationIndex:Number(destinationIndex)});
       this.notify();
       return false;
     }
@@ -766,15 +786,60 @@ export class GameEngine{
     const sourceIndex=pending.sourceIndex;
     const destination=Number(destinationIndex);
     const sourceNode=transportNode(sourceIndex);
-    const destinationNode=transportNode(destination);
+    const fee=Math.max(0,Number(pending.fee)||0);
 
+    if(player.cash<fee){
+      this.log(player.name+" 現金不足，無法支付交通費。","warning",{seat:player.seat,fee});
+      this.notify();
+      return false;
+    }
+
+    if(pending.kind==="port_logistics"){
+      const target=this.state.tiles?.[destination];
+      if(!target||target.type!=="property"||target.owner!==player.seat){
+        this.log("國際港口目前沒有合法的物流區域。","warning",{seat:player.seat});
+        this.notify();
+        return false;
+      }
+      player.cash-=fee;
+      player.portLogistics={
+        group:target.group,
+        remainingCharges:2,
+        bonus:0.15
+      };
+      this.state.pendingTransport=null;
+      this.state.phase="landed";
+      this.log(
+        player.name+" 在「"+sourceNode.name+"」支付 "+this.formatMoney(fee)+
+          " 啟動「"+target.group+"」商業物流；接下來 2 次該區收租 +15%。",
+        "transport_complete",
+        {
+          seat:player.seat,
+          playerName:player.name,
+          sourceIndex,
+          sourceName:sourceNode.name,
+          transportKind:pending.kind,
+          group:target.group,
+          fee,
+          remainingCharges:2,
+          bonus:0.15,
+          cashAfter:player.cash
+        }
+      );
+      this.notify();
+      return true;
+    }
+
+    const destinationNode=transportNode(destination);
+    const destinationTile=this.state.tiles?.[destination];
+    player.cash-=fee;
     player.position=destination;
     this.state.pendingTransport=null;
     this.state.phase="landed";
 
     this.log(
-      player.name+" 從「"+(sourceNode?.name??("第 "+(sourceIndex+1)+" 格"))+"」轉乘至「"+
-        (destinationNode?.name??("第 "+(destination+1)+" 格"))+"」。",
+      player.name+" 從「"+(sourceNode?.name??("第 "+(sourceIndex+1)+" 格"))+"」前往「"+
+        (destinationNode?.name??destinationTile?.name??("第 "+(destination+1)+" 格"))+"」。",
       "move",
       {
         seat:player.seat,
@@ -785,7 +850,9 @@ export class GameEngine{
       }
     );
     this.log(
-      player.name+" 完成免費轉乘，本次抵達交通節點不再連續觸發第二次交通。",
+      player.name+" 完成「"+(sourceNode?.mode??"交通")+"」"+
+        (fee>0?"，支付 "+this.formatMoney(fee):"")+
+        "；"+(pending.resolveLanding?"抵達後立即結算目的地格效果。":"本次不觸發沿途格子。"),
       "transport_complete",
       {
         seat:player.seat,
@@ -793,9 +860,16 @@ export class GameEngine{
         sourceIndex,
         sourceName:sourceNode?.name??"",
         destinationIndex:destination,
-        destinationName:destinationNode?.name??""
+        destinationName:destinationNode?.name??destinationTile?.name??"",
+        transportKind:pending.kind,
+        fee,
+        cashAfter:player.cash
       }
     );
+
+    if(pending.resolveLanding){
+      this.resolveLanding(player,{specialChainDepth:1});
+    }
     this.notify();
     return true;
   }
