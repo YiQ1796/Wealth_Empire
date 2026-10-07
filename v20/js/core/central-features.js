@@ -93,7 +93,11 @@ export function startBankDeposit(state,seat,principal=minimumBankPrincipal()){
   const round=currentRound(state);
   player.cash-=plan.principal;
   const bankEffect=state.strategicEffects?.bank;
-  const bankMultiplier=bankEffect&&Number(bankEffect.untilRound)>=round
+  const bankMultiplier=(
+    bankEffect&&
+    Number(bankEffect.activeFromRound)<=round&&
+    Number(bankEffect.untilRound)>=round
+  )
     ?Math.max(0.8,Math.min(1.2,Number(bankEffect.multiplier)||1))
     :1;
   const returnAmount=Math.round(plan.returnAmount*bankMultiplier);
