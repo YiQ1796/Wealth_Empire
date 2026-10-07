@@ -9,7 +9,7 @@ assert.match(html,/id="desktopBgmControls"/);
 assert.match(html,/id="bgmMuteButton"/);
 assert.match(html,/id="bgmVolumeSlider"/);
 assert.match(html,/巷仔口的風/);
-assert.match(html,/alpha32-232/);
+assert.match(html,/alpha32-233/);
 assert.match(css,/V20 Alpha 32\.1 — local BGM preview controls/);
 assert.match(css,/@media \(hover:none\) and \(pointer:coarse\)/);
 assert.match(css,/\.desktop-bgm-controls\{display:none!important\}/);
@@ -25,4 +25,4 @@ assert.match(controller,/document\.addEventListener\("pointerdown",tryStart,true
 assert.match(controller,/localStorage\.setItem/);
 assert.doesNotMatch(controller,/PeerNetwork|GameEngine|networkMode|dispatchRemote/);
 assert.doesNotMatch(controller,/audio\.autoplay=true/);
-console.log("V20 Alpha32.1 BGM controller regression PASS");
+console.log("V20 Alpha32.3.12 BGM controller regression PASS");

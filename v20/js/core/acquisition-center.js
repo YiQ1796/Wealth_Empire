@@ -1,3 +1,4 @@
+import{MAX_PROPERTY_LEVEL}from"../data/board.js";
 import{
   canForceAcquireProperty,
   suggestedAcquisitionOffer,
@@ -19,6 +20,7 @@ export function acquisitionOptions(state,buyerSeat){
         tileName:tile.name,
         group:tile.group,
         level:tile.level,
+        levelAfterAcquisition:Math.min(MAX_PROPERTY_LEVEL,(Number(tile.level)||0)+1),
         ownerSeat:tile.owner,
         ownerName:owner?.name??"其他玩家",
         offer,
@@ -78,12 +80,19 @@ export function executeAcquisition(state,buyerSeat,tileIndex){
     return{ok:false,reason:transfer.reason};
   }
 
+  const tile=state.tiles[Number(tileIndex)];
+  const levelBefore=Math.max(0,Number(tile.level)||0);
+  const levelAfter=Math.min(MAX_PROPERTY_LEVEL,levelBefore+1);
+  tile.level=levelAfter;
+
   return{
     ok:true,
     tileIndex:Number(tileIndex),
     tileName:option.tileName,
     group:option.group,
-    level:option.level,
+    level:levelAfter,
+    levelBefore,
+    levelAfter,
     offer:option.offer,
     previousOwnerSeat:option.ownerSeat,
     previousOwnerName:option.ownerName,
