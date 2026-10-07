@@ -97,7 +97,8 @@ assert.match(css,/Network dialog: keep room information readable on short mobile
 
 console.log("V20 Alpha 31 central/mobile layout regression PASS");
 
-assert.match(css,/\.player-rank-badge,[\s\S]*?\.player-wealth\{display:none\}/);\nassert.match(css,/V20 Alpha 32\.3 — single-surface notifications/);
+assert.match(css,/\.player-rank-badge,[\s\S]*?\.player-wealth\{display:none\}/);
+assert.match(css,/V20 Alpha 32\.3 — single-surface notifications/);
 assert.match(css,/\.action-toast__card-bg,[\s\S]*?display:none!important/);
 assert.match(css,/\.action-toast\.leaving/);
 assert.match(main,/function isLocalRoomHost/);
