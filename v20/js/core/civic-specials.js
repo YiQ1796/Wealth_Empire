@@ -1,5 +1,5 @@
 import{advanceStockMarket}from"./stock-market.js";
-import{CIVIC_EVENT_POOLS}from"../data/civic-events.js";
+import{CIVIC_EVENT_POOLS}from"../data/civic-events.js?v=alpha32-226";
 import{appendEventHistory,pickEventFromPool,RARE_EVENT_RATE}from"./event-picker.js";
 import{applyRandomPropertyUpgrade,grantDevelopmentPermits,grantPropertyProtectionPermits}from"./property-events.js";
 
