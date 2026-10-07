@@ -17,6 +17,7 @@ import{GameEngine}from"../js/core/game.js";
 import{
   canForceAcquireProperty,
   groupProgress,
+  rentBreakdown,
   rentFor,
   transferPropertyOwnership,
   upgradeCost,
@@ -119,7 +120,14 @@ assert.deepEqual(progress,{owned:4,total:4,complete:true},"buying all 4 properti
 
 const upgradedTile=state.tiles[testIndexes[0]];
 const completeGroupBaseRent=Math.round(upgradedTile.rent*2);
+const initialRentDetail=rentBreakdown(state,upgradedTile);
 assert.equal(rentFor(state,upgradedTile),completeGroupBaseRent,"4-property region must double rent");
+assert.equal(initialRentDetail.completeGroup,true);
+assert.equal(initialRentDetail.groupMultiplier,2);
+assert.equal(initialRentDetail.baseRent,upgradedTile.rent);
+assert.equal(initialRentDetail.beforeGroupRent,upgradedTile.rent);
+assert.equal(initialRentDetail.groupBonus,upgradedTile.rent);
+assert.equal(initialRentDetail.finalRent,completeGroupBaseRent);
 
 state.phase="await-roll";
 state.pendingPurchase=null;
@@ -224,6 +232,14 @@ const rentReceivedBefore=buyer.rentReceived;
 const rentPaidBefore=payer.rentPaid;
 
 engine.resolveLanding(payer);
+
+const latestRentEvent=state.events.find(event=>event.kind==="rent");
+assert.ok(latestRentEvent,"landing on a completed region must emit a rent event");
+assert.equal(latestRentEvent.data?.rentBreakdown?.completeGroup,true);
+assert.equal(latestRentEvent.data?.rentBreakdown?.groupMultiplier,2);
+assert.ok(latestRentEvent.data?.rentBreakdown?.groupBonus>0);
+assert.match(latestRentEvent.text,/商業區連區 ×2/);
+assert.match(latestRentEvent.text,/連區加成 \+\$/);
 
 assert.equal(buyer.cash,ownerCashBefore+expectedRent,"owner must receive the exact calculated rent");
 assert.equal(payer.cash,payerCashBefore-expectedRent,"payer must pay the exact calculated rent");
