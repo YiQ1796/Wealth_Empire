@@ -832,7 +832,7 @@ button:focus-visible{outline:3px solid rgba(47,114,196,.28);outline-offset:2px}
   font-weight:800
 }
 
-/* V20 Alpha 32.3.1 — connected players return to the board; lobby state stays compact. */
+/* V20 Alpha 32.3.2 — connected players return to the board; lobby state stays compact. */
 .network-lobby-card{
   display:grid;
   grid-template-columns:minmax(0,1fr) auto;
