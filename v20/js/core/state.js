@@ -51,6 +51,7 @@ export function createInitialState(){
     phase:"await-roll",
     turnToken:1,
     aiPreparedTurnToken:null,
+    autoEndTurnSeat:null,
     dice:null,
     pendingPurchase:null,
     pendingUpgrade:null,
@@ -217,6 +218,10 @@ export function hydrateState(raw){
     },
     marketItemLockUntilRound:Math.max(0,Number(rawEffects.marketItemLockUntilRound)||0)
   };
+  const rawAutoEndTurnSeat=Number(raw.autoEndTurnSeat);
+  state.autoEndTurnSeat=Number.isInteger(rawAutoEndTurnSeat)&&rawAutoEndTurnSeat>=0&&rawAutoEndTurnSeat<state.players.length
+    ?rawAutoEndTurnSeat
+    :null;
   state.turnToken=Math.max(1,Number(raw.turnToken)||1);
   state.version=BOARD_VERSION;
   return state;

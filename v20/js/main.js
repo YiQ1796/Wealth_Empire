@@ -1,5 +1,5 @@
-import{createInitialState,createLobbyState,hydrateState,setAiSeat,setHumanSeat,setPlayerCharacter}from"./core/state.js";
-import{GameEngine}from"./core/game.js?v=alpha32-235";
+import{createInitialState,createLobbyState,hydrateState,setAiSeat,setHumanSeat,setPlayerCharacter}from"./core/state.js?v=alpha32-236";
+import{GameEngine}from"./core/game.js?v=alpha32-236";
 import{
   PeerNetwork,
   clearNetworkSession,
@@ -14,20 +14,20 @@ import{
 }from"./core/network.js?v=alpha32-224";
 import{characterAsset,mountStaticBoard,render}from"./ui/render.js?v=alpha32-230";
 import{itemUiSummary}from"./ui/item-render.js";
-import{renderStockMarket}from"./ui/stock-render.js?v=alpha32-235";
+import{renderStockMarket}from"./ui/stock-render.js?v=alpha32-236";
 import{UI_ASSETS}from"./data/ui-assets.js";
 import{MinigameUI}from"./ui/minigame-ui.js";
 import{GROUP_SIZES,MAX_PROPERTY_LEVEL,groupRentMultiplier}from"./data/board.js";
-import{canForceAcquireProperty,groupProgress,propertyValue,rentFor,suggestedAcquisitionOffer,upgradeCost}from"./core/property-economy.js?v=alpha32-235";
-import{TRANSPORT_NODE_BY_INDEX}from"./data/transport.js?v=alpha32-235";
-import{transportDestinationPreview}from"./core/transport.js?v=alpha32-235";
+import{canForceAcquireProperty,groupProgress,propertyValue,rentFor,suggestedAcquisitionOffer,upgradeCost}from"./core/property-economy.js?v=alpha32-236";
+import{TRANSPORT_NODE_BY_INDEX}from"./data/transport.js?v=alpha32-236";
+import{transportDestinationPreview}from"./core/transport.js?v=alpha32-236";
 import{
   CENTRAL_FEATURE_BY_ID,
   CENTRAL_MISSIONS,
   CENTRAL_MISSION_BY_ID,
   CENTRAL_TEST_TUNING
-}from"./data/central-features.js?v=alpha32-235";
-import{centralDevelopmentOptions,centralFacilityStatus,insuranceCooldownRemaining,insurancePremium}from"./core/central-features.js?v=alpha32-235";
+}from"./data/central-features.js?v=alpha32-236";
+import{centralDevelopmentOptions,centralFacilityStatus,insuranceCooldownRemaining,insurancePremium}from"./core/central-features.js?v=alpha32-236";
 const board=document.getElementById("board");
 mountStaticBoard(board);
 const boardCharacterLayer=document.createElement("div");
@@ -1025,58 +1025,86 @@ const minigameUi=new MinigameUI({
 function executeAction(action,seat=currentLocalSeat()){
   if(!action||typeof action!=="object")return false;
 
+  let result=false;
   switch(action.type){
     case"roll":
-      return engine.roll(seat);
+      result=engine.roll(seat);
+      break;
     case"buy_property":
-      return engine.buyCurrentProperty(seat);
+      result=engine.buyCurrentProperty(seat);
+      break;
     case"decline_property":
-      return engine.declineCurrentProperty(seat);
+      result=engine.declineCurrentProperty(seat);
+      break;
     case"upgrade_property":
-      return engine.upgradeProperty(action.tileIndex,seat);
+      result=engine.upgradeProperty(action.tileIndex,seat);
+      break;
     case"property_permit_upgrade":
-      return engine.usePropertyPermit(action.tileIndex,seat);
+      result=engine.usePropertyPermit(action.tileIndex,seat);
+      break;
     case"property_protection_apply":
-      return engine.usePropertyProtection(action.tileIndex,seat);
+      result=engine.usePropertyProtection(action.tileIndex,seat);
+      break;
     case"item_use":
-      return engine.useStrategyItem(action.itemId,action.target,seat);
+      result=engine.useStrategyItem(action.itemId,action.target,seat);
+      break;
     case"decline_upgrade":
-      return engine.declineUpgrade(seat);
+      result=engine.declineUpgrade(seat);
+      break;
     case"buy_stock":
-      return engine.buyStock(action.stockId,action.shares,seat);
+      result=engine.buyStock(action.stockId,action.shares,seat);
+      break;
     case"sell_stock":
-      return engine.sellStock(action.stockId,action.shares,seat);
+      result=engine.sellStock(action.stockId,action.shares,seat);
+      break;
     case"minigame_result":
-      return engine.submitMinigameResult(seat,{score:action.score,detail:action.detail});
+      result=engine.submitMinigameResult(seat,{score:action.score,detail:action.detail});
+      break;
     case"transport_travel":
-      return engine.useTransport(action.destinationIndex,seat);
+      result=engine.useTransport(action.destinationIndex,seat);
+      break;
     case"transport_skip":
-      return engine.skipTransport(seat);
+      result=engine.skipTransport(seat);
+      break;
     case"strategic_choice":
-      return engine.resolveStrategicChoice(action.choiceId,action.targetValue,seat);
+      result=engine.resolveStrategicChoice(action.choiceId,action.targetValue,seat);
+      break;
     case"acquisition_buy":
-      return engine.acquireFromCenter(action.tileIndex,seat);
+      result=engine.acquireFromCenter(action.tileIndex,seat);
+      break;
     case"acquisition_skip":
-      return engine.skipAcquisition(seat);
+      result=engine.skipAcquisition(seat);
+      break;
     case"urban_move":
-      return engine.useUrban(action.destinationIndex,seat);
+      result=engine.useUrban(action.destinationIndex,seat);
+      break;
     case"urban_skip":
-      return engine.skipUrban(seat);
+      result=engine.skipUrban(seat);
+      break;
     case"central_bank_deposit":
-      return engine.centralBankDeposit(seat,action.principal);
+      result=engine.centralBankDeposit(seat,action.principal);
+      break;
     case"central_mission_accept":
-      return engine.centralAcceptMission(action.missionId,seat);
+      result=engine.centralAcceptMission(action.missionId,seat);
+      break;
     case"central_transit":
-      return engine.centralTransit(action.distance,seat);
+      result=engine.centralTransit(action.distance,seat);
+      break;
     case"central_insurance":
-      return engine.centralActivateInsurance(seat);
+      result=engine.centralActivateInsurance(seat);
+      break;
     case"central_development":
-      return engine.centralDevelopmentUpgrade(action.tileIndex,seat);
+      result=engine.centralDevelopmentUpgrade(action.tileIndex,seat);
+      break;
     case"end_turn":
-      return engine.endTurn(seat);
+      result=engine.endTurn(seat);
+      break;
     default:
       return false;
   }
+
+  if(result!==false&&action.type!=="end_turn")engine.tryAutoEndTurn();
+  return result;
 }
 
 function dispatchAction(action){
