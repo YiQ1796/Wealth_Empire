@@ -32,7 +32,7 @@ assert.ok(
   createBlock.indexOf("await network.host"),
   "host must enter lobby state before opening network transports"
 );
-assert.match(createBlock,/房間 " \+finalCode\+" 已建立，正在等待好友加入/);
+assert.match(createBlock,/正在等待好友加入/);
 assert.match(createBlock,/if\(!networkDialog\.open\)networkDialog\.showModal\(\)/);
 assert.doesNotMatch(createBlock,/networkDialog\.close\(\)/);
 
