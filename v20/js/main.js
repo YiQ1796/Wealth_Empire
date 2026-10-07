@@ -1,5 +1,5 @@
 import{createInitialState,createLobbyState,hydrateState,setAiSeat,setHumanSeat,setPlayerCharacter}from"./core/state.js";
-import{GameEngine}from"./core/game.js?v=alpha32-227";
+import{GameEngine}from"./core/game.js?v=alpha32-228";
 import{
   PeerNetwork,
   clearNetworkSession,
@@ -55,6 +55,7 @@ const ACTION_TOAST_KINDS=new Set([
   "property_upgrade",
   "group_complete",
   "rent",
+  "acquisition_offer",
   "stock_buy",
   "stock_sell",
   "market_tick",
@@ -561,12 +562,20 @@ function noticeView(event){
         details:[data.tileName??"地產"]
       };
 
-    case"game_complete":
+    case"game_complete":{
+      const rankings=Array.isArray(data.rankings)?data.rankings:[];
+      const champion=rankings.find(item=>item.rank===1);
       return{
         message:event.text,
-        metric:"ROUND "+(data.round??state.round),
-        details:[]
+        metric:champion?"#1 "+champion.playerName:"ROUND "+(data.round??state.round),
+        details:rankings.slice(0,4).map(item=>
+          "#"+item.rank+" "+item.playerName+"｜總資產 "+noticeMoney(item.total)+
+          "（現金 "+noticeMoney(item.cash)+"／地產 "+noticeMoney(item.properties)+
+          "／股票 "+noticeMoney(item.stocks)+
+          (Number(item.bankDeposit)>0?"／定存 "+noticeMoney(item.bankDeposit):"")+"）"
+        )
       };
+    }
 
     default:
       return{message:event.text,metric:null,details:[]};
