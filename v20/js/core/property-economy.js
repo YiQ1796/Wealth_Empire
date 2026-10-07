@@ -31,6 +31,12 @@ export function rentBreakdown(state,tile){
       beforeGroupRent:0,
       groupMultiplier:1,
       groupBonus:0,
+      globalRentMultiplier:1,
+      strategicGroupMultiplier:1,
+      maintenanceMultiplier:1,
+      leaseMultiplier:1,
+      logisticsMultiplier:1,
+      logisticsBonus:0,
       finalRent:0,
       completeGroup:false
     };
@@ -47,9 +53,44 @@ export function rentBreakdown(state,tile){
   const groupMultiplier=completeGroup
     ? (GROUP_RENT_MULTIPLIERS[tile.group]??1)
     : 1;
-  const finalRent=Math.round(
+  const afterGroupRent=Math.round(
     baseRent*levelMultiplier*permanentMultiplier*groupMultiplier
   );
+  const round=Math.max(1,Number(state?.round)||1);
+  const globalEffect=state?.strategicEffects?.globalRent;
+  const globalRentMultiplier=globalEffect&&Number(globalEffect.untilRound)>=round
+    ?Math.max(0.5,Math.min(1.5,Number(globalEffect.multiplier)||1))
+    :1;
+  const groupEffect=state?.strategicEffects?.groupRents?.[tile.group];
+  const strategicGroupMultiplier=groupEffect&&Number(groupEffect.untilRound)>=round
+    ?Math.max(0.5,Math.min(1.5,Number(groupEffect.multiplier)||1))
+    :1;
+  const maintenanceMultiplier=Number(tile.maintenanceRentPenaltyCharges)>0
+    ?Math.max(0.7,Math.min(1,Number(tile.maintenanceRentMultiplier)||0.7))
+    :1;
+  const leaseMultiplier=Number(tile.leaseRentBoostCharges)>0
+    ?1+Math.max(0,Math.min(0.15,Number(tile.leaseRentBonus)||0.15))
+    :1;
+
+  const beforeLogisticsRent=Math.round(
+    afterGroupRent*
+    globalRentMultiplier*
+    strategicGroupMultiplier*
+    maintenanceMultiplier*
+    leaseMultiplier
+  );
+
+  const owner=tile.owner!=null?state.players?.[tile.owner]:null;
+  const logistics=owner?.portLogistics;
+  const logisticsActive=Boolean(
+    logistics&&
+    logistics.group===tile.group&&
+    Number(logistics.remainingCharges)>0
+  );
+  const logisticsMultiplier=logisticsActive
+    ?1+Math.max(0,Math.min(0.15,Number(logistics.bonus)||0.15))
+    :1;
+  const finalRent=Math.round(beforeLogisticsRent*logisticsMultiplier);
 
   return{
     baseRent,
@@ -58,7 +99,13 @@ export function rentBreakdown(state,tile){
     permanentMultiplier,
     beforeGroupRent,
     groupMultiplier,
-    groupBonus:Math.max(0,finalRent-beforeGroupRent),
+    groupBonus:Math.max(0,afterGroupRent-beforeGroupRent),
+    globalRentMultiplier,
+    strategicGroupMultiplier,
+    maintenanceMultiplier,
+    leaseMultiplier,
+    logisticsMultiplier,
+    logisticsBonus:Math.max(0,finalRent-beforeLogisticsRent),
     finalRent,
     completeGroup
   };
@@ -84,7 +131,12 @@ export function canUpgradeProperty(playerSeat,tile){
 
 export function propertyValue(tile){
   if(!tile||tile.type!=="property")return 0;
-  return tile.price+upgradeCost(tile)*Math.max(0,tile.level||0);
+  const baseValue=tile.price+upgradeCost(tile)*Math.max(0,tile.level||0);
+  const temporaryMultiplier=Math.max(
+    0.5,
+    Math.min(1.5,Number(tile.temporaryValueMultiplier)||1)
+  );
+  return Math.round(baseValue*temporaryMultiplier);
 }
 
 /*

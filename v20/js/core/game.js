@@ -1,11 +1,11 @@
 import{shouldBuyProperty,chooseStockOrders,chooseUpgrade}from"./ai.js";
 import{fillAiMinigameResults,finalizeMinigame,startMinigame,submitMinigameResult as submitGameResult}from"./minigames.js";
-import{canUpgradeProperty,ownsCompleteGroup,rentBreakdown,rentFor,upgradeCost}from"./property-economy.js?v=alpha32-227";
+import{canUpgradeProperty,ownsCompleteGroup,rentBreakdown,rentFor,upgradeCost}from"./property-economy.js?v=alpha32-234";
 import{GROUP_SIZES,groupRentMultiplier}from"../data/board.js";
 import{advanceStockMarket,buyStock as executeBuyStock,getMarketStock,sellStock as executeSellStock}from"./stock-market.js";
 import{playerAssetRankings}from"./player-assets.js?v=alpha32-228";
-import{resolveSpecialEvent}from"./special-events.js";
-import{canUseTransport,chooseAiTransportDestination,createPendingTransport,transportNode}from"./transport.js";
+import{resolveSpecialEvent}from"./special-events.js?v=alpha32-234";
+import{canUseTransport,chooseAiTransportDestination,createPendingTransport,transportNode}from"./transport.js?v=alpha32-234";
 import{chooseAiAcquisition,createPendingAcquisition,executeAcquisition}from"./acquisition-center.js?v=alpha32-233";
 import{canUseUrban,chooseAiUrbanDestination,createPendingUrban,resolveCivicEvent}from"./civic-specials.js?v=alpha32-226";
 import{
@@ -23,9 +23,10 @@ import{
   recordMissionAction,
   settleBankDeposits,
   startBankDeposit
-}from"./central-features.js";
+}from"./central-features.js?v=alpha32-234";
 import{canUseDevelopmentPermit,canUsePropertyProtectionPermit,eligibleOwnedPropertyIndexes,eligibleProtectionPropertyIndexes,useDevelopmentPermit,usePropertyProtectionPermit}from"./property-events.js";
-import{chooseAiItemAction,useItem as executeItemUse}from"./items.js";
+import{chooseAiItemAction,useItem as executeItemUse}from"./items.js?v=alpha32-234";
+import{chooseAiStrategicChoice,recordStrategicAction,resolvePendingStrategicChoice,settleStrategicRound}from"./strategic-events.js?v=alpha32-234";
 
 export class GameEngine{
   constructor(state,onChange){
@@ -189,15 +190,33 @@ export class GameEngine{
               beforeGroupRent:rentDetail.beforeGroupRent,
               groupMultiplier:rentDetail.groupMultiplier,
               groupBonus:rentDetail.groupBonus,
+              globalRentMultiplier:rentDetail.globalRentMultiplier,
+              strategicGroupMultiplier:rentDetail.strategicGroupMultiplier,
+              maintenanceMultiplier:rentDetail.maintenanceMultiplier,
+              leaseMultiplier:rentDetail.leaseMultiplier,
+              logisticsMultiplier:rentDetail.logisticsMultiplier,
+              logisticsBonus:rentDetail.logisticsBonus,
               finalRent:rentDetail.finalRent,
               completeGroup:rentDetail.completeGroup
             }
           }
         );
+        if(requestedRent>0&&rentDetail.maintenanceMultiplier<1&&Number(tile.maintenanceRentPenaltyCharges)>0){
+          tile.maintenanceRentPenaltyCharges=Math.max(0,Number(tile.maintenanceRentPenaltyCharges)-1);
+          if(tile.maintenanceRentPenaltyCharges===0)tile.maintenanceRentMultiplier=1;
+        }
+        if(requestedRent>0&&rentDetail.leaseMultiplier>1&&Number(tile.leaseRentBoostCharges)>0){
+          tile.leaseRentBoostCharges=Math.max(0,Number(tile.leaseRentBoostCharges)-1);
+          if(tile.leaseRentBoostCharges===0)tile.leaseRentBonus=0;
+        }
+        if(rentDetail.logisticsMultiplier>1&&requestedRent>0&&owner.portLogistics?.group===tile.group){
+          owner.portLogistics.remainingCharges=Math.max(0,Number(owner.portLogistics.remainingCharges)-1);
+          if(owner.portLogistics.remainingCharges===0)owner.portLogistics=null;
+        }
         if(insurance.protected){
           this.log(
             player.name+" 的租金保險生效，本次原租金 "+this.formatMoney(requestedRent)+
-              "，減壓後為 "+this.formatMoney(rent)+"。",
+              "，保險吸收 "+this.formatMoney(insurance.discount)+"，實付 "+this.formatMoney(rent)+"。",
             "central_insurance_used",
             {seat:player.seat,requested:requestedRent,amount:rent,discount:insurance.discount}
           );
@@ -332,14 +351,24 @@ export class GameEngine{
       }
       this.state.pendingTransport=pending;
       this.state.phase="transport";
+      const transportRole=
+        pending.kind==="blocked"?"交通罷工：本節點暫停服務":
+        pending.kind==="station"?"低成本城市轉乘":
+        pending.kind==="airport"?"精準跨區航班":
+        pending.kind==="port_logistics"?"區域物流加成":
+        "免費跨海快速通道";
       this.log(
-        player.name+" 抵達「"+tile.name+"」，可免費轉乘至其他交通節點，或留在原地。",
+        player.name+" 抵達「"+tile.name+"」，啟動「"+transportRole+"」。"+
+          (Number(pending.fee)>0?" 使用費 "+this.formatMoney(pending.fee)+"。":"")+
+          (pending.destinationIndexes.length===0?" 目前沒有可用目標，可選擇留在原地。":""),
         "transport_offer",
         {
           seat:player.seat,
           playerName:player.name,
           sourceIndex:pending.sourceIndex,
           sourceName:tile.name,
+          transportKind:pending.kind,
+          fee:pending.fee,
           destinationIndexes:pending.destinationIndexes
         }
       );
@@ -543,9 +572,17 @@ export class GameEngine{
           from:resolved.from,
           to:resolved.to,
           cashAfter:resolved.cashAfter,
-          blockedBy:resolved.blockedBy??null
+          blockedBy:resolved.blockedBy??null,
+          strategicId:resolved.strategicId??null,
+          summary:resolved.summary??null,
+          strategicData:resolved.strategicData??null
         }
       );
+
+      if(resolved.requiresChoice){
+        this.state.phase="strategic_choice";
+        return;
+      }
 
       if(resolved.moved){
         this.resolveLanding(player,{specialChainDepth:specialChainDepth+1});
@@ -561,15 +598,37 @@ export class GameEngine{
   }
 
   handleCentralMissionAction(seat,action){
-    const result=recordMissionAction(this.state,seat,action);
-    if(!result?.completed)return result;
     const player=this.state.players[Number(seat)];
-    this.log(
-      player.name+" 完成城市委託，獲得 "+this.formatMoney(result.reward)+"。",
-      "central_mission_complete",
-      {seat:Number(seat),playerName:player.name,missionId:result.missionId,reward:result.reward,cashAfter:result.cashAfter}
-    );
-    return result;
+    const missionResult=recordMissionAction(this.state,seat,action);
+    if(missionResult?.completed){
+      this.log(
+        player.name+" 完成城市委託，獲得 "+this.formatMoney(missionResult.reward)+"。",
+        "central_mission_complete",
+        {
+          seat:Number(seat),
+          playerName:player.name,
+          missionId:missionResult.missionId,
+          reward:missionResult.reward,
+          cashAfter:missionResult.cashAfter
+        }
+      );
+    }
+
+    const contractResult=recordStrategicAction(this.state,seat,action);
+    if(contractResult?.completed){
+      this.log(
+        player.name+" 完成政府標案，獲得 "+this.formatMoney(contractResult.reward)+"。",
+        "strategic_contract_complete",
+        {
+          seat:Number(seat),
+          playerName:player.name,
+          action,
+          reward:contractResult.reward,
+          cashAfter:contractResult.cashAfter
+        }
+      );
+    }
+    return{missionResult,contractResult};
   }
 
   centralBankDeposit(seat=this.state.currentPlayer,principal=5000){
@@ -607,9 +666,14 @@ export class GameEngine{
     if(!result.ok)return false;
     const player=this.state.players[Number(seat)];
     this.log(
-      player.name+" 啟動租金保險，下一次踩到他人地產時租金壓力降低。",
+      player.name+" 支付 "+this.formatMoney(result.premium)+" 啟動租金保險；下一次過路費降低 40%，使用後進入 3 ROUND 冷卻。",
       "central_insurance_active",
-      {seat:Number(seat),playerName:player.name}
+      {
+        seat:Number(seat),
+        playerName:player.name,
+        premium:result.premium,
+        cashAfter:result.cashAfter
+      }
     );
     this.notify();
     return true;
@@ -757,7 +821,7 @@ export class GameEngine{
   useTransport(destinationIndex,seat=this.state.currentPlayer){
     const player=this.currentPlayer;
     if(!this.isCurrentSeat(seat)||!canUseTransport(this.state,seat,destinationIndex)){
-      this.log("目前無法使用這條交通路線。","warning",{seat,destinationIndex:Number(destinationIndex)});
+      this.log("目前無法使用這個交通選項。","warning",{seat,destinationIndex:Number(destinationIndex)});
       this.notify();
       return false;
     }
@@ -766,15 +830,67 @@ export class GameEngine{
     const sourceIndex=pending.sourceIndex;
     const destination=Number(destinationIndex);
     const sourceNode=transportNode(sourceIndex);
-    const destinationNode=transportNode(destination);
+    const fee=Math.max(0,Number(pending.fee)||0);
 
+    if(player.cash<fee){
+      this.log(player.name+" 現金不足，無法支付交通費。","warning",{seat:player.seat,fee});
+      this.notify();
+      return false;
+    }
+
+    if(pending.kind==="port_logistics"){
+      const target=this.state.tiles?.[destination];
+      if(!target||target.type!=="property"||target.owner!==player.seat){
+        this.log("國際港口目前沒有合法的物流區域。","warning",{seat:player.seat});
+        this.notify();
+        return false;
+      }
+      const transportBonus=Math.max(0,Number(pending.freeDayBonus)||0);
+      player.cash-=fee;
+      player.cash+=transportBonus;
+      player.portLogistics={
+        group:target.group,
+        remainingCharges:2,
+        bonus:0.15
+      };
+      this.state.pendingTransport=null;
+      this.state.phase="landed";
+      this.log(
+        player.name+" 在「"+sourceNode.name+"」"+
+          (fee>0?"支付 "+this.formatMoney(fee)+" ":"免費")+
+          "啟動「"+target.group+"」商業物流；接下來 2 次該區收租 +15%"+
+          (transportBonus>0?"，另領交通補助 "+this.formatMoney(transportBonus):"")+"。",
+        "transport_complete",
+        {
+          seat:player.seat,
+          playerName:player.name,
+          sourceIndex,
+          sourceName:sourceNode.name,
+          transportKind:pending.kind,
+          group:target.group,
+          fee,
+          remainingCharges:2,
+          bonus:0.15,
+          transportBonus,
+          cashAfter:player.cash
+        }
+      );
+      this.notify();
+      return true;
+    }
+
+    const destinationNode=transportNode(destination);
+    const destinationTile=this.state.tiles?.[destination];
+    const transportBonus=Math.max(0,Number(pending.freeDayBonus)||0);
+    player.cash-=fee;
+    player.cash+=transportBonus;
     player.position=destination;
     this.state.pendingTransport=null;
     this.state.phase="landed";
 
     this.log(
-      player.name+" 從「"+(sourceNode?.name??("第 "+(sourceIndex+1)+" 格"))+"」轉乘至「"+
-        (destinationNode?.name??("第 "+(destination+1)+" 格"))+"」。",
+      player.name+" 從「"+(sourceNode?.name??("第 "+(sourceIndex+1)+" 格"))+"」前往「"+
+        (destinationNode?.name??destinationTile?.name??("第 "+(destination+1)+" 格"))+"」。",
       "move",
       {
         seat:player.seat,
@@ -785,7 +901,9 @@ export class GameEngine{
       }
     );
     this.log(
-      player.name+" 完成免費轉乘，本次抵達交通節點不再連續觸發第二次交通。",
+      player.name+" 完成「"+(sourceNode?.mode??"交通")+"」"+
+        (fee>0?"，支付 "+this.formatMoney(fee):"")+
+        "；"+(pending.resolveLanding?"抵達後立即結算目的地格效果。":"本次不觸發沿途格子。"),
       "transport_complete",
       {
         seat:player.seat,
@@ -793,7 +911,46 @@ export class GameEngine{
         sourceIndex,
         sourceName:sourceNode?.name??"",
         destinationIndex:destination,
-        destinationName:destinationNode?.name??""
+        destinationName:destinationNode?.name??destinationTile?.name??"",
+        transportKind:pending.kind,
+        fee,
+        transportBonus,
+        cashAfter:player.cash
+      }
+    );
+
+    if(pending.resolveLanding){
+      this.resolveLanding(player,{specialChainDepth:1});
+    }
+    this.notify();
+    return true;
+  }
+
+  resolveStrategicChoice(choiceId,targetValue=null,seat=this.state.currentPlayer){
+    if(
+      !this.isCurrentSeat(seat)||
+      this.state.phase!=="strategic_choice"||
+      !this.state.pendingStrategicChoice
+    )return false;
+
+    const result=resolvePendingStrategicChoice(this.state,seat,choiceId,targetValue);
+    if(!result.ok){
+      this.log("目前無法完成這個事件選擇。","warning",{seat,choiceId,targetValue});
+      this.notify();
+      return false;
+    }
+
+    this.state.phase="landed";
+    const player=this.state.players[Number(seat)];
+    this.log(
+      player.name+"｜"+result.summary,
+      "strategic_choice_complete",
+      {
+        seat:Number(seat),
+        playerName:player.name,
+        choiceKind:result.choiceKind,
+        choiceId:result.choiceId,
+        ...result.data
       }
     );
     this.notify();
@@ -1197,6 +1354,12 @@ export class GameEngine{
       return this.roll(player.seat);
     }
 
+    if(this.state.phase==="strategic_choice"){
+      const choice=chooseAiStrategicChoice(this.state,player.seat);
+      if(choice)return this.resolveStrategicChoice(choice.choiceId,choice.targetValue,player.seat);
+      return false;
+    }
+
     if(this.state.phase==="transport"){
       const destinationIndex=chooseAiTransportDestination(this.state,player.seat);
       if(destinationIndex!=null)return this.useTransport(destinationIndex,player.seat);
@@ -1254,7 +1417,8 @@ export class GameEngine{
       this.state.pendingUpgrade!=null||
       this.state.pendingTransport!=null||
       this.state.pendingAcquisition!=null||
-      this.state.pendingUrban!=null
+      this.state.pendingUrban!=null||
+      this.state.pendingStrategicChoice!=null
     )return false;
 
     const previousSeat=this.state.currentPlayer;
@@ -1295,6 +1459,14 @@ export class GameEngine{
         return true;
       }
       this.state.round+=1;
+      for(const failure of settleStrategicRound(this.state)){
+        const player=this.state.players?.[failure.seat];
+        this.log(
+          (player?.name??"玩家")+" 的政府標案期限已到，未完成條件，本次投資不返還。",
+          "strategic_contract_failed",
+          {seat:failure.seat,playerName:player?.name??"玩家",action:failure.action,investment:failure.investment}
+        );
+      }
       for(const settled of settleBankDeposits(this.state)){
         const player=this.state.players[settled.seat];
         this.log(
@@ -1375,6 +1547,7 @@ export class GameEngine{
     if(result.kind==="market_tick"){
       return"市場重新報價 "+Math.max(1,Number(result.marketTicks)||1)+" 次";
     }
+    if(result.kind==="strategic")return result.summary||"策略事件生效";
     if(result.kind==="urban_redeploy")return"可重新部署至自己的地產";
     if(result.kind==="acquisition_offer")return"開放本次強制收購選擇";
     if(result.kind==="auction_game")return"進入多人地產拍賣挑戰";

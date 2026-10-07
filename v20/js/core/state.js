@@ -30,6 +30,8 @@ export function createPlayer(seat,name,kind="ai"){
     centralMissionUsedRound:0,
     rentInsuranceActive:false,
     rentInsuranceUsedRound:0,
+    portLogistics:null,
+    governmentContract:null,
     centralTransitUsedRound:0,
     centralDevelopmentUsedRound:0,
     developmentPermits:0,
@@ -55,6 +57,14 @@ export function createInitialState(){
     pendingTransport:null,
     pendingAcquisition:null,
     pendingUrban:null,
+    pendingStrategicChoice:null,
+    strategicEffects:{
+      globalRent:{multiplier:1,untilRound:0,label:""},
+      groupRents:{},
+      bank:{multiplier:1,activeFromRound:0,untilRound:0,label:""},
+      transport:{blockedNodeIndex:null,blockedUntilRound:0,freeUntilRound:0,freeDayBonus:0},
+      marketItemLockUntilRound:0
+    },
     minigame:null,
     minigameHistory:[],
     lastMinigame:null,
@@ -132,6 +142,22 @@ export function hydrateState(raw){
       centralMissionUsedRound:Math.max(0,Number(saved.centralMissionUsedRound)||0),
       rentInsuranceActive:Boolean(saved.rentInsuranceActive),
       rentInsuranceUsedRound:Math.max(0,Number(saved.rentInsuranceUsedRound)||0),
+      portLogistics:saved.portLogistics&&typeof saved.portLogistics==="object"&&Number(saved.portLogistics.remainingCharges)>0
+        ?{
+            group:String(saved.portLogistics.group??""),
+            remainingCharges:Math.max(0,Math.min(2,Math.floor(Number(saved.portLogistics.remainingCharges)||0))),
+            bonus:Math.max(0,Math.min(0.15,Number(saved.portLogistics.bonus)||0.15))
+          }
+        :null,
+      governmentContract:saved.governmentContract&&typeof saved.governmentContract==="object"
+        ?{
+            action:String(saved.governmentContract.action??""),
+            dueRound:Math.max(0,Number(saved.governmentContract.dueRound)||0),
+            reward:Math.max(0,Number(saved.governmentContract.reward)||0),
+            investment:Math.max(0,Number(saved.governmentContract.investment)||0),
+            acceptedRound:Math.max(0,Number(saved.governmentContract.acceptedRound)||0)
+          }
+        :null,
       centralTransitUsedRound:Math.max(0,Number(saved.centralTransitUsedRound)||0),
       centralDevelopmentUsedRound:Math.max(0,Number(saved.centralDevelopmentUsedRound)||0),
       developmentPermits:Math.max(0,Math.min(3,Math.floor(Number(saved.developmentPermits)||0))),
@@ -147,7 +173,13 @@ export function hydrateState(raw){
       acquisitionProtectedUntilRound:Math.max(0,Number(saved.acquisitionProtectedUntilRound)||0),
       permanentRentBoost:Math.max(0,Math.min(0.2,Number(saved.permanentRentBoost)||0)),
       rentBurstCharges:Math.max(0,Math.min(1,Math.floor(Number(saved.rentBurstCharges)||0))),
-      rentBlockedCharges:Math.max(0,Math.min(1,Math.floor(Number(saved.rentBlockedCharges)||0)))
+      rentBlockedCharges:Math.max(0,Math.min(1,Math.floor(Number(saved.rentBlockedCharges)||0))),
+      maintenanceRentPenaltyCharges:Math.max(0,Math.min(1,Math.floor(Number(saved.maintenanceRentPenaltyCharges)||0))),
+      maintenanceRentMultiplier:Math.max(0.7,Math.min(1,Number(saved.maintenanceRentMultiplier)||1)),
+      leaseRentBoostCharges:Math.max(0,Math.min(2,Math.floor(Number(saved.leaseRentBoostCharges)||0))),
+      leaseRentBonus:Math.max(0,Math.min(0.15,Number(saved.leaseRentBonus)||0)),
+      temporaryValueMultiplier:Math.max(0.5,Math.min(1.5,Number(saved.temporaryValueMultiplier)||1)),
+      temporaryValueUntilRound:Math.max(0,Number(saved.temporaryValueUntilRound)||0)
     };
   });
   state.market=raw.market??createInitialMarket();
@@ -158,6 +190,33 @@ export function hydrateState(raw){
   state.pendingTransport=raw.pendingTransport&&typeof raw.pendingTransport==="object"?raw.pendingTransport:null;
   state.pendingAcquisition=raw.pendingAcquisition&&typeof raw.pendingAcquisition==="object"?raw.pendingAcquisition:null;
   state.pendingUrban=raw.pendingUrban&&typeof raw.pendingUrban==="object"?raw.pendingUrban:null;
+  state.pendingStrategicChoice=raw.pendingStrategicChoice&&typeof raw.pendingStrategicChoice==="object"
+    ?raw.pendingStrategicChoice
+    :null;
+  const rawEffects=raw.strategicEffects&&typeof raw.strategicEffects==="object"?raw.strategicEffects:{};
+  state.strategicEffects={
+    globalRent:{
+      multiplier:Number(rawEffects.globalRent?.multiplier)||1,
+      untilRound:Math.max(0,Number(rawEffects.globalRent?.untilRound)||0),
+      label:String(rawEffects.globalRent?.label??"")
+    },
+    groupRents:rawEffects.groupRents&&typeof rawEffects.groupRents==="object"?rawEffects.groupRents:{},
+    bank:{
+      multiplier:Number(rawEffects.bank?.multiplier)||1,
+      activeFromRound:Math.max(0,Number(rawEffects.bank?.activeFromRound)||0),
+      untilRound:Math.max(0,Number(rawEffects.bank?.untilRound)||0),
+      label:String(rawEffects.bank?.label??"")
+    },
+    transport:{
+      blockedNodeIndex:Number.isInteger(Number(rawEffects.transport?.blockedNodeIndex))
+        ?Number(rawEffects.transport.blockedNodeIndex)
+        :null,
+      blockedUntilRound:Math.max(0,Number(rawEffects.transport?.blockedUntilRound)||0),
+      freeUntilRound:Math.max(0,Number(rawEffects.transport?.freeUntilRound)||0),
+      freeDayBonus:Math.max(0,Number(rawEffects.transport?.freeDayBonus)||0)
+    },
+    marketItemLockUntilRound:Math.max(0,Number(rawEffects.marketItemLockUntilRound)||0)
+  };
   state.turnToken=Math.max(1,Number(raw.turnToken)||1);
   state.version=BOARD_VERSION;
   return state;

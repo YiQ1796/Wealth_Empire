@@ -1,5 +1,5 @@
 import{createInitialState,createLobbyState,hydrateState,setAiSeat,setHumanSeat,setPlayerCharacter}from"./core/state.js";
-import{GameEngine}from"./core/game.js?v=alpha32-233";
+import{GameEngine}from"./core/game.js?v=alpha32-234";
 import{
   PeerNetwork,
   clearNetworkSession,
@@ -14,24 +14,20 @@ import{
 }from"./core/network.js?v=alpha32-224";
 import{characterAsset,mountStaticBoard,render}from"./ui/render.js?v=alpha32-230";
 import{itemUiSummary}from"./ui/item-render.js";
-import{renderStockMarket}from"./ui/stock-render.js?v=alpha32-233";
+import{renderStockMarket}from"./ui/stock-render.js?v=alpha32-234";
 import{UI_ASSETS}from"./data/ui-assets.js";
 import{MinigameUI}from"./ui/minigame-ui.js";
 import{GROUP_SIZES,MAX_PROPERTY_LEVEL,groupRentMultiplier}from"./data/board.js";
-import{canForceAcquireProperty,groupProgress,propertyValue,rentFor,suggestedAcquisitionOffer,upgradeCost}from"./core/property-economy.js";
-import{TRANSPORT_NODE_BY_INDEX}from"./data/transport.js";
-import{transportDestinationPreview}from"./core/transport.js";
+import{canForceAcquireProperty,groupProgress,propertyValue,rentFor,suggestedAcquisitionOffer,upgradeCost}from"./core/property-economy.js?v=alpha32-234";
+import{TRANSPORT_NODE_BY_INDEX}from"./data/transport.js?v=alpha32-234";
+import{transportDestinationPreview}from"./core/transport.js?v=alpha32-234";
 import{
   CENTRAL_FEATURE_BY_ID,
   CENTRAL_MISSIONS,
   CENTRAL_MISSION_BY_ID,
   CENTRAL_TEST_TUNING
-}from"./data/central-features.js";
-import{centralDevelopmentOptions,centralFacilityStatus}from"./core/central-features.js";
-import{initBgmController}from"./ui/bgm-controller.js";
-
-try{initBgmController()}catch(error){console.warn("BGM controller unavailable",error)}
-
+}from"./data/central-features.js?v=alpha32-234";
+import{centralDevelopmentOptions,centralFacilityStatus,insuranceCooldownRemaining,insurancePremium}from"./core/central-features.js?v=alpha32-234";
 const board=document.getElementById("board");
 mountStaticBoard(board);
 const boardCharacterLayer=document.createElement("div");
@@ -49,6 +45,8 @@ let noticeActive=false;
 let movementQueue=Promise.resolve();
 let selectedCharacterIndex=0;
 let lastItemPromptKey="";
+let transportMinimized=false;
+let dismissedFinalSettlementEventId=0;
 const disconnectTimers=new Map();
 const ACTION_TOAST_KINDS=new Set([
   "property_buy",
@@ -77,7 +75,9 @@ const ACTION_TOAST_KINDS=new Set([
   "central_insurance_active",
   "central_insurance_used",
   "central_development",
-  "game_complete"
+  "strategic_choice_complete",
+  "strategic_contract_complete",
+  "strategic_contract_failed"
 ]);
 const uiContext={
   localSeat:0,
@@ -93,6 +93,8 @@ const propertyInfoDialog=document.getElementById("propertyInfoDialog");
 const urbanDialog=document.getElementById("urbanDialog");
 const acquisitionDialog=document.getElementById("acquisitionDialog");
 const transportDialog=document.getElementById("transportDialog");
+const finalSettlementDialog=document.getElementById("finalSettlementDialog");
+const strategicChoiceDialog=document.getElementById("strategicChoiceDialog");
 const entryGate=document.getElementById("entryGate");
 const actionToastStack=document.getElementById("actionToastStack");
 board.appendChild(actionToastStack);
@@ -248,7 +250,7 @@ function noticeConfig(event){
     property_buy:{title:"地產購入",icon:N.icons.propertyBuy,effect:N.effects.gold,tone:"gold",major:true},
     property_upgrade:{title:"地產升級",icon:N.icons.propertyUpgrade,effect:N.effects.purple,tone:"purple",major:true},
     group_complete:{title:"區域完成",icon:N.icons.regionComplete,effect:N.effects.gold,tone:"gold",major:true},
-    rent:{title:"過路費結算",icon:N.icons.rent,effect:N.effects.green,tone:"green",major:true},
+    rent:{title:"過路費扣款",icon:N.icons.rent,effect:N.effects.red,tone:"red",major:true},
     acquisition_offer:{title:"取得強制收購權",icon:N.icons.acquisition,effect:N.effects.red,tone:"red",major:true},
     property_acquisition:{title:"強制收購",icon:N.icons.acquisition,effect:N.effects.red,tone:"red",major:true},
     item_use:{title:"策略道具",icon:N.icons.minigameResult,effect:N.effects.purple,tone:"purple",major:true},
@@ -270,6 +272,9 @@ function noticeConfig(event){
     central_insurance_active:{title:"租金保險",icon:N.icons.rent,effect:N.effects.blue,tone:"blue",major:true},
     central_insurance_used:{title:"租金保險生效",icon:N.icons.rent,effect:N.effects.green,tone:"green",major:true},
     central_development:{title:"城市建案",icon:N.icons.propertyUpgrade,effect:N.effects.purple,tone:"purple",major:true},
+    strategic_choice_complete:{title:"策略事件決策",icon:N.icons.minigameResult,effect:N.effects.gold,tone:"gold",major:true},
+    strategic_contract_complete:{title:"政府標案完成",icon:N.icons.minigameResult,effect:N.effects.green,tone:"green",major:true},
+    strategic_contract_failed:{title:"政府標案逾期",icon:N.icons.minigameResult,effect:N.effects.red,tone:"red",major:true},
     cash:{title:"現金變動",icon:N.icons.rent,effect:N.effects.green,tone:"green",metric:true}
   };
   return map[event.kind]??{title:"遊戲動態",icon:N.icons.marketTick,effect:N.effects.blue,tone:"blue"};
@@ -330,17 +335,28 @@ function noticeView(event){
         details
       };
 
-    case"rent":
+    case"rent":{
+      const breakdown=data.rentBreakdown??{};
       if(data.strategyRentEffect==="rent_block")details.push("租金封鎖生效，本次免收");
       else if(data.strategyRentEffect==="rent_burst")details.push("過路費爆發生效，本次租金 ×2");
-      else details.push("支付 "+noticeMoney(data.amount));
+      else details.push("本次實付 "+noticeMoney(data.amount));
+      if(Number.isFinite(Number(breakdown.baseRent)))details.push("基礎 "+noticeMoney(breakdown.baseRent));
+      if(Number(breakdown.levelRent)>Number(breakdown.baseRent))details.push("等級後 "+noticeMoney(breakdown.levelRent));
+      if(Number(breakdown.groupMultiplier)>1)details.push("連區 ×"+Number(breakdown.groupMultiplier).toFixed(2));
+      if(Number(breakdown.globalRentMultiplier)!==1)details.push("城市景氣 ×"+Number(breakdown.globalRentMultiplier).toFixed(2));
+      if(Number(breakdown.strategicGroupMultiplier)!==1)details.push("區域事件 ×"+Number(breakdown.strategicGroupMultiplier).toFixed(2));
+      if(Number(breakdown.maintenanceMultiplier)<1)details.push("維修延後 ×"+Number(breakdown.maintenanceMultiplier).toFixed(2));
+      if(Number(breakdown.leaseMultiplier)>1)details.push("租賃契約 ×"+Number(breakdown.leaseMultiplier).toFixed(2));
+      if(Number(breakdown.logisticsMultiplier)>1)details.push("港口物流 ×"+Number(breakdown.logisticsMultiplier).toFixed(2));
+      if(Number(data.discount)>0)details.push("保險吸收 "+noticeMoney(data.discount));
       if(Number(data.requested)!==Number(data.amount)&&data.strategyRentEffect!=="rent_block")details.push("原應付 "+noticeMoney(data.requested));
       if(group)details.push("區域 "+group);
       return{
-        message:(data.payerName??"玩家")+" → "+(data.ownerName??"地主")+"｜「"+tileName+"」",
+        message:(data.payerName??"玩家")+" 踩到 "+(data.ownerName??"地主")+" 的「"+tileName+"」",
         metric:noticeMoney(data.amount),
         details
       };
+    }
 
     case"group_complete":{
       const groupName=data.group??"區域";
@@ -446,7 +462,9 @@ function noticeView(event){
                     ?"保全券 +"+Math.max(0,Number(data.protectionPermitDelta)||0)
                     : data.effectKind==="grant_item"
                       ?"道具 +"+Math.max(0,Number(data.itemDelta)||0)
-                      :"事件";
+                      : data.effectKind==="strategic"
+                        ?"策略變化"
+                        :"事件";
       const details=[];
       if(data.effectKind==="cash"&&Number.isFinite(Number(data.cashAfter))){
         details.push("事件後現金 "+noticeMoney(data.cashAfter));
@@ -465,6 +483,9 @@ function noticeView(event){
       }
       if(data.effectKind==="grant_item"&&Number(data.itemDelta)>0){
         details.push("取得「"+data.itemName+"」｜同名持有 "+data.itemTotal+" 張");
+      }
+      if(data.effectKind==="strategic"&&data.summary){
+        details.push(data.summary);
       }
       return{message:event.text,metric,details};
     }
@@ -505,14 +526,47 @@ function noticeView(event){
         details:[data.tileName?"移動至 "+data.tileName:""]
       };
 
-    case"transport_complete":
+    case"transport_complete":{
+      const details=[];
+      if(data.transportKind==="port_logistics"){
+        details.push("物流區域 "+(data.group??"持有區域"));
+        details.push("接下來 "+(data.remainingCharges??2)+" 次該區收租 +15%");
+      }else{
+        details.push((data.sourceName??"交通設施")+" → "+(data.destinationName??"目的地"));
+      }
+      if(Number(data.fee)>0)details.push("交通費 "+noticeMoney(data.fee));
+      if(Number(data.transportBonus)>0)details.push("交通免費日補助 +"+noticeMoney(data.transportBonus));
       return{
-        message:(data.playerName??"玩家")+" 完成交通轉乘",
-        metric:"抵達",
-        details:[
-          (data.sourceName??"交通設施")+" → "+(data.destinationName??"目的地"),
-          "本次轉乘不連鎖觸發第二次交通"
-        ]
+        message:(data.playerName??"玩家")+" 完成"+(
+          data.transportKind==="port_logistics"?"港口物流":
+          data.transportKind==="airport"?"跨區航班":
+          data.transportKind==="bridge"?"跨海快速通道":
+          "城市轉乘"
+        ),
+        metric:data.transportKind==="port_logistics"?"+15%":"抵達",
+        details
+      };
+    }
+
+    case"strategic_choice_complete":
+      return{
+        message:event.text,
+        metric:"已決定",
+        details:[]
+      };
+
+    case"strategic_contract_complete":
+      return{
+        message:event.text,
+        metric:"+"+noticeMoney(data.reward),
+        details:["標案條件已完成"]
+      };
+
+    case"strategic_contract_failed":
+      return{
+        message:event.text,
+        metric:"逾期",
+        details:[Number(data.investment)>0?"投資 "+noticeMoney(data.investment)+" 不返還":""].filter(Boolean)
       };
 
     case"market_tick":{
@@ -553,8 +607,11 @@ function noticeView(event){
     case"central_insurance_active":
       return{
         message:event.text,
-        metric:"已啟動",
-        details:["下一次他人地產租金降低 50%"]
+        metric:"保費 "+noticeMoney(data.premium),
+        details:[
+          "下一次他人地產過路費降低 40%",
+          "使用後需等待 3 ROUND 才能再買"
+        ]
       };
 
     case"central_insurance_used":
@@ -910,6 +967,8 @@ function executeAction(action,seat=currentLocalSeat()){
       return engine.useTransport(action.destinationIndex,seat);
     case"transport_skip":
       return engine.skipTransport(seat);
+    case"strategic_choice":
+      return engine.resolveStrategicChoice(action.choiceId,action.targetValue,seat);
     case"acquisition_buy":
       return engine.acquireFromCenter(action.tileIndex,seat);
     case"acquisition_skip":
@@ -1199,22 +1258,26 @@ function renderCentralFacilityBody(id){
   }
 
   if(id==="insurance"){
+    const premium=insurancePremium(state,seat);
+    const cooldown=insuranceCooldownRemaining(state,seat);
     if(player?.rentInsuranceActive){
       const active=document.createElement("div");
       active.className="central-feature-active";
-      active.innerHTML="<strong>租金保險已啟動</strong><p>下一次踩到其他玩家地產時，應付租金降低 50%；生效後自動解除。</p>";
+      active.innerHTML="<strong>租金保險已啟動</strong><p>下一次踩到其他玩家地產時，過路費降低 40%；只保護一次，生效後自動解除。</p>";
       body.appendChild(active);
     }else{
       const note=document.createElement("p");
       note.className="central-feature-note";
-      note.textContent="Alpha 28 測試值：下一次他人地產租金降低 50%，每 ROUND 最多啟動一次。";
+      note.textContent=cooldown>0
+        ?"保險冷卻中：還要等待 "+cooldown+" ROUND。每張只保護一次，不能每回合連續補買。"
+        :"本次保費 "+noticeMoney(premium)+"；下一次過路費降低 40%，使用後進入 3 ROUND 冷卻。";
       body.appendChild(note);
       const actions=document.createElement("div");
       actions.className="central-feature-actions";
       actions.appendChild(centralButton(
-        "啟動租金保險",
-        "下一次租金 ×0.5",
-        !usable||Number(player?.rentInsuranceUsedRound)===Number(state.round),
+        "購買租金保險｜"+noticeMoney(premium),
+        cooldown>0?"冷卻剩餘 "+cooldown+" ROUND":"只保護下一次過路費",
+        !usable||cooldown>0||Number(player?.cash)<premium,
         ()=>dispatchAction({type:"central_insurance"})
       ));
       body.appendChild(actions);
@@ -1449,21 +1512,39 @@ function renderTransportDialog(){
   );
 
   if(!shouldShow){
+    transportMinimized=false;
+    transportDialog?.classList.remove("is-minimized");
     if(transportDialog?.open)transportDialog.close();
     return;
   }
 
   const source=TRANSPORT_NODE_BY_INDEX[pending.sourceIndex];
-  document.getElementById("transportTitle").textContent=source?.name??"交通轉乘";
-  document.getElementById("transportSubtitle").textContent="選擇另一個交通節點作為本回合轉乘目的地。";
+  document.getElementById("transportTitle").textContent=source?.name??"交通節點";
+  document.getElementById("transportSubtitle").textContent=source?.description??"選擇本回合交通功能。";
   document.getElementById("transportSourceName").textContent=(source?.icon?source.icon+" ":"")+(source?.name??"交通設施");
+  const ruleNote=document.getElementById("transportRuleNote");
+  if(ruleNote){
+    const fee=Number(pending.fee)||0;
+    ruleNote.textContent=
+      (fee>0?"本次使用費 "+noticeMoney(fee)+"｜":"免費｜")+
+      (pending.kind==="blocked"
+        ?"交通罷工生效：本 ROUND 這個節點暫停服務。"
+        :pending.kind==="station"
+          ?"前往其他交通節點，不重複觸發第二次交通。"
+          :pending.kind==="airport"
+            ?"直接飛到所選區域入口，抵達後正常結算該格。"
+            :pending.kind==="port_logistics"
+              ?"不移動；選一個已持有區域，接下來 2 次該區收租 +15%。"
+              :"直接跨越到主要交通出口，不觸發沿途格子。")+
+      (Number(pending.freeDayBonus)>0?"｜交通免費日：使用後再領 "+noticeMoney(pending.freeDayBonus):"");
+  }
 
   const list=document.getElementById("transportDestinationList");
   list.replaceChildren();
 
   for(const destinationIndex of pending.destinationIndexes??[]){
+    const tile=state.tiles?.[destinationIndex];
     const node=TRANSPORT_NODE_BY_INDEX[destinationIndex];
-    if(!node)continue;
     const button=document.createElement("button");
     button.type="button";
     button.className="transport-destination";
@@ -1471,28 +1552,142 @@ function renderTransportDialog(){
 
     const icon=document.createElement("span");
     icon.className="transport-destination__icon";
-    icon.textContent=node.icon;
+    icon.textContent=
+      pending.kind==="port_logistics"?"📦":
+      pending.kind==="airport"?"✈️":
+      node?.icon??"➡️";
 
     const copy=document.createElement("span");
     copy.className="transport-destination__copy";
     const title=document.createElement("strong");
-    title.textContent=node.name;
     const meta=document.createElement("small");
-    meta.textContent=node.mode+"｜第 "+(destinationIndex+1)+" 格";
-    const preview=transportDestinationPreview(state,destinationIndex);
     const strategy=document.createElement("small");
     strategy.className="transport-destination__strategy";
-    strategy.textContent="前方6格｜可買地產 "+preview.unownedProperties+"｜機會命運 "+preview.chanceOrFate;
-    copy.append(title,meta,strategy);
 
+    if(pending.kind==="port_logistics"){
+      title.textContent=(tile?.group??"持有區域")+"物流";
+      meta.textContent=(tile?.name??"地產")+"｜代表目標";
+      strategy.textContent="接下來 2 次此區收租 +15%";
+    }else if(pending.kind==="airport"){
+      title.textContent=(tile?.group??"區域")+"｜"+(tile?.name??("第 "+(destinationIndex+1)+" 格"));
+      meta.textContent="第 "+(destinationIndex+1)+" 格｜跨區航班";
+      const preview=transportDestinationPreview(state,destinationIndex);
+      strategy.textContent="前方6格｜可買地產 "+preview.unownedProperties+"｜機會命運 "+preview.chanceOrFate;
+    }else{
+      title.textContent=node?.name??tile?.name??("第 "+(destinationIndex+1)+" 格");
+      meta.textContent=(node?.mode??"快速出口")+"｜第 "+(destinationIndex+1)+" 格";
+      const preview=transportDestinationPreview(state,destinationIndex);
+      strategy.textContent="前方6格｜可買地產 "+preview.unownedProperties+"｜機會命運 "+preview.chanceOrFate;
+    }
+
+    copy.append(title,meta,strategy);
     button.append(icon,copy);
     button.addEventListener("click",()=>{
+      transportMinimized=false;
+      transportDialog.classList.remove("is-minimized");
       dispatchAction({type:"transport_travel",destinationIndex});
     },{once:true});
     list.appendChild(button);
   }
 
+  if((pending.destinationIndexes??[]).length===0){
+    const empty=document.createElement("p");
+    empty.className="transport-empty";
+    empty.textContent=pending.kind==="blocked"
+      ?"交通罷工中，本 ROUND 無法使用這個節點。"
+      :pending.kind==="port_logistics"
+        ?"你目前沒有持有地產，因此這次沒有可啟動物流加成的區域。"
+        :"目前沒有可用目的地。";
+    list.appendChild(empty);
+  }
+
+  transportDialog.classList.toggle("is-minimized",transportMinimized);
+  const toggle=document.getElementById("toggleTransportMinimizeButton");
+  if(toggle){
+    toggle.textContent=transportMinimized?"展開選擇":"縮小看棋盤";
+    toggle.setAttribute("aria-expanded",String(!transportMinimized));
+  }
   if(!transportDialog.open)transportDialog.showModal();
+}
+
+function renderStrategicChoiceDialog(){
+  if(!strategicChoiceDialog)return;
+  const pending=state.pendingStrategicChoice;
+  const seat=currentLocalSeat();
+  const player=state.players?.[seat];
+  const shouldShow=Boolean(
+    state.phase==="strategic_choice"&&
+    pending&&
+    pending.seat===seat&&
+    player?.kind==="human"&&
+    player.connected!==false
+  );
+
+  if(!shouldShow){
+    if(strategicChoiceDialog.open)strategicChoiceDialog.close();
+    return;
+  }
+
+  document.getElementById("strategicChoiceTitle").textContent=pending.title??pending.eventName??"策略事件";
+  document.getElementById("strategicChoiceDescription").textContent=pending.description??"請選擇這次事件的處理方式。";
+  const list=document.getElementById("strategicChoiceOptions");
+  list.replaceChildren();
+
+  for(const option of pending.options??[]){
+    const button=document.createElement("button");
+    button.type="button";
+    button.className="strategic-choice-option";
+    button.disabled=Boolean(option.disabled);
+    button.textContent=option.label??option.id;
+    button.addEventListener("click",()=>{
+      dispatchAction({
+        type:"strategic_choice",
+        choiceId:option.id,
+        targetValue:option.targetValue??null
+      });
+    },{once:true});
+    list.appendChild(button);
+  }
+
+  if(!strategicChoiceDialog.open)strategicChoiceDialog.showModal();
+}
+
+function renderFinalSettlementDialog(){
+  if(!finalSettlementDialog)return;
+  const event=(state.events??[]).find(item=>item.kind==="game_complete");
+  const shouldShow=Boolean(
+    state.gameStatus==="finished"&&
+    event&&
+    Number(event.id)>dismissedFinalSettlementEventId
+  );
+  if(!shouldShow){
+    if(finalSettlementDialog.open)finalSettlementDialog.close();
+    return;
+  }
+
+  const rankings=Array.isArray(event.data?.rankings)?event.data.rankings:[];
+  const champion=rankings.find(item=>item.rank===1);
+  const championNode=document.getElementById("finalSettlementChampion");
+  if(championNode){
+    championNode.textContent=champion
+      ?"冠軍｜"+champion.playerName+"｜總資產 "+noticeMoney(champion.total)
+      :"遊戲已完成 30 ROUND";
+  }
+
+  const ranking=document.getElementById("finalSettlementRanking");
+  ranking.replaceChildren();
+  for(const item of rankings){
+    const row=document.createElement("div");
+    row.className="final-settlement-row"+(item.rank===1?" is-champion":"");
+    row.innerHTML=
+      "<strong>#"+item.rank+" "+item.playerName+"</strong>"+
+      "<span>總資產 "+noticeMoney(item.total)+"</span>"+
+      "<small>現金 "+noticeMoney(item.cash)+"｜地產 "+noticeMoney(item.properties)+
+      "｜股票 "+noticeMoney(item.stocks)+
+      (Number(item.bankDeposit)>0?"｜定存 "+noticeMoney(item.bankDeposit):"")+"</small>";
+    ranking.appendChild(row);
+  }
+  if(!finalSettlementDialog.open)finalSettlementDialog.showModal();
 }
 
 function maybePromptStrategyItems(){
@@ -1503,12 +1698,15 @@ function maybePromptStrategyItems(){
     state.pendingAcquisition||
     state.pendingUrban||
     state.pendingTransport||
+    state.pendingStrategicChoice||
+    state.phase==="strategic_choice"||
     state.phase==="minigame"||
     purchaseDialog?.open||
     upgradeDialog?.open||
     acquisitionDialog?.open||
     urbanDialog?.open||
-    transportDialog?.open
+    transportDialog?.open||
+    strategicChoiceDialog?.open
   )return;
   const seat=currentLocalSeat();
   const player=state.players?.[seat];
@@ -1544,6 +1742,8 @@ function renderAll(){
   renderUrbanDialog();
   renderAcquisitionDialog();
   renderTransportDialog();
+  renderStrategicChoiceDialog();
+  renderFinalSettlementDialog();
   minigameUi.sync(state,currentLocalSeat());
   processMoveAnimations();
   processActionToasts();
@@ -1770,10 +1970,26 @@ document.getElementById("skipAcquisitionButton").addEventListener("click",skipAc
 document.getElementById("skipAcquisitionIconButton").addEventListener("click",skipAcquisition);
 acquisitionDialog.addEventListener("cancel",event=>event.preventDefault());
 
-const skipTransport=()=>dispatchAction({type:"transport_skip"});
+const skipTransport=()=>{
+  transportMinimized=false;
+  transportDialog.classList.remove("is-minimized");
+  dispatchAction({type:"transport_skip"});
+};
 document.getElementById("skipTransportButton").addEventListener("click",skipTransport);
 document.getElementById("skipTransportIconButton").addEventListener("click",skipTransport);
+document.getElementById("toggleTransportMinimizeButton").addEventListener("click",()=>{
+  transportMinimized=!transportMinimized;
+  renderTransportDialog();
+});
 transportDialog.addEventListener("cancel",event=>event.preventDefault());
+strategicChoiceDialog.addEventListener("cancel",event=>event.preventDefault());
+
+document.getElementById("closeFinalSettlementButton").addEventListener("click",()=>{
+  const event=(state.events??[]).find(item=>item.kind==="game_complete");
+  dismissedFinalSettlementEventId=Math.max(dismissedFinalSettlementEventId,Number(event?.id)||0);
+  if(finalSettlementDialog.open)finalSettlementDialog.close();
+});
+finalSettlementDialog.addEventListener("cancel",event=>event.preventDefault());
 
 document.getElementById("closeNetworkDialog").addEventListener("click",()=>networkDialog.close());
 networkDialog.addEventListener("click",event=>{

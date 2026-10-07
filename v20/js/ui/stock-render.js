@@ -29,7 +29,16 @@ function signedPercent(value){
 }
 
 function normalizeShares(value){
-  return Math.max(1,Math.min(9999,Math.floor(Number(value)||1)));
+  if(value==null||String(value).trim()==="")return 0;
+  const number=Math.floor(Number(value));
+  if(!Number.isFinite(number)||number<1)return 0;
+  return Math.min(9999,number);
+}
+
+function sharesPreview(stock,shares){
+  return shares>0
+    ?shares+" 股｜預估 "+money(stock.price*shares)
+    :"請輸入交易股數";
 }
 
 function portfolioSummary(player,state){
@@ -57,7 +66,7 @@ function stockCardMarkup(stock,player,canTrade,draft){
   const cost=position.shares*position.avgCost;
   const pnlPercent=cost>0?(position.unrealized/cost)*100:0;
   const pnlClass=position.unrealized>0?"profit":position.unrealized<0?"loss":"flat";
-  const shares=normalizeShares(draft.quantities.get(stock.id)??1);
+  const shares=normalizeShares(draft.quantities.get(stock.id)??"");
   const active=draft.stockId===stock.id;
 
   const held=position.shares>0;
@@ -83,10 +92,10 @@ function stockCardMarkup(stock,player,canTrade,draft){
       '<strong>'+signedMoney(position.unrealized)+' <small>('+signedPercent(pnlPercent)+')</small></strong>'+
     '</div>'+
     '<div class="stock-trade-preview" data-stock-card-preview>'+
-      '<span>正在操作</span><strong>'+stock.name+'｜'+shares+' 股｜預估 '+money(stock.price*shares)+'</strong>'+
+      '<span>正在操作</span><strong>'+stock.name+'｜'+sharesPreview(stock,shares)+'</strong>'+
     '</div>'+
     '<div class="stock-trade-controls">'+
-      '<label class="stock-qty-field"><span>交易股數</span><span class="stock-qty-input"><input type="number" min="1" max="9999" step="1" value="'+shares+'" inputmode="numeric" enterkeyhint="done" data-stock-qty aria-label="'+stock.name+'交易股數"><b>股</b></span></label>'+
+      '<label class="stock-qty-field"><span>交易股數</span><span class="stock-qty-input"><input type="number" min="1" max="9999" step="1" value="'+(shares>0?shares:"")+'" placeholder="輸入股數" inputmode="numeric" enterkeyhint="done" autocomplete="off" data-stock-qty aria-label="'+stock.name+'交易股數"><b>股</b></span></label>'+
       '<button type="button" class="stock-buy" data-stock-buy '+(canTrade?"":"disabled")+'>買進</button>'+
       '<button type="button" class="stock-sell" data-stock-sell '+(canTrade&&position.shares>0?"":"disabled")+'>賣出</button>'+
     '</div>'+
@@ -101,8 +110,8 @@ function selectionMarkup(state,draft,canTrade){
   if(!stock){
     return '<div class="stock-selection-bar" data-stock-selection><strong>選擇一檔股票</strong><span>點一下「交易股數」，這裡會固定顯示股票名稱、股數與預估金額。</span></div>';
   }
-  const shares=normalizeShares(draft.quantities.get(stock.id)??1);
-  return '<div class="stock-selection-bar is-active" data-stock-selection><strong>目前操作：'+stock.name+'</strong><span>'+shares+' 股｜預估 '+money(stock.price*shares)+'</span></div>';
+  const shares=normalizeShares(draft.quantities.get(stock.id)??"");
+  return '<div class="stock-selection-bar is-active" data-stock-selection><strong>目前操作：'+stock.name+'</strong><span>'+sharesPreview(stock,shares)+'</span></div>';
 }
 
 export function renderStockMarket(container,state,localSeat,{onBuy=()=>{},onSell=()=>{}}={}){
@@ -154,20 +163,20 @@ export function renderStockMarket(container,state,localSeat,{onBuy=()=>{},onSell
     const qty=card.querySelector("[data-stock-qty]");
     if(!stock||!qty)return;
     const shares=normalizeShares(qty.value);
-    qty.value=String(shares);
     draft.stockId=stockId;
-    draft.quantities.set(stockId,shares);
+    if(shares>0)draft.quantities.set(stockId,shares);
+    else draft.quantities.delete(stockId);
 
     container.querySelectorAll(".stock-trade-card").forEach(node=>{
       node.classList.toggle("is-active-trade",node===card);
     });
 
     const cardPreview=card.querySelector("[data-stock-card-preview] strong");
-    if(cardPreview)cardPreview.textContent=stock.name+"｜"+shares+" 股｜預估 "+money(stock.price*shares);
+    if(cardPreview)cardPreview.textContent=stock.name+"｜"+sharesPreview(stock,shares);
     if(selection){
       selection.classList.remove("is-locked");
       selection.classList.add("is-active");
-      selection.innerHTML="<strong>目前操作："+stock.name+"</strong><span>"+shares+" 股｜預估 "+money(stock.price*shares)+"</span>";
+      selection.innerHTML="<strong>目前操作："+stock.name+"</strong><span>"+sharesPreview(stock,shares)+"</span>";
     }
 
     if(scroll){
@@ -191,6 +200,7 @@ export function renderStockMarket(container,state,localSeat,{onBuy=()=>{},onSell
       activateCard(card);
       const qty=card?.querySelector("[data-stock-qty]");
       const shares=normalizeShares(qty?.value);
+      if(shares<1){qty?.focus();return;}
       onBuy(card.dataset.stockId,shares);
     });
   });
@@ -201,6 +211,7 @@ export function renderStockMarket(container,state,localSeat,{onBuy=()=>{},onSell
       activateCard(card);
       const qty=card?.querySelector("[data-stock-qty]");
       const shares=normalizeShares(qty?.value);
+      if(shares<1){qty?.focus();return;}
       onSell(card.dataset.stockId,shares);
     });
   });

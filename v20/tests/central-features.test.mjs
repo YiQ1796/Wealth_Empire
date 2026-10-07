@@ -96,13 +96,18 @@ for(const plan of CENTRAL_TEST_TUNING.bankPlans){
   const state=createInitialState();
   const engine=new GameEngine(state,()=>{});
   const player=state.players[0];
+  const cashBefore=player.cash;
 
   assert.equal(engine.centralActivateInsurance(0),true);
   assert.equal(player.rentInsuranceActive,true);
+  assert.ok(player.cash<cashBefore,"insurance must charge a premium");
   const insured=applyRentInsurance(player,1000);
   assert.equal(insured.protected,true);
   assert.equal(insured.rent,Math.round(1000*CENTRAL_TEST_TUNING.insuranceRentMultiplier));
   assert.equal(player.rentInsuranceActive,false);
+  assert.equal(centralFacilityStatus(state,0,"insurance"),"cooldown","insurance must not be repurchased every round");
+  state.round+=CENTRAL_TEST_TUNING.insuranceCooldownRounds;
+  assert.equal(centralFacilityStatus(state,0,"insurance"),"ready","insurance becomes available after cooldown");
 }
 
 {
@@ -157,4 +162,4 @@ assert.deepEqual(
   {type:"central_mission_accept",missionId:"buy_property"}
 );
 
-console.log("V20 Alpha 29 central five facilities test PASS");
+console.log("V20 Alpha 32.3.13 central five facilities test PASS");

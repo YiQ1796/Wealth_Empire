@@ -52,7 +52,9 @@ export function centralFacilityStatus(state,seat,id){
   }
   if(id==="insurance"){
     if(player.rentInsuranceActive)return"active";
-    return canUseCentralBase(state,seat)&&Number(player.rentInsuranceUsedRound)!==round
+    const usedRound=Math.max(0,Number(player.rentInsuranceUsedRound)||0);
+    const cooldownReady=usedRound===0||round>=usedRound+CENTRAL_TEST_TUNING.insuranceCooldownRounds;
+    return canUseCentralBase(state,seat)&&cooldownReady&&player.cash>=insurancePremium(state,seat)
       ?"ready"
       :"cooldown";
   }
@@ -90,11 +92,21 @@ export function startBankDeposit(state,seat,principal=minimumBankPrincipal()){
   const player=state.players[Number(seat)];
   const round=currentRound(state);
   player.cash-=plan.principal;
+  const bankEffect=state.strategicEffects?.bank;
+  const bankMultiplier=(
+    bankEffect&&
+    Number(bankEffect.activeFromRound)<=round&&
+    Number(bankEffect.untilRound)>=round
+  )
+    ?Math.max(0.8,Math.min(1.2,Number(bankEffect.multiplier)||1))
+    :1;
+  const returnAmount=Math.round(plan.returnAmount*bankMultiplier);
   player.centralBankDeposit={
     principal:plan.principal,
-    returnAmount:plan.returnAmount,
+    returnAmount,
     startedRound:round,
-    maturesRound:round+CENTRAL_TEST_TUNING.bankRounds
+    maturesRound:round+CENTRAL_TEST_TUNING.bankRounds,
+    rateMultiplier:bankMultiplier
   };
   return{
     ok:true,
@@ -162,21 +174,49 @@ export function recordMissionAction(state,seat,action){
   };
 }
 
+export function insurancePremium(state,seat){
+  const player=state?.players?.[Number(seat)];
+  if(!player)return 0;
+  const propertyCount=Math.max(0,(player.properties??[]).length);
+  const wealthStep=Math.max(0,Math.floor(Math.max(0,Number(player.cash)||0)/20000));
+  return Math.min(
+    4000,
+    CENTRAL_TEST_TUNING.insurancePremiumBase+
+      propertyCount*CENTRAL_TEST_TUNING.insurancePropertyPremium+
+      wealthStep*250
+  );
+}
+
+export function insuranceCooldownRemaining(state,seat){
+  const player=state?.players?.[Number(seat)];
+  if(!player)return 0;
+  const usedRound=Math.max(0,Number(player.rentInsuranceUsedRound)||0);
+  if(usedRound===0)return 0;
+  return Math.max(
+    0,
+    usedRound+CENTRAL_TEST_TUNING.insuranceCooldownRounds-currentRound(state)
+  );
+}
+
 export function canActivateInsurance(state,seat){
   const player=state?.players?.[Number(seat)];
   return Boolean(
     canUseCentralBase(state,seat)&&
-    player&&!player.rentInsuranceActive&&
-    Number(player.rentInsuranceUsedRound)!==currentRound(state)
+    player&&
+    !player.rentInsuranceActive&&
+    insuranceCooldownRemaining(state,seat)===0&&
+    player.cash>=insurancePremium(state,seat)
   );
 }
 
 export function activateInsurance(state,seat){
   if(!canActivateInsurance(state,seat))return{ok:false,reason:"unavailable"};
   const player=state.players[Number(seat)];
+  const premium=insurancePremium(state,seat);
+  player.cash-=premium;
   player.rentInsuranceActive=true;
   player.rentInsuranceUsedRound=currentRound(state);
-  return{ok:true,seat:Number(seat)};
+  return{ok:true,seat:Number(seat),premium,cashAfter:player.cash};
 }
 
 export function applyRentInsurance(player,rent){

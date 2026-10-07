@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#eef3f7">
-<title>財富帝國 V20 Alpha 32.3.12</title>
-<link rel="stylesheet" href="./styles/app.css?v=alpha32-233">
+<title>財富帝國 V20 Alpha 32.3.13</title>
+<link rel="stylesheet" href="./styles/app.css?v=alpha32-234">
 </head>
 <body class="entry-pending">
 <section id="entryGate" class="entry-gate" aria-label="遊戲模式選擇">
@@ -122,14 +122,6 @@
           </button>
         </div>
       </header>
-
-      <div id="desktopBgmControls" class="desktop-bgm-controls" aria-label="背景音樂控制">
-        <span class="desktop-bgm-controls__title">巷仔口的風</span>
-        <button id="bgmMuteButton" type="button" class="desktop-bgm-controls__mute" aria-pressed="false" aria-label="靜音背景音樂">聲音</button>
-        <input id="bgmVolumeSlider" class="desktop-bgm-controls__slider" type="range" min="0" max="1" step="0.05" value="0.45" aria-label="背景音樂音量">
-        <output id="bgmVolumeValue" class="desktop-bgm-controls__value" for="bgmVolumeSlider">45%</output>
-        <span id="bgmStatus" class="desktop-bgm-controls__status" aria-live="polite">首次操作後播放</span>
-      </div>
 
       <section id="networkLobbyCard" class="network-lobby-card" aria-label="好友房等待狀態" hidden>
         <div class="network-lobby-card__copy">
@@ -399,21 +391,52 @@
   <div class="transport-modal">
     <header class="transport-modal__header">
       <div>
-        <span class="transport-modal__eyebrow">快速通車</span>
-        <h2 id="transportTitle">交通轉乘</h2>
-        <p id="transportSubtitle">選擇要前往的交通節點，或留在原地。</p>
+        <span class="transport-modal__eyebrow">策略交通</span>
+        <h2 id="transportTitle">交通節點</h2>
+        <p id="transportSubtitle">先看棋盤，再決定這回合要怎麼使用交通節點。</p>
       </div>
-      <button id="skipTransportIconButton" type="button" class="modal-close" aria-label="放棄轉乘">
-        <img src="./assets/v5/ui/modal/MODAL_CLOSE.webp" alt="">
-      </button>
+      <div class="transport-modal__header-actions">
+        <button id="toggleTransportMinimizeButton" type="button" class="transport-minimize" aria-expanded="true">縮小看棋盤</button>
+        <button id="skipTransportIconButton" type="button" class="modal-close" aria-label="放棄本次交通選項">
+          <img src="./assets/v5/ui/modal/MODAL_CLOSE.webp" alt="">
+        </button>
+      </div>
     </header>
-    <div class="transport-current">
-      <span>目前位置</span>
-      <strong id="transportSourceName">—</strong>
-      <small>本版轉乘不收費；抵達另一個交通節點後不會再次連鎖觸發交通。</small>
+    <div class="transport-modal__body">
+      <div class="transport-current">
+        <span>目前位置</span>
+        <strong id="transportSourceName">—</strong>
+        <small id="transportRuleNote">—</small>
+      </div>
+      <div id="transportDestinationList" class="transport-destinations" aria-label="交通目的地或物流目標"></div>
+      <button id="skipTransportButton" type="button" class="transport-skip">留在原地，不使用本次交通功能</button>
     </div>
-    <div id="transportDestinationList" class="transport-destinations" aria-label="交通目的地"></div>
-    <button id="skipTransportButton" type="button" class="transport-skip">留在原地，不轉乘</button>
+  </div>
+</dialog>
+
+<dialog id="finalSettlementDialog" class="final-settlement-dialog">
+  <div class="final-settlement-modal">
+    <header>
+      <div>
+        <span>30 ROUND 正式結算</span>
+        <h2>最終資產排名</h2>
+        <p>這個畫面不會自動消失，確認完排名後再自行關閉。</p>
+      </div>
+    </header>
+    <div id="finalSettlementChampion" class="final-settlement-champion">—</div>
+    <div id="finalSettlementRanking" class="final-settlement-ranking"></div>
+    <button id="closeFinalSettlementButton" type="button" class="final-settlement-close">關閉結算</button>
+  </div>
+</dialog>
+
+<dialog id="strategicChoiceDialog" class="strategic-choice-dialog">
+  <div class="strategic-choice-modal">
+    <header>
+      <span>策略事件</span>
+      <h2 id="strategicChoiceTitle">事件選擇</h2>
+      <p id="strategicChoiceDescription">請選擇這次事件的處理方式。</p>
+    </header>
+    <div id="strategicChoiceOptions" class="strategic-choice-options"></div>
   </div>
 </dialog>
 
@@ -432,6 +455,6 @@
 </dialog>
 
 <div id="actionToastStack" class="action-toast-stack" aria-live="polite" aria-atomic="false"></div>
-<script type="module" src="./js/main.js?v=alpha32-233"></script>
+<script type="module" src="./js/main.js?v=alpha32-234"></script>
 </body>
 </html>

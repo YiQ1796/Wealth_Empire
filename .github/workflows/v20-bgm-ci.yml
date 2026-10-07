@@ -1,10 +1,9 @@
-name: V20 BGM Preview CI
+name: V20 Audio Disabled CI
 
 on:
-  push:
-    branches:
-      - "work-v20-alpha32-bgm-preview-20261006"
   pull_request:
+    branches:
+      - "main"
     paths:
       - "v20/**"
       - ".github/workflows/v20-bgm-ci.yml"
@@ -14,21 +13,11 @@ permissions:
   contents: read
 
 jobs:
-  bgm-regression:
+  audio-disabled-regression:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Rebuild complete BGM asset
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p v20/assets/audio
-          test "$(find v20/assets/audio/bgm-src -name 'part_*.b64' -type f | wc -l)" -eq 17
-          cat v20/assets/audio/bgm-src/part_*.b64 | base64 --decode > v20/assets/audio/alley-wind.m4a
-          echo "4986dcd3fd5ccfd9a5284ed0dc01a1a93f5261c2a82905af242704ce7dbc2ade  v20/assets/audio/alley-wind.m4a" | sha256sum -c -
-          test "$(wc -c < v20/assets/audio/alley-wind.m4a)" -eq 988842
 
       - name: Validate module syntax
         shell: bash
@@ -38,15 +27,13 @@ jobs:
             node --input-type=module --check < "$file"
           done
 
-      - name: Validate BGM controller
+      - name: Validate audio is disabled
         shell: bash
         run: |
           set -euo pipefail
-          grep -q '財富帝國 V20 Alpha 32.3.12' v20/index.html
-          grep -q 'app.css?v=alpha32-233' v20/index.html
-          grep -q 'main.js?v=alpha32-233' v20/index.html
-          grep -q '巷仔口的風' v20/index.html
-          grep -q 'alley-wind.m4a?v=alpha32-222' v20/js/ui/bgm-controller.js
+          grep -q '財富帝國 V20 Alpha 32.3.13' v20/index.html
+          grep -q 'app.css?v=alpha32-234' v20/index.html
+          grep -q 'main.js?v=alpha32-234' v20/index.html
           node --experimental-default-type=module v20/tests/bgm-controller.test.mjs
 
       - name: Run affected regressions
@@ -64,3 +51,5 @@ jobs:
           node --experimental-default-type=module v20/tests/dual-relay-host.test.mjs
           node --experimental-default-type=module v20/tests/mobile-responsive.test.mjs
           node --experimental-default-type=module v20/tests/gameplay-systems.test.mjs
+          node --experimental-default-type=module v20/tests/strategic-events-p1-p3.test.mjs
+          node --experimental-default-type=module v20/tests/alpha32-3-13-rent-transport-ui.test.mjs

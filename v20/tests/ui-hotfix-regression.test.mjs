@@ -28,4 +28,4 @@ assert.match(css,/V20 Alpha 32\.3\.11 — restore desktop notification frame art
 assert.match(css,/@media \(min-width:1181px\)\{[\s\S]*?\.action-toast__card-bg\{[\s\S]*?display:block!important/);
 assert.doesNotMatch(css,/V20 Alpha 29\.2 — phone notice seam mask/);
 
-console.log("V20 Alpha 32.3.12 desktop-frame/mobile-notice regression PASS");
+console.log("V20 Alpha 32.3.13 desktop-frame/mobile-notice regression PASS");
