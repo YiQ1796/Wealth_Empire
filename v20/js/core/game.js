@@ -900,9 +900,34 @@ export class GameEngine{
     this.state.pendingTransport=null;
     this.state.phase="landed";
     this.log(
-      this.currentPlayer.name+" 選擇留在「"+(sourceNode?.name??"交通設施")+"」，不進行轉乘。",
+      this.currentPlayer.name+" 選擇不使用「"+(sourceNode?.name??"交通樞紐")+"」本次功能。",
       "transport_skip",
       {seat:this.currentPlayer.seat,sourceIndex:pending.sourceIndex,sourceName:sourceNode?.name??""}
+    );
+    this.notify();
+    return true;
+  }
+
+  resolveWorldChoice(optionId,seat=this.state.currentPlayer){
+    if(!this.isCurrentSeat(seat))return false;
+    const result=executeWorldChoice(this.state,seat,optionId);
+    if(!result.ok){
+      this.log("目前無法執行這個事件選項。","warning",{seat,optionId:String(optionId)});
+      this.notify();
+      return false;
+    }
+    const player=this.state.players[Number(seat)];
+    this.log(
+      player.name+"｜"+result.eventName+"："+result.summary,
+      "world_event_choice",
+      {
+        seat:Number(seat),
+        playerName:player.name,
+        eventName:result.eventName,
+        effectKind:result.kind,
+        optionId:result.optionId,
+        cashAfter:result.cashAfter
+      }
     );
     this.notify();
     return true;
