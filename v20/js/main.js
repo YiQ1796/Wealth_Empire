@@ -1,5 +1,5 @@
-import{createInitialState,createLobbyState,hydrateState,setAiSeat,setHumanSeat,setPlayerCharacter}from"./core/state.js";
-import{GameEngine}from"./core/game.js?v=alpha32-233";
+import{createInitialState,createLobbyState,hydrateState,setAiSeat,setHumanSeat,setPlayerCharacter}from"./core/state.js?v=alpha32-240";
+import{GameEngine}from"./core/game.js?v=alpha32-240";
 import{
   PeerNetwork,
   clearNetworkSession,
@@ -11,23 +11,23 @@ import{
   sanitizePlayerName,
   sanitizeRoomCode,
   saveHostSnapshot
-}from"./core/network.js?v=alpha32-224";
-import{characterAsset,mountStaticBoard,render}from"./ui/render.js?v=alpha32-230";
+}from"./core/network.js?v=alpha32-240";
+import{characterAsset,mountStaticBoard,render}from"./ui/render.js?v=alpha32-240";
 import{itemUiSummary}from"./ui/item-render.js";
-import{renderStockMarket}from"./ui/stock-render.js?v=alpha32-233";
+import{renderStockMarket}from"./ui/stock-render.js?v=alpha32-240";
 import{UI_ASSETS}from"./data/ui-assets.js";
 import{MinigameUI}from"./ui/minigame-ui.js";
 import{GROUP_SIZES,MAX_PROPERTY_LEVEL,groupRentMultiplier}from"./data/board.js";
-import{canForceAcquireProperty,groupProgress,propertyValue,rentFor,suggestedAcquisitionOffer,upgradeCost}from"./core/property-economy.js";
-import{TRANSPORT_NODE_BY_INDEX}from"./data/transport.js";
-import{transportDestinationPreview}from"./core/transport.js";
+import{canForceAcquireProperty,groupProgress,propertyValue,rentFor,suggestedAcquisitionOffer,upgradeCost}from"./core/property-economy.js?v=alpha32-240";
+import{TRANSPORT_NODE_BY_INDEX}from"./data/transport.js?v=alpha32-240";
+import{bankReturnAmount,worldStatusSummary}from"./core/world-events.js?v=alpha32-240";
 import{
   CENTRAL_FEATURE_BY_ID,
   CENTRAL_MISSIONS,
   CENTRAL_MISSION_BY_ID,
   CENTRAL_TEST_TUNING
 }from"./data/central-features.js";
-import{centralDevelopmentOptions,centralFacilityStatus}from"./core/central-features.js";
+import{centralDevelopmentOptions,centralFacilityStatus}from"./core/central-features.js?v=alpha32-240";
 import{initBgmController}from"./ui/bgm-controller.js";
 
 try{initBgmController()}catch(error){console.warn("BGM controller unavailable",error)}
@@ -70,6 +70,10 @@ const ACTION_TOAST_KINDS=new Set([
   "special_event",
   "special_grid",
   "transport_complete",
+  "transport_event",
+  "world_event_choice",
+  "government_contract_complete",
+  "government_contract_expired",
   "urban_complete",
   "central_bank_active",
   "central_bank_matured",
@@ -93,6 +97,7 @@ const propertyInfoDialog=document.getElementById("propertyInfoDialog");
 const urbanDialog=document.getElementById("urbanDialog");
 const acquisitionDialog=document.getElementById("acquisitionDialog");
 const transportDialog=document.getElementById("transportDialog");
+const worldChoiceDialog=document.getElementById("worldChoiceDialog");
 const entryGate=document.getElementById("entryGate");
 const actionToastStack=document.getElementById("actionToastStack");
 board.appendChild(actionToastStack);
@@ -261,7 +266,11 @@ function noticeConfig(event){
     network_join:{title:"好友加入",icon:N.icons.network,effect:N.effects.blue,tone:"blue"},
     network_reconnect:{title:"重新連線",icon:N.icons.network,effect:N.effects.green,tone:"green"},
     network_ai_takeover:{title:"AI 接手",icon:N.icons.aiTakeover,effect:N.effects.purple,tone:"purple"},
-    transport_complete:{title:"快速通車",icon:N.icons.network,effect:N.effects.blue,tone:"blue",major:true},
+    transport_complete:{title:"交通樞紐",icon:N.icons.network,effect:N.effects.blue,tone:"blue",major:true},
+    transport_event:{title:"交通事件",icon:N.icons.network,effect:N.effects.gold,tone:"gold",major:true},
+    world_event_choice:{title:"城市事件決策",icon:N.icons.minigameResult,effect:N.effects.gold,tone:"gold",major:true},
+    government_contract_complete:{title:"政府標案完成",icon:N.icons.minigameResult,effect:N.effects.green,tone:"green",major:true},
+    government_contract_expired:{title:"政府標案逾期",icon:N.icons.minigameResult,effect:N.effects.red,tone:"red",major:true},
     urban_complete:{title:"城市更新",icon:N.icons.propertyUpgrade,effect:N.effects.green,tone:"green",major:true},
     special_grid:{title:"特殊設施",icon:N.icons.minigameResult,effect:N.effects.purple,tone:"purple",major:true},
     central_bank_active:{title:"都會銀行",icon:N.icons.marketTick,effect:N.effects.gold,tone:"gold",major:true},
@@ -507,19 +516,52 @@ function noticeView(event){
 
     case"transport_complete":
       return{
-        message:(data.playerName??"玩家")+" 完成交通轉乘",
-        metric:"抵達",
+        message:event.text,
+        metric:data.actionLabel??"已完成",
         details:[
-          (data.sourceName??"交通設施")+" → "+(data.destinationName??"目的地"),
-          "本次轉乘不連鎖觸發第二次交通"
-        ]
+          data.sourceName?"樞紐 "+data.sourceName:null,
+          Number(data.cost)>0?"費用 "+noticeMoney(data.cost):"本次不收費",
+          Number.isInteger(Number(data.destinationIndex))
+            ?"抵達 #"+(Number(data.destinationIndex)+1)+" "+(state.tiles?.[Number(data.destinationIndex)]?.name??"")
+            :null
+        ].filter(Boolean)
+      };
+
+    case"transport_event":
+      return{
+        message:event.text,
+        metric:Number.isFinite(Number(data.amount))?noticeSignedMoney(data.amount):"交通事件",
+        details:[data.sourceName??""].filter(Boolean)
+      };
+
+    case"world_event_choice":
+      return{
+        message:event.text,
+        metric:"已選擇",
+        details:[data.eventName??""].filter(Boolean)
+      };
+
+    case"government_contract_complete":
+      return{
+        message:event.text,
+        metric:"+"+noticeMoney(data.reward),
+        details:[data.taskName??"政府標案"]
+      };
+
+    case"government_contract_expired":
+      return{
+        message:event.text,
+        metric:"逾期",
+        details:[data.taskName??"政府標案"]
       };
 
     case"market_tick":{
       const movers=Array.isArray(data.movers)?data.movers:[];
+      const isMarketGrid=data.type==="market";
+      const repriced=data.effectKind==="market_tick"||!isMarketGrid;
       return{
-        message:data.type==="market"
-          ?"股市事件｜全市場立即重新漲跌"
+        message:isMarketGrid
+          ?(repriced?"股市事件｜全市場立即重新漲跌":event.text)
           :"輪到 "+(data.playerName??"下一位玩家")+"｜全市場重新漲跌",
         metric:null,
         details:movers.map(stock=>stock.name+" "+(stock.changePercent>0?"+":"")+Number(stock.changePercent).toFixed(1)+"%")
@@ -908,8 +950,12 @@ function executeAction(action,seat=currentLocalSeat()){
       return engine.submitMinigameResult(seat,{score:action.score,detail:action.detail});
     case"transport_travel":
       return engine.useTransport(action.destinationIndex,seat);
+    case"transport_action":
+      return engine.useTransportAction(action.actionId,seat);
     case"transport_skip":
       return engine.skipTransport(seat);
+    case"world_choice_select":
+      return engine.resolveWorldChoice(action.optionId,seat);
     case"acquisition_buy":
       return engine.acquireFromCenter(action.tileIndex,seat);
     case"acquisition_skip":
@@ -1129,9 +1175,13 @@ function renderCentralFacilityBody(id){
       const actions=document.createElement("div");
       actions.className="central-feature-actions";
       for(const plan of CENTRAL_TEST_TUNING.bankPlans){
+        const adjustedReturn=bankReturnAmount(state,plan.principal,plan.returnAmount);
+        const returnDetail=adjustedReturn===plan.returnAmount
+          ?"2 ROUND 後返還 "+noticeMoney(adjustedReturn)
+          :"原方案 "+noticeMoney(plan.returnAmount)+"｜本次城市利率後返還 "+noticeMoney(adjustedReturn);
         actions.appendChild(centralButton(
           "存入 "+noticeMoney(plan.principal),
-          "2 ROUND 後返還 "+noticeMoney(plan.returnAmount),
+          returnDetail,
           !usable||player.cash<plan.principal,
           ()=>dispatchAction({type:"central_bank_deposit",principal:plan.principal})
         ));
@@ -1454,45 +1504,144 @@ function renderTransportDialog(){
   }
 
   const source=TRANSPORT_NODE_BY_INDEX[pending.sourceIndex];
-  document.getElementById("transportTitle").textContent=source?.name??"交通轉乘";
-  document.getElementById("transportSubtitle").textContent="選擇另一個交通節點作為本回合轉乘目的地。";
+  document.getElementById("transportTitle").textContent=source?.name??"交通樞紐";
+  document.getElementById("transportSubtitle").textContent=source?.description??"選擇本交通樞紐的一項功能。";
   document.getElementById("transportSourceName").textContent=(source?.icon?source.icon+" ":"")+(source?.name??"交通設施");
+  const note=document.getElementById("transportSourceNote");
+  if(note){
+    note.textContent=pending.status==="free_day"
+      ?"交通免費日生效：本次所有原本需要付費的交通選項皆免費。"
+      :"每個交通節點功能不同；選擇後會立即結算，也可以本次不用。";
+  }
 
   const list=document.getElementById("transportDestinationList");
   list.replaceChildren();
 
-  for(const destinationIndex of pending.destinationIndexes??[]){
-    const node=TRANSPORT_NODE_BY_INDEX[destinationIndex];
-    if(!node)continue;
+  for(const action of pending.actions??[]){
     const button=document.createElement("button");
     button.type="button";
-    button.className="transport-destination";
-    button.dataset.destinationIndex=String(destinationIndex);
+    button.className="transport-destination transport-destination--action";
+    button.dataset.actionId=String(action.id);
+    const cost=Math.max(0,Math.round(Number(action.cost)||0));
+    button.disabled=player.cash<cost;
 
     const icon=document.createElement("span");
     icon.className="transport-destination__icon";
-    icon.textContent=node.icon;
+    icon.textContent=action.icon??source?.icon??"🚇";
 
     const copy=document.createElement("span");
     copy.className="transport-destination__copy";
     const title=document.createElement("strong");
-    title.textContent=node.name;
+    title.textContent=action.label;
     const meta=document.createElement("small");
-    meta.textContent=node.mode+"｜第 "+(destinationIndex+1)+" 格";
-    const preview=transportDestinationPreview(state,destinationIndex);
+    if(action.freeDay&&Number(action.originalCost)>0){
+      meta.textContent="原價 "+noticeMoney(action.originalCost)+"｜交通免費日：免費";
+    }else{
+      meta.textContent=cost>0?"費用 "+noticeMoney(cost):"本次免費";
+    }
     const strategy=document.createElement("small");
     strategy.className="transport-destination__strategy";
-    strategy.textContent="前方6格｜可買地產 "+preview.unownedProperties+"｜機會命運 "+preview.chanceOrFate;
+    strategy.textContent=action.description+(button.disabled?"｜現金不足":"");
     copy.append(title,meta,strategy);
 
     button.append(icon,copy);
-    button.addEventListener("click",()=>{
-      dispatchAction({type:"transport_travel",destinationIndex});
-    },{once:true});
+    if(!button.disabled){
+      button.addEventListener("click",()=>{
+        dispatchAction({type:"transport_action",actionId:action.id});
+      },{once:true});
+    }
     list.appendChild(button);
   }
 
   if(!transportDialog.open)transportDialog.showModal();
+}
+
+function renderWorldEventStatus(){
+  const container=document.getElementById("worldEventStatus");
+  if(!container)return;
+  const items=worldStatusSummary(state);
+  container.replaceChildren();
+
+  const heading=document.createElement("strong");
+  heading.textContent="進行中的城市效果";
+  container.appendChild(heading);
+
+  if(items.length===0){
+    const empty=document.createElement("span");
+    empty.className="world-event-status__empty";
+    empty.textContent="目前沒有持續中的城市事件或限時標案。";
+    container.appendChild(empty);
+    container.classList.remove("active");
+    return;
+  }
+
+  container.classList.add("active");
+  const list=document.createElement("div");
+  list.className="world-event-status__list";
+  for(const item of items){
+    const badge=document.createElement("span");
+    badge.textContent=item;
+    list.appendChild(badge);
+  }
+  container.appendChild(list);
+}
+
+function renderWorldChoiceDialog(){
+  const pending=state.pendingWorldChoice;
+  const localSeat=currentLocalSeat();
+  const player=state.players?.[localSeat];
+  const shouldShow=Boolean(
+    worldChoiceDialog&&
+    state.phase==="world_choice"&&
+    pending&&
+    pending.seat===localSeat&&
+    player?.kind==="human"&&
+    player.connected!==false
+  );
+
+  if(!shouldShow){
+    if(worldChoiceDialog?.open)worldChoiceDialog.close();
+    return;
+  }
+
+  if(itemPromptDialog?.open)itemPromptDialog.close();
+  if(featureDialog?.open)featureDialog.close();
+  if(propertyInfoDialog?.open)propertyInfoDialog.close();
+
+  document.getElementById("worldChoiceTitle").textContent=pending.title??pending.eventName??"事件選擇";
+  document.getElementById("worldChoiceDescription").textContent=pending.description??"請選擇本次事件的處理方式。";
+  document.getElementById("worldChoiceCash").textContent=noticeMoney(player.cash);
+
+  const list=document.getElementById("worldChoiceOptionList");
+  list.replaceChildren();
+  for(const option of pending.options??[]){
+    const cost=Math.max(0,Math.round(Number(option.cost)||0));
+    const button=document.createElement("button");
+    button.type="button";
+    button.className="world-choice-option";
+    button.dataset.optionId=String(option.id);
+    button.disabled=option.enabled===false||player.cash<cost;
+
+    const title=document.createElement("strong");
+    title.textContent=option.label;
+    const description=document.createElement("span");
+    description.textContent=option.description??"";
+    const meta=document.createElement("small");
+    meta.textContent=button.disabled
+      ? "目前條件不足"
+      : cost>0
+        ? "確認後支付 "+noticeMoney(cost)
+        : "不需支付現金";
+    button.append(title,description,meta);
+    if(!button.disabled){
+      button.addEventListener("click",()=>{
+        dispatchAction({type:"world_choice_select",optionId:option.id});
+      },{once:true});
+    }
+    list.appendChild(button);
+  }
+
+  if(!worldChoiceDialog.open)worldChoiceDialog.showModal();
 }
 
 function maybePromptStrategyItems(){
@@ -1503,12 +1652,15 @@ function maybePromptStrategyItems(){
     state.pendingAcquisition||
     state.pendingUrban||
     state.pendingTransport||
+    state.pendingWorldChoice||
+    state.phase==="world_choice"||
     state.phase==="minigame"||
     purchaseDialog?.open||
     upgradeDialog?.open||
     acquisitionDialog?.open||
     urbanDialog?.open||
-    transportDialog?.open
+    transportDialog?.open||
+    worldChoiceDialog?.open
   )return;
   const seat=currentLocalSeat();
   const player=state.players?.[seat];
@@ -1541,9 +1693,11 @@ function renderAll(){
   renderStocks();
   renderNetworkUi();
   renderCentralFacilities();
+  renderWorldEventStatus();
   renderUrbanDialog();
   renderAcquisitionDialog();
   renderTransportDialog();
+  renderWorldChoiceDialog();
   minigameUi.sync(state,currentLocalSeat());
   processMoveAnimations();
   processActionToasts();
@@ -1774,6 +1928,7 @@ const skipTransport=()=>dispatchAction({type:"transport_skip"});
 document.getElementById("skipTransportButton").addEventListener("click",skipTransport);
 document.getElementById("skipTransportIconButton").addEventListener("click",skipTransport);
 transportDialog.addEventListener("cancel",event=>event.preventDefault());
+worldChoiceDialog.addEventListener("cancel",event=>event.preventDefault());
 
 document.getElementById("closeNetworkDialog").addEventListener("click",()=>networkDialog.close());
 networkDialog.addEventListener("click",event=>{
