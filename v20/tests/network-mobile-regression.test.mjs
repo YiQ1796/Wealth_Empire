@@ -18,7 +18,7 @@ assert.match(network,/this\.roomCode=createRoomCode\(\)/);
 assert.match(network,/const finalCode=this\.roomCode/);
 assert.match(main,/const finalCode=result\.roomCode/);
 assert.match(main,/next\.network\.roomCode=finalCode/);
-assert.match(main,/\.\/core\/network\.js\?v=alpha32-223/);
+assert.match(main,/\.\/core\/network\.js\?v=alpha32-224/);
 assert.match(network,/this\.connections\.set\(seat,connection\);[\s\S]*?if\(previous&&previous!==connection\)/);
 
 const heartbeatStart=network.indexOf("this.relayHeartbeatTimer=setInterval");
@@ -30,4 +30,4 @@ assert.doesNotMatch(
   "post-join relay heartbeat must ping instead of repeatedly re-sending join_request"
 );
 
-console.log("V20 Alpha 32.3.2 dual-relay regression test PASS");
+console.log("V20 Alpha 32.3.3 dual-relay regression test PASS");
