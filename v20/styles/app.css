@@ -7028,7 +7028,7 @@ body.entry-pending .app-shell{
 @media (orientation:landscape) and (max-height:650px) and (max-width:1180px){
   .stock-market-grid--mobile{
     display:grid;
-    grid-template-rows:auto auto minmax(0,1fr);
+    grid-template-rows:auto minmax(0,1fr);
     gap:7px;
     max-height:calc(100dvh - 92px);
     overflow:auto;
@@ -7053,11 +7053,13 @@ body.entry-pending .app-shell{
   }
 
   .stock-mobile-trade-dock{
-    position:sticky;
-    top:0;
-    z-index:12;
+    position:relative;
+    top:auto;
+    z-index:2;
+    grid-column:1/-1;
     display:grid;
     gap:6px;
+    margin-top:2px;
     padding:9px 10px;
     border:2px solid #d6a83f;
     border-radius:13px;
@@ -7107,11 +7109,29 @@ body.entry-pending .app-shell{
     font-size:8px;
     font-weight:900
   }
+  .stock-mobile-trade-dock__head-actions{
+    flex:0 0 auto;
+    display:flex;
+    align-items:center;
+    gap:7px
+  }
   .stock-mobile-trade-dock__quote{
     flex:0 0 auto;
     display:grid;
     justify-items:end;
     gap:1px
+  }
+  .stock-mobile-trade-dock__close{
+    min-height:34px;
+    padding:5px 9px;
+    border:1px solid #c58f28;
+    border-radius:9px;
+    background:#fff;
+    color:#8b5c0b;
+    font-size:10px;
+    font-weight:1000;
+    white-space:nowrap;
+    cursor:pointer
   }
   .stock-mobile-trade-dock__quote>b{
     color:#173b58;
@@ -7242,8 +7262,15 @@ body.entry-pending .app-shell{
   .stock-card-list--mobile-compact{
     min-height:0;
     display:grid;
-    grid-template-columns:repeat(2,minmax(0,1fr));
+    grid-template-columns:1fr;
     align-content:start;
+    gap:6px
+  }
+  .stock-mobile-pair-row{
+    min-width:0;
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    align-items:start;
     gap:6px
   }
   .stock-mobile-card{
@@ -7329,10 +7356,9 @@ body.entry-pending .app-shell{
     font-weight:1000
   }
 
-  body.stock-keyboard-active .feature-modal__header,
   body.stock-keyboard-active .feature-modal__pane--market.active>.feature-heading,
   body.stock-keyboard-active #stockMarketMobileGrid>.stock-summary,
-  body.stock-keyboard-active #stockMarketMobileGrid>.stock-card-list{
+  body.stock-keyboard-active #stockMarketMobileGrid .stock-mobile-card{
     display:none!important
   }
   body.stock-keyboard-active #stockMarketMobileGrid{
@@ -7341,9 +7367,19 @@ body.entry-pending .app-shell{
     overflow:hidden!important;
     padding:0!important
   }
+  body.stock-keyboard-active #stockMarketMobileGrid>.stock-card-list{
+    display:block!important
+  }
+  body.stock-keyboard-active .stock-mobile-pair-row{
+    display:none!important
+  }
+  body.stock-keyboard-active .stock-mobile-pair-row.has-active-trade{
+    display:block!important
+  }
   body.stock-keyboard-active .stock-mobile-trade-dock{
     position:relative;
     top:auto;
+    margin-top:0;
     gap:4px;
     padding:7px 9px;
     border-radius:11px;
@@ -7354,6 +7390,11 @@ body.entry-pending .app-shell{
   }
   body.stock-keyboard-active .stock-mobile-trade-dock__quote>b{
     font-size:19px
+  }
+  body.stock-keyboard-active .stock-mobile-trade-dock__close{
+    min-height:31px;
+    padding:4px 8px;
+    font-size:9px
   }
   body.stock-keyboard-active .stock-mobile-trade-dock__status>span{
     padding:3px 5px;
@@ -7376,5 +7417,21 @@ body.entry-pending .app-shell{
   body.stock-keyboard-active .stock-mobile-trade-dock__actions button{
     min-height:37px;
     font-size:12px
+  }
+}
+
+
+/* V20 Alpha 32.3.13 — phone stock trade panel must never trap the player.
+   The market header/outer close stays visible; the selected trade panel expands inline
+   under its stock pair and always provides its own explicit collapse control. */
+@media (orientation:landscape) and (max-height:650px) and (max-width:1180px){
+  body.stock-keyboard-active .feature-modal__header{
+    display:flex!important
+  }
+  .stock-mobile-pair-row.has-active-trade{
+    scroll-margin-block:52px 16px
+  }
+  .stock-mobile-trade-dock__close:active{
+    transform:translateY(1px)
   }
 }
