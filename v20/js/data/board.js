@@ -21,10 +21,10 @@ export const GROUP_SIZES=Object.freeze({
 });
 
 /*
-  Completed-region rent multipliers are intentionally different:
-  2-tile region = x1.25
-  3-tile region = x1.50
-  4-tile region = x2.00
+  Alpha 32.3.13 completed-region rent multipliers:
+  2-tile region = x1.50
+  3-tile region = x1.75
+  4-tile region = x2.25
 */
 export const GROUP_RENT_MULTIPLIERS=Object.freeze({
   "海港區":1.50,
