@@ -6,8 +6,8 @@ const css=readFileSync(new URL("../styles/app.css",import.meta.url),"utf8");
 const main=readFileSync(new URL("../js/main.js",import.meta.url),"utf8");
 const network=readFileSync(new URL("../js/core/network.js",import.meta.url),"utf8");
 
-assert.match(html,/財富帝國 V20 Alpha 32\.3\.3/);
-assert.match(html,/alpha32-224/);
+assert.match(html,/財富帝國 V20 Alpha 32\.3\.4/);
+assert.match(html,/alpha32-225/);
 assert.match(html,/id="networkLobbyCard"/);
 assert.match(html,/id="networkLobbyStartButton"/);
 assert.match(html,/id="networkLobbyManageButton"/);
@@ -54,9 +54,9 @@ assert.match(network,/RELAY_JOIN_TIMEOUT_MS=8000/);
 assert.match(network,/PEER_JOIN_TIMEOUT_MS=9000/);
 assert.match(network,/export function prewarmNetworkTransport/);
 
-assert.match(css,/V20 Alpha 32\.3\.3 — connected players can minimize the waiting room/);
-assert.match(css,/V20 Alpha 32\.3\.3 — the connection dialog becomes a real waiting room/);
+assert.match(css,/V20 Alpha 32\.3\.4 — connected players can minimize the waiting room/);
+assert.match(css,/V20 Alpha 32\.3\.4 — the connection dialog becomes a real waiting room/);
 assert.match(css,/\.network-dialog\.is-room-lobby \.network-form-grid/);
 assert.match(css,/\.network-lobby-card\[hidden\]/);
 
-console.log("V20 Alpha32.3.3 explicit friend lobby regression PASS");
+console.log("V20 Alpha32.3.4 explicit friend lobby regression PASS");
