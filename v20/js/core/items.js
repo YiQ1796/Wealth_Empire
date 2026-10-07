@@ -129,6 +129,12 @@ export function getItemUseStatus(state,seat,itemId,target=null){
   if(inventoryCount(player,itemId)<=0)return{usable:false,reason:"目前未持有",targets:[]};
   if(state.gameStatus!=="playing")return{usable:false,reason:"遊戲尚未開始",targets:[]};
   if(Number(state.currentPlayer)!==Number(seat))return{usable:false,reason:"等待自己的回合",targets:[]};
+  if(
+    ["stock_boost","stock_drop"].includes(itemId)&&
+    Number(state.strategicEffects?.marketItemLockUntilRound)>=Number(state.round)
+  ){
+    return{usable:false,reason:"市場熔斷，本 ROUND 不能使用股票拉升／打壓卡",targets:[]};
+  }
   if(!(definition.allowedPhases??[]).includes(state.phase)){
     return{usable:false,reason:"目前時機不可使用",targets:[]};
   }
