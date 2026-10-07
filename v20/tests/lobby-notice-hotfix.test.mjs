@@ -44,6 +44,6 @@ assert.match(css,/\.action-toast\.leaving/);
 assert.match(css,/\.action-toast__card-bg,[\s\S]*?display:none!important/);
 assert.match(css,/overflow:hidden!important/);
 assert.match(html,/財富帝國 V20 Alpha 32\.3/);
-assert.match(html,/alpha32-233/);
+assert.match(html,/alpha32-234/);
 
-console.log("V20 Alpha32.3.12 lobby start and notification frame regression PASS");
+console.log("V20 Alpha32.3.13 lobby start and notification frame regression PASS");
