@@ -7,16 +7,16 @@ const main=readFileSync(new URL("../js/main.js",import.meta.url),"utf8");
 const stock=readFileSync(new URL("../js/ui/stock-render.js",import.meta.url),"utf8");
 const render=readFileSync(new URL("../js/ui/render.js",import.meta.url),"utf8");
 
-assert.match(html,/財富帝國 V20 Alpha 32\.3\.8/);
-assert.match(html,/app\.css\?v=alpha32-229/);
-assert.match(html,/main\.js\?v=alpha32-229/);
-assert.match(main,/\.\/ui\/stock-render\.js\?v=alpha32-229/);
+assert.match(html,/財富帝國 V20 Alpha 32\.3\.9/);
+assert.match(html,/app\.css\?v=alpha32-230/);
+assert.match(html,/main\.js\?v=alpha32-230/);
+assert.match(main,/\.\/ui\/stock-render\.js\?v=alpha32-230/);
 assert.match(main,/\.\/core\/game\.js\?v=alpha32-229/);
 
 assert.match(stock,/const desktopTradeSurface=/);
 assert.match(stock,/stock-market-grid--desktop-popup/);
 assert.match(stock,/\(desktopTradeSurface\|\|state\.currentPlayer===localSeat\)/);
-assert.match(stock,/const cardsPerRow=desktopTradeSurface\?1:2/);
+assert.match(stock,/const cardsPerRow=2/);
 
 const desktopMarker="/* V20 Alpha 32.3.4 — desktop-only readability pass. Phone/mobile authority remains unchanged. */";
 const desktopStart=css.indexOf(desktopMarker);
@@ -49,7 +49,7 @@ const regionBlock=css.slice(regionStart);
 assert.match(regionBlock,/\.tile\.tile--region-complete::before/);
 assert.match(regionBlock,/content:"連區 " attr\(data-region-bonus\)/);
 assert.match(regionBlock,/\.property-rent-breakdown\{/);
-assert.match(main,/\.\/ui\/render\.js\?v=alpha32-229/);
+assert.match(main,/\.\/ui\/render\.js\?v=alpha32-230/);
 
 const rankingMarker="/* V20 Alpha 32.3.7 — desktop wealth ranking + forced-acquisition visibility. */";
 const rankingStart=css.indexOf(rankingMarker);
@@ -81,4 +81,15 @@ assert.match(render,/完整連區/);
 assert.match(marketPopupBlock,/\.stock-market-grid--desktop-popup \.stock-pair-row\{[\s\S]*?grid-template-columns:minmax\(0,1fr\)/);
 assert.match(marketPopupBlock,/\.stock-market-grid--desktop-popup \.stock-trade-controls input\{[\s\S]*?font-size:20px/);
 
-console.log("V20 Alpha32.3.8 desktop-only readability regression PASS");
+const alpha329Marker="/* V20 Alpha 32.3.9 — desktop two-column market and readability/color pass. */";
+const alpha329Start=css.indexOf(alpha329Marker);
+assert.ok(alpha329Start>=0,"Alpha 32.3.9 desktop readability marker missing");
+const alpha329Block=css.slice(alpha329Start);
+assert.match(alpha329Block,/\.stock-market-grid--desktop-popup \.stock-pair-row\{[\s\S]*?grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
+assert.match(alpha329Block,/\.feature-modal__header h2\{[\s\S]*?font-size:30px/);
+assert.match(alpha329Block,/\.central-facility-modal__title>h2\{[\s\S]*?font-size:32px/);
+assert.match(alpha329Block,/\.player-card h3\{[\s\S]*?font-size:18px/);
+assert.match(alpha329Block,/border-left:4px solid var\(--player-accent/);
+assert.match(render,/--player-accent/);
+
+console.log("V20 Alpha32.3.9 desktop-only readability regression PASS");
