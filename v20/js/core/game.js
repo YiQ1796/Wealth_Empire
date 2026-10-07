@@ -1423,8 +1423,7 @@ export class GameEngine{
       this.state.pendingTransport!=null||
       this.state.pendingAcquisition!=null||
       this.state.pendingUrban!=null||
-      this.state.pendingStrategicChoice!=null||
-      this.state.minigame!=null
+      this.state.pendingStrategicChoice!=null
     )return false;
 
     this.state.autoEndTurnSeat=null;
