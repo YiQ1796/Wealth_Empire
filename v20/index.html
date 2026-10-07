@@ -166,21 +166,13 @@
         <button class="feature-tab" data-feature="item">
           <img src="./assets/v5/ui/modal/MODAL_ITEMS_ICON.webp" alt=""><span>道具</span>
         </button>
+        <button class="feature-tab feature-tab--market" data-feature="market">
+          <img src="./assets/v5/ui/modal/MODAL_STOCK_ICON.webp" alt=""><span>市場操作</span>
+        </button>
         <button class="feature-tab" data-feature="info">
           <img src="./assets/v5/ui/modal/MODAL_INFO_ICON.webp" alt=""><span>資訊</span>
         </button>
       </nav>
-
-      <section class="desktop-stock-panel" aria-label="股票市場">
-        <header class="desktop-stock-panel__header">
-          <div>
-            <h2>股票市場</h2>
-            <p>即時價格、持股、損益與買賣固定顯示</p>
-          </div>
-          <span class="market-badge">即時行情</span>
-        </header>
-        <div id="stockMarketGrid" class="stock-market-grid stock-market-grid--persistent"></div>
-      </section>
     </aside>
   </section>
 </main>
@@ -284,7 +276,8 @@
       </div>
 
       <div class="feature-modal__pane feature-modal__pane--market" data-feature-panel="market">
-        <div class="feature-heading"><div><h3>市場操作</h3><p>手機版使用大卡片查看即時行情、持股、損益與買賣。</p></div></div>
+        <div class="feature-heading"><div><h3>市場操作</h3><p>查看即時行情、持股與損益；桌機版改用大視窗一列一檔操作。</p></div></div>
+        <div id="stockMarketDesktopGrid" class="stock-market-grid stock-market-grid--desktop-popup"></div>
         <div id="stockMarketMobileGrid" class="stock-market-grid stock-market-grid--mobile"></div>
       </div>
 
