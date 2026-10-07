@@ -6,9 +6,11 @@ const css=readFileSync(new URL("../styles/app.css",import.meta.url),"utf8");
 const main=readFileSync(new URL("../js/main.js",import.meta.url),"utf8");
 
 assert.match(html,/id="acquisitionTitle"/);
-assert.match(main,/acquisition_offer:\{title:"強制收購機會"/);\nassert.match(main,/ACTION_TOAST_KINDS[\\s\\S]*?"acquisition_offer"/);
+assert.match(main,/acquisition_offer:\{title:"強制收購機會"/);
+assert.match(main,/ACTION_TOAST_KINDS[\s\S]*?"acquisition_offer"/);
 assert.match(main,/if\(itemPromptDialog\?\.open\)itemPromptDialog\.close\(\)/);
-assert.match(main,/state\.pendingAcquisition/);\nassert.match(main,/state\.pendingPurchase!=null[\\s\\S]*?state\.pendingAcquisition[\\s\\S]*?state\.pendingTransport/);
+assert.match(main,/state\.pendingAcquisition/);
+assert.match(main,/state\.pendingPurchase!=null[\s\S]*?state\.pendingAcquisition[\s\S]*?state\.pendingTransport/);
 assert.match(main,/acquisitionDialog\?\.open/);
 assert.match(main,/acquisitionDialog\.classList\.toggle\("is-landing-acquisition",landingOffer\)/);
 assert.match(main,/踩到對手地產｜強制收購/);
