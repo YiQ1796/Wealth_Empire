@@ -20,10 +20,12 @@ assert.ok(
 
 assert.match(ui,/data-minigame-close>關閉<\/button>/);
 assert.doesNotMatch(main,/action-toast__divider-mask/);
-assert.doesNotMatch(main,/action-toast__card-bg/);
+assert.match(main,/action-toast__card-bg/);
 assert.match(css,/V20 Alpha 32\.3 — single-surface notifications/);
 assert.match(css,/\.action-toast\.leaving/);
 assert.match(css,/\.action-toast__card-bg,[\s\S]*?display:none!important/);
+assert.match(css,/V20 Alpha 32\.3\.11 — restore desktop notification frame artwork/);
+assert.match(css,/@media \(min-width:1181px\)\{[\s\S]*?\.action-toast__card-bg\{[\s\S]*?display:block!important/);
 assert.doesNotMatch(css,/V20 Alpha 29\.2 — phone notice seam mask/);
 
-console.log("V20 Alpha 32.3 UI hotfix regression PASS");
+console.log("V20 Alpha 32.3.11 desktop-frame/mobile-notice regression PASS");

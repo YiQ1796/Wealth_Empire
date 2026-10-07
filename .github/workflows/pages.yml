@@ -530,17 +530,16 @@ jobs:
           grep -q 'V20 Alpha 32.3 — single-surface notifications' v20/styles/app.css
           grep -q '.action-toast.leaving' v20/styles/app.css
           grep -q 'overflow:hidden!important' v20/styles/app.css
-          if grep -q 'action-toast__card-bg' v20/js/main.js; then
-            echo "Legacy notification background image render source must not return"
-            exit 1
-          fi
+          grep -q 'action-toast__card-bg' v20/js/main.js
+          grep -q 'V20 Alpha 32.3.11 — restore desktop notification frame artwork' v20/styles/app.css
+          grep -q 'display:block!important' v20/styles/app.css
           if grep -q 'action-toast__divider-mask' v20/js/main.js; then
             echo "Legacy notification seam mask must not return"
             exit 1
           fi
           grep -q 'app.css?v=alpha32-232' v20/index.html
           grep -q 'main.js?v=alpha32-232' v20/index.html
-          echo "V20 phone single-surface notification fit PASS"
+          echo "V20 desktop notification frame + phone single-surface fit PASS"
 
       - name: Validate V20 mobile pass 2 composition
         shell: bash
