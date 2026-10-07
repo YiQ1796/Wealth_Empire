@@ -25,7 +25,7 @@ export const CENTRAL_FEATURES=Object.freeze([
     name:"租金保險中心",
     position:"left",
     building:"./assets/center-v1/CENTRAL_INSURANCE.webp",
-    description:"啟動一次租金保護，降低下一次踩到他人地產的租金。"
+    description:"支付保費啟動一次租金保護；只能降低下一次過路費，使用後進入 3 ROUND 冷卻。"
   },
   {
     id:"development",
@@ -48,7 +48,10 @@ export const CENTRAL_TEST_TUNING=Object.freeze({
     Object.freeze({principal:10000,returnAmount:12000}),
     Object.freeze({principal:20000,returnAmount:23000})
   ]),
-  insuranceRentMultiplier:0.5,
+  insuranceRentMultiplier:0.6,
+  insuranceCooldownRounds:3,
+  insurancePremiumBase:1200,
+  insurancePropertyPremium:250,
   missionReward:900,
   transitDistances:Object.freeze([3,6,9])
 });
