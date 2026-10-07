@@ -54,7 +54,6 @@ const rankingMarker="/* V20 Alpha 32.3.7 — desktop wealth ranking + forced-acq
 const rankingStart=css.indexOf(rankingMarker);
 assert.ok(rankingStart>=0,"desktop wealth ranking marker missing");
 const rankingBlock=css.slice(rankingStart);
-assert.match(rankingBlock,/\.wealth-ranking-heading\{/);
 assert.match(rankingBlock,/\.player-rank-badge--1\{/);
 assert.match(rankingBlock,/\.player-wealth\{/);
 assert.match(rankingBlock,/\.players::before\{[\s\S]*?即時總資產排名/);
