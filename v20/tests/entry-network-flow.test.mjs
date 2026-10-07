@@ -6,8 +6,8 @@ const css=readFileSync(new URL("../styles/app.css",import.meta.url),"utf8");
 const main=readFileSync(new URL("../js/main.js",import.meta.url),"utf8");
 const network=readFileSync(new URL("../js/core/network.js",import.meta.url),"utf8");
 
-assert.match(html,/財富帝國 V20 Alpha 32\.3\.1/);
-assert.match(html,/alpha32-222/);
+assert.match(html,/財富帝國 V20 Alpha 32\.3\.2/);
+assert.match(html,/alpha32-223/);
 assert.match(html,/id="networkLobbyCard"/);
 assert.match(html,/id="networkLobbyStartButton"/);
 assert.match(html,/id="networkLobbyManageButton"/);
@@ -34,7 +34,7 @@ assert.match(network,/RELAY_JOIN_TIMEOUT_MS=8000/);
 assert.match(network,/PEER_JOIN_TIMEOUT_MS=9000/);
 assert.match(network,/export function prewarmNetworkTransport/);
 
-assert.match(css,/V20 Alpha 32\.3\.1 — connected players return to the board/);
+assert.match(css,/V20 Alpha 32\.3\.2 — connected players return to the board/);
 assert.match(css,/\.network-lobby-card\[hidden\]/);
 
-console.log("V20 Alpha32.3.1 entry + friend lobby regression PASS");
+console.log("V20 Alpha32.3.2 entry + friend lobby regression PASS");

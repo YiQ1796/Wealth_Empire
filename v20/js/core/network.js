@@ -330,6 +330,7 @@ export class PeerNetwork{
     this.processedActionIds=new Map();
 
     this.relayClient=null;
+    this.hostRelayClients=new Map();
     this.relayConnectionsByClient=new Map();
     this.relayHeartbeatTimer=null;
     this.relayWatchdogTimer=null;
@@ -403,27 +404,30 @@ export class PeerNetwork{
     this.playerName=sanitizePlayerName(playerName);
     this.characterIndex=sanitizeCharacterIndex(characterIndex);
 
-    let relayConnected=false;
-    let relayError=null;
-    for(const brokerUrl of orderedRelayBrokerUrls()){
-      try{
-        await this.startHostRelay(brokerUrl);
-        rememberRelayBroker(brokerUrl);
-        relayConnected=true;
-        break;
-      }catch(error){
-        relayError=error;
-        this.cleanupRelayTransport();
-      }
-    }
+    const brokerUrls=orderedRelayBrokerUrls();
+    const relayResults=await Promise.allSettled(
+      brokerUrls.map(brokerUrl=>this.startHostRelay(brokerUrl))
+    );
+    const connectedBrokers=relayResults
+      .map((result,index)=>result.status==="fulfilled"?brokerUrls[index]:null)
+      .filter(Boolean);
+    const relayErrors=relayResults
+      .filter(result=>result.status==="rejected")
+      .map(result=>result.reason);
 
-    if(relayConnected){
+    connectedBrokers.forEach(rememberRelayBroker);
+
+    if(connectedBrokers.length>0){
       this.transport="relay";
+      this.startHostRelayWatchdog();
       this.startHostPeer().catch(()=>{});
-      this.status("房間已建立，房號 "+this.roomCode+"。目前使用 WSS 中繼，可跨不同網路與手機 NAT；P2P 同步作為備援。","success");
+      const relayLabel=connectedBrokers.length===RELAY_BROKER_URLS.length
+        ?"雙 WSS 中繼已就緒"
+        :"WSS 中繼 "+connectedBrokers.length+"/"+RELAY_BROKER_URLS.length+" 已就緒";
+      this.status("房間已建立，房號 "+this.roomCode+"。"+relayLabel+"；P2P 同步作為第三層備援。","success");
     }else{
       this.status("WSS 中繼暫時不可用，正在切換 P2P 備援。","warning");
-      let peerError=relayError;
+      let peerError=relayErrors.at(-1)??null;
       for(let attempt=0;attempt<4;attempt++){
         try{
           await this.startHostPeer();
@@ -464,47 +468,52 @@ export class PeerNetwork{
       keepalive:15,
       protocolVersion:4
     });
-    this.relayClient=client;
 
-    await new Promise((resolve,reject)=>{
-      const timer=setTimeout(()=>reject(new Error("relay_timeout")),RELAY_HOST_TIMEOUT_MS);
-      let settled=false;
+    try{
+      await new Promise((resolve,reject)=>{
+        const timer=setTimeout(()=>reject(new Error("relay_timeout")),RELAY_HOST_TIMEOUT_MS);
+        let settled=false;
 
-      client.on("connect",()=>{
-        if(this.relayClient!==client)return;
-        client.subscribe(base+"/guest/+",{qos:1},error=>{
-          if(error){
+        client.on("connect",()=>{
+          client.subscribe(base+"/guest/+",{qos:1},error=>{
+            if(error){
+              if(!settled){
+                settled=true;
+                clearTimeout(timer);
+                reject(error);
+              }
+              return;
+            }
             if(!settled){
               settled=true;
               clearTimeout(timer);
-              reject(error);
+              resolve();
             }
-            return;
-          }
+          });
+        });
+        client.on("error",error=>{
           if(!settled){
             settled=true;
             clearTimeout(timer);
-            resolve();
+            reject(error);
           }
         });
       });
-      client.on("error",error=>{
-        if(!settled){
-          settled=true;
-          clearTimeout(timer);
-          reject(error);
-        }
-      });
-    });
+    }catch(error){
+      try{client.end(true)}catch{}
+      throw error;
+    }
+
+    this.hostRelayClients.set(brokerUrl,client);
 
     client.on("message",(topic,raw)=>{
-      if(this.relayClient!==client||this.mode!=="host")return;
+      if(this.hostRelayClients.get(brokerUrl)!==client||this.mode!=="host")return;
       try{
         const clientId=String(topic).split("/").pop();
         const envelope=JSON.parse(raw.toString());
         const message=envelope?.payload??envelope;
         if(!clientId||!message||typeof message!=="object")return;
-        const connection=this.getRelayHostConnection(clientId,base);
+        const connection=this.getRelayHostConnection(clientId,base,client,brokerUrl);
         connection.lastSeen=Date.now();
         if(message.type==="relay_disconnect"){
           this.disconnectRelayConnection(connection);
@@ -514,14 +523,26 @@ export class PeerNetwork{
       }catch{}
     });
 
-    client.on("offline",()=>this.status("WSS 中繼暫時離線，系統正在自動重連。","warning"));
-    client.on("reconnect",()=>this.status("WSS 中繼正在重新連線…","warning"));
+    client.on("offline",()=>{
+      if(this.mode==="host"){
+        this.status("其中一個 WSS 中繼暫時離線，另一個中繼與 P2P 仍會繼續服務。","warning");
+      }
+    });
+    client.on("reconnect",()=>{
+      if(this.mode==="host"){
+        this.status("其中一個 WSS 中繼正在重新連線…","warning");
+      }
+    });
     client.on("connect",()=>{
       if(this.mode==="host"){
         client.subscribe(base+"/guest/+",{qos:1},()=>{});
       }
     });
 
+    return brokerUrl;
+  }
+
+  startHostRelayWatchdog(){
     clearInterval(this.relayWatchdogTimer);
     this.relayWatchdogTimer=setInterval(()=>{
       if(this.mode!=="host")return;
@@ -534,8 +555,9 @@ export class PeerNetwork{
     },7000);
   }
 
-  getRelayHostConnection(clientId,base){
-    let connection=this.relayConnectionsByClient.get(clientId);
+  getRelayHostConnection(clientId,base,client,brokerUrl){
+    const relayKey=brokerUrl+"|"+clientId;
+    let connection=this.relayConnectionsByClient.get(relayKey);
     if(connection){
       connection.open=true;
       return connection;
@@ -543,13 +565,15 @@ export class PeerNetwork{
 
     connection={
       relay:true,
+      relayKey,
+      brokerUrl,
       open:true,
       clientId,
       metadata:null,
       lastSeen:Date.now(),
       send:message=>{
-        if(!this.relayClient?.connected)throw new Error("relay_not_connected");
-        this.relayClient.publish(
+        if(!client?.connected)throw new Error("relay_not_connected");
+        client.publish(
           base+"/host/"+clientId,
           JSON.stringify({payload:message,ts:Date.now()}),
           {qos:relayQos(message),retain:false}
@@ -557,14 +581,14 @@ export class PeerNetwork{
       },
       close:()=>this.disconnectRelayConnection(connection)
     };
-    this.relayConnectionsByClient.set(clientId,connection);
+    this.relayConnectionsByClient.set(relayKey,connection);
     return connection;
   }
 
   disconnectRelayConnection(connection){
     if(!connection?.open)return;
     connection.open=false;
-    this.relayConnectionsByClient.delete(connection.clientId);
+    this.relayConnectionsByClient.delete(connection.relayKey??connection.clientId);
     const seat=connection.metadata?.seat;
     const clientId=connection.metadata?.clientId;
     if(Number.isInteger(seat)&&this.connections.get(seat)===connection){
@@ -617,10 +641,10 @@ export class PeerNetwork{
       const seat=Number(response.seat);
       connection.metadata={seat,clientId};
       const previous=this.connections.get(seat);
+      this.connections.set(seat,connection);
       if(previous&&previous!==connection){
         try{previous.close()}catch{}
       }
-      this.connections.set(seat,connection);
 
       connection.send({
         type:"join_ack",
@@ -959,6 +983,10 @@ export class PeerNetwork{
       this.relayClient=null;
     }
 
+    for(const client of this.hostRelayClients.values()){
+      try{client.end(true)}catch{}
+    }
+    this.hostRelayClients.clear();
     this.relayConnectionsByClient.clear();
     if(this.hostConnection?.relay){
       try{this.hostConnection.close()}catch{}
@@ -991,6 +1019,11 @@ export class PeerNetwork{
       try{this.relayClient.end(true)}catch{}
       this.relayClient=null;
     }
+
+    for(const client of this.hostRelayClients.values()){
+      try{client.end(true)}catch{}
+    }
+    this.hostRelayClients.clear();
 
     if(this.peer){
       try{this.peer.destroy()}catch{}

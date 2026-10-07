@@ -11,7 +11,7 @@ import{
   sanitizePlayerName,
   sanitizeRoomCode,
   saveHostSnapshot
-}from"./core/network.js";
+}from"./core/network.js?v=alpha32-223";
 import{characterAsset,mountStaticBoard,render}from"./ui/render.js";
 import{itemUiSummary}from"./ui/item-render.js";
 import{renderStockMarket}from"./ui/stock-render.js";
