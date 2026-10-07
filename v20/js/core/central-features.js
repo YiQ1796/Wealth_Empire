@@ -3,6 +3,7 @@ import{
   CENTRAL_MISSION_BY_ID,
   CENTRAL_TEST_TUNING
 }from"../data/central-features.js";
+import{bankReturnAmount}from"./world-events.js";
 import{canUpgradeProperty,upgradeCost}from"./property-economy.js";
 
 function currentRound(state){
@@ -90,9 +91,11 @@ export function startBankDeposit(state,seat,principal=minimumBankPrincipal()){
   const player=state.players[Number(seat)];
   const round=currentRound(state);
   player.cash-=plan.principal;
+  const adjustedReturn=bankReturnAmount(state,plan.principal,plan.returnAmount);
   player.centralBankDeposit={
     principal:plan.principal,
-    returnAmount:plan.returnAmount,
+    returnAmount:adjustedReturn,
+    baseReturnAmount:plan.returnAmount,
     startedRound:round,
     maturesRound:round+CENTRAL_TEST_TUNING.bankRounds
   };
