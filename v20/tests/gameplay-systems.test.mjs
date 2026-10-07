@@ -118,6 +118,8 @@ function commonPickValue(pool,eventId){
 
   state.phase="minigame";
   assert.equal(buyStock(state,0,stock.id,1).reason,"trade_locked");
+  state.phase="world_choice";
+  assert.equal(buyStock(state,0,stock.id,1).reason,"trade_locked","mandatory event choices must resolve before stock trading resumes");
 }
 
 {
