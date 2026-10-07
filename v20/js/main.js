@@ -1887,6 +1887,7 @@ const skipTransport=()=>dispatchAction({type:"transport_skip"});
 document.getElementById("skipTransportButton").addEventListener("click",skipTransport);
 document.getElementById("skipTransportIconButton").addEventListener("click",skipTransport);
 transportDialog.addEventListener("cancel",event=>event.preventDefault());
+worldChoiceDialog.addEventListener("cancel",event=>event.preventDefault());
 
 document.getElementById("closeNetworkDialog").addEventListener("click",()=>networkDialog.close());
 networkDialog.addEventListener("click",event=>{
