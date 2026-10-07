@@ -454,14 +454,19 @@ function commonPickValue(pool,eventId){
   const engine=new GameEngine(state,()=>{});
   state.currentPlayer=1;
   const stationIndex=TRANSPORT_NODE_INDEXES[2];
+  const ownedPropertyIndex=24;
+  state.tiles[ownedPropertyIndex].owner=1;
+  state.players[1].properties=[ownedPropertyIndex];
   state.players[1].position=(stationIndex-2+state.tiles.length)%state.tiles.length;
   assert.equal(engine.roll(1,{d1:1,d2:1}),true);
   assert.equal(state.phase,"transport");
-  assert.equal(engine.runAiStep(),true,"AI must resolve its own transport decision");
+  assert.equal(state.pendingTransport?.kind,"port_logistics");
+  assert.equal(engine.runAiStep(),true,"AI must resolve its own port logistics decision");
   assert.equal(state.phase,"landed");
   assert.equal(state.pendingTransport,null);
-  assert.ok(TRANSPORT_NODE_INDEXES.includes(state.players[1].position));
-  assert.notEqual(state.players[1].position,stationIndex);
+  assert.equal(state.players[1].position,stationIndex,"port logistics must not move the player");
+  assert.equal(state.players[1].portLogistics?.group,state.tiles[ownedPropertyIndex].group);
+  assert.equal(state.players[1].portLogistics?.remainingCharges,2);
 }
 
 {
