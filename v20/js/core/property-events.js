@@ -17,6 +17,7 @@ function noBlockingDecision(state){
     state.pendingTransport==null&&
     state.pendingAcquisition==null&&
     state.pendingUrban==null&&
+    state.pendingWorldChoice==null&&
     state.phase!=="minigame"&&
     state.phase!=="finished"
   );
