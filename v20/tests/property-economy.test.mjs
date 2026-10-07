@@ -71,12 +71,12 @@ assert.deepEqual(
   "duplicate adjacent chance/fate tiles are forbidden"
 );
 
-assert.equal(GROUP_RENT_MULTIPLIERS["海港區"],1.25);
-assert.equal(GROUP_RENT_MULTIPLIERS["帝王區"],1.25);
-assert.equal(GROUP_RENT_MULTIPLIERS["科技區"],1.5);
-assert.equal(GROUP_RENT_MULTIPLIERS["金融區"],1.5);
-assert.equal(GROUP_RENT_MULTIPLIERS["商業區"],2);
-assert.equal(GROUP_RENT_MULTIPLIERS["豪宅區"],2);
+assert.equal(GROUP_RENT_MULTIPLIERS["海港區"],1.5);
+assert.equal(GROUP_RENT_MULTIPLIERS["帝王區"],1.5);
+assert.equal(GROUP_RENT_MULTIPLIERS["科技區"],1.75);
+assert.equal(GROUP_RENT_MULTIPLIERS["金融區"],1.75);
+assert.equal(GROUP_RENT_MULTIPLIERS["商業區"],2.25);
+assert.equal(GROUP_RENT_MULTIPLIERS["豪宅區"],2.25);
 
 const occupied=new Set();
 BOARD_TILES.forEach((tile,index)=>{
@@ -91,7 +91,7 @@ const state=createInitialState();
 const engine=new GameEngine(state,()=>{});
 const buyer=state.players[0];
 
-// Use a 4-property region so the test covers the hardest x2 completion bonus.
+// Use a 4-property region so the test covers the strongest x2.25 completion bonus.
 const testGroup="商業區";
 const testIndexes=state.tiles
   .map((tile,index)=>({tile,index}))
@@ -119,14 +119,14 @@ const progress=groupProgress(state,buyer.seat,testGroup);
 assert.deepEqual(progress,{owned:4,total:4,complete:true},"buying all 4 properties must complete the region");
 
 const upgradedTile=state.tiles[testIndexes[0]];
-const completeGroupBaseRent=Math.round(upgradedTile.rent*2);
+const completeGroupBaseRent=Math.round(upgradedTile.rent*2.25);
 const initialRentDetail=rentBreakdown(state,upgradedTile);
-assert.equal(rentFor(state,upgradedTile),completeGroupBaseRent,"4-property region must double rent");
+assert.equal(rentFor(state,upgradedTile),completeGroupBaseRent,"4-property region must apply the x2.25 rent multiplier");
 assert.equal(initialRentDetail.completeGroup,true);
-assert.equal(initialRentDetail.groupMultiplier,2);
+assert.equal(initialRentDetail.groupMultiplier,2.25);
 assert.equal(initialRentDetail.baseRent,upgradedTile.rent);
 assert.equal(initialRentDetail.beforeGroupRent,upgradedTile.rent);
-assert.equal(initialRentDetail.groupBonus,upgradedTile.rent);
+assert.equal(initialRentDetail.groupBonus,completeGroupBaseRent-upgradedTile.rent);
 assert.equal(initialRentDetail.finalRent,completeGroupBaseRent);
 
 state.phase="await-roll";
@@ -236,9 +236,9 @@ engine.resolveLanding(payer);
 const latestRentEvent=state.events.find(event=>event.kind==="rent");
 assert.ok(latestRentEvent,"landing on a completed region must emit a rent event");
 assert.equal(latestRentEvent.data?.rentBreakdown?.completeGroup,true);
-assert.equal(latestRentEvent.data?.rentBreakdown?.groupMultiplier,2);
+assert.equal(latestRentEvent.data?.rentBreakdown?.groupMultiplier,2.25);
 assert.ok(latestRentEvent.data?.rentBreakdown?.groupBonus>0);
-assert.match(latestRentEvent.text,/商業區連區 ×2/);
+assert.match(latestRentEvent.text,/商業區連區 ×2.25/);
 assert.match(latestRentEvent.text,/連區加成 \+\$/);
 
 assert.equal(buyer.cash,ownerCashBefore+expectedRent,"owner must receive the exact calculated rent");
@@ -246,4 +246,4 @@ assert.equal(payer.cash,payerCashBefore-expectedRent,"payer must pay the exact c
 assert.equal(buyer.rentReceived,rentReceivedBefore+expectedRent,"owner rent history total must update");
 assert.equal(payer.rentPaid,rentPaidBefore+expectedRent,"payer rent history total must update");
 
-console.log("V20 Alpha 18 property economy test PASS");
+console.log("V20 Alpha 32.3.13 property economy test PASS");
