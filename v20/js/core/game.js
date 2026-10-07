@@ -3,6 +3,7 @@ import{fillAiMinigameResults,finalizeMinigame,startMinigame,submitMinigameResult
 import{canUpgradeProperty,ownsCompleteGroup,rentBreakdown,rentFor,upgradeCost}from"./property-economy.js?v=alpha32-227";
 import{GROUP_SIZES,groupRentMultiplier}from"../data/board.js";
 import{advanceStockMarket,buyStock as executeBuyStock,getMarketStock,sellStock as executeSellStock}from"./stock-market.js";
+import{playerAssetRankings}from"./player-assets.js?v=alpha32-228";
 import{resolveSpecialEvent}from"./special-events.js";
 import{canUseTransport,chooseAiTransportDestination,createPendingTransport,transportNode}from"./transport.js";
 import{chooseAiAcquisition,createPendingAcquisition,executeAcquisition}from"./acquisition-center.js?v=alpha32-226";
@@ -1269,7 +1270,25 @@ export class GameEngine{
         this.state.turnToken+=1;
         this.state.aiPreparedTurnToken=null;
         this.state.dice=null;
-        this.log("第 "+this.state.maxRounds+" ROUND 已完成，遊戲正式結束。","game_complete",{round:this.state.round});
+        const assetRankings=playerAssetRankings(this.state).map(entry=>({
+          rank:entry.rank,
+          seat:entry.seat,
+          playerName:entry.player.name,
+          total:entry.assets.total,
+          cash:entry.assets.cash,
+          properties:entry.assets.properties,
+          stocks:entry.assets.stocks,
+          bankDeposit:entry.assets.bankDeposit
+        }));
+        const champion=assetRankings[0];
+        this.log(
+          "第 "+this.state.maxRounds+" ROUND 已完成，遊戲正式結束。"+
+            (champion
+              ?" 冠軍："+champion.playerName+"｜總資產 "+this.formatMoney(champion.total)+"。"
+              :""),
+          "game_complete",
+          {round:this.state.round,rankings:assetRankings}
+        );
         this.notify();
         return true;
       }
