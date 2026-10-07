@@ -3,6 +3,7 @@ import{appendEventHistory,pickEventFromPool,RARE_EVENT_RATE}from"./event-picker.
 import{applyRandomPropertyUpgrade,grantDevelopmentPermits,grantPropertyProtectionPermits}from"./property-events.js";
 import{grantItem,inventoryCount}from"./items.js";
 import{ITEM_BY_ID}from"../data/items.js";
+import{resolveExtendedEventEffect}from"./world-events.js";
 
 function wrappedPosition(position,delta,size){
   return((position+delta)%size+size)%size;
@@ -107,6 +108,9 @@ export function resolveSpecialEvent(state,player,type,random=Math.random){
       const fallback=applyCash(player,effect.fallbackAmount??1500);
       result={...result,kind:"cash",...fallback,fallback:"no_upgradeable_property"};
     }
+  }else{
+    const extended=resolveExtendedEventEffect(state,player,effect,event,random);
+    if(extended)result={...result,...extended,kind:extended.kind??effect.kind};
   }
 
   appendEventHistory(state,{type,event});
