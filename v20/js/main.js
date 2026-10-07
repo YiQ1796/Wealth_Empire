@@ -275,6 +275,18 @@ function noticeConfig(event){
   return map[event.kind]??{title:"遊戲動態",icon:N.icons.marketTick,effect:N.effects.blue,tone:"blue"};
 }
 
+function noticeCardSources(config){
+  const cards=UI_ASSETS.notification.cards;
+  const market=UI_ASSETS.notification.market;
+  if(config.market){
+    return{desktop:market.desktop,mobile:market.mobile};
+  }
+  if(config.major||config.metric){
+    return{desktop:cards.majorDesktop,mobile:cards.majorMobile};
+  }
+  return{desktop:cards.standardDesktop,mobile:cards.standardMobile};
+}
+
 function noticeMoney(value){
   const number=Number(value);
   if(!Number.isFinite(number))return"—";
@@ -593,6 +605,7 @@ function pumpActionNotice(){
 
   const event=noticeQueue.shift();
   const config=noticeConfig(event);
+  const source=noticeCardSources(config);
   const view=noticeView(event);
   const node=document.createElement("div");
   node.className=
@@ -603,6 +616,9 @@ function pumpActionNotice(){
     (view.metric?" action-toast--has-metric":"");
 
   node.innerHTML=
+    '<picture class="action-toast__card-bg" aria-hidden="true">'+
+      '<img src="'+source.desktop+'" alt="">'+
+    '</picture>'+
     '<img class="action-toast__fx" src="'+config.effect+'" alt="">'+
     (config.major&&config.tone==="gold"?'<img class="action-toast__sparkle" src="'+UI_ASSETS.notification.effects.sparkleGold+'" alt="">':"")+
     '<div class="action-toast__content">'+

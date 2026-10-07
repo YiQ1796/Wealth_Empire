@@ -36,13 +36,14 @@ assert.match(main,/function canStartRoomGame\(\)/);
 assert.match(main,/const started=engine\.startGame\(hostSeat\)/);
 assert.match(main,/好友與 AI 補位已同步進入棋盤/);
 assert.doesNotMatch(main,/action-toast__divider-mask/);
-assert.doesNotMatch(main,/action-toast__card-bg/);
+assert.match(main,/action-toast__card-bg/);
+assert.match(main,/function noticeCardSources\(config\)/);
 
 assert.match(css,/V20 Alpha 32\.3 — single-surface notifications/);
 assert.match(css,/\.action-toast\.leaving/);
 assert.match(css,/\.action-toast__card-bg,[\s\S]*?display:none!important/);
 assert.match(css,/overflow:hidden!important/);
 assert.match(html,/財富帝國 V20 Alpha 32\.3/);
-assert.match(html,/alpha32-231/);
+assert.match(html,/alpha32-232/);
 
-console.log("V20 Alpha32.3.10 lobby start and single-surface notification regression PASS");
+console.log("V20 Alpha32.3.11 lobby start and notification frame regression PASS");
