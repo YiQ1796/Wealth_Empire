@@ -62,12 +62,36 @@ export function createPendingTransport(state,player){
   const source=TRANSPORT_NODE_BY_INDEX[sourceIndex];
   if(!source)return null;
 
+  const round=Math.max(1,Number(state?.round)||1);
+  const transportEffect=state?.strategicEffects?.transport??{};
+  const blocked=(
+    Number(transportEffect.blockedNodeIndex)===sourceIndex&&
+    Number(transportEffect.blockedUntilRound)>=round
+  );
+  const freeDay=Number(transportEffect.freeUntilRound)>=round;
+  const effectiveFee=freeDay?0:Math.max(0,Number(source.fee)||0);
+  const freeDayBonus=freeDay?Math.max(0,Number(transportEffect.freeDayBonus)||0):0;
+
+  if(blocked){
+    return{
+      seat:player.seat,
+      sourceIndex,
+      kind:"blocked",
+      originalKind:source.id,
+      fee:0,
+      freeDayBonus:0,
+      resolveLanding:false,
+      destinationIndexes:[]
+    };
+  }
+
   if(source.id==="central_station"){
     return{
       seat:player.seat,
       sourceIndex,
       kind:"station",
-      fee:source.fee,
+      fee:effectiveFee,
+      freeDayBonus,
       resolveLanding:false,
       destinationIndexes:transportDestinations(sourceIndex).map(node=>node.index)
     };
@@ -78,7 +102,8 @@ export function createPendingTransport(state,player){
       seat:player.seat,
       sourceIndex,
       kind:"airport",
-      fee:source.fee,
+      fee:effectiveFee,
+      freeDayBonus,
       resolveLanding:true,
       destinationIndexes:groupEntryIndexes()
     };
@@ -90,7 +115,8 @@ export function createPendingTransport(state,player){
       seat:player.seat,
       sourceIndex,
       kind:"port_logistics",
-      fee:source.fee,
+      fee:effectiveFee,
+      freeDayBonus,
       resolveLanding:false,
       destinationIndexes:options.map(option=>option.index)
     };
@@ -100,7 +126,8 @@ export function createPendingTransport(state,player){
     seat:player.seat,
     sourceIndex,
     kind:"bridge",
-    fee:source.fee,
+    fee:effectiveFee,
+    freeDayBonus,
     resolveLanding:false,
     destinationIndexes:BRIDGE_EXIT_INDEXES.filter(index=>index!==sourceIndex)
   };
