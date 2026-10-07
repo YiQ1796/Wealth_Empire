@@ -347,20 +347,34 @@ export class GameEngine{
       const pending=createPendingTransport(this.state,player);
       if(!pending){
         this.state.phase="landed";
-        this.log(player.name+" 抵達「"+tile.name+"」，但交通節點資料不完整。","warning",{seat:player.seat,tile:player.position});
+        this.log(player.name+" 抵達「"+tile.name+"」，但交通樞紐資料不完整。","warning",{seat:player.seat,tile:player.position});
+        return;
+      }
+      if(pending.status==="strike"){
+        player.cash+=300;
+        this.state.phase="landed";
+        this.log(
+          player.name+" 抵達「"+tile.name+"」，遇到交通罷工，本 ROUND 樞紐服務暫停；改領交通補貼 $300。",
+          "transport_event",
+          {seat:player.seat,sourceIndex:pending.sourceIndex,sourceName:tile.name,status:"strike",amount:300,cashAfter:player.cash}
+        );
         return;
       }
       this.state.pendingTransport=pending;
       this.state.phase="transport";
+      const node=transportNode(pending.sourceIndex);
       this.log(
-        player.name+" 抵達「"+tile.name+"」，可免費轉乘至其他交通節點，或留在原地。",
+        player.name+" 抵達「"+tile.name+"」，啟用「"+(node?.description??"交通樞紐功能")+"」"+
+          (pending.status==="free_day"?"（交通免費日：付費選項本回合免費）":""),
         "transport_offer",
         {
           seat:player.seat,
           playerName:player.name,
           sourceIndex:pending.sourceIndex,
           sourceName:tile.name,
-          destinationIndexes:pending.destinationIndexes
+          nodeId:pending.nodeId,
+          status:pending.status,
+          actionIds:(pending.actions??[]).map(action=>action.id)
         }
       );
       return;
