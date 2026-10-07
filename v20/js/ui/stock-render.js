@@ -95,7 +95,7 @@ function stockCardMarkup(stock,player,canTrade,draft){
 
 function selectionMarkup(state,draft,canTrade){
   if(!canTrade){
-    return '<div class="stock-selection-bar is-locked" data-stock-selection><strong>目前暫停股票交易</strong><span>小遊戲、重大決策或結算期間暫時不能交易。</span></div>';
+    return '<div class="stock-selection-bar is-locked" data-stock-selection><strong>目前暫停股票交易</strong><span>小遊戲或遊戲結算期間暫時不能交易。</span></div>';
   }
   const stock=state.market.stocks.find(item=>item.id===draft.stockId);
   if(!stock){
@@ -116,7 +116,6 @@ export function renderStockMarket(container,state,localSeat,{onBuy=()=>{},onSell
     player.connected!==false&&
     !player.bankrupt&&
     state.phase!=="minigame"&&
-    state.phase!=="world_choice"&&
     state.phase!=="finished";
 
   const draft=getDraft(container);
