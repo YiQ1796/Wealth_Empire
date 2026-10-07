@@ -6874,3 +6874,43 @@ body.entry-pending .app-shell{
     font-size:10px
   }
 }
+
+
+/* V20 Alpha 32.3.13 — phone stock keyboard overlay hotfix.
+   Keep the board at its pre-keyboard size; only the market dialog fits the visible keyboard viewport. */
+@media (orientation:landscape) and (max-height:650px) and (max-width:1180px){
+  body.stock-keyboard-active .app-shell,
+  body.stock-keyboard-active .game-layout,
+  body.stock-keyboard-active .board-panel,
+  body.stock-keyboard-active .board{
+    height:var(--phone-app-height,100dvh);
+    min-height:var(--phone-app-height,100dvh);
+    max-height:var(--phone-app-height,100dvh)
+  }
+  body.stock-keyboard-active .feature-dialog{
+    top:max(4px,env(safe-area-inset-top));
+    bottom:auto;
+    margin:0 auto;
+    height:calc(var(--stock-keyboard-height,100dvh) - max(8px,env(safe-area-inset-top)) - max(6px,env(safe-area-inset-bottom)));
+    max-height:calc(var(--stock-keyboard-height,100dvh) - max(8px,env(safe-area-inset-top)) - max(6px,env(safe-area-inset-bottom)))
+  }
+  body.stock-keyboard-active .feature-modal{
+    height:100%;
+    max-height:100%;
+    padding-bottom:max(12px,env(safe-area-inset-bottom))
+  }
+  body.stock-keyboard-active .feature-modal__header{
+    position:sticky;
+    top:0;
+    z-index:20
+  }
+  body.stock-keyboard-active .feature-modal__pane--market.active{
+    min-height:0
+  }
+  body.stock-keyboard-active .stock-selection-bar{
+    top:44px
+  }
+  body.stock-keyboard-active .stock-trade-card.is-active-trade{
+    scroll-margin-block:60px 18px
+  }
+}
