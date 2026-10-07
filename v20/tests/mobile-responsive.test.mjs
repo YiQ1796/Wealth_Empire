@@ -34,7 +34,7 @@ assert.match(render,/mobileRollButton\.disabled=rollDisabled/);
 
 console.log("V20 Alpha19 mobile responsive static regression PASS");
 
-assert.doesNotMatch(main,/action-toast__card-bg/);
+assert.match(main,/action-toast__card-bg/);
 assert.doesNotMatch(main,/action-toast__divider-mask/);
 assert.match(css,/@media \(orientation:landscape\) and \(max-height:650px\) and \(max-width:1180px\)/);
 assert.match(css,/Alpha 19 mobile notification correction/);
