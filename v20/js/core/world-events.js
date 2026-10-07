@@ -98,6 +98,11 @@ function applySectorPercent(state,sector,percent){
     .filter(Boolean);
 }
 
+export function applyDirectStockMove(state,stockId,percent){
+  const stock=(state.market?.stocks??[]).find(item=>item.id===String(stockId));
+  return applyStockPercent(state,stock,percent);
+}
+
 function playerOwnedIndexes(state,player){
   return(player?.properties??[]).filter(index=>state.tiles?.[index]?.owner===player.seat);
 }
