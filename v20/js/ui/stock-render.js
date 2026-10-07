@@ -270,7 +270,6 @@ export function renderStockMarket(container,state,localSeat,{onBuy=()=>{},onSell
         else if(mode==="all-held")value=Math.max(0,Math.min(9999,position?.shares??0));
         input.value=value>0?String(value):"";
         syncTradeState();
-        input.focus();
       });
     });
 
