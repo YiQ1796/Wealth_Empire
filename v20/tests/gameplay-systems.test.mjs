@@ -198,6 +198,16 @@ function commonPickValue(pool,eventId){
     {type:"transport_travel",destinationIndex:32}
   );
   assert.equal(normalizeRemoteAction({type:"transport_travel",destinationIndex:44}),null);
+  assert.deepEqual(
+    normalizeRemoteAction({type:"transport_action",actionId:"port_export_order"}),
+    {type:"transport_action",actionId:"port_export_order"}
+  );
+  assert.equal(normalizeRemoteAction({type:"transport_action",actionId:"!!!"}),null);
+  assert.deepEqual(
+    normalizeRemoteAction({type:"world_choice_select",optionId:"accept_contract"}),
+    {type:"world_choice_select",optionId:"accept_contract"}
+  );
+  assert.equal(normalizeRemoteAction({type:"world_choice_select",optionId:"<bad>"}),null);
   assert.deepEqual(normalizeRemoteAction({type:"transport_skip"}),{type:"transport_skip"});
   assert.deepEqual(
     normalizeRemoteAction({type:"acquisition_buy",tileIndex:2}),
@@ -395,39 +405,39 @@ function commonPickValue(pool,eventId){
   const engine=new GameEngine(state,()=>{});
   const stationIndex=TRANSPORT_NODE_INDEXES[0];
   state.players[0].position=(stationIndex-2+state.tiles.length)%state.tiles.length;
+  const cashBefore=state.players[0].cash;
 
   assert.equal(engine.roll(0,{d1:1,d2:1}),true);
   assert.equal(state.players[0].position,stationIndex);
-  assert.equal(state.phase,"transport","station tile must enter the transport decision phase");
+  assert.equal(state.phase,"transport","central station must open its dedicated transport actions");
   assert.equal(state.pendingTransport?.sourceIndex,stationIndex);
   assert.deepEqual(
-    state.pendingTransport?.destinationIndexes,
-    TRANSPORT_NODE_INDEXES.filter(index=>index!==stationIndex)
+    state.pendingTransport?.actions.map(action=>action.id),
+    ["station_chance_line","station_fate_line","station_commuter_bonus"]
   );
-  assert.equal(engine.endTurn(0),false,"transport decision cannot be skipped by ending the turn");
+  assert.equal(engine.endTurn(0),false,"transport action must be resolved or skipped before ending the turn");
 
-  const destinationIndex=state.pendingTransport.destinationIndexes[0];
-  assert.equal(engine.useTransport(destinationIndex,0),true);
-  assert.equal(state.players[0].position,destinationIndex);
+  assert.equal(engine.useTransportAction("station_commuter_bonus",0),true);
+  assert.equal(state.players[0].position,stationIndex);
+  assert.equal(state.players[0].cash,cashBefore+500);
   assert.equal(state.phase,"landed");
   assert.equal(state.pendingTransport,null);
   assert.equal(state.events[0].kind,"transport_complete");
-  assert.equal(
-    state.events.some(event=>event.kind==="transport_offer"),
-    true,
-    "station landing must log a transport offer"
-  );
 }
 
 {
   const state=createInitialState();
   const engine=new GameEngine(state,()=>{});
-  const stationIndex=TRANSPORT_NODE_INDEXES[1];
-  state.players[0].position=(stationIndex-2+state.tiles.length)%state.tiles.length;
+  const airportIndex=TRANSPORT_NODE_INDEXES[1];
+  state.players[0].position=(airportIndex-2+state.tiles.length)%state.tiles.length;
   assert.equal(engine.roll(0,{d1:1,d2:1}),true);
   assert.equal(state.phase,"transport");
+  assert.deepEqual(
+    state.pendingTransport.actions.map(action=>action.id),
+    ["airport_acquisition","airport_auction","airport_urban"]
+  );
   assert.equal(engine.skipTransport(0),true);
-  assert.equal(state.players[0].position,stationIndex);
+  assert.equal(state.players[0].position,airportIndex);
   assert.equal(state.phase,"landed");
   assert.equal(state.pendingTransport,null);
 }
@@ -441,25 +451,30 @@ function commonPickValue(pool,eventId){
   state.players[0].position=41;
   assert.equal(engine.roll(0,{d1:1,d2:1}),true);
   assert.equal(state.players[0].position,bridgeIndex);
-  assert.equal(state.phase,"transport","cross-sea bridge must trigger the transport system");
-  assert.equal(state.pendingTransport.sourceIndex,bridgeIndex);
-  assert.equal(state.pendingTransport.destinationIndexes.includes(bridgeIndex),false);
-  assert.equal(state.pendingTransport.destinationIndexes.length,3);
+  assert.equal(state.phase,"transport","cross-sea bridge must expose its own shortcut actions");
+  assert.deepEqual(
+    state.pendingTransport.actions.map(action=>action.id),
+    ["bridge_shortcut_6","bridge_shortcut_11","bridge_rebate"]
+  );
 }
 
 {
   const state=createInitialState();
   const engine=new GameEngine(state,()=>{});
   state.currentPlayer=1;
-  const stationIndex=TRANSPORT_NODE_INDEXES[2];
-  state.players[1].position=(stationIndex-2+state.tiles.length)%state.tiles.length;
+  const portIndex=TRANSPORT_NODE_INDEXES[2];
+  state.players[1].position=(portIndex-2+state.tiles.length)%state.tiles.length;
+  const cashBefore=state.players[1].cash;
   assert.equal(engine.roll(1,{d1:1,d2:1}),true);
   assert.equal(state.phase,"transport");
-  assert.equal(engine.runAiStep(),true,"AI must resolve its own transport decision");
+  assert.deepEqual(
+    state.pendingTransport.actions.map(action=>action.id),
+    ["port_export_order","port_shipping_market","port_material_import"]
+  );
+  assert.equal(engine.runAiStep(),true,"AI must resolve its own transport-hub decision");
   assert.equal(state.phase,"landed");
   assert.equal(state.pendingTransport,null);
-  assert.ok(TRANSPORT_NODE_INDEXES.includes(state.players[1].position));
-  assert.notEqual(state.players[1].position,stationIndex);
+  assert.equal(state.players[1].cash,cashBefore+900,"AI should prefer the zero-cost export order at the port");
 }
 
 {
