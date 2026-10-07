@@ -1,5 +1,5 @@
 import{createInitialState,createLobbyState,hydrateState,setAiSeat,setHumanSeat,setPlayerCharacter}from"./core/state.js";
-import{GameEngine}from"./core/game.js?v=alpha32-229";
+import{GameEngine}from"./core/game.js?v=alpha32-233";
 import{
   PeerNetwork,
   clearNetworkSession,
@@ -11,16 +11,16 @@ import{
   sanitizePlayerName,
   sanitizeRoomCode,
   saveHostSnapshot
-}from"./core/network.js?v=alpha32-224";
-import{characterAsset,mountStaticBoard,render}from"./ui/render.js?v=alpha32-230";
+}from"./core/network.js?v=alpha32-233";
+import{characterAsset,mountStaticBoard,render}from"./ui/render.js?v=alpha32-233";
 import{itemUiSummary}from"./ui/item-render.js";
-import{renderStockMarket}from"./ui/stock-render.js?v=alpha32-231";
+import{renderStockMarket}from"./ui/stock-render.js?v=alpha32-233";
 import{UI_ASSETS}from"./data/ui-assets.js";
 import{MinigameUI}from"./ui/minigame-ui.js";
 import{GROUP_SIZES,MAX_PROPERTY_LEVEL,groupRentMultiplier}from"./data/board.js";
 import{canForceAcquireProperty,groupProgress,propertyValue,rentFor,suggestedAcquisitionOffer,upgradeCost}from"./core/property-economy.js";
 import{TRANSPORT_NODE_BY_INDEX}from"./data/transport.js";
-import{transportDestinationPreview}from"./core/transport.js";
+import{worldStatusSummary}from"./core/world-events.js?v=alpha32-233";
 import{
   CENTRAL_FEATURE_BY_ID,
   CENTRAL_MISSIONS,
@@ -70,6 +70,10 @@ const ACTION_TOAST_KINDS=new Set([
   "special_event",
   "special_grid",
   "transport_complete",
+  "transport_event",
+  "world_event_choice",
+  "government_contract_complete",
+  "government_contract_expired",
   "urban_complete",
   "central_bank_active",
   "central_bank_matured",
@@ -93,6 +97,7 @@ const propertyInfoDialog=document.getElementById("propertyInfoDialog");
 const urbanDialog=document.getElementById("urbanDialog");
 const acquisitionDialog=document.getElementById("acquisitionDialog");
 const transportDialog=document.getElementById("transportDialog");
+const worldChoiceDialog=document.getElementById("worldChoiceDialog");
 const entryGate=document.getElementById("entryGate");
 const actionToastStack=document.getElementById("actionToastStack");
 board.appendChild(actionToastStack);
