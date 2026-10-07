@@ -117,7 +117,7 @@ function stockMobileCardMarkup(stock,player,draft){
     '<div class="stock-mobile-card__bottom">'+
       '<span>持有 <b>'+position.shares+' 股</b></span>'+
       '<span class="'+pnlClass+'">損益 <b>'+signedMoney(position.unrealized)+'</b></span>'+
-      '<button type="button" data-stock-mobile-open>'+(active?"操作中":"交易")+'</button>'+
+      '<button type="button" data-stock-mobile-open>'+(active?"收合":"交易")+'</button>'+
     '</div>'+
   '</article>';
 }
