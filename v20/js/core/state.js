@@ -61,7 +61,7 @@ export function createInitialState(){
     strategicEffects:{
       globalRent:{multiplier:1,untilRound:0,label:""},
       groupRents:{},
-      bank:{multiplier:1,untilRound:0,label:""},
+      bank:{multiplier:1,activeFromRound:0,untilRound:0,label:""},
       transport:{blockedNodeIndex:null,blockedUntilRound:0,freeUntilRound:0,freeDayBonus:0},
       marketItemLockUntilRound:0
     },
@@ -203,6 +203,7 @@ export function hydrateState(raw){
     groupRents:rawEffects.groupRents&&typeof rawEffects.groupRents==="object"?rawEffects.groupRents:{},
     bank:{
       multiplier:Number(rawEffects.bank?.multiplier)||1,
+      activeFromRound:Math.max(0,Number(rawEffects.bank?.activeFromRound)||0),
       untilRound:Math.max(0,Number(rawEffects.bank?.untilRound)||0),
       label:String(rawEffects.bank?.label??"")
     },
