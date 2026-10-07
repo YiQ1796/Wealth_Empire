@@ -340,7 +340,8 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
     const completedRegions=GROUP_ORDER
       .filter(group=>groupProgress(state,player.seat,group).complete).length;
     return '<article class="player-card '+(index===state.currentPlayer?"active":"")+
-      ' '+(ranking?.rank===1?"player-card--wealth-leader":"")+'">'+
+      ' '+(ranking?.rank===1?"player-card--wealth-leader":"")+
+      '" style="--player-accent:'+(player.color??"#377bd1")+'">'+
       '<img class="player-pawn" data-player-avatar="'+index+'" src="'+playerCharacter(player,"idle")+'" alt="">'+
       '<div class="player-card__body">'+
         '<div class="player-card__headline">'+
