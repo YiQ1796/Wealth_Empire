@@ -1,5 +1,5 @@
-import{createInitialState,createLobbyState,hydrateState,setAiSeat,setHumanSeat,setPlayerCharacter}from"./core/state.js?v=alpha32-233";
-import{GameEngine}from"./core/game.js?v=alpha32-233";
+import{createInitialState,createLobbyState,hydrateState,setAiSeat,setHumanSeat,setPlayerCharacter}from"./core/state.js?v=alpha32-240";
+import{GameEngine}from"./core/game.js?v=alpha32-240";
 import{
   PeerNetwork,
   clearNetworkSession,
@@ -11,23 +11,23 @@ import{
   sanitizePlayerName,
   sanitizeRoomCode,
   saveHostSnapshot
-}from"./core/network.js?v=alpha32-233";
-import{characterAsset,mountStaticBoard,render}from"./ui/render.js?v=alpha32-233";
+}from"./core/network.js?v=alpha32-240";
+import{characterAsset,mountStaticBoard,render}from"./ui/render.js?v=alpha32-240";
 import{itemUiSummary}from"./ui/item-render.js";
-import{renderStockMarket}from"./ui/stock-render.js?v=alpha32-233";
+import{renderStockMarket}from"./ui/stock-render.js?v=alpha32-240";
 import{UI_ASSETS}from"./data/ui-assets.js";
 import{MinigameUI}from"./ui/minigame-ui.js";
 import{GROUP_SIZES,MAX_PROPERTY_LEVEL,groupRentMultiplier}from"./data/board.js";
-import{canForceAcquireProperty,groupProgress,propertyValue,rentFor,suggestedAcquisitionOffer,upgradeCost}from"./core/property-economy.js?v=alpha32-233";
-import{TRANSPORT_NODE_BY_INDEX}from"./data/transport.js?v=alpha32-233";
-import{bankReturnAmount,worldStatusSummary}from"./core/world-events.js?v=alpha32-233";
+import{canForceAcquireProperty,groupProgress,propertyValue,rentFor,suggestedAcquisitionOffer,upgradeCost}from"./core/property-economy.js?v=alpha32-240";
+import{TRANSPORT_NODE_BY_INDEX}from"./data/transport.js?v=alpha32-240";
+import{bankReturnAmount,worldStatusSummary}from"./core/world-events.js?v=alpha32-240";
 import{
   CENTRAL_FEATURE_BY_ID,
   CENTRAL_MISSIONS,
   CENTRAL_MISSION_BY_ID,
   CENTRAL_TEST_TUNING
 }from"./data/central-features.js";
-import{centralDevelopmentOptions,centralFacilityStatus}from"./core/central-features.js?v=alpha32-233";
+import{centralDevelopmentOptions,centralFacilityStatus}from"./core/central-features.js?v=alpha32-240";
 import{initBgmController}from"./ui/bgm-controller.js";
 
 try{initBgmController()}catch(error){console.warn("BGM controller unavailable",error)}
