@@ -1,7 +1,7 @@
 export const BOARD_VERSION="20.0.0-alpha.32";
 export const MAX_ROUNDS=30;
 export const MAX_PROPERTY_LEVEL=2;
-export const PROPERTY_LEVEL_RENT_BONUS=0.65;
+export const PROPERTY_LEVEL_RENT_BONUS=0.85;
 export const PROPERTY_UPGRADE_COST_RATE=0.5;
 
 export const GROUP_ORDER=Object.freeze([
@@ -27,14 +27,14 @@ export const GROUP_SIZES=Object.freeze({
   4-tile region = x2.00
 */
 export const GROUP_RENT_MULTIPLIERS=Object.freeze({
-  "海港區":1.25,
-  "商業區":2.00,
-  "科技區":1.50,
-  "住宅區":1.50,
-  "金融區":1.50,
-  "觀光區":1.50,
-  "豪宅區":2.00,
-  "帝王區":1.25
+  "海港區":1.50,
+  "商業區":2.25,
+  "科技區":1.75,
+  "住宅區":1.75,
+  "金融區":1.75,
+  "觀光區":1.75,
+  "豪宅區":2.25,
+  "帝王區":1.50
 });
 
 const PROPERTY_BASE_PRICE=2200;
@@ -42,7 +42,7 @@ const PROPERTY_PRICE_STEP=260;
 
 const property=(number,name,group,slot)=>{
   const price=PROPERTY_BASE_PRICE+slot*PROPERTY_PRICE_STEP;
-  return{number,name,type:"property",group,price,rent:Math.round(price*0.14)};
+  return{number,name,type:"property",group,price,rent:Math.round(price*0.18)};
 };
 const event=(number,name,type)=>({number,name,type});
 
