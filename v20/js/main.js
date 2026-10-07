@@ -892,8 +892,6 @@ function executeAction(action,seat=currentLocalSeat()){
       return engine.centralDevelopmentUpgrade(action.tileIndex,seat);
     case"end_turn":
       return engine.endTurn(seat);
-    case"start_game":
-      return engine.startGame(seat);
     default:
       return false;
   }
@@ -1751,6 +1749,9 @@ document.getElementById("createRoomButton").addEventListener("click",async()=>{
     renderNetworkUi();
     if(!networkDialog.open)networkDialog.showModal();
   }catch(error){
+    await network.close(false);
+    uiContext.localSeat=0;
+    uiContext.networkMode="offline";
     state=previousState;
     engine.replaceState(state);
     setNetworkStatus("建立房間失敗："+friendlyNetworkError(error),"error");
