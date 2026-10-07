@@ -334,6 +334,11 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
       player.medicalMoveShield?'<span class="player-civic-badge player-civic-badge--hospital">醫療保護</span>':"",
       Number(player.courtShieldUntilRound)>=Number(state.round)?'<span class="player-civic-badge player-civic-badge--court">法院保全 R'+player.courtShieldUntilRound+'</span>':""
     ].join("");
+    const tileName=state.tiles?.[player.position]?.name??("第 "+(player.position+1)+" 格");
+    const totalShares=Object.values(player.portfolio??{})
+      .reduce((sum,position)=>sum+Math.max(0,Math.floor(Number(position?.shares)||0)),0);
+    const completedRegions=GROUP_ORDER
+      .filter(group=>groupProgress(state,player.seat,group).complete).length;
     return '<article class="player-card '+(index===state.currentPlayer?"active":"")+
       ' '+(ranking?.rank===1?"player-card--wealth-leader":"")+'">'+
       '<img class="player-pawn" data-player-avatar="'+index+'" src="'+playerCharacter(player,"idle")+'" alt="">'+
@@ -351,6 +356,11 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
           '<strong>總資產 '+money(assets.total)+'</strong>'+
           '<small>現金 '+money(assets.cash)+'｜地產 '+money(assets.properties)+'｜股票 '+money(assets.stocks)+
             (assets.bankDeposit>0?'｜定存 '+money(assets.bankDeposit):"")+'</small>'+
+        '</div>'+
+        '<div class="player-card__details">'+
+          '<span>所在地 <b>'+tileName+'</b></span>'+
+          '<span>持股 <b>'+totalShares+' 股</b></span>'+
+          '<span>完整連區 <b>'+completedRegions+'</b></span>'+
         '</div>'+
         (civicBadges?'<div class="player-civic-badges">'+civicBadges+'</div>':"")+
       '</div>'+
@@ -497,11 +507,14 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
     upgradeDialog.close();
   }
 
-  document.getElementById("endTurnButton").disabled=
+  const endTurnDisabled=
     !isLocalTurn||
     state.phase!=="landed"||
     state.pendingPurchase!=null||
     state.pendingUpgrade!=null;
+  document.getElementById("endTurnButton").disabled=endTurnDisabled;
+  const desktopEndTurnButton=document.getElementById("desktopEndTurnButton");
+  if(desktopEndTurnButton)desktopEndTurnButton.disabled=endTurnDisabled;
 
   renderProperties(state,localPlayer,canControl);
 }

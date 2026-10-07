@@ -107,7 +107,9 @@ export function renderStockMarket(container,state,localSeat,{onBuy=()=>{},onSell
   const player=state.players?.[localSeat];
   if(!player)return;
 
-  const desktopPersistent=container.classList.contains("stock-market-grid--persistent");
+  const desktopTradeSurface=
+    container.classList.contains("stock-market-grid--persistent")||
+    container.classList.contains("stock-market-grid--desktop-popup");
   const canTrade=
     state.gameStatus==="playing"&&
     player.kind==="human"&&
@@ -115,7 +117,7 @@ export function renderStockMarket(container,state,localSeat,{onBuy=()=>{},onSell
     !player.bankrupt&&
     state.phase!=="minigame"&&
     state.phase!=="finished"&&
-    (desktopPersistent||state.currentPlayer===localSeat);
+    (desktopTradeSurface||state.currentPlayer===localSeat);
 
   const draft=getDraft(container);
   if(draft.stockId&&!state.market.stocks.some(stock=>stock.id===draft.stockId))draft.stockId=null;
@@ -125,7 +127,7 @@ export function renderStockMarket(container,state,localSeat,{onBuy=()=>{},onSell
   const summaryRealizedClass=summary.realized>0?"profit":summary.realized<0?"loss":"flat";
 
   const cards=state.market.stocks.map(stock=>stockCardMarkup(stock,player,canTrade,draft));
-  const cardsPerRow=desktopPersistent?1:2;
+  const cardsPerRow=desktopTradeSurface?1:2;
   const rows=[];
   for(let index=0;index<cards.length;index+=cardsPerRow){
     const rowCards=cards.slice(index,index+cardsPerRow).join("");

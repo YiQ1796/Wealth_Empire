@@ -217,7 +217,7 @@ export class GameEngine{
           this.state.pendingAcquisition=landingAcquisition;
           this.state.phase="acquisition";
           this.log(
-            player.name+" 踩到未滿級的對手地產「"+tile.name+"」，支付過路費後取得強制收購選擇。"+
+            player.name+" 踩到未滿級的對手地產「"+tile.name+"」，支付過路費後取得強制收購權；是否收購由玩家決定，對手不能拒絕。"+
               (option.affordable
                 ?" 可用 "+this.formatMoney(option.offer)+" 收購。"
                 :" 目前現金不足，仍可查看報價後放棄。"),
@@ -707,7 +707,7 @@ export class GameEngine{
     this.state.phase="landed";
 
     this.log(
-      buyer.name+(acquisitionSource==="landing"?" 踩到對手地產後":" 透過收購中心")+
+      buyer.name+(acquisitionSource==="landing"?" 行使踩地後的強制收購權":" 透過收購中心")+
         "以 "+this.formatMoney(result.offer)+" 收購「"+result.tileName+
         "」，原持有人 "+(seller?.name??result.previousOwnerName)+"。",
       "property_acquisition",
@@ -744,7 +744,7 @@ export class GameEngine{
     this.state.phase="landed";
     this.log(
       this.currentPlayer.name+
-        (acquisitionSource==="landing"?" 放棄本次踩地後的強制收購。":" 選擇不使用收購中心。"),
+        (acquisitionSource==="landing"?" 選擇不行使本次強制收購權，地產維持原持有人。":" 選擇不使用收購中心。"),
       "acquisition_skip",
       {seat:this.currentPlayer.seat,source:acquisitionSource}
     );

@@ -33,4 +33,4 @@ assert.equal(rankings[0].seat,1);
 assert.equal(rankings[0].rank,1);
 assert.equal(rankings.find(entry=>entry.seat===0)?.rank,2);
 
-console.log("V20 Alpha32.3.7 total-asset ranking regression PASS");
+console.log("V20 Alpha32.3.8 total-asset ranking regression PASS");

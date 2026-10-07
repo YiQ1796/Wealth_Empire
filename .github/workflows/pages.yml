@@ -210,34 +210,31 @@ jobs:
 
           echo "V20 Alpha18 V5 visual assets PASS: 44 tiles + houses + 16 character states + badges + modal + notification UI"
 
-      - name: Validate V20 persistent stock HUD
+      - name: Validate V20 desktop stock popup and HUD allocation
         shell: bash
         run: |
           set -euo pipefail
-          grep -q 'class="desktop-stock-panel"' v20/index.html
-          grep -q 'id="stockMarketGrid"' v20/index.html
+          grep -q 'id="stockMarketDesktopGrid"' v20/index.html
+          grep -q 'stock-market-grid--desktop-popup' v20/index.html
+          grep -q 'id="desktopMarketButton"' v20/index.html
+          grep -q 'data-feature-panel="market"' v20/index.html
           grep -q 'stock-summary' v20/js/ui/stock-render.js
           grep -q 'stock-holding-row' v20/js/ui/stock-render.js
           grep -q 'stock-pnl-row' v20/js/ui/stock-render.js
           grep -q 'stock-pair-row' v20/js/ui/stock-render.js
-          grep -q '.stock-summary{' v20/styles/app.css
-          grep -q '.stock-holding-row{' v20/styles/app.css
-          grep -q '.stock-pnl-row{' v20/styles/app.css
-          grep -q 'grid-template-columns:repeat(2,minmax(0,1fr))' v20/styles/app.css
-          grep -q 'app.css?v=alpha32-228' v20/index.html
-          grep -q 'main.js?v=alpha32-228' v20/index.html
+          grep -q 'desktopTradeSurface' v20/js/ui/stock-render.js
+          grep -q 'desktop-command-dock' v20/index.html
+          grep -q 'id="rollButton"' v20/index.html
+          grep -q 'id="desktopEndTurnButton"' v20/index.html
+          grep -q 'app.css?v=alpha32-229' v20/index.html
+          grep -q 'main.js?v=alpha32-229' v20/index.html
 
-          if grep -q 'data-feature="stock"' v20/index.html; then
-            echo "Desktop stock market must not return as a shortcut"
+          if grep -q 'class="desktop-stock-panel"' v20/index.html; then
+            echo "Desktop stock market must not return to the persistent HUD"
             exit 1
           fi
 
-          if grep -q 'data-feature-panel="stock"' v20/index.html; then
-            echo "Desktop stock market must remain persistent instead of modal-only"
-            exit 1
-          fi
-
-          echo "V20 reference-based persistent stock HUD PASS"
+          echo "V20 desktop stock popup + 3/2 command dock PASS"
 
       - name: Validate V20 board-center visual layout
         shell: bash
@@ -513,7 +510,7 @@ jobs:
           grep -q 'V20 Alpha 29.1 — phone board fill tuning' v20/styles/app.css
           grep -q 'orientation:landscape' v20/styles/app.css
           grep -q 'grid-template-columns:minmax(0,1fr) clamp(242px,27.5vw,286px)' v20/styles/app.css
-          grep -q '.desktop-stock-panel{' v20/styles/app.css
+          grep -q '.stock-market-grid--desktop-popup{' v20/styles/app.css
           grep -q 'env(safe-area-inset-left)' v20/styles/app.css
           node --experimental-default-type=module v20/tests/mobile-responsive.test.mjs
           node --experimental-default-type=module v20/tests/ui-hotfix-regression.test.mjs
@@ -541,8 +538,8 @@ jobs:
             echo "Legacy notification seam mask must not return"
             exit 1
           fi
-          grep -q 'app.css?v=alpha32-228' v20/index.html
-          grep -q 'main.js?v=alpha32-228' v20/index.html
+          grep -q 'app.css?v=alpha32-229' v20/index.html
+          grep -q 'main.js?v=alpha32-229' v20/index.html
           echo "V20 phone single-surface notification fit PASS"
 
       - name: Validate V20 mobile pass 2 composition
@@ -553,8 +550,8 @@ jobs:
           grep -q 'grid-template-rows:auto auto auto' v20/styles/app.css
           grep -q 'width:min(58%,460px)' v20/styles/app.css
           grep -q 'grid-template-columns:42px minmax(0,1fr) 68px' v20/styles/app.css
-          grep -q 'app.css?v=alpha32-228' v20/index.html
-          grep -q 'main.js?v=alpha32-228' v20/index.html
+          grep -q 'app.css?v=alpha32-229' v20/index.html
+          grep -q 'main.js?v=alpha32-229' v20/index.html
           echo "V20 phone composition pass 2 PASS"
 
       - name: Validate V20 mobile scroll and viewport authority
@@ -569,8 +566,8 @@ jobs:
           grep -q 'function syncPhoneViewportHeight' v20/js/main.js
           grep -q -- '--phone-app-height' v20/js/main.js
           grep -q 'resetScrollPosition()' v20/js/ui/minigame-ui.js
-          grep -q 'app.css?v=alpha32-228' v20/index.html
-          grep -q 'main.js?v=alpha32-228' v20/index.html
+          grep -q 'app.css?v=alpha32-229' v20/index.html
+          grep -q 'main.js?v=alpha32-229' v20/index.html
           node --experimental-default-type=module v20/tests/mobile-responsive.test.mjs
           echo "V20 mobile scroll and first-entry viewport authority PASS"
 
@@ -584,8 +581,8 @@ jobs:
           grep -q 'width:13px' v20/styles/app.css
           grep -q 'height:14px' v20/styles/app.css
           grep -q 'grid-template-rows:repeat(4,minmax(0,1fr))' v20/styles/app.css
-          grep -q 'app.css?v=alpha32-228' v20/index.html
-          grep -q 'main.js?v=alpha32-228' v20/index.html
+          grep -q 'app.css?v=alpha32-229' v20/index.html
+          grep -q 'main.js?v=alpha32-229' v20/index.html
           node --experimental-default-type=module v20/tests/mobile-responsive.test.mjs
           echo "V20 mobile-only pawn/house/HUD fill PASS"
 
@@ -598,8 +595,8 @@ jobs:
           grep -q 'tile__tokens:has(.pawn-token:nth-child(3))' v20/styles/app.css
           grep -q 'function settlePhoneLandscapeLayout' v20/js/main.js
           grep -q 'visualViewport?.addEventListener("resize",settlePhoneLandscapeLayout)' v20/js/main.js
-          grep -q 'app.css?v=alpha32-228' v20/index.html
-          grep -q 'main.js?v=alpha32-228' v20/index.html
+          grep -q 'app.css?v=alpha32-229' v20/index.html
+          grep -q 'main.js?v=alpha32-229' v20/index.html
           echo "V20 first-entry phone landscape stabilization PASS"
 
       - name: Validate V20 property tile info card
@@ -688,8 +685,8 @@ jobs:
           grep -q 'id="itemInventoryList"' v20/index.html
           grep -q 'id="itemPromptDialog"' v20/index.html
           grep -q 'V20 Alpha 32 — strategy item system' v20/styles/app.css
-          grep -q 'app.css?v=alpha32-228' v20/index.html
-          grep -q 'main.js?v=alpha32-228' v20/index.html
+          grep -q 'app.css?v=alpha32-229' v20/index.html
+          grep -q 'main.js?v=alpha32-229' v20/index.html
           node --experimental-default-type=module v20/tests/items-system.test.mjs
           echo "V20 Alpha32 strategy item state/effect/network/UI PASS"
 
@@ -719,7 +716,7 @@ jobs:
           grep -q 'hostClientId' v20/js/core/state.js
           grep -q 'V20 Alpha 32.3 — single-surface notifications' v20/styles/app.css
           grep -q '.action-toast.leaving' v20/styles/app.css
-          grep -q 'alpha32-228' v20/index.html
+          grep -q 'alpha32-229' v20/index.html
           node --experimental-default-type=module v20/tests/mobile-responsive.test.mjs
           node --experimental-default-type=module v20/tests/network-mobile-resilience.test.mjs
           node --experimental-default-type=module v20/tests/network-market-mobile-hotfix.test.mjs

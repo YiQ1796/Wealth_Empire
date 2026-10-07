@@ -2017,7 +2017,7 @@ body.entry-pending .app-shell{
   flex:0 0 24px
 }
 .feature-tabs--secondary{
-  grid-template-columns:repeat(3,minmax(0,1fr))
+  grid-template-columns:repeat(4,minmax(0,1fr))
 }
 .desktop-stock-panel{
   min-width:0;
@@ -5942,4 +5942,278 @@ body.entry-pending .app-shell{
     color:#b33e2d;
     font-size:17px
   }
+}
+
+
+/* V20 Alpha 32.3.8 — explicit yes/no forced-acquisition choice. */
+@media (min-width:1181px){
+  .acquisition-dialog.is-landing-acquisition .acquisition-option--confirm:not(:disabled){
+    border-color:#2d9a67;
+    background:#eefaf3;
+    box-shadow:0 5px 14px rgba(45,154,103,.15)
+  }
+  .acquisition-dialog.is-landing-acquisition .acquisition-option--confirm:not(:disabled):hover,
+  .acquisition-dialog.is-landing-acquisition .acquisition-option--confirm:not(:disabled):focus-visible{
+    border-color:#18784e;
+    background:#e5f8ed
+  }
+  .acquisition-dialog.is-landing-acquisition .acquisition-option--confirm .acquisition-option__offer{
+    color:#126a43
+  }
+  .acquisition-dialog.is-landing-acquisition .acquisition-skip{
+    min-height:46px;
+    border:2px solid #bf5b50;
+    background:#fff4f2;
+    color:#9a352d;
+    font-size:13px
+  }
+}
+
+
+/* V20 Alpha 32.3.8 — desktop market moves to a popup; player cards share the freed HUD space. */
+.stock-market-grid--desktop-popup{
+  display:none
+}
+@media (min-width:1181px){
+  .hud-panel{
+    grid-template-rows:auto auto minmax(0,1fr) auto
+  }
+  .hud-panel.has-network-lobby{
+    grid-template-rows:auto auto auto minmax(0,1fr) auto
+  }
+  .players{
+    min-height:0;
+    height:100%;
+    grid-template-rows:auto repeat(4,minmax(0,1fr));
+    align-content:stretch;
+    gap:8px
+  }
+  .player-card{
+    height:100%;
+    min-height:0
+  }
+  .feature-tab--market{
+    border-color:#8fb7da;
+    background:#eef7ff;
+    color:#245f91
+  }
+
+  .feature-modal__pane--market.active{
+    min-height:0
+  }
+  .feature-modal__pane--market .stock-market-grid--mobile{
+    display:none!important
+  }
+  .feature-modal__pane--market .stock-market-grid--desktop-popup{
+    display:block;
+    min-height:0
+  }
+  .stock-market-grid--desktop-popup .stock-pair-row{
+    grid-template-columns:minmax(0,1fr);
+    gap:10px;
+    margin-bottom:10px
+  }
+  .stock-market-grid--desktop-popup .stock-pair-row__spacer{
+    display:none
+  }
+  .stock-market-grid--desktop-popup .stock-trade-card{
+    padding:14px 16px;
+    border-radius:15px
+  }
+  .stock-market-grid--desktop-popup .stock-title strong{
+    font-size:18px
+  }
+  .stock-market-grid--desktop-popup .stock-title small{
+    margin-top:4px;
+    font-size:12px
+  }
+  .stock-market-grid--desktop-popup .stock-quote{
+    min-width:94px
+  }
+  .stock-market-grid--desktop-popup .stock-quote>b{
+    font-size:28px
+  }
+  .stock-market-grid--desktop-popup .stock-trend{
+    font-size:11px
+  }
+  .stock-market-grid--desktop-popup .stock-holding-row,
+  .stock-market-grid--desktop-popup .stock-pnl-row{
+    padding:9px 11px
+  }
+  .stock-market-grid--desktop-popup .stock-holding-row span,
+  .stock-market-grid--desktop-popup .stock-pnl-row span{
+    font-size:12px
+  }
+  .stock-market-grid--desktop-popup .stock-holding-row b,
+  .stock-market-grid--desktop-popup .stock-pnl-row strong{
+    font-size:15px
+  }
+  .stock-market-grid--desktop-popup .stock-trade-preview{
+    min-height:36px;
+    padding:8px 10px;
+    font-size:12px
+  }
+  .stock-market-grid--desktop-popup .stock-trade-preview strong{
+    font-size:13px
+  }
+  .stock-market-grid--desktop-popup .stock-selection-bar{
+    position:sticky;
+    top:0;
+    z-index:3;
+    padding:10px 12px
+  }
+  .stock-market-grid--desktop-popup .stock-selection-bar strong{
+    font-size:14px
+  }
+  .stock-market-grid--desktop-popup .stock-selection-bar span{
+    font-size:12px
+  }
+  .stock-market-grid--desktop-popup .stock-summary{
+    gap:9px
+  }
+  .stock-market-grid--desktop-popup .stock-summary>div{
+    padding:9px 10px
+  }
+  .stock-market-grid--desktop-popup .stock-summary span{
+    font-size:11px
+  }
+  .stock-market-grid--desktop-popup .stock-summary strong{
+    font-size:17px
+  }
+  .stock-market-grid--desktop-popup .stock-trade-controls{
+    grid-template-columns:minmax(180px,1.4fr) minmax(110px,.8fr) minmax(110px,.8fr);
+    gap:10px;
+    margin-top:10px
+  }
+  .stock-market-grid--desktop-popup .stock-qty-field>span:first-child{
+    font-size:12px
+  }
+  .stock-market-grid--desktop-popup .stock-qty-input b{
+    font-size:13px
+  }
+  .stock-market-grid--desktop-popup .stock-trade-controls input{
+    height:50px;
+    min-height:50px;
+    padding:8px 11px;
+    font-size:20px;
+    font-weight:1000
+  }
+  .stock-market-grid--desktop-popup .stock-trade-controls button{
+    min-height:50px;
+    padding:8px 12px;
+    font-size:15px
+  }
+}
+
+
+/* V20 Alpha 32.3.8 — desktop HUD allocation requested by player feedback. */
+.player-card__details{display:none}
+.hud-market-button{display:none}
+@media (min-width:1181px){
+  .hud-turn-tools--compact{
+    grid-template-columns:58px minmax(0,1fr)
+  }
+  .mobile-header-end-turn{
+    display:none!important
+  }
+  .hud-market-button{
+    min-width:0;
+    min-height:46px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+    border:1px solid #8fb7da;
+    border-radius:11px;
+    background:#eef7ff;
+    color:#245f91;
+    font-size:13px;
+    font-weight:1000;
+    cursor:pointer
+  }
+  .hud-market-button img{
+    width:27px;
+    height:27px;
+    object-fit:contain
+  }
+
+  .desktop-command-dock{
+    grid-template-columns:repeat(6,minmax(0,1fr));
+    gap:6px
+  }
+  .desktop-command-dock .desktop-command-dock__feature:nth-of-type(1),
+  .desktop-command-dock .desktop-command-dock__feature:nth-of-type(2),
+  .desktop-command-dock .desktop-command-dock__feature:nth-of-type(3){
+    grid-column:span 2
+  }
+  .desktop-command-dock #rollButton,
+  .desktop-command-dock #desktopEndTurnButton{
+    grid-column:span 3
+  }
+  .desktop-command-dock .feature-tab,
+  .desktop-command-dock .action-button{
+    min-height:46px;
+    font-size:13px
+  }
+  .desktop-command-dock .feature-tab img,
+  .desktop-command-dock .action-button img{
+    width:27px;
+    height:27px
+  }
+
+  .players{
+    gap:8px
+  }
+  .player-card{
+    grid-template-columns:50px minmax(0,1fr);
+    gap:10px;
+    padding:10px 12px
+  }
+  .player-pawn{
+    width:46px;
+    height:46px
+  }
+  .player-card h3{
+    font-size:17px
+  }
+  .player-stats{
+    margin-top:2px;
+    gap:5px 12px;
+    font-size:12px
+  }
+  .player-stats b{
+    font-size:13px
+  }
+  .player-wealth{
+    margin-top:6px;
+    padding:7px 9px
+  }
+  .player-wealth strong{
+    font-size:14px
+  }
+  .player-wealth small{
+    font-size:10px
+  }
+  .player-card__details{
+    display:flex;
+    flex-wrap:wrap;
+    gap:5px 12px;
+    margin-top:6px;
+    color:#60778c;
+    font-size:10px;
+    font-weight:850;
+    line-height:1.3
+  }
+  .player-card__details span{
+    white-space:nowrap
+  }
+  .player-card__details b{
+    color:#29465f;
+    font-size:11px
+  }
+}
+
+@media (orientation:landscape) and (max-height:650px) and (max-width:1180px){
+  .hud-market-button{display:none!important}
+  .player-card__details{display:none!important}
 }

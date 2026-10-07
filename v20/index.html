@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#eef3f7">
-<title>財富帝國 V20 Alpha 32.3.7</title>
-<link rel="stylesheet" href="./styles/app.css?v=alpha32-228">
+<title>財富帝國 V20 Alpha 32.3.8</title>
+<link rel="stylesheet" href="./styles/app.css?v=alpha32-229">
 </head>
 <body class="entry-pending">
 <section id="entryGate" class="entry-gate" aria-label="遊戲模式選擇">
@@ -105,21 +105,21 @@
           <div class="round-inline">ROUND <strong id="roundValue">1</strong> / 30</div>
         </div>
 
-        <div class="hud-turn-tools">
+        <div class="hud-turn-tools hud-turn-tools--compact">
           <div class="dice-result" aria-label="骰子結果">
             <span class="dice-result__faces" id="diceFacesValue">🎲 —</span>
             <strong class="dice-result__total" id="diceTotalValue">= —</strong>
           </div>
-          <div class="control-actions control-actions--turn">
-            <button id="rollButton" class="action-button action-button--primary">
-              <img src="./assets/ui/ACTION_ROLL.webp" alt="">
-              <span>擲骰子</span>
-            </button>
+          <div class="control-actions control-actions--turn mobile-header-end-turn">
             <button id="endTurnButton" class="action-button">
               <img src="./assets/ui/ACTION_END_TURN.webp" alt="">
               <span>結束回合</span>
             </button>
           </div>
+          <button id="desktopMarketButton" type="button" class="hud-market-button" data-feature="market">
+            <img src="./assets/v5/ui/modal/MODAL_STOCK_ICON.webp" alt="">
+            <span>股票市場</span>
+          </button>
         </div>
       </header>
 
@@ -159,28 +159,23 @@
         </button>
       </nav>
 
-      <nav class="feature-tabs feature-tabs--secondary" aria-label="其他功能">
-        <button class="feature-tab" data-feature="property">
+      <nav class="feature-tabs feature-tabs--secondary desktop-command-dock" aria-label="桌機主要操作">
+        <button class="feature-tab desktop-command-dock__feature" data-feature="property">
           <img src="./assets/v5/ui/modal/MODAL_PROPERTY_ICON.webp" alt=""><span>我的房產</span>
         </button>
-        <button class="feature-tab" data-feature="item">
+        <button class="feature-tab desktop-command-dock__feature" data-feature="item">
           <img src="./assets/v5/ui/modal/MODAL_ITEMS_ICON.webp" alt=""><span>道具</span>
         </button>
-        <button class="feature-tab" data-feature="info">
+        <button class="feature-tab desktop-command-dock__feature" data-feature="info">
           <img src="./assets/v5/ui/modal/MODAL_INFO_ICON.webp" alt=""><span>資訊</span>
         </button>
+        <button id="rollButton" class="action-button action-button--primary desktop-command-dock__turn">
+          <img src="./assets/ui/ACTION_ROLL.webp" alt=""><span>擲骰子</span>
+        </button>
+        <button id="desktopEndTurnButton" class="action-button desktop-command-dock__turn">
+          <img src="./assets/ui/ACTION_END_TURN.webp" alt=""><span>結束</span>
+        </button>
       </nav>
-
-      <section class="desktop-stock-panel" aria-label="股票市場">
-        <header class="desktop-stock-panel__header">
-          <div>
-            <h2>股票市場</h2>
-            <p>即時價格、持股、損益與買賣固定顯示</p>
-          </div>
-          <span class="market-badge">即時行情</span>
-        </header>
-        <div id="stockMarketGrid" class="stock-market-grid stock-market-grid--persistent"></div>
-      </section>
     </aside>
   </section>
 </main>
@@ -284,7 +279,8 @@
       </div>
 
       <div class="feature-modal__pane feature-modal__pane--market" data-feature-panel="market">
-        <div class="feature-heading"><div><h3>市場操作</h3><p>手機版使用大卡片查看即時行情、持股、損益與買賣。</p></div></div>
+        <div class="feature-heading"><div><h3>市場操作</h3><p>查看即時行情、持股與損益；桌機版改用大視窗一列一檔操作。</p></div></div>
+        <div id="stockMarketDesktopGrid" class="stock-market-grid stock-market-grid--desktop-popup"></div>
         <div id="stockMarketMobileGrid" class="stock-market-grid stock-market-grid--mobile"></div>
       </div>
 
@@ -383,7 +379,7 @@
       <div>
         <span id="acquisitionEyebrow" class="acquisition-modal__eyebrow">收購中心</span>
         <h2 id="acquisitionTitle">強制收購</h2>
-        <p id="acquisitionDescription">使用既有規則：符合條件的對手地產，以目前資產估值的 125% 報價收購。</p>
+        <p id="acquisitionDescription">取得強制收購權後，由你決定是否收購；只有確認後才會成交。</p>
       </div>
       <button id="skipAcquisitionIconButton" type="button" class="modal-close" aria-label="放棄收購">
         <img src="./assets/v5/ui/modal/MODAL_CLOSE.webp" alt="">
@@ -436,6 +432,6 @@
 </dialog>
 
 <div id="actionToastStack" class="action-toast-stack" aria-live="polite" aria-atomic="false"></div>
-<script type="module" src="./js/main.js?v=alpha32-228"></script>
+<script type="module" src="./js/main.js?v=alpha32-229"></script>
 </body>
 </html>
