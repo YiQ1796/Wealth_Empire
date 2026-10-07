@@ -908,8 +908,12 @@ function executeAction(action,seat=currentLocalSeat()){
       return engine.submitMinigameResult(seat,{score:action.score,detail:action.detail});
     case"transport_travel":
       return engine.useTransport(action.destinationIndex,seat);
+    case"transport_action":
+      return engine.useTransportAction(action.actionId,seat);
     case"transport_skip":
       return engine.skipTransport(seat);
+    case"world_choice_select":
+      return engine.resolveWorldChoice(action.optionId,seat);
     case"acquisition_buy":
       return engine.acquireFromCenter(action.tileIndex,seat);
     case"acquisition_skip":
