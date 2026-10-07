@@ -441,7 +441,7 @@ export function worldStatusSummary(state){
   if(Number(world.marketCircuitBreakerUntilRound)>=round)items.push("市場熔斷｜股票拉升／打壓卡停用｜R"+world.marketCircuitBreakerUntilRound);
   for(const player of state.players??[]){
     if(player.governmentContract){
-      items.push(player.name+"｜政府標案："+player.governmentContract.taskName+"｜期限 R"+player.governmentContract.expiresRound);
+      items.push(player.name+"｜政府標案："+player.governmentContract.taskName+"｜進度 "+player.governmentContract.progress+"/"+player.governmentContract.target+"｜期限 R"+player.governmentContract.expiresRound);
     }
   }
   return items;
