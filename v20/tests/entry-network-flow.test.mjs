@@ -7,7 +7,7 @@ const main=readFileSync(new URL("../js/main.js",import.meta.url),"utf8");
 const network=readFileSync(new URL("../js/core/network.js",import.meta.url),"utf8");
 
 assert.match(html,/財富帝國 V20 Alpha 32\.3\.11/);
-assert.match(html,/alpha32-232/);
+assert.match(html,/alpha32-233/);
 assert.match(html,/id="networkLobbyCard"/);
 assert.match(html,/id="networkLobbyStartButton"/);
 assert.match(html,/id="networkLobbyManageButton"/);
