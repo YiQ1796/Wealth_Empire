@@ -21,7 +21,16 @@ export const CHANCE_EVENTS=Object.freeze([
   {id:"chance_rare_guard",name:"產權保障獎",description:"取得一張產權保全券，可到「我的房產」指定保護一塊地產。",rarity:"rare",category:"property_guard",effect:{kind:"grant_property_protection",count:1}},
   {id:"chance_rare_jackpot",name:"城市超級獎金",description:"抽中年度城市獎金。",rarity:"rare",category:"cash_gain",effect:{kind:"cash",amount:3000}},
   {id:"chance_rare_remote_dice",name:"都市導航控制器",description:"取得一張遙控骰子，可在擲骰前指定本回合總點數。",rarity:"rare",category:"strategy_item",effect:{kind:"grant_item",itemId:"remote_dice",count:1}},
-  {id:"chance_rare_rent_boost",name:"黃金商圈合約",description:"取得一張地租增幅卡，可永久提高自己一塊地產 20% 過路費。",rarity:"rare",category:"strategy_item",effect:{kind:"grant_item",itemId:"rent_boost",count:1}}
+  {id:"chance_rare_rent_boost",name:"黃金商圈合約",description:"取得一張地租增幅卡，可永久提高自己一塊地產 20% 過路費。",rarity:"rare",category:"strategy_item",effect:{kind:"grant_item",itemId:"rent_boost",count:1}},
+
+  {id:"chance_p1_city_cycle",name:"城市景氣循環",description:"城市景氣改變，短期影響全地圖過路費。",rarity:"common",category:"strategic_global",effect:{kind:"strategic",strategicId:"city_cycle"}},
+  {id:"chance_p1_industry_news",name:"產業新聞",description:"隨機產業出現利多或利空，同產業股票同步波動。",rarity:"common",category:"strategic_market",effect:{kind:"strategic",strategicId:"industry_news"}},
+  {id:"chance_p1_dividend_season",name:"股息季",description:"依各玩家目前持股發放現金股息。",rarity:"common",category:"strategic_market",effect:{kind:"strategic",strategicId:"dividend_season"}},
+  {id:"chance_p1_property_maintenance",name:"房產維修抉擇",description:"持有地產出現維修需求，由玩家選擇立即付款或承受下一次租金折減。",rarity:"common",category:"strategic_choice",effect:{kind:"strategic",strategicId:"property_maintenance_choice"}},
+  {id:"chance_p2_housing_hot_zone",name:"房市熱區",description:"隨機一個地產區域成為短期熱區。",rarity:"common",category:"strategic_region",effect:{kind:"strategic",strategicId:"housing_hot_zone"}},
+  {id:"chance_p2_tech_subsidy_wave",name:"科技補助潮",description:"科技區與科技相關股票同時受惠。",rarity:"common",category:"strategic_cross_system",effect:{kind:"strategic",strategicId:"tech_subsidy_wave"}},
+  {id:"chance_p2_city_major_event",name:"城市大型活動",description:"商業區或觀光區因大型活動短期提高過路費。",rarity:"common",category:"strategic_region",effect:{kind:"strategic",strategicId:"city_major_event"}},
+  {id:"chance_p3_lease_contract",name:"租賃契約",description:"支付現金替一塊持有地產簽約，換取未來兩次收租加成。",rarity:"rare",category:"strategic_contract",effect:{kind:"strategic",strategicId:"lease_contract"}}
 ]);
 
 export const FATE_EVENTS=Object.freeze([
@@ -47,7 +56,16 @@ export const FATE_EVENTS=Object.freeze([
   {id:"fate_rare_guard",name:"命運保全令",description:"取得一張產權保全券，可到「我的房產」指定保護地產。",rarity:"rare",category:"property_guard",effect:{kind:"grant_property_protection",count:1}},
   {id:"fate_rare_windfall",name:"意外大進帳",description:"一筆多年未領取的資金突然入帳。",rarity:"rare",category:"cash_gain",effect:{kind:"cash",amount:2800}},
   {id:"fate_rare_loss",name:"重大意外支出",description:"突發事故造成一筆較大的臨時支出。",rarity:"rare",category:"cash_loss",effect:{kind:"cash",amount:-2200}},
-  {id:"fate_rare_rent_block",name:"租約凍結令",description:"取得一張租金封鎖卡，可封鎖對手一塊地產的下一次收租。",rarity:"rare",category:"strategy_item",effect:{kind:"grant_item",itemId:"rent_block",count:1}}
+  {id:"fate_rare_rent_block",name:"租約凍結令",description:"取得一張租金封鎖卡，可封鎖對手一塊地產的下一次收租。",rarity:"rare",category:"strategy_item",effect:{kind:"grant_item",itemId:"rent_block",count:1}},
+
+  {id:"fate_p1_region_subsidy",name:"連區發展補助",description:"完成連區的玩家可取得發展補助或建案許可。",rarity:"common",category:"strategic_region",effect:{kind:"strategic",strategicId:"region_development_subsidy"}},
+  {id:"fate_p1_transport_day",name:"交通罷工／免費日",description:"本 ROUND 交通節點可能罷工，也可能進入免費交通日。",rarity:"common",category:"strategic_transport",effect:{kind:"strategic",strategicId:"transport_labor_day"}},
+  {id:"fate_p2_interest_rate",name:"利率決策",description:"短期利率改變下一輪新開定存的到期收益。",rarity:"common",category:"strategic_bank",effect:{kind:"strategic",strategicId:"interest_rate_decision"}},
+  {id:"fate_p2_tourism_peak",name:"觀光旺季",description:"觀光區短期進入旺季，提高該區過路費。",rarity:"common",category:"strategic_region",effect:{kind:"strategic",strategicId:"tourism_peak"}},
+  {id:"fate_p2_financial_turbulence",name:"金融震盪",description:"金融區租金與金融股同時出現短期波動。",rarity:"common",category:"strategic_cross_system",effect:{kind:"strategic",strategicId:"financial_turbulence"}},
+  {id:"fate_p2_government_contract",name:"政府標案",description:"玩家可選擇投入資金，在期限內完成指定條件換取較高獎勵。",rarity:"common",category:"strategic_contract",effect:{kind:"strategic",strategicId:"government_contract"}},
+  {id:"fate_p3_property_revaluation",name:"房價重估",description:"隨機區域的地產資產估值短期調整，會影響總資產排名。",rarity:"rare",category:"strategic_valuation",effect:{kind:"strategic",strategicId:"property_revaluation"}},
+  {id:"fate_p3_market_circuit_breaker",name:"市場熔斷",description:"本 ROUND 暫停股票拉升／打壓道具，但一般股票買賣不受影響。",rarity:"rare",category:"strategic_market",effect:{kind:"strategic",strategicId:"market_circuit_breaker"}}
 ]);
 
 export const SPECIAL_EVENT_POOLS=Object.freeze({
