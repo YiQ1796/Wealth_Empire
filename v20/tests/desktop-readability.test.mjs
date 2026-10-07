@@ -6,11 +6,11 @@ const css=readFileSync(new URL("../styles/app.css",import.meta.url),"utf8");
 const main=readFileSync(new URL("../js/main.js",import.meta.url),"utf8");
 const stock=readFileSync(new URL("../js/ui/stock-render.js",import.meta.url),"utf8");
 
-assert.match(html,/財富帝國 V20 Alpha 32\.3\.5/);
-assert.match(html,/app\.css\?v=alpha32-226/);
-assert.match(html,/main\.js\?v=alpha32-226/);
+assert.match(html,/財富帝國 V20 Alpha 32\.3\.6/);
+assert.match(html,/app\.css\?v=alpha32-227/);
+assert.match(html,/main\.js\?v=alpha32-227/);
 assert.match(main,/\.\/ui\/stock-render\.js\?v=alpha32-225/);
-assert.match(main,/\.\/core\/game\.js\?v=alpha32-226/);
+assert.match(main,/\.\/core\/game\.js\?v=alpha32-227/);
 
 assert.match(stock,/const desktopPersistent=container\.classList\.contains\("stock-market-grid--persistent"\)/);
 assert.match(stock,/\(desktopPersistent\|\|state\.currentPlayer===localSeat\)/);
@@ -40,4 +40,13 @@ assert.match(propertyBlock,/\.property-event-card strong\{[\s\S]*?font-size:15px
 assert.match(propertyBlock,/\.property-row__title strong\{[\s\S]*?font-size:15px/);
 assert.match(propertyBlock,/\.property-row span,[\s\S]*?font-size:11px/);
 
-console.log("V20 Alpha32.3.5 desktop-only readability regression PASS");
+const regionMarker="/* V20 Alpha 32.3.6 — desktop complete-region visibility; mobile layout remains unchanged. */";
+const regionStart=css.indexOf(regionMarker);
+assert.ok(regionStart>=0,"desktop complete-region marker missing");
+const regionBlock=css.slice(regionStart);
+assert.match(regionBlock,/\.tile\.tile--region-complete::before/);
+assert.match(regionBlock,/content:"連區 " attr\(data-region-bonus\)/);
+assert.match(regionBlock,/\.property-rent-breakdown\{/);
+assert.match(main,/\.\/ui\/render\.js\?v=alpha32-227/);
+
+console.log("V20 Alpha32.3.6 desktop-only readability regression PASS");
