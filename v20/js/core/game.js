@@ -1,6 +1,6 @@
 import{shouldBuyProperty,chooseStockOrders,chooseUpgrade}from"./ai.js";
 import{fillAiMinigameResults,finalizeMinigame,startMinigame,submitMinigameResult as submitGameResult}from"./minigames.js";
-import{canUpgradeProperty,ownsCompleteGroup,rentFor,upgradeCost}from"./property-economy.js";
+import{canUpgradeProperty,ownsCompleteGroup,rentBreakdown,rentFor,upgradeCost}from"./property-economy.js?v=alpha32-227";
 import{GROUP_SIZES,groupRentMultiplier}from"../data/board.js";
 import{advanceStockMarket,buyStock as executeBuyStock,getMarketStock,sellStock as executeSellStock}from"./stock-market.js";
 import{resolveSpecialEvent}from"./special-events.js";
@@ -132,7 +132,8 @@ export class GameEngine{
 
       if(tile.owner!==player.seat){
         const owner=this.state.players[tile.owner];
-        let requestedRent=rentFor(this.state,tile);
+        const rentDetail=rentBreakdown(this.state,tile);
+        let requestedRent=rentDetail.finalRent;
         let strategyRentEffect=null;
         if(Math.floor(Number(tile.rentBlockedCharges)||0)>0){
           tile.rentBlockedCharges=Math.max(0,Math.floor(Number(tile.rentBlockedCharges)||0)-1);
@@ -152,13 +153,17 @@ export class GameEngine{
         owner.cash+=paid;
         player.rentPaid+=paid;
         owner.rentReceived+=paid;
+        const regionMessage=rentDetail.completeGroup
+          ?"（"+tile.group+"連區 ×"+rentDetail.groupMultiplier+
+            "：連區加成 +"+this.formatMoney(rentDetail.groupBonus)+
+            "，連區後 "+this.formatMoney(rentDetail.finalRent)+"）"
+          :"";
         const rentMessage=strategyRentEffect==="rent_block"
-          ? player.name+" 踩到「"+tile.name+"」，租金封鎖卡生效，本次免收過路費。"
+          ? player.name+" 踩到「"+tile.name+"」，租金封鎖卡生效，本次免收過路費。"+
+            regionMessage
           : player.name+" 支付「"+tile.name+"」過路費 "+this.formatMoney(paid)+" 給 "+owner.name+"。"+
-            (strategyRentEffect==="rent_burst"?"（過路費爆發 ×2）":"")+
-            (ownsCompleteGroup(this.state,tile.owner,tile.group)
-              ?"（連區 ×"+groupRentMultiplier(tile.group)+"）"
-              :"");
+            regionMessage+
+            (strategyRentEffect==="rent_burst"?"（過路費爆發 ×2）":"");
         this.log(
           rentMessage,
           "rent",
@@ -176,7 +181,16 @@ export class GameEngine{
             group:tile.group,
             payerCashAfter:player.cash,
             ownerCashAfter:owner.cash,
-            strategyRentEffect
+            strategyRentEffect,
+            rentBreakdown:{
+              baseRent:rentDetail.baseRent,
+              levelRent:rentDetail.levelRent,
+              beforeGroupRent:rentDetail.beforeGroupRent,
+              groupMultiplier:rentDetail.groupMultiplier,
+              groupBonus:rentDetail.groupBonus,
+              finalRent:rentDetail.finalRent,
+              completeGroup:rentDetail.completeGroup
+            }
           }
         );
         if(insurance.protected){
