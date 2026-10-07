@@ -6217,3 +6217,273 @@ body.entry-pending .app-shell{
   .hud-market-button{display:none!important}
   .player-card__details{display:none!important}
 }
+
+
+/* V20 Alpha 32.3.9 — desktop two-column market and readability/color pass. */
+@media (min-width:1181px){
+  /* Large stock popup: use the available width instead of one long card per row. */
+  .stock-market-grid--desktop-popup .stock-pair-row{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:12px;
+    margin-bottom:12px
+  }
+  .stock-market-grid--desktop-popup .stock-trade-card{
+    min-width:0;
+    padding:13px 14px
+  }
+  .stock-market-grid--desktop-popup .stock-title strong{
+    font-size:18px
+  }
+  .stock-market-grid--desktop-popup .stock-title small{
+    font-size:12px
+  }
+  .stock-market-grid--desktop-popup .stock-quote>b{
+    font-size:27px
+  }
+  .stock-market-grid--desktop-popup .stock-holding-row span,
+  .stock-market-grid--desktop-popup .stock-pnl-row span{
+    font-size:12px
+  }
+  .stock-market-grid--desktop-popup .stock-holding-row b,
+  .stock-market-grid--desktop-popup .stock-pnl-row strong{
+    font-size:15px
+  }
+  .stock-market-grid--desktop-popup .stock-trade-controls{
+    grid-template-columns:minmax(145px,1.35fr) minmax(92px,.8fr) minmax(92px,.8fr);
+    gap:8px
+  }
+  .stock-market-grid--desktop-popup .stock-trade-controls input{
+    height:48px;
+    min-height:48px;
+    font-size:19px
+  }
+  .stock-market-grid--desktop-popup .stock-trade-controls button{
+    min-height:48px;
+    font-size:14px
+  }
+
+  /* Generic desktop feature dialogs: one more readability step without growing the modal itself. */
+  .feature-modal__header h2{
+    font-size:30px
+  }
+  .feature-modal__header p{
+    font-size:15px;
+    line-height:1.48
+  }
+  .feature-heading h3{
+    font-size:25px
+  }
+  .feature-heading p{
+    font-size:14px;
+    line-height:1.48
+  }
+  .property-event-card strong{
+    font-size:16px
+  }
+  .property-event-card small,
+  .property-event-card>span{
+    font-size:12px
+  }
+  .region-card__copy strong{
+    font-size:15px
+  }
+  .region-card__copy small{
+    font-size:12px
+  }
+  .region-card>span{
+    font-size:15px
+  }
+  .property-section-title{
+    font-size:14px
+  }
+  .property-row__title strong{
+    font-size:16px
+  }
+  .property-row__title em{
+    font-size:12px
+  }
+  .property-row span,
+  .property-row small{
+    font-size:12px
+  }
+  .property-permit-upgrade,
+  .property-protection-action,
+  .property-upgrade,
+  .property-upgrade--status{
+    font-size:13px
+  }
+  .rent-totals span,
+  .rent-history-row{
+    font-size:12px
+  }
+  .rent-totals b{
+    font-size:15px
+  }
+
+  /* Central facilities and other functional dialogs. */
+  .central-facility-modal__title>h2{
+    font-size:32px
+  }
+  .central-facility-modal__title p{
+    font-size:14px
+  }
+  .central-feature-summary span{
+    font-size:12px
+  }
+  .central-feature-summary strong{
+    font-size:19px
+  }
+  .central-feature-note{
+    font-size:13px
+  }
+  .central-feature-action strong,
+  .central-mission-card strong,
+  .central-development-card strong{
+    font-size:16px
+  }
+  .central-feature-action small,
+  .central-mission-card small,
+  .central-development-card small{
+    font-size:12px;
+    line-height:1.45
+  }
+  .central-feature-active strong{
+    font-size:17px
+  }
+  .central-feature-active p{
+    font-size:13px
+  }
+
+  .transport-modal__header h2,
+  .acquisition-modal__header h2,
+  .urban-modal__header h2{
+    font-size:31px
+  }
+  .transport-modal__header p,
+  .acquisition-modal__header p,
+  .urban-modal__header p{
+    font-size:14px
+  }
+  .transport-current span,
+  .acquisition-summary span{
+    font-size:13px
+  }
+  .transport-current strong{
+    font-size:24px
+  }
+  .transport-current small,
+  .acquisition-summary small{
+    font-size:12px
+  }
+  .transport-destination__copy strong,
+  .acquisition-option__heading strong,
+  .urban-destination strong{
+    font-size:17px
+  }
+  .transport-destination__copy small,
+  .acquisition-option__meta,
+  .acquisition-option small,
+  .urban-destination span{
+    font-size:12px;
+    line-height:1.42
+  }
+
+  /* Player cards: larger, easier to scan, with restrained player/rank color cues. */
+  .players::before{
+    font-size:11px;
+    color:#49677f
+  }
+  .player-card{
+    overflow:hidden;
+    grid-template-columns:52px minmax(0,1fr);
+    gap:11px;
+    padding:11px 13px;
+    border-left:4px solid var(--player-accent,#377bd1);
+    box-shadow:
+      inset 4px 0 0 color-mix(in srgb,var(--player-accent,#377bd1) 18%,transparent),
+      0 1px 0 rgba(29,58,82,.04)
+  }
+  .player-card.active{
+    box-shadow:
+      inset 4px 0 0 var(--player-accent,#377bd1),
+      0 0 0 2px color-mix(in srgb,var(--player-accent,#377bd1) 28%,transparent)
+  }
+  .player-pawn{
+    width:48px;
+    height:48px
+  }
+  .player-card h3{
+    font-size:18px
+  }
+  .player-rank-badge{
+    min-width:38px;
+    min-height:27px;
+    font-size:13px
+  }
+  .player-stats{
+    gap:6px 13px;
+    font-size:13px
+  }
+  .player-stats b{
+    color:var(--player-accent,#29465f);
+    font-size:14px
+  }
+  .player-wealth{
+    margin-top:7px;
+    padding:8px 10px;
+    border:1px solid color-mix(in srgb,var(--player-accent,#377bd1) 22%,#dbe6ef);
+    background:linear-gradient(
+      135deg,
+      color-mix(in srgb,var(--player-accent,#377bd1) 8%,#fff),
+      #eef5fb
+    )
+  }
+  .player-card--wealth-leader .player-wealth{
+    border-color:#dfbd62;
+    background:linear-gradient(135deg,#fff4cc,#fffaf0)
+  }
+  .player-wealth strong{
+    font-size:15px
+  }
+  .player-wealth small{
+    font-size:11px;
+    line-height:1.4
+  }
+  .player-card__details{
+    gap:6px 8px;
+    margin-top:7px;
+    font-size:11px
+  }
+  .player-card__details span{
+    max-width:100%;
+    padding:3px 7px;
+    border-radius:999px;
+    background:color-mix(in srgb,var(--player-accent,#377bd1) 8%,#f4f8fb);
+    overflow:hidden;
+    text-overflow:ellipsis
+  }
+  .player-card__details b{
+    color:var(--player-accent,#29465f);
+    font-size:12px
+  }
+  .player-civic-badges{
+    margin-top:5px
+  }
+  .player-civic-badge{
+    font-size:9px
+  }
+
+  /* Keep the requested 3 + 2 command dock untouched. */
+  .desktop-command-dock{
+    grid-template-columns:repeat(6,minmax(0,1fr))
+  }
+  .desktop-command-dock .desktop-command-dock__feature:nth-of-type(1),
+  .desktop-command-dock .desktop-command-dock__feature:nth-of-type(2),
+  .desktop-command-dock .desktop-command-dock__feature:nth-of-type(3){
+    grid-column:span 2
+  }
+  .desktop-command-dock #rollButton,
+  .desktop-command-dock #desktopEndTurnButton{
+    grid-column:span 3
+  }
+}
