@@ -507,11 +507,14 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
     upgradeDialog.close();
   }
 
-  document.getElementById("endTurnButton").disabled=
+  const endTurnDisabled=
     !isLocalTurn||
     state.phase!=="landed"||
     state.pendingPurchase!=null||
     state.pendingUpgrade!=null;
+  document.getElementById("endTurnButton").disabled=endTurnDisabled;
+  const desktopEndTurnButton=document.getElementById("desktopEndTurnButton");
+  if(desktopEndTurnButton)desktopEndTurnButton.disabled=endTurnDisabled;
 
   renderProperties(state,localPlayer,canControl);
 }
