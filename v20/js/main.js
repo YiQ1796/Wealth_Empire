@@ -1,5 +1,5 @@
-import{createInitialState,createLobbyState,hydrateState,setAiSeat,setHumanSeat,setPlayerCharacter}from"./core/state.js?v=alpha32-236";
-import{GameEngine}from"./core/game.js?v=alpha32-236";
+import{createInitialState,createLobbyState,hydrateState,setAiSeat,setHumanSeat,setPlayerCharacter}from"./core/state.js?v=alpha32-237";
+import{GameEngine}from"./core/game.js?v=alpha32-237";
 import{
   PeerNetwork,
   clearNetworkSession,
@@ -14,20 +14,20 @@ import{
 }from"./core/network.js?v=alpha32-224";
 import{characterAsset,mountStaticBoard,render}from"./ui/render.js?v=alpha32-230";
 import{itemUiSummary}from"./ui/item-render.js";
-import{renderStockMarket}from"./ui/stock-render.js?v=alpha32-236";
+import{renderStockMarket}from"./ui/stock-render.js?v=alpha32-237";
 import{UI_ASSETS}from"./data/ui-assets.js";
 import{MinigameUI}from"./ui/minigame-ui.js";
 import{GROUP_SIZES,MAX_PROPERTY_LEVEL,groupRentMultiplier}from"./data/board.js";
-import{canForceAcquireProperty,groupProgress,propertyValue,rentFor,suggestedAcquisitionOffer,upgradeCost}from"./core/property-economy.js?v=alpha32-236";
-import{TRANSPORT_NODE_BY_INDEX}from"./data/transport.js?v=alpha32-236";
-import{transportDestinationPreview}from"./core/transport.js?v=alpha32-236";
+import{canForceAcquireProperty,groupProgress,propertyValue,rentFor,suggestedAcquisitionOffer,upgradeCost}from"./core/property-economy.js?v=alpha32-237";
+import{TRANSPORT_NODE_BY_INDEX}from"./data/transport.js?v=alpha32-237";
+import{transportDestinationPreview}from"./core/transport.js?v=alpha32-237";
 import{
   CENTRAL_FEATURE_BY_ID,
   CENTRAL_MISSIONS,
   CENTRAL_MISSION_BY_ID,
   CENTRAL_TEST_TUNING
-}from"./data/central-features.js?v=alpha32-236";
-import{centralDevelopmentOptions,centralFacilityStatus,insuranceCooldownRemaining,insurancePremium}from"./core/central-features.js?v=alpha32-236";
+}from"./data/central-features.js?v=alpha32-237";
+import{centralDevelopmentOptions,centralFacilityStatus,insuranceCooldownRemaining,insurancePremium}from"./core/central-features.js?v=alpha32-237";
 const board=document.getElementById("board");
 mountStaticBoard(board);
 const boardCharacterLayer=document.createElement("div");
@@ -1953,7 +1953,7 @@ function openFeature(name){
     property:["我的房產","地產經營中心：查看地產與收租，並使用事件取得的建案許可與產權保全券。"],
     item:["策略道具","符合使用條件時會主動提示。"],
     market:["市場操作","查看即時行情、持股損益並進行買賣。"],
-    info:["遊戲資訊","目前格子與事件紀錄。"]
+    info:["事件紀錄","查看每位玩家的擲骰、買地、升級、收租、股票、道具、交通、收購與事件操作。"]
   }[name];
   if(!meta)return;
 
@@ -1992,11 +1992,6 @@ document.getElementById("confirmUpgradeButton").addEventListener("click",()=>{
   dispatchAction({type:"upgrade_property",tileIndex:state.pendingUpgrade});
 });
 document.getElementById("declineUpgradeButton").addEventListener("click",()=>dispatchAction({type:"decline_upgrade"}));
-document.getElementById("endTurnButton").addEventListener("click",()=>dispatchAction({type:"end_turn"}));
-const desktopEndTurnButton=document.getElementById("desktopEndTurnButton");
-if(desktopEndTurnButton){
-  desktopEndTurnButton.addEventListener("click",()=>dispatchAction({type:"end_turn"}));
-}
 
 board.addEventListener("click",event=>{
   const tileNode=event.target.closest(".tile--property[data-index]");
