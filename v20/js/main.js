@@ -1664,6 +1664,10 @@ document.getElementById("confirmUpgradeButton").addEventListener("click",()=>{
 });
 document.getElementById("declineUpgradeButton").addEventListener("click",()=>dispatchAction({type:"decline_upgrade"}));
 document.getElementById("endTurnButton").addEventListener("click",()=>dispatchAction({type:"end_turn"}));
+const desktopEndTurnButton=document.getElementById("desktopEndTurnButton");
+if(desktopEndTurnButton){
+  desktopEndTurnButton.addEventListener("click",()=>dispatchAction({type:"end_turn"}));
+}
 
 board.addEventListener("click",event=>{
   const tileNode=event.target.closest(".tile--property[data-index]");
