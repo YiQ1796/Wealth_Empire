@@ -5662,3 +5662,125 @@ body.entry-pending .app-shell{
     box-shadow:none
   }
 }
+
+
+/* V20 Alpha 32.3.5 — desktop property readability only; mobile remains unchanged. */
+@media (min-width:1181px){
+  .feature-dialog{
+    width:min(1120px,calc(100vw - 32px))
+  }
+  .feature-modal{
+    padding:18px
+  }
+  .feature-modal__header{
+    margin:-18px -18px 16px;
+    padding:17px 18px 14px
+  }
+  .feature-modal__header h2{
+    font-size:28px
+  }
+  .feature-modal__header p{
+    font-size:14px;
+    line-height:1.45
+  }
+  .feature-heading h3{
+    font-size:23px
+  }
+  .feature-heading p{
+    font-size:13px;
+    line-height:1.45
+  }
+
+  .property-event-card{
+    gap:12px;
+    padding:12px 13px
+  }
+  .property-event-card strong{
+    font-size:15px
+  }
+  .property-event-card small{
+    font-size:11px;
+    line-height:1.45
+  }
+  .property-event-card>span{
+    padding:6px 10px;
+    font-size:11px
+  }
+
+  .region-summary{
+    gap:8px;
+    margin-bottom:11px
+  }
+  .region-card{
+    padding:10px 11px;
+    gap:5px 8px
+  }
+  .region-card__copy strong{
+    font-size:14px
+  }
+  .region-card__copy small{
+    font-size:11px;
+    line-height:1.35
+  }
+  .region-card>span{
+    font-size:14px
+  }
+
+  .property-section-title{
+    margin:11px 0 7px;
+    font-size:13px
+  }
+  .property-list{
+    gap:8px
+  }
+  .property-row{
+    grid-template-columns:44px minmax(0,1fr) auto;
+    gap:10px;
+    padding:11px 12px
+  }
+  .property-row>.region-badge{
+    width:40px;
+    height:40px
+  }
+  .property-row__title{
+    gap:7px
+  }
+  .property-row__title strong{
+    font-size:15px
+  }
+  .property-row__title em{
+    padding:3px 6px;
+    font-size:11px
+  }
+  .property-row span,
+  .property-row small{
+    font-size:11px;
+    line-height:1.5
+  }
+  .property-row__actions{
+    min-width:126px
+  }
+  .property-permit-upgrade,
+  .property-protection-action,
+  .property-upgrade,
+  .property-upgrade--status{
+    min-height:36px;
+    font-size:12px
+  }
+
+  .rent-totals{
+    gap:8px
+  }
+  .rent-totals span{
+    padding:8px 9px;
+    font-size:11px
+  }
+  .rent-totals b{
+    font-size:14px
+  }
+  .rent-history-row{
+    padding:8px 9px;
+    font-size:11px;
+    line-height:1.45
+  }
+}
