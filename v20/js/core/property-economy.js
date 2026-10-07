@@ -31,6 +31,8 @@ export function rentBreakdown(state,tile){
       beforeGroupRent:0,
       groupMultiplier:1,
       groupBonus:0,
+      logisticsMultiplier:1,
+      logisticsBonus:0,
       finalRent:0,
       completeGroup:false
     };
@@ -47,9 +49,20 @@ export function rentBreakdown(state,tile){
   const groupMultiplier=completeGroup
     ? (GROUP_RENT_MULTIPLIERS[tile.group]??1)
     : 1;
-  const finalRent=Math.round(
+  const afterGroupRent=Math.round(
     baseRent*levelMultiplier*permanentMultiplier*groupMultiplier
   );
+  const owner=tile.owner!=null?state.players?.[tile.owner]:null;
+  const logistics=owner?.portLogistics;
+  const logisticsActive=Boolean(
+    logistics&&
+    logistics.group===tile.group&&
+    Number(logistics.remainingCharges)>0
+  );
+  const logisticsMultiplier=logisticsActive
+    ?1+Math.max(0,Math.min(0.15,Number(logistics.bonus)||0.15))
+    :1;
+  const finalRent=Math.round(afterGroupRent*logisticsMultiplier);
 
   return{
     baseRent,
@@ -58,7 +71,9 @@ export function rentBreakdown(state,tile){
     permanentMultiplier,
     beforeGroupRent,
     groupMultiplier,
-    groupBonus:Math.max(0,finalRent-beforeGroupRent),
+    groupBonus:Math.max(0,afterGroupRent-beforeGroupRent),
+    logisticsMultiplier,
+    logisticsBonus:Math.max(0,finalRent-afterGroupRent),
     finalRent,
     completeGroup
   };
