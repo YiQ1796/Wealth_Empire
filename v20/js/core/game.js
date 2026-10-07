@@ -797,50 +797,94 @@ export class GameEngine{
     return true;
   }
 
-  useTransport(destinationIndex,seat=this.state.currentPlayer){
+  useTransportAction(actionId,seat=this.state.currentPlayer){
     const player=this.currentPlayer;
-    if(!this.isCurrentSeat(seat)||!canUseTransport(this.state,seat,destinationIndex)){
-      this.log("目前無法使用這條交通路線。","warning",{seat,destinationIndex:Number(destinationIndex)});
+    if(!this.isCurrentSeat(seat)||!canUseTransportAction(this.state,seat,actionId)){
+      this.log("目前無法使用這個交通樞紐選項。","warning",{seat,actionId:String(actionId)});
       this.notify();
       return false;
     }
 
     const pending=this.state.pendingTransport;
+    const action=(pending.actions??[]).find(item=>item.id===String(actionId));
+    const sourceNode=transportNode(pending.sourceIndex);
     const sourceIndex=pending.sourceIndex;
-    const destination=Number(destinationIndex);
-    const sourceNode=transportNode(sourceIndex);
-    const destinationNode=transportNode(destination);
+    const cost=Math.max(0,Math.round(Number(action.cost)||0));
+    if(cost>0)player.cash-=cost;
 
-    player.position=destination;
     this.state.pendingTransport=null;
     this.state.phase="landed";
 
-    this.log(
-      player.name+" 從「"+(sourceNode?.name??("第 "+(sourceIndex+1)+" 格"))+"」轉乘至「"+
-        (destinationNode?.name??("第 "+(destination+1)+" 格"))+"」。",
-      "move",
-      {
-        seat:player.seat,
-        from:sourceIndex,
-        to:destination,
-        path:[destination],
-        transport:true
+    let moved=false;
+    let destinationIndex=null;
+    let summary=action.label;
+
+    if(action.effect==="cash"){
+      const amount=Math.max(0,Math.round(Number(action.amount)||0));
+      player.cash+=amount;
+      summary=action.label+"｜獲得 "+this.formatMoney(amount);
+    }else if(action.effect==="stock_move"){
+      const market=applyDirectStockMove(this.state,action.stockId,action.percent);
+      summary=action.label+"｜"+(market?.stockName??action.stockId)+" "+
+        (Number(market?.changePercent)>=0?"+":"")+(Number(market?.changePercent)||0).toFixed(1)+"%";
+    }else if(action.effect==="grant_permit"){
+      const granted=grantDevelopmentPermits(player,action.count??1);
+      if(granted.added>0){
+        summary=action.label+"｜取得建案許可 ×"+granted.added;
+      }else{
+        player.cash+=500;
+        summary=action.label+"｜建案許可已滿，改領 "+this.formatMoney(500);
       }
-    );
+    }else if(action.effect==="move_to_type"||action.effect==="move_to_index"){
+      destinationIndex=Number(action.destinationIndex);
+      if(Number.isInteger(destinationIndex)&&this.state.tiles[destinationIndex]){
+        player.position=destinationIndex;
+        moved=true;
+        summary=action.label+"｜抵達「"+this.state.tiles[destinationIndex].name+"」";
+      }
+    }else if(action.effect==="move_forward"){
+      const path=buildForwardPath(this.state,player.position,Number(action.distance)||0);
+      if(path.length){
+        const passedStart=path.includes(0);
+        destinationIndex=path.at(-1);
+        player.position=destinationIndex;
+        moved=true;
+        if(passedStart){
+          player.cash+=2500;
+          this.log(player.name+" 使用「"+sourceNode.name+"」快速通行並通過起點，獲得 $2,500。","cash",{seat:player.seat,amount:2500});
+        }
+        summary=action.label+"｜抵達「"+this.state.tiles[destinationIndex].name+"」";
+      }
+    }
+
     this.log(
-      player.name+" 完成免費轉乘，本次抵達交通節點不再連續觸發第二次交通。",
+      player.name+" 使用「"+(sourceNode?.name??"交通樞紐")+"」："+summary+
+        (cost>0?"（費用 "+this.formatMoney(cost)+"）":""),
       "transport_complete",
       {
         seat:player.seat,
         playerName:player.name,
         sourceIndex,
         sourceName:sourceNode?.name??"",
-        destinationIndex:destination,
-        destinationName:destinationNode?.name??""
+        actionId:action.id,
+        actionLabel:action.label,
+        cost,
+        destinationIndex,
+        cashAfter:player.cash
       }
     );
+
+    if(moved){
+      this.resolveLanding(player);
+    }
     this.notify();
     return true;
+  }
+
+  // Compatibility path for older callers that still provide a destination index.
+  useTransport(destinationIndex,seat=this.state.currentPlayer){
+    const action=this.state.pendingTransport?.actions?.find(item=>Number(item.destinationIndex)===Number(destinationIndex));
+    return action?this.useTransportAction(action.id,seat):false;
   }
 
   skipTransport(seat=this.state.currentPlayer){
