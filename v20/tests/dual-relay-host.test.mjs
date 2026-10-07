@@ -7,7 +7,7 @@ const source=readFileSync(new URL("../js/core/network.js",import.meta.url),"utf8
 assert.match(source,/Promise\.allSettled/);
 assert.match(source,/this\.hostRelayClients=new Map\(\)/);
 assert.match(source,/this\.hostRelayClients\.set\(brokerUrl,client\)/);
-assert.match(source,/const relayKey=brokerUrl+"\\|"+clientId/);
+assert.ok(source.includes('const relayKey=brokerUrl+"|"+clientId;'));
 assert.match(source,/雙 WSS 中繼已就緒/);
 assert.match(source,/P2P 同步作為第三層備援/);
 
