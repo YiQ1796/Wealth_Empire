@@ -6,6 +6,11 @@ const RELAY_BROKER_URLS=Object.freeze([
   "wss://broker.hivemq.com:8884/mqtt",
   "wss://broker.emqx.io:8084/mqtt"
 ]);
+const RELAY_PREF_KEY="wealth_empire_v20_relay_preference";
+const RELAY_CONNECT_TIMEOUT_MS=6000;
+const RELAY_HOST_TIMEOUT_MS=7000;
+const RELAY_JOIN_TIMEOUT_MS=8000;
+const PEER_JOIN_TIMEOUT_MS=9000;
 const RELAY_PROTOCOL="v20a28";
 const RELAY_HEARTBEAT_MS=7000;
 const RELAY_STALE_MS=35000;
@@ -51,6 +56,17 @@ export const NETWORK_ACTION_TYPES=Object.freeze([
 
 function storage(){
   try{return window.localStorage}catch{return null}
+}
+
+function orderedRelayBrokerUrls(){
+  const preferred=storage()?.getItem(RELAY_PREF_KEY);
+  if(!preferred||!RELAY_BROKER_URLS.includes(preferred))return[...RELAY_BROKER_URLS];
+  return[preferred,...RELAY_BROKER_URLS.filter(url=>url!==preferred)];
+}
+
+function rememberRelayBroker(url){
+  if(!RELAY_BROKER_URLS.includes(url))return;
+  try{storage()?.setItem(RELAY_PREF_KEY,url)}catch{}
 }
 
 function safeJsonParse(value){
@@ -283,6 +299,10 @@ async function loadMqttLibrary(){
   return mqttLibraryPromise;
 }
 
+export function prewarmNetworkTransport(){
+  return loadMqttLibrary().then(()=>true).catch(()=>false);
+}
+
 export class PeerNetwork{
   constructor({
     onStatus=()=>{},
@@ -385,9 +405,10 @@ export class PeerNetwork{
 
     let relayConnected=false;
     let relayError=null;
-    for(const brokerUrl of RELAY_BROKER_URLS){
+    for(const brokerUrl of orderedRelayBrokerUrls()){
       try{
         await this.startHostRelay(brokerUrl);
+        rememberRelayBroker(brokerUrl);
         relayConnected=true;
         break;
       }catch(error){
@@ -438,7 +459,7 @@ export class PeerNetwork{
     const client=mqtt.connect(brokerUrl,{
       clientId:relayRandomId("we-host-"+this.roomCode),
       clean:true,
-      connectTimeout:8000,
+      connectTimeout:RELAY_CONNECT_TIMEOUT_MS,
       reconnectPeriod:1800,
       keepalive:15,
       protocolVersion:4
@@ -446,7 +467,7 @@ export class PeerNetwork{
     this.relayClient=client;
 
     await new Promise((resolve,reject)=>{
-      const timer=setTimeout(()=>reject(new Error("relay_timeout")),10000);
+      const timer=setTimeout(()=>reject(new Error("relay_timeout")),RELAY_HOST_TIMEOUT_MS);
       let settled=false;
 
       client.on("connect",()=>{
@@ -662,9 +683,10 @@ export class PeerNetwork{
     this.characterIndex=sanitizeCharacterIndex(characterIndex);
 
     let relayError=null;
-    for(const brokerUrl of RELAY_BROKER_URLS){
+    for(const brokerUrl of orderedRelayBrokerUrls()){
       try{
         const result=await this.joinViaRelay(brokerUrl);
+        rememberRelayBroker(brokerUrl);
         this.transport="relay";
         return result;
       }catch(error){
@@ -692,7 +714,7 @@ export class PeerNetwork{
     const client=mqtt.connect(brokerUrl,{
       clientId:relayId,
       clean:true,
-      connectTimeout:8000,
+      connectTimeout:RELAY_CONNECT_TIMEOUT_MS,
       reconnectPeriod:1800,
       keepalive:15,
       protocolVersion:4,
@@ -741,7 +763,7 @@ export class PeerNetwork{
       const timer=setTimeout(()=>{
         if(presenceRetryTimer)clearInterval(presenceRetryTimer);
         reject(new Error("relay_join_timeout"));
-      },15000);
+      },RELAY_JOIN_TIMEOUT_MS);
       let settled=false;
 
       const startPresenceRetry=()=>{
@@ -848,7 +870,7 @@ export class PeerNetwork{
     this.hostConnection=connection;
 
     const result=await new Promise((resolve,reject)=>{
-      const timer=setTimeout(()=>reject(new Error("join_timeout")),12000);
+      const timer=setTimeout(()=>reject(new Error("join_timeout")),PEER_JOIN_TIMEOUT_MS);
       connection.on("open",()=>{
         connection.send({
           type:"join_request",
