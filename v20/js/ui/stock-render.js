@@ -124,12 +124,7 @@ function stockMobileCardMarkup(stock,player,draft){
 
 function mobileTradePanelMarkup(state,player,draft,canTrade){
   const stock=state.market.stocks.find(item=>item.id===draft.stockId);
-  if(!stock){
-    return '<section class="stock-mobile-trade-dock is-empty" data-stock-mobile-trade-dock>'+
-      '<strong>先點一檔股票</strong>'+
-      '<span>選好股票後，交易區會固定在這裡；輸入數字時不再被其他股票卡擠住。</span>'+
-    '</section>';
-  }
+  if(!stock)return "";
 
   const trend=trendClass(stock.changePercent);
   const position=stockPosition(player,stock);
@@ -145,7 +140,10 @@ function mobileTradePanelMarkup(state,player,draft,canTrade){
   return '<section class="stock-mobile-trade-dock is-active" data-stock-mobile-trade-dock data-stock-id="'+stock.id+'">'+
     '<div class="stock-mobile-trade-dock__head">'+
       '<div><small>目前交易</small><strong>'+stock.name+'</strong><span>'+stock.id+'｜'+stock.sector+'</span></div>'+
-      '<div class="stock-mobile-trade-dock__quote"><b>'+stock.price+'</b><em class="stock-trend '+trend+'">'+trendText(stock.changePercent)+'</em></div>'+
+      '<div class="stock-mobile-trade-dock__head-actions">'+
+        '<div class="stock-mobile-trade-dock__quote"><b>'+stock.price+'</b><em class="stock-trend '+trend+'">'+trendText(stock.changePercent)+'</em></div>'+
+        '<button type="button" class="stock-mobile-trade-dock__close" data-stock-mobile-close aria-label="收合交易面板">✕ 收合</button>'+
+      '</div>'+
     '</div>'+
     '<div class="stock-mobile-trade-dock__status">'+
       '<span>持有 <b>'+position.shares+' 股</b></span>'+
@@ -210,21 +208,37 @@ export function renderStockMarket(container,state,localSeat,{onBuy=()=>{},onSell
   const isMobile=container.id==="stockMarketMobileGrid";
 
   if(isMobile){
-    const cards=state.market.stocks.map(stock=>stockMobileCardMarkup(stock,player,draft)).join("");
+    const rows=[];
+    for(let index=0;index<state.market.stocks.length;index+=2){
+      const pair=state.market.stocks.slice(index,index+2);
+      const hasActive=pair.some(stock=>stock.id===draft.stockId);
+      const pairCards=pair.map(stock=>stockMobileCardMarkup(stock,player,draft)).join("");
+      rows.push(
+        '<div class="stock-mobile-pair-row '+(hasActive?"has-active-trade":"")+'">'+
+          pairCards+
+          (hasActive?mobileTradePanelMarkup(state,player,draft,canTrade):"")+
+        '</div>'
+      );
+    }
+
     container.innerHTML=
       summaryMarkup+
-      mobileTradePanelMarkup(state,player,draft,canTrade)+
-      '<div class="stock-card-list stock-card-list--mobile-compact">'+cards+'</div>';
+      '<div class="stock-card-list stock-card-list--mobile-compact">'+rows.join("")+'</div>';
 
     const rerender=()=>renderStockMarket(container,state,localSeat,{onBuy,onSell});
     container.querySelectorAll("[data-stock-mobile-select]").forEach(card=>{
       card.addEventListener("click",event=>{
         if(event.target.closest("input,button")&&!event.target.closest("[data-stock-mobile-open]"))return;
-        draft.stockId=card.dataset.stockId;
+        const nextStockId=card.dataset.stockId;
+        const collapse=draft.stockId===nextStockId;
+        draft.stockId=collapse?null:nextStockId;
         rerender();
-        requestAnimationFrame(()=>{
-          container.querySelector("[data-stock-mobile-trade-dock]")?.scrollIntoView({block:"start",behavior:"smooth"});
-        });
+        if(!collapse){
+          requestAnimationFrame(()=>{
+            container.querySelector('[data-stock-mobile-select][data-stock-id="'+nextStockId+'"]')
+              ?.scrollIntoView({block:"nearest",behavior:"smooth"});
+          });
+        }
       });
     });
 
@@ -237,6 +251,23 @@ export function renderStockMarket(container,state,localSeat,{onBuy=()=>{},onSell
     const preview=dock.querySelector("[data-stock-mobile-preview]");
     const buyButton=dock.querySelector("[data-stock-mobile-buy]");
     const sellButton=dock.querySelector("[data-stock-mobile-sell]");
+    const closeButton=dock.querySelector("[data-stock-mobile-close]");
+
+    const closeTradePanel=()=>{
+      if(document.activeElement instanceof HTMLElement)document.activeElement.blur();
+      document.body.classList.remove("stock-mobile-trade-focused");
+      draft.stockId=null;
+      rerender();
+      requestAnimationFrame(()=>{
+        container.querySelector('[data-stock-mobile-select][data-stock-id="'+stockId+'"]')
+          ?.scrollIntoView({block:"nearest",behavior:"smooth"});
+      });
+    };
+
+    closeButton?.addEventListener("click",event=>{
+      event.stopPropagation();
+      closeTradePanel();
+    });
 
     const syncTradeState=()=>{
       if(!stock||!input)return 0;
@@ -253,7 +284,7 @@ export function renderStockMarket(container,state,localSeat,{onBuy=()=>{},onSell
 
     input?.addEventListener("focus",()=>{
       document.body.classList.add("stock-mobile-trade-focused");
-      requestAnimationFrame(()=>dock.scrollIntoView({block:"start",behavior:"smooth"}));
+      requestAnimationFrame(()=>dock.scrollIntoView({block:"nearest",behavior:"smooth"}));
     });
     input?.addEventListener("blur",()=>document.body.classList.remove("stock-mobile-trade-focused"));
     input?.addEventListener("input",syncTradeState);
