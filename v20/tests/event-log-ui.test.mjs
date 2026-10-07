@@ -13,7 +13,7 @@ assert.match(html,/id="desktopEventLogButton"[\s\S]*?data-feature="info"[\s\S]*?
 assert.match(html,/data-feature="market"[\s\S]*?市場操作/);
 assert.match(html,/data-feature-panel="info"[\s\S]*?<h3>事件紀錄<\/h3>/);
 assert.match(main,/info:\["事件紀錄","查看每位玩家/);
-assert.match(main,/\.\/ui\/render\.js\?v=alpha32-237/);
+assert.match(main,/\.\/ui\/render\.js\?v=alpha32-238/);
 assert.doesNotMatch(main,/getElementById\("endTurnButton"\)\.addEventListener/);
 assert.doesNotMatch(main,/desktopEndTurnButton/);
 assert.match(render,/function eventActor\(state,event\)/);
