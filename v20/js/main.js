@@ -74,7 +74,10 @@ const ACTION_TOAST_KINDS=new Set([
   "central_mission_complete",
   "central_insurance_active",
   "central_insurance_used",
-  "central_development"
+  "central_development",
+  "strategic_choice_complete",
+  "strategic_contract_complete",
+  "strategic_contract_failed"
 ]);
 const uiContext={
   localSeat:0,
@@ -91,6 +94,7 @@ const urbanDialog=document.getElementById("urbanDialog");
 const acquisitionDialog=document.getElementById("acquisitionDialog");
 const transportDialog=document.getElementById("transportDialog");
 const finalSettlementDialog=document.getElementById("finalSettlementDialog");
+const strategicChoiceDialog=document.getElementById("strategicChoiceDialog");
 const entryGate=document.getElementById("entryGate");
 const actionToastStack=document.getElementById("actionToastStack");
 board.appendChild(actionToastStack);
@@ -268,6 +272,9 @@ function noticeConfig(event){
     central_insurance_active:{title:"租金保險",icon:N.icons.rent,effect:N.effects.blue,tone:"blue",major:true},
     central_insurance_used:{title:"租金保險生效",icon:N.icons.rent,effect:N.effects.green,tone:"green",major:true},
     central_development:{title:"城市建案",icon:N.icons.propertyUpgrade,effect:N.effects.purple,tone:"purple",major:true},
+    strategic_choice_complete:{title:"策略事件決策",icon:N.icons.minigameResult,effect:N.effects.gold,tone:"gold",major:true},
+    strategic_contract_complete:{title:"政府標案完成",icon:N.icons.minigameResult,effect:N.effects.green,tone:"green",major:true},
+    strategic_contract_failed:{title:"政府標案逾期",icon:N.icons.minigameResult,effect:N.effects.red,tone:"red",major:true},
     cash:{title:"現金變動",icon:N.icons.rent,effect:N.effects.green,tone:"green",metric:true}
   };
   return map[event.kind]??{title:"遊戲動態",icon:N.icons.marketTick,effect:N.effects.blue,tone:"blue"};
@@ -336,6 +343,10 @@ function noticeView(event){
       if(Number.isFinite(Number(breakdown.baseRent)))details.push("基礎 "+noticeMoney(breakdown.baseRent));
       if(Number(breakdown.levelRent)>Number(breakdown.baseRent))details.push("等級後 "+noticeMoney(breakdown.levelRent));
       if(Number(breakdown.groupMultiplier)>1)details.push("連區 ×"+Number(breakdown.groupMultiplier).toFixed(2));
+      if(Number(breakdown.globalRentMultiplier)!==1)details.push("城市景氣 ×"+Number(breakdown.globalRentMultiplier).toFixed(2));
+      if(Number(breakdown.strategicGroupMultiplier)!==1)details.push("區域事件 ×"+Number(breakdown.strategicGroupMultiplier).toFixed(2));
+      if(Number(breakdown.maintenanceMultiplier)<1)details.push("維修延後 ×"+Number(breakdown.maintenanceMultiplier).toFixed(2));
+      if(Number(breakdown.leaseMultiplier)>1)details.push("租賃契約 ×"+Number(breakdown.leaseMultiplier).toFixed(2));
       if(Number(breakdown.logisticsMultiplier)>1)details.push("港口物流 ×"+Number(breakdown.logisticsMultiplier).toFixed(2));
       if(Number(data.discount)>0)details.push("保險吸收 "+noticeMoney(data.discount));
       if(Number(data.requested)!==Number(data.amount)&&data.strategyRentEffect!=="rent_block")details.push("原應付 "+noticeMoney(data.requested));
@@ -451,7 +462,9 @@ function noticeView(event){
                     ?"保全券 +"+Math.max(0,Number(data.protectionPermitDelta)||0)
                     : data.effectKind==="grant_item"
                       ?"道具 +"+Math.max(0,Number(data.itemDelta)||0)
-                      :"事件";
+                      : data.effectKind==="strategic"
+                        ?"策略變化"
+                        :"事件";
       const details=[];
       if(data.effectKind==="cash"&&Number.isFinite(Number(data.cashAfter))){
         details.push("事件後現金 "+noticeMoney(data.cashAfter));
@@ -470,6 +483,9 @@ function noticeView(event){
       }
       if(data.effectKind==="grant_item"&&Number(data.itemDelta)>0){
         details.push("取得「"+data.itemName+"」｜同名持有 "+data.itemTotal+" 張");
+      }
+      if(data.effectKind==="strategic"&&data.summary){
+        details.push(data.summary);
       }
       return{message:event.text,metric,details};
     }
@@ -510,14 +526,47 @@ function noticeView(event){
         details:[data.tileName?"移動至 "+data.tileName:""]
       };
 
-    case"transport_complete":
+    case"transport_complete":{
+      const details=[];
+      if(data.transportKind==="port_logistics"){
+        details.push("物流區域 "+(data.group??"持有區域"));
+        details.push("接下來 "+(data.remainingCharges??2)+" 次該區收租 +15%");
+      }else{
+        details.push((data.sourceName??"交通設施")+" → "+(data.destinationName??"目的地"));
+      }
+      if(Number(data.fee)>0)details.push("交通費 "+noticeMoney(data.fee));
+      if(Number(data.transportBonus)>0)details.push("交通免費日補助 +"+noticeMoney(data.transportBonus));
       return{
-        message:(data.playerName??"玩家")+" 完成交通轉乘",
-        metric:"抵達",
-        details:[
-          (data.sourceName??"交通設施")+" → "+(data.destinationName??"目的地"),
-          "本次轉乘不連鎖觸發第二次交通"
-        ]
+        message:(data.playerName??"玩家")+" 完成"+(
+          data.transportKind==="port_logistics"?"港口物流":
+          data.transportKind==="airport"?"跨區航班":
+          data.transportKind==="bridge"?"跨海快速通道":
+          "城市轉乘"
+        ),
+        metric:data.transportKind==="port_logistics"?"+15%":"抵達",
+        details
+      };
+    }
+
+    case"strategic_choice_complete":
+      return{
+        message:event.text,
+        metric:"已決定",
+        details:[]
+      };
+
+    case"strategic_contract_complete":
+      return{
+        message:event.text,
+        metric:"+"+noticeMoney(data.reward),
+        details:["標案條件已完成"]
+      };
+
+    case"strategic_contract_failed":
+      return{
+        message:event.text,
+        metric:"逾期",
+        details:[Number(data.investment)>0?"投資 "+noticeMoney(data.investment)+" 不返還":""].filter(Boolean)
       };
 
     case"market_tick":{
@@ -918,6 +967,8 @@ function executeAction(action,seat=currentLocalSeat()){
       return engine.useTransport(action.destinationIndex,seat);
     case"transport_skip":
       return engine.skipTransport(seat);
+    case"strategic_choice":
+      return engine.resolveStrategicChoice(action.choiceId,action.targetValue,seat);
     case"acquisition_buy":
       return engine.acquireFromCenter(action.tileIndex,seat);
     case"acquisition_skip":
@@ -1476,13 +1527,16 @@ function renderTransportDialog(){
     const fee=Number(pending.fee)||0;
     ruleNote.textContent=
       (fee>0?"本次使用費 "+noticeMoney(fee)+"｜":"免費｜")+
-      (pending.kind==="station"
-        ?"前往其他交通節點，不重複觸發第二次交通。"
-        :pending.kind==="airport"
-          ?"直接飛到所選區域入口，抵達後正常結算該格。"
-          :pending.kind==="port_logistics"
-            ?"不移動；選一個已持有區域，接下來 2 次該區收租 +15%。"
-            :"直接跨越到主要交通出口，不觸發沿途格子。");
+      (pending.kind==="blocked"
+        ?"交通罷工生效：本 ROUND 這個節點暫停服務。"
+        :pending.kind==="station"
+          ?"前往其他交通節點，不重複觸發第二次交通。"
+          :pending.kind==="airport"
+            ?"直接飛到所選區域入口，抵達後正常結算該格。"
+            :pending.kind==="port_logistics"
+              ?"不移動；選一個已持有區域，接下來 2 次該區收租 +15%。"
+              :"直接跨越到主要交通出口，不觸發沿途格子。")+
+      (Number(pending.freeDayBonus)>0?"｜交通免費日：使用後再領 "+noticeMoney(pending.freeDayBonus):"");
   }
 
   const list=document.getElementById("transportDestinationList");
@@ -1539,9 +1593,11 @@ function renderTransportDialog(){
   if((pending.destinationIndexes??[]).length===0){
     const empty=document.createElement("p");
     empty.className="transport-empty";
-    empty.textContent=pending.kind==="port_logistics"
-      ?"你目前沒有持有地產，因此這次沒有可啟動物流加成的區域。"
-      :"目前沒有可用目的地。";
+    empty.textContent=pending.kind==="blocked"
+      ?"交通罷工中，本 ROUND 無法使用這個節點。"
+      :pending.kind==="port_logistics"
+        ?"你目前沒有持有地產，因此這次沒有可啟動物流加成的區域。"
+        :"目前沒有可用目的地。";
     list.appendChild(empty);
   }
 
@@ -1552,6 +1608,48 @@ function renderTransportDialog(){
     toggle.setAttribute("aria-expanded",String(!transportMinimized));
   }
   if(!transportDialog.open)transportDialog.showModal();
+}
+
+function renderStrategicChoiceDialog(){
+  if(!strategicChoiceDialog)return;
+  const pending=state.pendingStrategicChoice;
+  const seat=currentLocalSeat();
+  const player=state.players?.[seat];
+  const shouldShow=Boolean(
+    state.phase==="strategic_choice"&&
+    pending&&
+    pending.seat===seat&&
+    player?.kind==="human"&&
+    player.connected!==false
+  );
+
+  if(!shouldShow){
+    if(strategicChoiceDialog.open)strategicChoiceDialog.close();
+    return;
+  }
+
+  document.getElementById("strategicChoiceTitle").textContent=pending.title??pending.eventName??"策略事件";
+  document.getElementById("strategicChoiceDescription").textContent=pending.description??"請選擇這次事件的處理方式。";
+  const list=document.getElementById("strategicChoiceOptions");
+  list.replaceChildren();
+
+  for(const option of pending.options??[]){
+    const button=document.createElement("button");
+    button.type="button";
+    button.className="strategic-choice-option";
+    button.disabled=Boolean(option.disabled);
+    button.textContent=option.label??option.id;
+    button.addEventListener("click",()=>{
+      dispatchAction({
+        type:"strategic_choice",
+        choiceId:option.id,
+        targetValue:option.targetValue??null
+      });
+    },{once:true});
+    list.appendChild(button);
+  }
+
+  if(!strategicChoiceDialog.open)strategicChoiceDialog.showModal();
 }
 
 function renderFinalSettlementDialog(){
@@ -1600,12 +1698,15 @@ function maybePromptStrategyItems(){
     state.pendingAcquisition||
     state.pendingUrban||
     state.pendingTransport||
+    state.pendingStrategicChoice||
+    state.phase==="strategic_choice"||
     state.phase==="minigame"||
     purchaseDialog?.open||
     upgradeDialog?.open||
     acquisitionDialog?.open||
     urbanDialog?.open||
-    transportDialog?.open
+    transportDialog?.open||
+    strategicChoiceDialog?.open
   )return;
   const seat=currentLocalSeat();
   const player=state.players?.[seat];
@@ -1641,6 +1742,7 @@ function renderAll(){
   renderUrbanDialog();
   renderAcquisitionDialog();
   renderTransportDialog();
+  renderStrategicChoiceDialog();
   renderFinalSettlementDialog();
   minigameUi.sync(state,currentLocalSeat());
   processMoveAnimations();
@@ -1880,6 +1982,7 @@ document.getElementById("toggleTransportMinimizeButton").addEventListener("click
   renderTransportDialog();
 });
 transportDialog.addEventListener("cancel",event=>event.preventDefault());
+strategicChoiceDialog.addEventListener("cancel",event=>event.preventDefault());
 
 document.getElementById("closeFinalSettlementButton").addEventListener("click",()=>{
   const event=(state.events??[]).find(item=>item.kind==="game_complete");
