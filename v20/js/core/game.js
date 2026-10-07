@@ -5,8 +5,8 @@ import{GROUP_SIZES,groupRentMultiplier}from"../data/board.js";
 import{advanceStockMarket,buyStock as executeBuyStock,getMarketStock,sellStock as executeSellStock}from"./stock-market.js";
 import{resolveSpecialEvent}from"./special-events.js";
 import{canUseTransport,chooseAiTransportDestination,createPendingTransport,transportNode}from"./transport.js";
-import{chooseAiAcquisition,createPendingAcquisition,executeAcquisition}from"./acquisition-center.js";
-import{canUseUrban,chooseAiUrbanDestination,createPendingUrban,resolveCivicEvent}from"./civic-specials.js";
+import{chooseAiAcquisition,createPendingAcquisition,executeAcquisition}from"./acquisition-center.js?v=alpha32-226";
+import{canUseUrban,chooseAiUrbanDestination,createPendingUrban,resolveCivicEvent}from"./civic-specials.js?v=alpha32-226";
 import{
   acceptMission,
   activateInsurance,
@@ -189,6 +189,36 @@ export class GameEngine{
         }
         if(paid<rent){
           this.log(player.name+" 現金不足，實際支付可用現金 "+this.formatMoney(paid)+"。","warning",{seat:player.seat});
+        }
+
+        const landingAcquisition=createPendingAcquisition(
+          this.state,
+          player.seat,
+          player.position,
+          {tileIndexes:[player.position],source:"landing"}
+        );
+        if(landingAcquisition.options.length){
+          const option=landingAcquisition.options[0];
+          this.state.pendingAcquisition=landingAcquisition;
+          this.state.phase="acquisition";
+          this.log(
+            player.name+" 踩到未滿級的對手地產「"+tile.name+"」，支付過路費後取得強制收購選擇。"+
+              (option.affordable
+                ?" 可用 "+this.formatMoney(option.offer)+" 收購。"
+                :" 目前現金不足，仍可查看報價後放棄。"),
+            "acquisition_offer",
+            {
+              seat:player.seat,
+              playerName:player.name,
+              tile:player.position,
+              tileName:tile.name,
+              source:"landing",
+              optionCount:1,
+              offer:option.offer,
+              affordable:option.affordable
+            }
+          );
+          return;
         }
       }else{
         const cost=upgradeCost(tile);
@@ -648,6 +678,7 @@ export class GameEngine{
       return false;
     }
 
+    const acquisitionSource=this.state.pendingAcquisition?.source??"center";
     const result=executeAcquisition(this.state,seat,tileIndex);
     if(!result.ok){
       this.log("目前無法收購這塊地產。","warning",{seat,tileIndex:Number(tileIndex)});
@@ -661,7 +692,8 @@ export class GameEngine{
     this.state.phase="landed";
 
     this.log(
-      buyer.name+" 透過收購中心以 "+this.formatMoney(result.offer)+" 收購「"+result.tileName+
+      buyer.name+(acquisitionSource==="landing"?" 踩到對手地產後":" 透過收購中心")+
+        "以 "+this.formatMoney(result.offer)+" 收購「"+result.tileName+
         "」，原持有人 "+(seller?.name??result.previousOwnerName)+"。",
       "property_acquisition",
       {
@@ -692,12 +724,14 @@ export class GameEngine{
       pending.seat!==Number(seat)
     )return false;
 
+    const acquisitionSource=pending.source??"center";
     this.state.pendingAcquisition=null;
     this.state.phase="landed";
     this.log(
-      this.currentPlayer.name+" 選擇不使用收購中心。",
+      this.currentPlayer.name+
+        (acquisitionSource==="landing"?" 放棄本次踩地後的強制收購。":" 選擇不使用收購中心。"),
       "acquisition_skip",
-      {seat:this.currentPlayer.seat}
+      {seat:this.currentPlayer.seat,source:acquisitionSource}
     );
     this.notify();
     return true;
