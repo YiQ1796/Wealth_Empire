@@ -596,15 +596,25 @@ export class GameEngine{
   }
 
   handleCentralMissionAction(seat,action){
-    const result=recordMissionAction(this.state,seat,action);
-    if(!result?.completed)return result;
     const player=this.state.players[Number(seat)];
-    this.log(
-      player.name+" 完成城市委託，獲得 "+this.formatMoney(result.reward)+"。",
-      "central_mission_complete",
-      {seat:Number(seat),playerName:player.name,missionId:result.missionId,reward:result.reward,cashAfter:result.cashAfter}
-    );
-    return result;
+    const missionResult=recordMissionAction(this.state,seat,action);
+    if(missionResult?.completed){
+      this.log(
+        player.name+" 完成城市委託，獲得 "+this.formatMoney(missionResult.reward)+"。",
+        "central_mission_complete",
+        {seat:Number(seat),playerName:player.name,missionId:missionResult.missionId,reward:missionResult.reward,cashAfter:missionResult.cashAfter}
+      );
+    }
+
+    const contractResult=recordGovernmentContractAction(this.state,seat,action);
+    if(contractResult?.completed){
+      this.log(
+        player.name+" 完成政府標案「"+contractResult.taskName+"」，獲得 "+this.formatMoney(contractResult.reward)+"。",
+        "government_contract_complete",
+        {seat:Number(seat),playerName:player.name,taskName:contractResult.taskName,reward:contractResult.reward,cashAfter:contractResult.cashAfter}
+      );
+    }
+    return missionResult??contractResult;
   }
 
   centralBankDeposit(seat=this.state.currentPlayer,principal=5000){
