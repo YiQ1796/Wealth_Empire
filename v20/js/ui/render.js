@@ -15,6 +15,73 @@ import{playerAssetRankings}from"../core/player-assets.js?v=alpha32-228";
 
 function money(value){return"$"+Math.round(value).toLocaleString()}
 
+function escapeHtml(value){
+  return String(value??"").replace(/[&<>"']/g,char=>({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  })[char]);
+}
+
+function eventActor(state,event){
+  const data=event?.data??{};
+  const seatCandidates=[
+    data.seat,
+    data.payerSeat,
+    data.buyerSeat,
+    data.ownerSeat,
+    data.previousOwnerSeat
+  ];
+  for(const rawSeat of seatCandidates){
+    const seat=Number(rawSeat);
+    if(!Number.isInteger(seat))continue;
+    const player=state.players?.[seat];
+    if(player)return{name:player.name||("玩家"+(seat+1)),color:player.color||"#718096"};
+  }
+  return{name:"系統",color:"#718096"};
+}
+
+function eventKindLabel(kind){
+  const labels={
+    move:"移動",
+    property_offer:"地產",
+    property_buy:"買地",
+    property_upgrade_offer:"升級選擇",
+    property_upgrade:"地產升級",
+    property_owned:"地產",
+    rent:"過路費",
+    group_complete:"連區完成",
+    stock_buy:"股票買進",
+    stock_sell:"股票賣出",
+    market_tick:"市場",
+    item_use:"策略道具",
+    transport_complete:"交通",
+    transport_skip:"交通",
+    acquisition_offer:"收購選擇",
+    acquisition_skip:"收購",
+    property_acquisition:"強制收購",
+    special_event:"機會／命運",
+    special_grid:"特殊設施",
+    strategic_choice_complete:"事件決策",
+    minigame_start:"小遊戲",
+    minigame_result:"小遊戲",
+    minigame_complete:"小遊戲結算",
+    cash:"現金",
+    central_bank_active:"都會銀行",
+    central_bank_matured:"定存到期",
+    central_mission_complete:"城市委託",
+    central_insurance_active:"租金保險",
+    central_insurance_used:"租金保險",
+    central_development:"城市建案",
+    system:"系統",
+    warning:"提醒",
+    game_complete:"遊戲結束"
+  };
+  return labels[kind]??"遊戲動態";
+}
+
 function badge(path,label,className=""){
   return'<img class="state-badge '+className+'" src="'+path+'" alt="'+label+'" title="'+label+'">';
 }
@@ -436,8 +503,19 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
 
   const eventLog=document.getElementById("eventLog");
   if(eventLog){
-    eventLog.innerHTML=state.events
-      .map(event=>'<div class="event-entry event-entry--'+event.kind+'">'+event.text+"</div>")
+    eventLog.innerHTML=(state.events??[])
+      .map(event=>{
+        const actor=eventActor(state,event);
+        const round=Math.max(1,Number(event.round)||1);
+        return '<article class="event-entry event-entry--'+escapeHtml(event.kind)+'" style="--event-player-color:'+escapeHtml(actor.color)+'">'+
+          '<div class="event-entry__meta">'+
+            '<span class="event-entry__round">ROUND '+round+'</span>'+
+            '<strong class="event-entry__actor">'+escapeHtml(actor.name)+'</strong>'+
+            '<em class="event-entry__kind">'+escapeHtml(eventKindLabel(event.kind))+'</em>'+
+          '</div>'+
+          '<p>'+escapeHtml(event.text)+'</p>'+
+        '</article>';
+      })
       .join("");
   }
 
@@ -507,15 +585,6 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
   }else if(upgradeDialog?.open){
     upgradeDialog.close();
   }
-
-  const endTurnDisabled=
-    !isLocalTurn||
-    state.phase!=="landed"||
-    state.pendingPurchase!=null||
-    state.pendingUpgrade!=null;
-  document.getElementById("endTurnButton").disabled=endTurnDisabled;
-  const desktopEndTurnButton=document.getElementById("desktopEndTurnButton");
-  if(desktopEndTurnButton)desktopEndTurnButton.disabled=endTurnDisabled;
 
   renderProperties(state,localPlayer,canControl);
 }
