@@ -5,6 +5,7 @@ const html=readFileSync(new URL("../index.html",import.meta.url),"utf8");
 const css=readFileSync(new URL("../styles/app.css",import.meta.url),"utf8");
 const main=readFileSync(new URL("../js/main.js",import.meta.url),"utf8");
 const stock=readFileSync(new URL("../js/ui/stock-render.js",import.meta.url),"utf8");
+const render=readFileSync(new URL("../js/ui/render.js",import.meta.url),"utf8");
 
 assert.match(html,/財富帝國 V20 Alpha 32\.3\.7/);
 assert.match(html,/app\.css\?v=alpha32-228/);
