@@ -39,6 +39,10 @@ assert.ok(FATE_EVENTS.length>=19,"fate pool must be expanded");
 for(const type of["tax","court","hospital","market","urban","acquisition","auction"]){
   assert.ok(CIVIC_EVENT_POOLS[type].length>=6,type+" must have a varied event pool");
   assert.ok(CIVIC_EVENT_POOLS[type].some(event=>event.rarity==="rare"),type+" must include rare events");
+  assert.ok(
+    CIVIC_EVENT_POOLS[type].every(event=>event.effect?.kind!=="none"),
+    type+" must not contain a no-op board event"
+  );
 }
 
 {
