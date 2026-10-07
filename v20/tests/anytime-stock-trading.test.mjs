@@ -30,6 +30,9 @@ state.phase="minigame";
 assert.equal(canTradeStock(state,seat),false,"minigame still temporarily locks trading");
 
 state.phase="world_choice";
-assert.equal(canTradeStock(state,seat),false,"major pending decision still temporarily locks trading");
+assert.equal(canTradeStock(state,seat),true,"pending decisions must not block anytime stock trading");
+
+state.phase="finished";
+assert.equal(canTradeStock(state,seat),false,"finished games must block trading");
 
 console.log("V20 Alpha32.3.12 anytime stock trading regression PASS");
