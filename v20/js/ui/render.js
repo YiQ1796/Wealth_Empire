@@ -11,6 +11,7 @@ import{UI_ASSETS}from"../data/ui-assets.js";
 import{groupProgress,propertyValue,rentBreakdown,rentFor,upgradeCost}from"../core/property-economy.js?v=alpha32-227";
 import{canUseDevelopmentPermit,canUsePropertyProtectionPermit}from"../core/property-events.js";
 import{itemUiSummary,renderStrategyItems}from"./item-render.js";
+import{playerAssetRankings}from"../core/player-assets.js?v=alpha32-228";
 
 function money(value){return"$"+Math.round(value).toLocaleString()}
 
@@ -314,7 +315,12 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
   });
 
   const players=document.getElementById("players");
+  const assetRankingBySeat=new Map(
+    playerAssetRankings(state).map(entry=>[entry.seat,entry])
+  );
   players.innerHTML=state.players.map((player,index)=>{
+    const ranking=assetRankingBySeat.get(player.seat);
+    const assets=ranking?.assets??{cash:0,properties:0,stocks:0,bankDeposit:0,total:0};
     const kindAsset=player.kind==="ai"?UI_ASSETS.badges.ai:UI_ASSETS.badges.player;
     const statusBadge=player.kind==="ai"
       ? '<img class="player-type-badge" src="'+kindAsset+'" alt="AI">'
@@ -328,14 +334,23 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
       player.medicalMoveShield?'<span class="player-civic-badge player-civic-badge--hospital">醫療保護</span>':"",
       Number(player.courtShieldUntilRound)>=Number(state.round)?'<span class="player-civic-badge player-civic-badge--court">法院保全 R'+player.courtShieldUntilRound+'</span>':""
     ].join("");
-    return '<article class="player-card '+(index===state.currentPlayer?"active":"")+'">'+
+    return '<article class="player-card '+(index===state.currentPlayer?"active":"")+
+      ' '+(ranking?.rank===1?"player-card--wealth-leader":"")+'">'+
       '<img class="player-pawn" data-player-avatar="'+index+'" src="'+playerCharacter(player,"idle")+'" alt="">'+
       '<div class="player-card__body">'+
-        '<h3>'+player.name+(index===state.currentPlayer?" 👑":"")+statusBadge+thinkingBadge+offlineLabel+'</h3>'+
+        '<div class="player-card__headline">'+
+          '<h3>'+player.name+(index===state.currentPlayer?" 👑":"")+statusBadge+thinkingBadge+offlineLabel+'</h3>'+
+          '<span class="player-rank-badge player-rank-badge--'+(ranking?.rank??4)+'">#'+(ranking?.rank??"—")+'</span>'+
+        '</div>'+
         '<div class="player-stats">'+
           '<span>現金 <b>'+money(player.cash)+'</b></span>'+
           '<span>地產 <b>'+player.properties.length+'</b></span>'+
           '<span>位置 <b>#'+(player.position+1)+'</b></span>'+
+        '</div>'+
+        '<div class="player-wealth">'+
+          '<strong>總資產 '+money(assets.total)+'</strong>'+
+          '<small>現金 '+money(assets.cash)+'｜地產 '+money(assets.properties)+'｜股票 '+money(assets.stocks)+
+            (assets.bankDeposit>0?'｜定存 '+money(assets.bankDeposit):"")+'</small>'+
         '</div>'+
         (civicBadges?'<div class="player-civic-badges">'+civicBadges+'</div>':"")+
       '</div>'+
