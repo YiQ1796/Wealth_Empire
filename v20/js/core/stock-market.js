@@ -1,4 +1,5 @@
 import{STOCK_DEFINITIONS,STOCK_BY_ID}from"../data/stocks.js";
+import{sectorVolatilityMultiplier}from"./world-events.js";
 
 const MIN_PRICE=10;
 const MAX_PRICE=9999;
@@ -80,7 +81,7 @@ export function advanceStockMarket(state,context={}){
     const random=mulberry32(hashString(
       stock.id+":"+state.market.seed+":"+tick+":"+round+":"+nextSeat
     ));
-    const noise=(random()-0.5)*2*stock.volatility;
+    const noise=(random()-0.5)*2*stock.volatility*sectorVolatilityMultiplier(state,stock.sector);
     const reversion=((stock.basePrice-stock.price)/Math.max(1,stock.basePrice))*0.11;
     const momentum=(stock.changePercent/100)*0.16;
     let move=macro+noise+reversion+momentum;
