@@ -8,10 +8,10 @@ import{
 }from"../data/board.js";
 import{CENTER_BACKGROUND,TILE_ART_BY_INDEX}from"../data/assets.js";
 import{UI_ASSETS}from"../data/ui-assets.js";
-import{groupProgress,propertyValue,rentBreakdown,rentFor,upgradeCost}from"../core/property-economy.js?v=alpha32-227";
+import{groupProgress,propertyValue,rentBreakdown,rentFor,upgradeCost}from"../core/property-economy.js?v=alpha32-233";
 import{canUseDevelopmentPermit,canUsePropertyProtectionPermit}from"../core/property-events.js";
 import{itemUiSummary,renderStrategyItems}from"./item-render.js";
-import{playerAssetRankings}from"../core/player-assets.js?v=alpha32-228";
+import{playerAssetRankings}from"../core/player-assets.js?v=alpha32-233";
 
 function money(value){return"$"+Math.round(value).toLocaleString()}
 
