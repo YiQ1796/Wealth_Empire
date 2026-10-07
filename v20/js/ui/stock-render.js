@@ -107,14 +107,15 @@ export function renderStockMarket(container,state,localSeat,{onBuy=()=>{},onSell
   const player=state.players?.[localSeat];
   if(!player)return;
 
+  const desktopPersistent=container.classList.contains("stock-market-grid--persistent");
   const canTrade=
     state.gameStatus==="playing"&&
-    state.currentPlayer===localSeat&&
     player.kind==="human"&&
     player.connected!==false&&
     !player.bankrupt&&
     state.phase!=="minigame"&&
-    state.phase!=="finished";
+    state.phase!=="finished"&&
+    (desktopPersistent||state.currentPlayer===localSeat);
 
   const draft=getDraft(container);
   if(draft.stockId&&!state.market.stocks.some(stock=>stock.id===draft.stockId))draft.stockId=null;
@@ -124,14 +125,14 @@ export function renderStockMarket(container,state,localSeat,{onBuy=()=>{},onSell
   const summaryRealizedClass=summary.realized>0?"profit":summary.realized<0?"loss":"flat";
 
   const cards=state.market.stocks.map(stock=>stockCardMarkup(stock,player,canTrade,draft));
+  const cardsPerRow=desktopPersistent?1:2;
   const rows=[];
-  for(let index=0;index<cards.length;index+=2){
-    rows.push(
-      '<div class="stock-pair-row">'+
-        cards[index]+
-        (cards[index+1]??'<div class="stock-pair-row__spacer" aria-hidden="true"></div>')+
-      '</div>'
-    );
+  for(let index=0;index<cards.length;index+=cardsPerRow){
+    const rowCards=cards.slice(index,index+cardsPerRow).join("");
+    const spacer=cardsPerRow===2&&index+1>=cards.length
+      ?'<div class="stock-pair-row__spacer" aria-hidden="true"></div>'
+      :"";
+    rows.push('<div class="stock-pair-row">'+rowCards+spacer+'</div>');
   }
 
   container.innerHTML=

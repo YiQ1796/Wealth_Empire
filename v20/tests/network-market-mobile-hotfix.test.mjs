@@ -49,12 +49,15 @@ assert.match(stockSource,/交易股數/);
 assert.match(stockSource,/預估/);
 assert.match(stockSource,/scrollIntoView/);
 assert.match(stockSource,/state\.currentPlayer===localSeat/);
+assert.match(stockSource,/const desktopPersistent=container\.classList\.contains\("stock-market-grid--persistent"\)/);
+assert.match(stockSource,/\(desktopPersistent\|\|state\.currentPlayer===localSeat\)/);
+assert.match(stockSource,/const cardsPerRow=desktopPersistent\?1:2/);
 assert.match(cssSource,/V20 Alpha 32\.3 — mobile stock scroll \+ explicit trade selection/);
 assert.match(cssSource,/\.feature-modal\{[\s\S]*?overflow-y:auto/);
 assert.match(cssSource,/-webkit-overflow-scrolling:touch/);
 assert.match(cssSource,/\.stock-selection-bar\{[\s\S]*?position:sticky/);
 assert.match(cssSource,/\.stock-trade-card\.is-active-trade/);
-assert.match(html,/財富帝國 V20 Alpha 32\.3\.3/);
-assert.match(html,/alpha32-224/);
+assert.match(html,/財富帝國 V20 Alpha 32\.3\.4/);
+assert.match(html,/alpha32-225/);
 
-console.log("V20 Alpha32.3.3 reliable multiplayer + mobile stock UX regression PASS");
+console.log("V20 Alpha32.3.4 reliable multiplayer + mobile stock UX regression PASS");
