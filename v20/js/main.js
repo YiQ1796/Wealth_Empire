@@ -11,7 +11,7 @@ import{
   sanitizePlayerName,
   sanitizeRoomCode,
   saveHostSnapshot
-}from"./core/network.js?v=alpha32-223";
+}from"./core/network.js?v=alpha32-224";
 import{characterAsset,mountStaticBoard,render}from"./ui/render.js";
 import{itemUiSummary}from"./ui/item-render.js";
 import{renderStockMarket}from"./ui/stock-render.js";
@@ -892,8 +892,6 @@ function executeAction(action,seat=currentLocalSeat()){
       return engine.centralDevelopmentUpgrade(action.tileIndex,seat);
     case"end_turn":
       return engine.endTurn(seat);
-    case"start_game":
-      return engine.startGame(seat);
     default:
       return false;
   }
@@ -981,6 +979,22 @@ function renderNetworkUi(){
   const lobbyStartButton=document.getElementById("networkLobbyStartButton");
   const lobbyActive=network.mode!=="offline"&&(state.gameStatus==="lobby"||state.phase==="lobby");
   document.querySelector(".hud-panel")?.classList.toggle("has-network-lobby",lobbyActive);
+  networkDialog.classList.toggle("is-room-lobby",lobbyActive);
+
+  const networkDialogTitle=document.getElementById("networkDialogTitle");
+  const networkDialogDescription=document.getElementById("networkDialogDescription");
+  if(networkDialogTitle){
+    networkDialogTitle.textContent=lobbyActive
+      ?(isLocalRoomHost()?"好友房等待室":"已加入好友房")
+      :"建立或加入好友房";
+  }
+  if(networkDialogDescription){
+    networkDialogDescription.textContent=lobbyActive
+      ?(isLocalRoomHost()
+        ?"房間會保持等待狀態。請把房號給好友；只有你按下「開始遊戲」才會正式開局。"
+        :"已成功進入等待室，請等待房主按下「開始遊戲」。")
+      :"建立房間或輸入朋友的 6 位數房號加入。";
+  }
   if(lobbyCard){
     lobbyCard.hidden=!lobbyActive;
     if(lobbyActive){
@@ -1706,25 +1720,42 @@ document.getElementById("copyRoomCodeButton").addEventListener("click",async()=>
 document.getElementById("createRoomButton").addEventListener("click",async()=>{
   const name=sanitizePlayerName(document.getElementById("networkPlayerName").value);
   const code=createRoomCode();
-  setNetworkStatus("正在建立房間…");
+  const previousState=state;
+  const lobbyState=createLobbyState(name,getOrCreateClientId());
+  setPlayerCharacter(lobbyState,0,selectedCharacterIndex);
+  lobbyState.network.roomCode=code;
+  lobbyState.network.hostSeat=0;
+  lobbyState.network.hostClientId=getOrCreateClientId();
+
+  state=lobbyState;
+  resetToastTracker(state);
+  engine.replaceState(state);
+  document.getElementById("networkRoomCode").value=code;
+  setNetworkStatus("正在建立等待室…");
+  renderNetworkUi();
+
   try{
     const result=await network.host({roomCode:code,playerName:name,characterIndex:selectedCharacterIndex});
     const finalCode=result.roomCode;
     uiContext.localSeat=0;
-    const next=createLobbyState(name,getOrCreateClientId());
-    setPlayerCharacter(next,0,selectedCharacterIndex);
-    next.network.roomCode=finalCode;
-    next.network.hostSeat=0;
-    next.network.hostClientId=getOrCreateClientId();
-    state=next;
-    resetToastTracker(state);
+    uiContext.networkMode="host";
+    state.network.roomCode=finalCode;
+    state.network.hostSeat=0;
+    state.network.hostClientId=getOrCreateClientId();
     engine.replaceState(state);
     document.getElementById("networkRoomCode").value=finalCode;
     setEntryVisible(false);
+    setNetworkStatus("房間 "+finalCode+" 已建立，正在等待好友加入。","success");
     renderNetworkUi();
-    if(networkDialog.open)networkDialog.close();
+    if(!networkDialog.open)networkDialog.showModal();
   }catch(error){
+    await network.close(false);
+    uiContext.localSeat=0;
+    uiContext.networkMode="offline";
+    state=previousState;
+    engine.replaceState(state);
     setNetworkStatus("建立房間失敗："+friendlyNetworkError(error),"error");
+    renderNetworkUi();
   }
 });
 
@@ -1748,7 +1779,12 @@ document.getElementById("joinRoomButton").addEventListener("click",async()=>{
     setEntryVisible(false);
     renderAll();
     renderNetworkUi();
-    if(networkDialog.open)networkDialog.close();
+    if(state.gameStatus==="playing"){
+      if(networkDialog.open)networkDialog.close();
+    }else{
+      setNetworkStatus("已加入房間 "+code+"，等待房主開始遊戲。","success");
+      if(!networkDialog.open)networkDialog.showModal();
+    }
   }catch(error){
     initialGuestStatePending=false;
     setNetworkStatus("加入房間失敗："+friendlyNetworkError(error),"error");

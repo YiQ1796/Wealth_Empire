@@ -50,8 +50,7 @@ export const NETWORK_ACTION_TYPES=Object.freeze([
   "central_transit",
   "central_insurance",
   "central_development",
-  "end_turn",
-  "start_game"
+  "end_turn"
 ]);
 
 function storage(){
