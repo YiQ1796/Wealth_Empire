@@ -31,6 +31,9 @@ export const CIVIC_EVENT_POOLS=Object.freeze({
     {id:"market_dividend",name:"臨時股息",description:"收到一筆臨時市場回饋。",rarity:"common",category:"cash_gain",effect:{kind:"cash",amount:700}},
     {id:"market_fee",name:"交易費調整",description:"臨時市場費用增加。",rarity:"common",category:"cash_loss",effect:{kind:"cash",amount:-550}},
     {id:"market_quiet",name:"市場盤整",description:"盤整結束，市場立即重新報價一次。",rarity:"common",category:"market",effect:{kind:"market_tick",count:1}},
+
+    {id:"market_sector_news",name:"產業新聞",description:"隨機一個產業出現利多或利空，同產業股票同步反應。",rarity:"common",category:"market",effect:{kind:"sector_news"}},
+    {id:"market_dividend_season",name:"股息季",description:"依所有玩家目前持股市值發放 2.5% 現金股息。",rarity:"common",category:"market",effect:{kind:"dividend_season"}},
     {id:"market_rare_ipo",name:"IPO 中籤",description:"幸運抽中新股配售，獲得一筆收益。",rarity:"rare",category:"cash_gain",effect:{kind:"cash",amount:2500}},
     {id:"market_rare_storm",name:"超級行情",description:"市場快速連續重估三次。",rarity:"rare",category:"market",effect:{kind:"market_tick",count:3}}
   ]),

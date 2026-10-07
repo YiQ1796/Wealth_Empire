@@ -16,6 +16,16 @@ export const CHANCE_EVENTS=Object.freeze([
   {id:"chance_item_rent_burst",name:"商圈加價券",description:"取得一張過路費爆發卡，可讓自己的地產下一次收租加倍。",rarity:"common",category:"strategy_item",effect:{kind:"grant_item",itemId:"rent_burst",count:1}},
   {id:"chance_item_stock_boost",name:"法人買盤情報",description:"取得一張股票拉升卡，可指定一檔股票立即上漲。",rarity:"common",category:"strategy_item",effect:{kind:"grant_item",itemId:"stock_boost",count:1}},
 
+  {id:"chance_city_economy_cycle",name:"城市景氣循環",description:"城市景氣轉向，短期內全地產租金會同步升降。",rarity:"common",category:"world",effect:{kind:"world_rent_cycle"}},
+  {id:"chance_property_maintenance_choice",name:"房產維修抉擇",description:"持有地產出現維修需求，由你決定立即處理或承受下一次租金折損。",rarity:"common",category:"choice",effect:{kind:"property_maintenance_choice"}},
+  {id:"chance_region_development_grant",name:"連區發展補助",description:"完整連區可獲城市發展獎勵；尚未完成連區則改領基礎補助。",rarity:"rare",category:"region",effect:{kind:"region_development_grant"}},
+  {id:"chance_transport_day",name:"交通營運日",description:"本 ROUND 可能遇到交通罷工，也可能進入交通免費日。",rarity:"common",category:"transport",effect:{kind:"transport_day"}},
+  {id:"chance_hot_property_market",name:"房市熱區",description:"隨機一個地區進入房市熱區，短期提高該區租金。",rarity:"common",category:"region",effect:{kind:"hot_property_market"}},
+  {id:"chance_tourism_season",name:"觀光旺季",description:"觀光區迎來旺季，飯店與影城地產短期提高租金。",rarity:"common",category:"region",effect:{kind:"tourism_season"}},
+  {id:"chance_city_festival",name:"城市大型活動",description:"觀光區或商業區舉辦大型活動，短期帶動該區租金。",rarity:"rare",category:"region",effect:{kind:"city_festival"}},
+  {id:"chance_government_contract",name:"政府標案",description:"可投入資金承接 2 ROUND 限時標案，完成指定操作取得高額回報。",rarity:"rare",category:"choice",effect:{kind:"government_contract"}},
+  {id:"chance_lease_contract",name:"租賃契約",description:"可支付費用替一塊地產簽署加值租約，未來兩次收租提高。",rarity:"rare",category:"choice",effect:{kind:"lease_contract"}},
+
   {id:"chance_rare_upgrade",name:"都市改建補助",description:"市府抽中你的建案，隨機一塊未滿級地產免費升級 1 級。",rarity:"rare",category:"property_upgrade",effect:{kind:"random_upgrade",fallbackAmount:1800}},
   {id:"chance_rare_permit",name:"黃金建案許可",description:"取得一張建案許可，可到「我的房產」指定一塊未滿級地產免費升級。",rarity:"rare",category:"property_permit",effect:{kind:"grant_permit",count:1}},
   {id:"chance_rare_guard",name:"產權保障獎",description:"取得一張產權保全券，可到「我的房產」指定保護一塊地產。",rarity:"rare",category:"property_guard",effect:{kind:"grant_property_protection",count:1}},
@@ -41,6 +51,12 @@ export const FATE_EVENTS=Object.freeze([
   {id:"fate_greenlight",name:"一路綠燈",description:"一路暢行，向前移動 3 格。",rarity:"common",category:"move_forward",effect:{kind:"move",delta:3}},
   {id:"fate_item_stock_drop",name:"空方密報",description:"取得一張股票打壓卡，可指定一檔股票立即下跌。",rarity:"common",category:"strategy_item",effect:{kind:"grant_item",itemId:"stock_drop",count:1}},
   {id:"fate_item_guard",name:"產權顧問支援",description:"取得一張產權保全卡，可保護自己一塊地產 2 ROUND。",rarity:"common",category:"strategy_item",effect:{kind:"grant_item",itemId:"property_guard",count:1}},
+
+  {id:"fate_bank_rate_shift",name:"利率決策",description:"金融環境改變，本 ROUND 新辦定存的利息可能上升或下降。",rarity:"common",category:"bank",effect:{kind:"bank_rate_shift"}},
+  {id:"fate_tech_subsidy",name:"科技補助潮",description:"科技區租金短期上升，同時推升科技與半導體股票。",rarity:"rare",category:"cross_system",effect:{kind:"tech_subsidy"}},
+  {id:"fate_financial_turbulence",name:"金融震盪",description:"金融區租金短期下滑，金融股波動明顯放大。",rarity:"common",category:"cross_system",effect:{kind:"financial_turbulence"}},
+  {id:"fate_property_revaluation",name:"房價重估",description:"隨機一個地區重新估值，該區地產資產價值永久小幅調整。",rarity:"rare",category:"property_value",effect:{kind:"property_revaluation"}},
+  {id:"fate_market_circuit_breaker",name:"市場熔斷",description:"本 ROUND 暫停股票拉升卡與股票打壓卡，但一般股票買賣照常。",rarity:"rare",category:"market",effect:{kind:"market_circuit_breaker"}},
 
   {id:"fate_rare_upgrade",name:"命運改建",description:"意外取得建築改善資格，隨機一塊未滿級地產免費升級 1 級。",rarity:"rare",category:"property_upgrade",effect:{kind:"random_upgrade",fallbackAmount:1600}},
   {id:"fate_rare_permit",name:"命運建案券",description:"取得一張建案許可，可到「我的房產」自由指定升級目標。",rarity:"rare",category:"property_permit",effect:{kind:"grant_permit",count:1}},

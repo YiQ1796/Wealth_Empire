@@ -226,8 +226,8 @@ jobs:
           grep -q 'desktop-command-dock' v20/index.html
           grep -q 'id="rollButton"' v20/index.html
           grep -q 'id="desktopEndTurnButton"' v20/index.html
-          grep -q 'app.css?v=alpha32-232' v20/index.html
-          grep -q 'main.js?v=alpha32-232' v20/index.html
+          grep -q 'app.css?v=alpha32-233' v20/index.html
+          grep -q 'main.js?v=alpha32-233' v20/index.html
 
           if grep -q 'class="desktop-stock-panel"' v20/index.html; then
             echo "Desktop stock market must not return to the persistent HUD"
@@ -353,23 +353,58 @@ jobs:
 
           echo "V20 Alpha24 distinct minigames and functional chance/fate events PASS"
 
-      - name: Validate V20 transport system
+      - name: Validate V20 transport hubs
         shell: bash
         run: |
           set -euo pipefail
           grep -q 'id="transportDialog"' v20/index.html
           grep -q 'id="transportDestinationList"' v20/index.html
           grep -Fq 'TRANSPORT_NODE_INDEXES=Object.freeze([10,13,32,43])' v20/js/data/transport.js
+          grep -q 'station_chance_line' v20/js/data/transport.js
+          grep -q 'airport_acquisition' v20/js/data/transport.js
+          grep -q 'port_shipping_market' v20/js/data/transport.js
+          grep -q 'bridge_shortcut_11' v20/js/data/transport.js
           grep -q 'createPendingTransport' v20/js/core/transport.js
+          grep -q 'transportActionOptions' v20/js/core/transport.js
           grep -q 'state.phase="transport"' v20/js/core/game.js
-          grep -q 'useTransport(destinationIndex' v20/js/core/game.js
+          grep -q 'useTransportAction(actionId' v20/js/core/game.js
           grep -q 'skipTransport(seat' v20/js/core/game.js
-          grep -q '"transport_travel"' v20/js/core/network.js
+          grep -q '"transport_action"' v20/js/core/network.js
           grep -q '"transport_skip"' v20/js/core/network.js
-          grep -q 'function renderTransportDialog' v20/js/main.js
-          grep -q 'V20 Alpha 25 — functional transport system' v20/styles/app.css
+          grep -q 'dispatchAction({type:"transport_action"' v20/js/main.js
+          grep -q 'V20 Alpha 32.4.0 — distinct transport hubs' v20/styles/app.css
           node --experimental-default-type=module v20/tests/gameplay-systems.test.mjs
-          echo "V20 Alpha25 transport routing and multiplayer authority PASS"
+          echo "V20 Alpha32.4.0 four distinct transport hubs PASS"
+
+      - name: Validate V20 P1-P3 strategic world events
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s v20/js/core/world-events.js
+          grep -q 'chance_city_economy_cycle' v20/js/data/special-events.js
+          grep -q 'chance_property_maintenance_choice' v20/js/data/special-events.js
+          grep -q 'chance_region_development_grant' v20/js/data/special-events.js
+          grep -q 'chance_transport_day' v20/js/data/special-events.js
+          grep -q 'chance_hot_property_market' v20/js/data/special-events.js
+          grep -q 'chance_tourism_season' v20/js/data/special-events.js
+          grep -q 'chance_city_festival' v20/js/data/special-events.js
+          grep -q 'chance_government_contract' v20/js/data/special-events.js
+          grep -q 'chance_lease_contract' v20/js/data/special-events.js
+          grep -q 'fate_bank_rate_shift' v20/js/data/special-events.js
+          grep -q 'fate_tech_subsidy' v20/js/data/special-events.js
+          grep -q 'fate_financial_turbulence' v20/js/data/special-events.js
+          grep -q 'fate_property_revaluation' v20/js/data/special-events.js
+          grep -q 'fate_market_circuit_breaker' v20/js/data/special-events.js
+          grep -q 'market_sector_news' v20/js/data/civic-events.js
+          grep -q 'market_dividend_season' v20/js/data/civic-events.js
+          grep -q 'id="worldChoiceDialog"' v20/index.html
+          grep -q 'id="worldEventStatus"' v20/index.html
+          grep -q '"world_choice_select"' v20/js/core/network.js
+          grep -q 'function renderWorldChoiceDialog' v20/js/main.js
+          grep -q 'function renderWorldEventStatus' v20/js/main.js
+          node --experimental-default-type=module --check v20/js/core/world-events.js
+          node --experimental-default-type=module v20/tests/world-events.test.mjs
+          echo "V20 Alpha32.4.0 P1-P3 strategic world events PASS"
 
       - name: Validate V20 acquisition and race polish
         shell: bash
@@ -537,8 +572,8 @@ jobs:
             echo "Legacy notification seam mask must not return"
             exit 1
           fi
-          grep -q 'app.css?v=alpha32-232' v20/index.html
-          grep -q 'main.js?v=alpha32-232' v20/index.html
+          grep -q 'app.css?v=alpha32-233' v20/index.html
+          grep -q 'main.js?v=alpha32-233' v20/index.html
           echo "V20 desktop notification frame + phone single-surface fit PASS"
 
       - name: Validate V20 mobile pass 2 composition
@@ -549,8 +584,8 @@ jobs:
           grep -q 'grid-template-rows:auto auto auto' v20/styles/app.css
           grep -q 'width:min(58%,460px)' v20/styles/app.css
           grep -q 'grid-template-columns:42px minmax(0,1fr) 68px' v20/styles/app.css
-          grep -q 'app.css?v=alpha32-232' v20/index.html
-          grep -q 'main.js?v=alpha32-232' v20/index.html
+          grep -q 'app.css?v=alpha32-233' v20/index.html
+          grep -q 'main.js?v=alpha32-233' v20/index.html
           echo "V20 phone composition pass 2 PASS"
 
       - name: Validate V20 mobile scroll and viewport authority
@@ -565,8 +600,8 @@ jobs:
           grep -q 'function syncPhoneViewportHeight' v20/js/main.js
           grep -q -- '--phone-app-height' v20/js/main.js
           grep -q 'resetScrollPosition()' v20/js/ui/minigame-ui.js
-          grep -q 'app.css?v=alpha32-232' v20/index.html
-          grep -q 'main.js?v=alpha32-232' v20/index.html
+          grep -q 'app.css?v=alpha32-233' v20/index.html
+          grep -q 'main.js?v=alpha32-233' v20/index.html
           node --experimental-default-type=module v20/tests/mobile-responsive.test.mjs
           echo "V20 mobile scroll and first-entry viewport authority PASS"
 
@@ -580,8 +615,8 @@ jobs:
           grep -q 'width:13px' v20/styles/app.css
           grep -q 'height:14px' v20/styles/app.css
           grep -q 'grid-template-rows:repeat(4,minmax(0,1fr))' v20/styles/app.css
-          grep -q 'app.css?v=alpha32-232' v20/index.html
-          grep -q 'main.js?v=alpha32-232' v20/index.html
+          grep -q 'app.css?v=alpha32-233' v20/index.html
+          grep -q 'main.js?v=alpha32-233' v20/index.html
           node --experimental-default-type=module v20/tests/mobile-responsive.test.mjs
           echo "V20 mobile-only pawn/house/HUD fill PASS"
 
@@ -594,8 +629,8 @@ jobs:
           grep -q 'tile__tokens:has(.pawn-token:nth-child(3))' v20/styles/app.css
           grep -q 'function settlePhoneLandscapeLayout' v20/js/main.js
           grep -q 'visualViewport?.addEventListener("resize",settlePhoneLandscapeLayout)' v20/js/main.js
-          grep -q 'app.css?v=alpha32-232' v20/index.html
-          grep -q 'main.js?v=alpha32-232' v20/index.html
+          grep -q 'app.css?v=alpha32-233' v20/index.html
+          grep -q 'main.js?v=alpha32-233' v20/index.html
           echo "V20 first-entry phone landscape stabilization PASS"
 
       - name: Validate V20 property tile info card
@@ -684,8 +719,8 @@ jobs:
           grep -q 'id="itemInventoryList"' v20/index.html
           grep -q 'id="itemPromptDialog"' v20/index.html
           grep -q 'V20 Alpha 32 — strategy item system' v20/styles/app.css
-          grep -q 'app.css?v=alpha32-232' v20/index.html
-          grep -q 'main.js?v=alpha32-232' v20/index.html
+          grep -q 'app.css?v=alpha32-233' v20/index.html
+          grep -q 'main.js?v=alpha32-233' v20/index.html
           node --experimental-default-type=module v20/tests/items-system.test.mjs
           echo "V20 Alpha32 strategy item state/effect/network/UI PASS"
 
@@ -715,7 +750,7 @@ jobs:
           grep -q 'hostClientId' v20/js/core/state.js
           grep -q 'V20 Alpha 32.3 — single-surface notifications' v20/styles/app.css
           grep -q '.action-toast.leaving' v20/styles/app.css
-          grep -q 'alpha32-232' v20/index.html
+          grep -q 'alpha32-233' v20/index.html
           node --experimental-default-type=module v20/tests/mobile-responsive.test.mjs
           node --experimental-default-type=module v20/tests/network-mobile-resilience.test.mjs
           node --experimental-default-type=module v20/tests/network-market-mobile-hotfix.test.mjs

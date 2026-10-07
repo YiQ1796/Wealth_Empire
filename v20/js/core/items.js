@@ -1,4 +1,5 @@
 import{ITEM_BY_ID,ITEM_DEFINITIONS,ITEM_INVENTORY_LIMIT}from"../data/items.js";
+import{isMarketItemBlocked}from"./world-events.js?v=alpha32-233";
 
 const HISTORY_LIMIT=40;
 
@@ -127,6 +128,7 @@ export function getItemUseStatus(state,seat,itemId,target=null){
   const definition=ITEM_BY_ID[itemId];
   if(!player||!definition)return{usable:false,reason:"無效道具",targets:[]};
   if(inventoryCount(player,itemId)<=0)return{usable:false,reason:"目前未持有",targets:[]};
+  if(isMarketItemBlocked(state,itemId))return{usable:false,reason:"市場熔斷中，本 ROUND 暫停股票拉升／打壓卡",targets:[]};
   if(state.gameStatus!=="playing")return{usable:false,reason:"遊戲尚未開始",targets:[]};
   if(Number(state.currentPlayer)!==Number(seat))return{usable:false,reason:"等待自己的回合",targets:[]};
   if(!(definition.allowedPhases??[]).includes(state.phase)){

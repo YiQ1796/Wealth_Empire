@@ -1,13 +1,13 @@
 import{shouldBuyProperty,chooseStockOrders,chooseUpgrade}from"./ai.js";
 import{fillAiMinigameResults,finalizeMinigame,startMinigame,submitMinigameResult as submitGameResult}from"./minigames.js";
-import{canUpgradeProperty,ownsCompleteGroup,rentBreakdown,rentFor,upgradeCost}from"./property-economy.js?v=alpha32-227";
+import{canUpgradeProperty,ownsCompleteGroup,rentBreakdown,rentFor,upgradeCost}from"./property-economy.js?v=alpha32-233";
 import{GROUP_SIZES,groupRentMultiplier}from"../data/board.js";
-import{advanceStockMarket,buyStock as executeBuyStock,getMarketStock,sellStock as executeSellStock}from"./stock-market.js";
-import{playerAssetRankings}from"./player-assets.js?v=alpha32-228";
-import{resolveSpecialEvent}from"./special-events.js";
-import{canUseTransport,chooseAiTransportDestination,createPendingTransport,transportNode}from"./transport.js";
-import{chooseAiAcquisition,createPendingAcquisition,executeAcquisition}from"./acquisition-center.js?v=alpha32-226";
-import{canUseUrban,chooseAiUrbanDestination,createPendingUrban,resolveCivicEvent}from"./civic-specials.js?v=alpha32-226";
+import{advanceStockMarket,buyStock as executeBuyStock,getMarketStock,sellStock as executeSellStock}from"./stock-market.js?v=alpha32-233";
+import{playerAssetRankings}from"./player-assets.js?v=alpha32-233";
+import{resolveSpecialEvent}from"./special-events.js?v=alpha32-233";
+import{canUseTransportAction,chooseAiTransportAction,createPendingTransport,transportNode}from"./transport.js?v=alpha32-233";
+import{chooseAiAcquisition,createPendingAcquisition,executeAcquisition}from"./acquisition-center.js?v=alpha32-233";
+import{canUseUrban,chooseAiUrbanDestination,createPendingUrban,resolveCivicEvent}from"./civic-specials.js?v=alpha32-233";
 import{
   acceptMission,
   activateInsurance,
@@ -23,9 +23,10 @@ import{
   recordMissionAction,
   settleBankDeposits,
   startBankDeposit
-}from"./central-features.js";
-import{canUseDevelopmentPermit,canUsePropertyProtectionPermit,eligibleOwnedPropertyIndexes,eligibleProtectionPropertyIndexes,useDevelopmentPermit,usePropertyProtectionPermit}from"./property-events.js";
-import{chooseAiItemAction,useItem as executeItemUse}from"./items.js";
+}from"./central-features.js?v=alpha32-233";
+import{canUseDevelopmentPermit,canUsePropertyProtectionPermit,eligibleOwnedPropertyIndexes,eligibleProtectionPropertyIndexes,grantDevelopmentPermits,useDevelopmentPermit,usePropertyProtectionPermit}from"./property-events.js?v=alpha32-233";
+import{chooseAiItemAction,useItem as executeItemUse}from"./items.js?v=alpha32-233";
+import{advanceWorldRound,applyDirectStockMove,chooseAiWorldChoice,recordGovernmentContractAction,resolveWorldChoice as executeWorldChoice}from"./world-events.js?v=alpha32-233";
 
 export class GameEngine{
   constructor(state,onChange){
@@ -121,6 +122,7 @@ export class GameEngine{
     this.state.pendingTransport=null;
     this.state.pendingAcquisition=null;
     this.state.pendingUrban=null;
+    this.state.pendingWorldChoice=null;
     const tile=this.state.tiles[player.position];
 
     if(tile.type==="property"){
@@ -145,6 +147,14 @@ export class GameEngine{
           requestedRent=Math.round(requestedRent*2);
           strategyRentEffect="rent_burst";
         }
+        if(requestedRent>0){
+          if(Math.floor(Number(tile.leaseBonusCharges)||0)>0){
+            tile.leaseBonusCharges=Math.max(0,Math.floor(Number(tile.leaseBonusCharges)||0)-1);
+          }
+          if(Math.floor(Number(tile.rentPenaltyCharges)||0)>0){
+            tile.rentPenaltyCharges=Math.max(0,Math.floor(Number(tile.rentPenaltyCharges)||0)-1);
+          }
+        }
         const insurance=requestedRent>0
           ? applyRentInsurance(player,requestedRent)
           : {rent:0,discount:0,protected:false};
@@ -157,14 +167,21 @@ export class GameEngine{
         const regionMessage=rentDetail.completeGroup
           ?"（"+tile.group+"連區 ×"+rentDetail.groupMultiplier+
             "：連區加成 +"+this.formatMoney(rentDetail.groupBonus)+
-            "，連區後 "+this.formatMoney(rentDetail.finalRent)+"）"
+            "，連區後 "+this.formatMoney(rentDetail.afterGroupRent??rentDetail.finalRent)+"）"
           :"";
+        const extraRentEffects=[
+          rentDetail.leaseMultiplier>1?"租賃契約 ×"+rentDetail.leaseMultiplier.toFixed(2):"",
+          rentDetail.maintenanceMultiplier<1?"維修延後 ×"+rentDetail.maintenanceMultiplier.toFixed(2):"",
+          Math.abs(rentDetail.worldMultiplier-1)>.001?"城市事件 ×"+rentDetail.worldMultiplier.toFixed(2):""
+        ].filter(Boolean);
+        const extraRentMessage=extraRentEffects.length?"（"+extraRentEffects.join("、")+"）":"";
         const rentMessage=strategyRentEffect==="rent_block"
           ? player.name+" 踩到「"+tile.name+"」，租金封鎖卡生效，本次免收過路費。"+
             regionMessage
           : player.name+" 支付「"+tile.name+"」過路費 "+this.formatMoney(paid)+" 給 "+owner.name+"。"+
             regionMessage+
-            (strategyRentEffect==="rent_burst"?"（過路費爆發 ×2）":"");
+            (strategyRentEffect==="rent_burst"?"（過路費爆發 ×2）":"")+
+            extraRentMessage;
         this.log(
           rentMessage,
           "rent",
@@ -189,6 +206,9 @@ export class GameEngine{
               beforeGroupRent:rentDetail.beforeGroupRent,
               groupMultiplier:rentDetail.groupMultiplier,
               groupBonus:rentDetail.groupBonus,
+              leaseMultiplier:rentDetail.leaseMultiplier,
+              maintenanceMultiplier:rentDetail.maintenanceMultiplier,
+              worldMultiplier:rentDetail.worldMultiplier,
               finalRent:rentDetail.finalRent,
               completeGroup:rentDetail.completeGroup
             }
@@ -327,20 +347,34 @@ export class GameEngine{
       const pending=createPendingTransport(this.state,player);
       if(!pending){
         this.state.phase="landed";
-        this.log(player.name+" 抵達「"+tile.name+"」，但交通節點資料不完整。","warning",{seat:player.seat,tile:player.position});
+        this.log(player.name+" 抵達「"+tile.name+"」，但交通樞紐資料不完整。","warning",{seat:player.seat,tile:player.position});
+        return;
+      }
+      if(pending.status==="strike"){
+        player.cash+=300;
+        this.state.phase="landed";
+        this.log(
+          player.name+" 抵達「"+tile.name+"」，遇到交通罷工，本 ROUND 樞紐服務暫停；改領交通補貼 $300。",
+          "transport_event",
+          {seat:player.seat,sourceIndex:pending.sourceIndex,sourceName:tile.name,status:"strike",amount:300,cashAfter:player.cash}
+        );
         return;
       }
       this.state.pendingTransport=pending;
       this.state.phase="transport";
+      const node=transportNode(pending.sourceIndex);
       this.log(
-        player.name+" 抵達「"+tile.name+"」，可免費轉乘至其他交通節點，或留在原地。",
+        player.name+" 抵達「"+tile.name+"」，啟用「"+(node?.description??"交通樞紐功能")+"」"+
+          (pending.status==="free_day"?"（交通免費日：付費選項本回合免費）":""),
         "transport_offer",
         {
           seat:player.seat,
           playerName:player.name,
           sourceIndex:pending.sourceIndex,
           sourceName:tile.name,
-          destinationIndexes:pending.destinationIndexes
+          nodeId:pending.nodeId,
+          status:pending.status,
+          actionIds:(pending.actions??[]).map(action=>action.id)
         }
       );
       return;
@@ -514,6 +548,7 @@ export class GameEngine{
         return;
       }
 
+      if(resolved.pendingChoice)this.state.phase="world_choice";
       const isChance=tile.type==="chance";
       const label=isChance?"機會":"命運";
       const effectText=this.describeEventEffect(resolved);
@@ -561,15 +596,25 @@ export class GameEngine{
   }
 
   handleCentralMissionAction(seat,action){
-    const result=recordMissionAction(this.state,seat,action);
-    if(!result?.completed)return result;
     const player=this.state.players[Number(seat)];
-    this.log(
-      player.name+" 完成城市委託，獲得 "+this.formatMoney(result.reward)+"。",
-      "central_mission_complete",
-      {seat:Number(seat),playerName:player.name,missionId:result.missionId,reward:result.reward,cashAfter:result.cashAfter}
-    );
-    return result;
+    const missionResult=recordMissionAction(this.state,seat,action);
+    if(missionResult?.completed){
+      this.log(
+        player.name+" 完成城市委託，獲得 "+this.formatMoney(missionResult.reward)+"。",
+        "central_mission_complete",
+        {seat:Number(seat),playerName:player.name,missionId:missionResult.missionId,reward:missionResult.reward,cashAfter:missionResult.cashAfter}
+      );
+    }
+
+    const contractResult=recordGovernmentContractAction(this.state,seat,action);
+    if(contractResult?.completed){
+      this.log(
+        player.name+" 完成政府標案「"+contractResult.taskName+"」，獲得 "+this.formatMoney(contractResult.reward)+"。",
+        "government_contract_complete",
+        {seat:Number(seat),playerName:player.name,taskName:contractResult.taskName,reward:contractResult.reward,cashAfter:contractResult.cashAfter}
+      );
+    }
+    return missionResult??contractResult;
   }
 
   centralBankDeposit(seat=this.state.currentPlayer,principal=5000){
@@ -752,50 +797,94 @@ export class GameEngine{
     return true;
   }
 
-  useTransport(destinationIndex,seat=this.state.currentPlayer){
+  useTransportAction(actionId,seat=this.state.currentPlayer){
     const player=this.currentPlayer;
-    if(!this.isCurrentSeat(seat)||!canUseTransport(this.state,seat,destinationIndex)){
-      this.log("目前無法使用這條交通路線。","warning",{seat,destinationIndex:Number(destinationIndex)});
+    if(!this.isCurrentSeat(seat)||!canUseTransportAction(this.state,seat,actionId)){
+      this.log("目前無法使用這個交通樞紐選項。","warning",{seat,actionId:String(actionId)});
       this.notify();
       return false;
     }
 
     const pending=this.state.pendingTransport;
+    const action=(pending.actions??[]).find(item=>item.id===String(actionId));
+    const sourceNode=transportNode(pending.sourceIndex);
     const sourceIndex=pending.sourceIndex;
-    const destination=Number(destinationIndex);
-    const sourceNode=transportNode(sourceIndex);
-    const destinationNode=transportNode(destination);
+    const cost=Math.max(0,Math.round(Number(action.cost)||0));
+    if(cost>0)player.cash-=cost;
 
-    player.position=destination;
     this.state.pendingTransport=null;
     this.state.phase="landed";
 
-    this.log(
-      player.name+" 從「"+(sourceNode?.name??("第 "+(sourceIndex+1)+" 格"))+"」轉乘至「"+
-        (destinationNode?.name??("第 "+(destination+1)+" 格"))+"」。",
-      "move",
-      {
-        seat:player.seat,
-        from:sourceIndex,
-        to:destination,
-        path:[destination],
-        transport:true
+    let moved=false;
+    let destinationIndex=null;
+    let summary=action.label;
+
+    if(action.effect==="cash"){
+      const amount=Math.max(0,Math.round(Number(action.amount)||0));
+      player.cash+=amount;
+      summary=action.label+"｜獲得 "+this.formatMoney(amount);
+    }else if(action.effect==="stock_move"){
+      const market=applyDirectStockMove(this.state,action.stockId,action.percent);
+      summary=action.label+"｜"+(market?.stockName??action.stockId)+" "+
+        (Number(market?.changePercent)>=0?"+":"")+(Number(market?.changePercent)||0).toFixed(1)+"%";
+    }else if(action.effect==="grant_permit"){
+      const granted=grantDevelopmentPermits(player,action.count??1);
+      if(granted.added>0){
+        summary=action.label+"｜取得建案許可 ×"+granted.added;
+      }else{
+        player.cash+=500;
+        summary=action.label+"｜建案許可已滿，改領 "+this.formatMoney(500);
       }
-    );
+    }else if(action.effect==="move_to_type"||action.effect==="move_to_index"){
+      destinationIndex=Number(action.destinationIndex);
+      if(Number.isInteger(destinationIndex)&&this.state.tiles[destinationIndex]){
+        player.position=destinationIndex;
+        moved=true;
+        summary=action.label+"｜抵達「"+this.state.tiles[destinationIndex].name+"」";
+      }
+    }else if(action.effect==="move_forward"){
+      const path=buildForwardPath(this.state,player.position,Number(action.distance)||0);
+      if(path.length){
+        const passedStart=path.includes(0);
+        destinationIndex=path.at(-1);
+        player.position=destinationIndex;
+        moved=true;
+        if(passedStart){
+          player.cash+=2500;
+          this.log(player.name+" 使用「"+sourceNode.name+"」快速通行並通過起點，獲得 $2,500。","cash",{seat:player.seat,amount:2500});
+        }
+        summary=action.label+"｜抵達「"+this.state.tiles[destinationIndex].name+"」";
+      }
+    }
+
     this.log(
-      player.name+" 完成免費轉乘，本次抵達交通節點不再連續觸發第二次交通。",
+      player.name+" 使用「"+(sourceNode?.name??"交通樞紐")+"」："+summary+
+        (cost>0?"（費用 "+this.formatMoney(cost)+"）":""),
       "transport_complete",
       {
         seat:player.seat,
         playerName:player.name,
         sourceIndex,
         sourceName:sourceNode?.name??"",
-        destinationIndex:destination,
-        destinationName:destinationNode?.name??""
+        actionId:action.id,
+        actionLabel:action.label,
+        cost,
+        destinationIndex,
+        cashAfter:player.cash
       }
     );
+
+    if(moved){
+      this.resolveLanding(player);
+    }
     this.notify();
     return true;
+  }
+
+  // Compatibility path for older callers that still provide a destination index.
+  useTransport(destinationIndex,seat=this.state.currentPlayer){
+    const action=this.state.pendingTransport?.actions?.find(item=>Number(item.destinationIndex)===Number(destinationIndex));
+    return action?this.useTransportAction(action.id,seat):false;
   }
 
   skipTransport(seat=this.state.currentPlayer){
@@ -811,9 +900,34 @@ export class GameEngine{
     this.state.pendingTransport=null;
     this.state.phase="landed";
     this.log(
-      this.currentPlayer.name+" 選擇留在「"+(sourceNode?.name??"交通設施")+"」，不進行轉乘。",
+      this.currentPlayer.name+" 選擇不使用「"+(sourceNode?.name??"交通樞紐")+"」本次功能。",
       "transport_skip",
       {seat:this.currentPlayer.seat,sourceIndex:pending.sourceIndex,sourceName:sourceNode?.name??""}
+    );
+    this.notify();
+    return true;
+  }
+
+  resolveWorldChoice(optionId,seat=this.state.currentPlayer){
+    if(!this.isCurrentSeat(seat))return false;
+    const result=executeWorldChoice(this.state,seat,optionId);
+    if(!result.ok){
+      this.log("目前無法執行這個事件選項。","warning",{seat,optionId:String(optionId)});
+      this.notify();
+      return false;
+    }
+    const player=this.state.players[Number(seat)];
+    this.log(
+      player.name+"｜"+result.eventName+"："+result.summary,
+      "world_event_choice",
+      {
+        seat:Number(seat),
+        playerName:player.name,
+        eventName:result.eventName,
+        effectKind:result.kind,
+        optionId:result.optionId,
+        cashAfter:result.cashAfter
+      }
     );
     this.notify();
     return true;
@@ -1196,9 +1310,14 @@ export class GameEngine{
     }
 
     if(this.state.phase==="transport"){
-      const destinationIndex=chooseAiTransportDestination(this.state,player.seat);
-      if(destinationIndex!=null)return this.useTransport(destinationIndex,player.seat);
+      const actionId=chooseAiTransportAction(this.state,player.seat);
+      if(actionId)return this.useTransportAction(actionId,player.seat);
       return this.skipTransport(player.seat);
+    }
+
+    if(this.state.phase==="world_choice"){
+      const optionId=chooseAiWorldChoice(this.state,player.seat);
+      return optionId?this.resolveWorldChoice(optionId,player.seat):false;
     }
 
     if(this.state.phase==="acquisition"){
@@ -1252,7 +1371,8 @@ export class GameEngine{
       this.state.pendingUpgrade!=null||
       this.state.pendingTransport!=null||
       this.state.pendingAcquisition!=null||
-      this.state.pendingUrban!=null
+      this.state.pendingUrban!=null||
+      this.state.pendingWorldChoice!=null
     )return false;
 
     const previousSeat=this.state.currentPlayer;
@@ -1293,6 +1413,15 @@ export class GameEngine{
         return true;
       }
       this.state.round+=1;
+      const worldAdvance=advanceWorldRound(this.state);
+      for(const expired of worldAdvance.expiredContracts){
+        const contractPlayer=this.state.players[expired.seat];
+        this.log(
+          contractPlayer.name+" 的政府標案「"+expired.taskName+"」已逾期，未取得獎勵。",
+          "government_contract_expired",
+          {seat:expired.seat,playerName:contractPlayer.name,taskName:expired.taskName,round:this.state.round}
+        );
+      }
       for(const settled of settleBankDeposits(this.state)){
         const player=this.state.players[settled.seat];
         this.log(
@@ -1338,6 +1467,7 @@ export class GameEngine{
 
   describeEventEffect(result){
     if(!result)return"沒有額外效果";
+    if(result.summary)return result.summary;
     if(result.blockedBy==="tax")return"稅務抵免生效，本次負面金錢事件取消";
     if(result.blockedBy==="hospital")return"醫療保護生效，本次後退事件取消";
     if(result.kind==="cash"){

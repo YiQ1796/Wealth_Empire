@@ -1,4 +1,4 @@
-import{propertyValue}from"./property-economy.js?v=alpha32-228";
+import{propertyValue}from"./property-economy.js?v=alpha32-233";
 
 function safeMoney(value){
   const number=Number(value);
