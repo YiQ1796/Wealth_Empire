@@ -19,7 +19,7 @@ assert.match(network,/const finalCode=this\.roomCode/);
 assert.match(main,/const finalCode=result\.roomCode/);
 assert.match(main,/lobbyState\.network\.roomCode=code/);
 assert.match(main,/state\.network\.roomCode=finalCode/);
-assert.match(main,/\.\/core\/network\.js\?v=alpha32-225/);
+assert.match(main,/\.\/core\/network\.js\?v=alpha32-224/);
 assert.match(network,/this\.connections\.set\(seat,connection\);[\s\S]*?if\(previous&&previous!==connection\)/);
 
 const heartbeatStart=network.indexOf("this.relayHeartbeatTimer=setInterval");
