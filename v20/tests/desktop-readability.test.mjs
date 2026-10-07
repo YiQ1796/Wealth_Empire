@@ -7,16 +7,15 @@ const main=readFileSync(new URL("../js/main.js",import.meta.url),"utf8");
 const stock=readFileSync(new URL("../js/ui/stock-render.js",import.meta.url),"utf8");
 const render=readFileSync(new URL("../js/ui/render.js",import.meta.url),"utf8");
 
-assert.match(html,/財富帝國 V20 Alpha 32\.3\.11/);
-assert.match(html,/app\.css\?v=alpha32-232/);
-assert.match(html,/main\.js\?v=alpha32-232/);
-assert.match(main,/\.\/ui\/stock-render\.js\?v=alpha32-231/);
+assert.match(html,/財富帝國 V20 Alpha 32\.3\.12/);
+assert.match(html,/app\.css\?v=alpha32-233/);
+assert.match(html,/main\.js\?v=alpha32-233/);
+assert.match(main,/\.\/ui\/stock-render\.js\?v=alpha32-233/);
 assert.match(main,/\.\/core\/game\.js\?v=alpha32-229/);
 
-assert.match(stock,/const desktopTradeSurface=/);
-assert.match(stock,/stock-market-grid--desktop-popup/);
-assert.match(stock,/\(desktopTradeSurface\|\|state\.currentPlayer===localSeat\)/);
 assert.match(stock,/const cardsPerRow=2/);
+assert.doesNotMatch(stock,/currentPlayer===localSeat/);
+assert.doesNotMatch(stock,/輪到你的回合時才能買賣股票/);
 
 const desktopMarker="/* V20 Alpha 32.3.4 — desktop-only readability pass. Phone/mobile authority remains unchanged. */";
 const desktopStart=css.indexOf(desktopMarker);
@@ -116,4 +115,4 @@ assert.match(noticeFrameBlock,/@media \(min-width:1181px\)/);
 assert.match(noticeFrameBlock,/\.action-toast__card-bg\{[\s\S]*?display:block!important/);
 assert.match(noticeFrameBlock,/\.action-toast\{[\s\S]*?background:transparent!important/);
 
-console.log("V20 Alpha32.3.11 desktop-only readability regression PASS");
+console.log("V20 Alpha32.3.12 desktop readability + anytime stock regression PASS");
