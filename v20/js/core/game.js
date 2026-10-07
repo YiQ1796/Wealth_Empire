@@ -1,13 +1,13 @@
 import{shouldBuyProperty,chooseStockOrders,chooseUpgrade}from"./ai.js";
 import{fillAiMinigameResults,finalizeMinigame,startMinigame,submitMinigameResult as submitGameResult}from"./minigames.js";
-import{canUpgradeProperty,ownsCompleteGroup,rentBreakdown,rentFor,upgradeCost}from"./property-economy.js?v=alpha32-227";
+import{canUpgradeProperty,ownsCompleteGroup,rentBreakdown,rentFor,upgradeCost}from"./property-economy.js?v=alpha32-233";
 import{GROUP_SIZES,groupRentMultiplier}from"../data/board.js";
-import{advanceStockMarket,buyStock as executeBuyStock,getMarketStock,sellStock as executeSellStock}from"./stock-market.js";
+import{advanceStockMarket,buyStock as executeBuyStock,getMarketStock,sellStock as executeSellStock}from"./stock-market.js?v=alpha32-233";
 import{playerAssetRankings}from"./player-assets.js?v=alpha32-228";
-import{resolveSpecialEvent}from"./special-events.js";
-import{canUseTransportAction,chooseAiTransportAction,createPendingTransport,transportNode}from"./transport.js";
-import{chooseAiAcquisition,createPendingAcquisition,executeAcquisition}from"./acquisition-center.js?v=alpha32-226";
-import{canUseUrban,chooseAiUrbanDestination,createPendingUrban,resolveCivicEvent}from"./civic-specials.js?v=alpha32-226";
+import{resolveSpecialEvent}from"./special-events.js?v=alpha32-233";
+import{canUseTransportAction,chooseAiTransportAction,createPendingTransport,transportNode}from"./transport.js?v=alpha32-233";
+import{chooseAiAcquisition,createPendingAcquisition,executeAcquisition}from"./acquisition-center.js?v=alpha32-233";
+import{canUseUrban,chooseAiUrbanDestination,createPendingUrban,resolveCivicEvent}from"./civic-specials.js?v=alpha32-233";
 import{
   acceptMission,
   activateInsurance,
@@ -23,10 +23,10 @@ import{
   recordMissionAction,
   settleBankDeposits,
   startBankDeposit
-}from"./central-features.js";
-import{canUseDevelopmentPermit,canUsePropertyProtectionPermit,eligibleOwnedPropertyIndexes,eligibleProtectionPropertyIndexes,grantDevelopmentPermits,useDevelopmentPermit,usePropertyProtectionPermit}from"./property-events.js";
-import{chooseAiItemAction,useItem as executeItemUse}from"./items.js";
-import{advanceWorldRound,applyDirectStockMove,chooseAiWorldChoice,recordGovernmentContractAction,resolveWorldChoice as executeWorldChoice}from"./world-events.js";
+}from"./central-features.js?v=alpha32-233";
+import{canUseDevelopmentPermit,canUsePropertyProtectionPermit,eligibleOwnedPropertyIndexes,eligibleProtectionPropertyIndexes,grantDevelopmentPermits,useDevelopmentPermit,usePropertyProtectionPermit}from"./property-events.js?v=alpha32-233";
+import{chooseAiItemAction,useItem as executeItemUse}from"./items.js?v=alpha32-233";
+import{advanceWorldRound,applyDirectStockMove,chooseAiWorldChoice,recordGovernmentContractAction,resolveWorldChoice as executeWorldChoice}from"./world-events.js?v=alpha32-233";
 
 export class GameEngine{
   constructor(state,onChange){
