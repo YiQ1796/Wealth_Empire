@@ -16,10 +16,12 @@ assert.match(main,/acquisitionDialog\.classList\.toggle\("is-landing-acquisition
 assert.match(main,/取得強制收購權｜要不要收購？/);
 assert.match(main,/確認收購這塊地/);
 assert.match(main,/不要收購，保留現金並繼續遊戲/);
-assert.match(main,/只有你按下「確認收購」才會扣款並轉移地產/);
+assert.match(main,/levelAfterAcquisition/);
+assert.match(main,/自動升 1 級/);
+assert.match(main,/確認後會轉移地產並免費自動升 1 級/);
 assert.match(css,/V20 Alpha 32\.3\.7 — desktop wealth ranking \+ forced-acquisition visibility/);
 assert.match(css,/\.acquisition-dialog\.is-landing-acquisition \.acquisition-modal/);
 assert.match(css,/\.acquisition-dialog\.is-landing-acquisition \.acquisition-option:not\(:disabled\)/);
 assert.match(css,/V20 Alpha 32\.3\.8 — explicit yes\/no forced-acquisition choice/);
 
-console.log("V20 Alpha32.3.8 forced acquisition visibility regression PASS");
+console.log("V20 Alpha32.4.0 forced acquisition choice + auto-upgrade regression PASS");
