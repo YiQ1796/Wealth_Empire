@@ -21,14 +21,51 @@ export function ownsCompleteGroup(state,playerSeat,group){
   return groupProgress(state,playerSeat,group).complete;
 }
 
-export function rentFor(state,tile){
-  if(!tile||tile.type!=="property")return 0;
+export function rentBreakdown(state,tile){
+  if(!tile||tile.type!=="property"){
+    return{
+      baseRent:0,
+      levelMultiplier:1,
+      levelRent:0,
+      permanentMultiplier:1,
+      beforeGroupRent:0,
+      groupMultiplier:1,
+      groupBonus:0,
+      finalRent:0,
+      completeGroup:false
+    };
+  }
+
+  const baseRent=Math.max(0,Math.round(Number(tile.rent)||0));
   const levelMultiplier=1+Math.max(0,tile.level||0)*PROPERTY_LEVEL_RENT_BONUS;
-  const groupMultiplier=tile.owner!=null&&ownsCompleteGroup(state,tile.owner,tile.group)
+  const levelRent=Math.round(baseRent*levelMultiplier);
+  const permanentMultiplier=1+Math.max(0,Math.min(0.2,Number(tile.permanentRentBoost)||0));
+  const beforeGroupRent=Math.round(baseRent*levelMultiplier*permanentMultiplier);
+  const completeGroup=Boolean(
+    tile.owner!=null&&ownsCompleteGroup(state,tile.owner,tile.group)
+  );
+  const groupMultiplier=completeGroup
     ? (GROUP_RENT_MULTIPLIERS[tile.group]??1)
     : 1;
-  const permanentMultiplier=1+Math.max(0,Math.min(0.2,Number(tile.permanentRentBoost)||0));
-  return Math.round(tile.rent*levelMultiplier*groupMultiplier*permanentMultiplier);
+  const finalRent=Math.round(
+    baseRent*levelMultiplier*permanentMultiplier*groupMultiplier
+  );
+
+  return{
+    baseRent,
+    levelMultiplier,
+    levelRent,
+    permanentMultiplier,
+    beforeGroupRent,
+    groupMultiplier,
+    groupBonus:Math.max(0,finalRent-beforeGroupRent),
+    finalRent,
+    completeGroup
+  };
+}
+
+export function rentFor(state,tile){
+  return rentBreakdown(state,tile).finalRent;
 }
 
 export function upgradeCost(tile){

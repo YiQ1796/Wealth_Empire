@@ -1,5 +1,5 @@
 import{createInitialState,createLobbyState,hydrateState,setAiSeat,setHumanSeat,setPlayerCharacter}from"./core/state.js";
-import{GameEngine}from"./core/game.js?v=alpha32-226";
+import{GameEngine}from"./core/game.js?v=alpha32-227";
 import{
   PeerNetwork,
   clearNetworkSession,
@@ -12,7 +12,7 @@ import{
   sanitizeRoomCode,
   saveHostSnapshot
 }from"./core/network.js?v=alpha32-224";
-import{characterAsset,mountStaticBoard,render}from"./ui/render.js";
+import{characterAsset,mountStaticBoard,render}from"./ui/render.js?v=alpha32-227";
 import{itemUiSummary}from"./ui/item-render.js";
 import{renderStockMarket}from"./ui/stock-render.js?v=alpha32-225";
 import{UI_ASSETS}from"./data/ui-assets.js";
