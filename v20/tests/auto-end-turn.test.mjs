@@ -1,7 +1,7 @@
 import assert from"node:assert/strict";
 import{readFileSync}from"node:fs";
 import{createInitialState}from"../js/core/state.js";
-import{GameEngine}from"../js/core/game.js?v=alpha32-238";
+import{GameEngine}from"../js/core/game.js?v=alpha32-239";
 
 function ownedMaxPropertyLanding(state,seat=0,steps=2){
   const index=state.tiles.findIndex(tile=>tile.type==="property");
@@ -64,7 +64,7 @@ function ownedMaxPropertyLanding(state,seat=0,steps=2){
 const mainSource=readFileSync(new URL("../js/main.js",import.meta.url),"utf8");
 const cssSource=readFileSync(new URL("../styles/app.css",import.meta.url),"utf8");
 assert.match(mainSource,/if\(result!==false&&action\.type!=="end_turn"\)engine\.tryAutoEndTurn\(\)/);
-assert.match(mainSource,/\.\/core\/state\.js\?v=alpha32-238/);
+assert.match(mainSource,/\.\/core\/state\.js\?v=alpha32-239/);
 assert.match(cssSource,/\.desktop-command-dock \.feature-tab span\{[\s\S]*?font-size:16px/);
 assert.match(cssSource,/\.desktop-command-dock \.action-button span\{[\s\S]*?font-size:17px/);
 
