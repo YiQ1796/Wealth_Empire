@@ -41,6 +41,7 @@ export const NETWORK_ACTION_TYPES=Object.freeze([
   "minigame_result",
   "transport_travel",
   "transport_skip",
+  "strategic_choice",
   "acquisition_buy",
   "acquisition_skip",
   "urban_move",
@@ -166,6 +167,19 @@ export function normalizeRemoteAction(raw){
     const destinationIndex=Math.floor(Number(raw.destinationIndex));
     if(!Number.isFinite(destinationIndex)||destinationIndex<0||destinationIndex>43)return null;
     action.destinationIndex=destinationIndex;
+  }
+
+  if(raw.type==="strategic_choice"){
+    const choiceId=String(raw.choiceId??"").replace(/[^a-z0-9_]/gi,"").slice(0,32);
+    if(!choiceId)return null;
+    action.choiceId=choiceId;
+    if(raw.targetValue!=null){
+      const targetValue=Math.floor(Number(raw.targetValue));
+      if(!Number.isFinite(targetValue)||targetValue<0||targetValue>43)return null;
+      action.targetValue=targetValue;
+    }else{
+      action.targetValue=null;
+    }
   }
 
   if(raw.type==="acquisition_buy"){
