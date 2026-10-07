@@ -57,7 +57,7 @@ assert.match(cssSource,/\.feature-modal\{[\s\S]*?overflow-y:auto/);
 assert.match(cssSource,/-webkit-overflow-scrolling:touch/);
 assert.match(cssSource,/\.stock-selection-bar\{[\s\S]*?position:sticky/);
 assert.match(cssSource,/\.stock-trade-card\.is-active-trade/);
-assert.match(html,/財富帝國 V20 Alpha 32\.3\.6/);
-assert.match(html,/alpha32-227/);
+assert.match(html,/財富帝國 V20 Alpha 32\.3\.7/);
+assert.match(html,/alpha32-228/);
 
-console.log("V20 Alpha32.3.6 reliable multiplayer + mobile stock UX regression PASS");
+console.log("V20 Alpha32.3.7 reliable multiplayer + mobile stock UX regression PASS");

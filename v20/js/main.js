@@ -1,5 +1,5 @@
 import{createInitialState,createLobbyState,hydrateState,setAiSeat,setHumanSeat,setPlayerCharacter}from"./core/state.js";
-import{GameEngine}from"./core/game.js?v=alpha32-227";
+import{GameEngine}from"./core/game.js?v=alpha32-228";
 import{
   PeerNetwork,
   clearNetworkSession,
@@ -12,7 +12,7 @@ import{
   sanitizeRoomCode,
   saveHostSnapshot
 }from"./core/network.js?v=alpha32-224";
-import{characterAsset,mountStaticBoard,render}from"./ui/render.js?v=alpha32-227";
+import{characterAsset,mountStaticBoard,render}from"./ui/render.js?v=alpha32-228";
 import{itemUiSummary}from"./ui/item-render.js";
 import{renderStockMarket}from"./ui/stock-render.js?v=alpha32-225";
 import{UI_ASSETS}from"./data/ui-assets.js";
@@ -55,6 +55,7 @@ const ACTION_TOAST_KINDS=new Set([
   "property_upgrade",
   "group_complete",
   "rent",
+  "acquisition_offer",
   "stock_buy",
   "stock_sell",
   "market_tick",
@@ -248,6 +249,7 @@ function noticeConfig(event){
     property_upgrade:{title:"地產升級",icon:N.icons.propertyUpgrade,effect:N.effects.purple,tone:"purple",major:true},
     group_complete:{title:"區域完成",icon:N.icons.regionComplete,effect:N.effects.gold,tone:"gold",major:true},
     rent:{title:"過路費結算",icon:N.icons.rent,effect:N.effects.green,tone:"green",major:true},
+    acquisition_offer:{title:"強制收購機會",icon:N.icons.acquisition,effect:N.effects.red,tone:"red",major:true},
     property_acquisition:{title:"強制收購",icon:N.icons.acquisition,effect:N.effects.red,tone:"red",major:true},
     item_use:{title:"策略道具",icon:N.icons.minigameResult,effect:N.effects.purple,tone:"purple",major:true},
     bankruptcy:{title:"玩家破產",icon:N.icons.bankruptcy,effect:N.effects.red,tone:"red",major:true},
@@ -369,6 +371,18 @@ function noticeView(event){
       itemDetails.push("剩餘 "+Math.max(0,Number(data.remaining)||0)+" 張");
       return{message:playerName+" 使用「"+(data.itemName??"策略道具")+"」",metric:data.itemName??"已使用",details:itemDetails};
     }
+
+    case"acquisition_offer":
+      return{
+        message:data.source==="landing"
+          ?playerName+" 踩到「"+tileName+"」，可選擇強制收購"
+          :event.text,
+        metric:Number.isFinite(Number(data.offer))?noticeMoney(data.offer):"可收購",
+        details:[
+          data.source==="landing"?"已先完成本次過路費結算":null,
+          data.affordable===false?"目前現金不足，可查看報價後放棄":"未滿級且未受保護，符合強制收購條件"
+        ].filter(Boolean)
+      };
 
     case"property_acquisition":
       return{
@@ -548,12 +562,20 @@ function noticeView(event){
         details:[data.tileName??"地產"]
       };
 
-    case"game_complete":
+    case"game_complete":{
+      const rankings=Array.isArray(data.rankings)?data.rankings:[];
+      const champion=rankings.find(item=>item.rank===1);
       return{
         message:event.text,
-        metric:"ROUND "+(data.round??state.round),
-        details:[]
+        metric:champion?"#1 "+champion.playerName:"ROUND "+(data.round??state.round),
+        details:rankings.slice(0,4).map(item=>
+          "#"+item.rank+" "+item.playerName+"｜總資產 "+noticeMoney(item.total)+
+          "（現金 "+noticeMoney(item.cash)+"／地產 "+noticeMoney(item.properties)+
+          "／股票 "+noticeMoney(item.stocks)+
+          (Number(item.bankDeposit)>0?"／定存 "+noticeMoney(item.bankDeposit):"")+"）"
+        )
       };
+    }
 
     default:
       return{message:event.text,metric:null,details:[]};
@@ -1305,7 +1327,14 @@ function renderAcquisitionDialog(){
     return;
   }
 
+  if(itemPromptDialog?.open)itemPromptDialog.close();
+  if(featureDialog?.open)featureDialog.close();
+  if(propertyInfoDialog?.open)propertyInfoDialog.close();
+
   const landingOffer=pending.source==="landing";
+  acquisitionDialog.classList.toggle("is-landing-acquisition",landingOffer);
+  const title=document.getElementById("acquisitionTitle");
+  if(title)title.textContent=landingOffer?"踩到對手地產｜強制收購":"強制收購";
   const eyebrow=document.getElementById("acquisitionEyebrow");
   const description=document.getElementById("acquisitionDescription");
   const summaryNote=document.getElementById("acquisitionSummaryNote");
@@ -1425,6 +1454,19 @@ function renderTransportDialog(){
 
 function maybePromptStrategyItems(){
   if(!itemPromptDialog||itemPromptDialog.open||featureDialog?.open)return;
+  if(
+    state.pendingPurchase!=null||
+    state.pendingUpgrade!=null||
+    state.pendingAcquisition||
+    state.pendingUrban||
+    state.pendingTransport||
+    state.phase==="minigame"||
+    purchaseDialog?.open||
+    upgradeDialog?.open||
+    acquisitionDialog?.open||
+    urbanDialog?.open||
+    transportDialog?.open
+  )return;
   const seat=currentLocalSeat();
   const player=state.players?.[seat];
   if(
