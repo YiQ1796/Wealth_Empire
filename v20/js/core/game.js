@@ -1300,7 +1300,7 @@ export class GameEngine{
 
   tick(now=Date.now()){
     if(this.state.phase==="minigame"&&this.tryFinalizeMinigame(now)){
-      this.notify();
+      if(!this.tryAutoEndTurn())this.notify();
       return true;
     }
     return false;
