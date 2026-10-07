@@ -54,8 +54,8 @@ assert.match(network,/RELAY_JOIN_TIMEOUT_MS=8000/);
 assert.match(network,/PEER_JOIN_TIMEOUT_MS=9000/);
 assert.match(network,/export function prewarmNetworkTransport/);
 
-assert.match(css,/V20 Alpha 32\.3\.4 — connected players can minimize the waiting room/);
-assert.match(css,/V20 Alpha 32\.3\.4 — the connection dialog becomes a real waiting room/);
+assert.match(css,/V20 Alpha 32\\.3\\.3 — connected players can minimize the waiting room/);
+assert.match(css,/V20 Alpha 32\\.3\\.3 — the connection dialog becomes a real waiting room/);
 assert.match(css,/\.network-dialog\.is-room-lobby \.network-form-grid/);
 assert.match(css,/\.network-lobby-card\[hidden\]/);
 
