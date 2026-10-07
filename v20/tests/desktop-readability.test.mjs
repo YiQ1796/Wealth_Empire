@@ -6,9 +6,9 @@ const css=readFileSync(new URL("../styles/app.css",import.meta.url),"utf8");
 const main=readFileSync(new URL("../js/main.js",import.meta.url),"utf8");
 const stock=readFileSync(new URL("../js/ui/stock-render.js",import.meta.url),"utf8");
 
-assert.match(html,/財富帝國 V20 Alpha 32\.3\.6/);
-assert.match(html,/app\.css\?v=alpha32-227/);
-assert.match(html,/main\.js\?v=alpha32-227/);
+assert.match(html,/財富帝國 V20 Alpha 32\.3\.7/);
+assert.match(html,/app\.css\?v=alpha32-228/);
+assert.match(html,/main\.js\?v=alpha32-228/);
 assert.match(main,/\.\/ui\/stock-render\.js\?v=alpha32-225/);
 assert.match(main,/\.\/core\/game\.js\?v=alpha32-227/);
 
@@ -47,6 +47,16 @@ const regionBlock=css.slice(regionStart);
 assert.match(regionBlock,/\.tile\.tile--region-complete::before/);
 assert.match(regionBlock,/content:"連區 " attr\(data-region-bonus\)/);
 assert.match(regionBlock,/\.property-rent-breakdown\{/);
-assert.match(main,/\.\/ui\/render\.js\?v=alpha32-227/);
+assert.match(main,/\.\/ui\/render\.js\?v=alpha32-228/);
 
-console.log("V20 Alpha32.3.6 desktop-only readability regression PASS");
+const rankingMarker="/* V20 Alpha 32.3.7 — desktop wealth ranking + forced-acquisition visibility. */";
+const rankingStart=css.indexOf(rankingMarker);
+assert.ok(rankingStart>=0,"desktop wealth ranking marker missing");
+const rankingBlock=css.slice(rankingStart);
+assert.match(rankingBlock,/\.wealth-ranking-heading\{/);
+assert.match(rankingBlock,/\.player-rank-badge--1\{/);
+assert.match(rankingBlock,/\.player-wealth\{/);
+assert.match(html,/即時總資產排名/);
+assert.match(render,/playerAssetRankings/);
+
+console.log("V20 Alpha32.3.7 desktop-only readability regression PASS");
