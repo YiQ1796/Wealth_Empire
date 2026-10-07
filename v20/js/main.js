@@ -249,7 +249,7 @@ function noticeConfig(event){
     property_upgrade:{title:"地產升級",icon:N.icons.propertyUpgrade,effect:N.effects.purple,tone:"purple",major:true},
     group_complete:{title:"區域完成",icon:N.icons.regionComplete,effect:N.effects.gold,tone:"gold",major:true},
     rent:{title:"過路費結算",icon:N.icons.rent,effect:N.effects.green,tone:"green",major:true},
-    acquisition_offer:{title:"強制收購機會",icon:N.icons.acquisition,effect:N.effects.red,tone:"red",major:true},
+    acquisition_offer:{title:"取得強制收購權",icon:N.icons.acquisition,effect:N.effects.red,tone:"red",major:true},
     property_acquisition:{title:"強制收購",icon:N.icons.acquisition,effect:N.effects.red,tone:"red",major:true},
     item_use:{title:"策略道具",icon:N.icons.minigameResult,effect:N.effects.purple,tone:"purple",major:true},
     bankruptcy:{title:"玩家破產",icon:N.icons.bankruptcy,effect:N.effects.red,tone:"red",major:true},
@@ -375,12 +375,12 @@ function noticeView(event){
     case"acquisition_offer":
       return{
         message:data.source==="landing"
-          ?playerName+" 踩到「"+tileName+"」，可選擇強制收購"
+          ?playerName+" 踩到「"+tileName+"」，取得強制收購權"
           :event.text,
         metric:Number.isFinite(Number(data.offer))?noticeMoney(data.offer):"可收購",
         details:[
-          data.source==="landing"?"已先完成本次過路費結算":null,
-          data.affordable===false?"目前現金不足，可查看報價後放棄":"未滿級且未受保護，符合強制收購條件"
+          data.source==="landing"?"已先完成本次過路費結算；是否收購由你決定":null,
+          data.affordable===false?"目前現金不足，只能選擇不收購":"未滿級且未受保護；若你確認收購，對手不能拒絕"
         ].filter(Boolean)
       };
 
@@ -1334,19 +1334,19 @@ function renderAcquisitionDialog(){
   const landingOffer=pending.source==="landing";
   acquisitionDialog.classList.toggle("is-landing-acquisition",landingOffer);
   const title=document.getElementById("acquisitionTitle");
-  if(title)title.textContent=landingOffer?"踩到對手地產｜強制收購":"強制收購";
+  if(title)title.textContent=landingOffer?"取得強制收購權｜要不要收購？":"強制收購";
   const eyebrow=document.getElementById("acquisitionEyebrow");
   const description=document.getElementById("acquisitionDescription");
   const summaryNote=document.getElementById("acquisitionSummaryNote");
-  if(eyebrow)eyebrow.textContent=landingOffer?"踩到對手地產":"收購中心";
+  if(eyebrow)eyebrow.textContent=landingOffer?"踩到對手地產｜你來決定":"收購中心";
   if(description){
     description.textContent=landingOffer
-      ?"已支付過路費；此地產未滿級且未受保護，可依目前資產估值的 125% 選擇強制收購。"
+      ?"已支付過路費。你現在取得這塊地的強制收購權：對手不能拒絕，但是否收購完全由你決定。"
       :"使用既有規則：符合條件的對手地產，以目前資產估值的 125% 報價收購。";
   }
   if(summaryNote){
     summaryNote.textContent=landingOffer
-      ?"只有本次踩到的未滿級地產可收購；滿級或受保護地產不會出現此選項。"
+      ?"收購價＝目前資產估值 ×125%。只有你按下「確認收購」才會扣款並轉移地產；也可以選擇這次不收購。"
       :"滿級 LV.2 或受保護地產依既有規則不可強制收購。";
   }
 
@@ -1375,11 +1375,23 @@ function renderAcquisitionDialog(){
 
     const offer=document.createElement("span");
     offer.className="acquisition-option__offer";
-    offer.textContent="收購價 "+noticeMoney(option.offer);
+    offer.textContent=landingOffer
+      ?"確認收購這塊地｜"+noticeMoney(option.offer)
+      :"收購價 "+noticeMoney(option.offer);
 
     const status=document.createElement("small");
-    status.textContent=option.affordable?"可收購":"現金不足";
+    status.textContent=landingOffer
+      ?(option.affordable
+        ?"按下後才會成交；對手無法拒絕"
+        :"現金不足，無法執行收購")
+      :(option.affordable?"可收購":"現金不足");
 
+    button.setAttribute(
+      "aria-label",
+      landingOffer
+        ?"確認收購 "+option.tileName+"，價格 "+noticeMoney(option.offer)
+        :"收購 "+option.tileName
+    );
     button.append(heading,meta,offer,status);
     if(option.affordable){
       button.addEventListener("click",()=>{
@@ -1387,6 +1399,20 @@ function renderAcquisitionDialog(){
       },{once:true});
     }
     list.appendChild(button);
+  }
+
+  const skipButton=document.getElementById("skipAcquisitionButton");
+  const skipIconButton=document.getElementById("skipAcquisitionIconButton");
+  if(skipButton){
+    skipButton.textContent=landingOffer
+      ?"不要收購，保留現金並繼續遊戲"
+      :"這次不收購";
+  }
+  if(skipIconButton){
+    skipIconButton.setAttribute(
+      "aria-label",
+      landingOffer?"不要收購，關閉強制收購權":"放棄收購"
+    );
   }
 
   if(!acquisitionDialog.open)acquisitionDialog.showModal();
