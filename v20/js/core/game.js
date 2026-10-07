@@ -3,7 +3,7 @@ import{fillAiMinigameResults,finalizeMinigame,startMinigame,submitMinigameResult
 import{canUpgradeProperty,ownsCompleteGroup,rentBreakdown,rentFor,upgradeCost}from"./property-economy.js?v=alpha32-233";
 import{GROUP_SIZES,groupRentMultiplier}from"../data/board.js";
 import{advanceStockMarket,buyStock as executeBuyStock,getMarketStock,sellStock as executeSellStock}from"./stock-market.js?v=alpha32-233";
-import{playerAssetRankings}from"./player-assets.js?v=alpha32-228";
+import{playerAssetRankings}from"./player-assets.js?v=alpha32-233";
 import{resolveSpecialEvent}from"./special-events.js?v=alpha32-233";
 import{canUseTransportAction,chooseAiTransportAction,createPendingTransport,transportNode}from"./transport.js?v=alpha32-233";
 import{chooseAiAcquisition,createPendingAcquisition,executeAcquisition}from"./acquisition-center.js?v=alpha32-233";
