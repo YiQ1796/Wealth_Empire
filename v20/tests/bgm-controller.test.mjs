@@ -5,8 +5,8 @@ const html=readFileSync(new URL("../index.html",import.meta.url),"utf8");
 const main=readFileSync(new URL("../js/main.js",import.meta.url),"utf8");
 
 assert.match(html,/財富帝國 V20 Alpha 32\.3\.13/);
-assert.match(html,/app\.css\?v=alpha32-234/);
-assert.match(html,/main\.js\?v=alpha32-234/);
+assert.match(html,/app\.css\?v=alpha32-235/);
+assert.match(html,/main\.js\?v=alpha32-235/);
 
 assert.doesNotMatch(html,/desktopBgmControls/);
 assert.doesNotMatch(html,/bgmMuteButton/);
