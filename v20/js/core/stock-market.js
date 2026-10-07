@@ -1,5 +1,5 @@
 import{STOCK_DEFINITIONS,STOCK_BY_ID}from"../data/stocks.js";
-import{sectorVolatilityMultiplier}from"./world-events.js?v=alpha32-233";
+import{sectorVolatilityMultiplier}from"./world-events.js?v=alpha32-240";
 
 const MIN_PRICE=10;
 const MAX_PRICE=9999;
