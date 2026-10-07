@@ -302,6 +302,7 @@ function commonPickValue(pool,eventId){
 
   assert.equal(engine.acquireFromCenter(targetIndex,0),true);
   assert.equal(state.tiles[targetIndex].owner,0);
+  assert.equal(state.tiles[targetIndex].level,2,"forced acquisition must immediately upgrade LV.1 property to LV.2");
   assert.equal(state.pendingAcquisition,null);
   assert.equal(state.phase,"landed");
 }
@@ -369,6 +370,7 @@ function commonPickValue(pool,eventId){
   assert.equal(state.phase,"landed");
   assert.equal(state.pendingAcquisition,null);
   assert.equal(state.tiles[targetIndex].owner,0);
+  assert.equal(state.tiles[targetIndex].level,1,"acquisition-center purchase must immediately upgrade LV.0 property to LV.1");
   assert.equal(state.players[0].cash,buyerCashBefore-option.offer);
   assert.equal(state.players[1].cash,sellerCashBefore+option.offer);
   assert.ok(state.players[0].properties.includes(targetIndex));
