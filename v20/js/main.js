@@ -1,5 +1,5 @@
 import{createInitialState,createLobbyState,hydrateState,setAiSeat,setHumanSeat,setPlayerCharacter}from"./core/state.js";
-import{GameEngine}from"./core/game.js";
+import{GameEngine}from"./core/game.js?v=alpha32-226";
 import{
   PeerNetwork,
   clearNetworkSession,
@@ -1303,6 +1303,22 @@ function renderAcquisitionDialog(){
   if(!shouldShow){
     if(acquisitionDialog?.open)acquisitionDialog.close();
     return;
+  }
+
+  const landingOffer=pending.source==="landing";
+  const eyebrow=document.getElementById("acquisitionEyebrow");
+  const description=document.getElementById("acquisitionDescription");
+  const summaryNote=document.getElementById("acquisitionSummaryNote");
+  if(eyebrow)eyebrow.textContent=landingOffer?"踩到對手地產":"收購中心";
+  if(description){
+    description.textContent=landingOffer
+      ?"已支付過路費；此地產未滿級且未受保護，可依目前資產估值的 125% 選擇強制收購。"
+      :"使用既有規則：符合條件的對手地產，以目前資產估值的 125% 報價收購。";
+  }
+  if(summaryNote){
+    summaryNote.textContent=landingOffer
+      ?"只有本次踩到的未滿級地產可收購；滿級或受保護地產不會出現此選項。"
+      :"滿級 LV.2 或受保護地產依既有規則不可強制收購。";
   }
 
   document.getElementById("acquisitionCash").textContent=noticeMoney(player.cash);

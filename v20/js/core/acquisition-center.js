@@ -27,11 +27,21 @@ export function acquisitionOptions(state,buyerSeat){
     });
 }
 
-export function createPendingAcquisition(state,buyerSeat,sourceIndex){
-  const options=acquisitionOptions(state,buyerSeat);
+export function createPendingAcquisition(
+  state,
+  buyerSeat,
+  sourceIndex,
+  {tileIndexes=null,source="center"}={}
+){
+  const allowedIndexes=Array.isArray(tileIndexes)
+    ? new Set(tileIndexes.map(index=>Number(index)).filter(Number.isInteger))
+    : null;
+  const options=acquisitionOptions(state,buyerSeat)
+    .filter(option=>!allowedIndexes||allowedIndexes.has(option.tileIndex));
   return{
     seat:Number(buyerSeat),
     sourceIndex:Number(sourceIndex),
+    source,
     options
   };
 }
@@ -85,8 +95,16 @@ export function executeAcquisition(state,buyerSeat,tileIndex){
 
 export function chooseAiAcquisition(state,buyerSeat){
   const buyer=state.players?.[Number(buyerSeat)];
-  const options=acquisitionOptions(state,buyerSeat)
-    .filter(option=>option.affordable);
+  const pending=state.pendingAcquisition;
+  const sourceOptions=pending?.seat===Number(buyerSeat)
+    ? (pending.options??[])
+    : acquisitionOptions(state,buyerSeat);
+  const options=sourceOptions
+    .filter(option=>
+      option.affordable&&
+      buyer?.cash>=option.offer&&
+      canForceAcquireProperty(state,option.tileIndex,buyerSeat)
+    );
   if(!buyer||options.length===0)return null;
 
   const ownedGroups=new Map();
