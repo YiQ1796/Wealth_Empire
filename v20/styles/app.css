@@ -6487,3 +6487,54 @@ body.entry-pending .app-shell{
     grid-column:span 3
   }
 }
+
+
+.stock-owned-badge{display:none}
+
+/* V20 Alpha 32.3.10 — desktop held-stock visibility. */
+@media (min-width:1181px){
+  .stock-market-grid--desktop-popup .stock-trade-card.is-held-stock{
+    border:2px solid #3a78c2;
+    background:linear-gradient(135deg,#eef6ff,#f8fbff);
+    box-shadow:
+      inset 6px 0 0 #2f78c8,
+      0 0 0 2px rgba(47,120,200,.08)
+  }
+  .stock-market-grid--desktop-popup .stock-trade-card.is-held-stock:hover{
+    border-color:#2f6fac
+  }
+  .stock-market-grid--desktop-popup .stock-trade-card.is-held-stock.is-active-trade{
+    border-color:#df9f2b;
+    box-shadow:
+      inset 6px 0 0 #2f78c8,
+      0 0 0 3px rgba(223,159,43,.25)
+  }
+  .stock-market-grid--desktop-popup .stock-title__line{
+    min-width:0;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap
+  }
+  .stock-market-grid--desktop-popup .stock-owned-badge{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-height:24px;
+    padding:3px 8px;
+    border-radius:999px;
+    background:#2f78c8;
+    color:#fff;
+    font-size:11px;
+    font-weight:1000;
+    line-height:1;
+    box-shadow:0 2px 6px rgba(47,120,200,.18)
+  }
+  .stock-market-grid--desktop-popup .stock-trade-card.is-held-stock .stock-holding-row{
+    background:#dfefff
+  }
+  .stock-market-grid--desktop-popup .stock-trade-card.is-held-stock .stock-holding-row span:first-child{
+    color:#1f5f9c;
+    font-weight:1000
+  }
+}
