@@ -1,4 +1,7 @@
 import{TRANSPORT_NODE_BY_INDEX,isTransportNodeIndex,transportDestinations}from"../data/transport.js";
+import{GROUP_ORDER,groupTileIndexes}from"../data/board.js";
+
+const BRIDGE_EXIT_INDEXES=Object.freeze([10,13,32]);
 
 export function transportDestinationPreview(state,startIndex,steps=6){
   const size=state.tiles?.length??44;
@@ -35,13 +38,71 @@ function destinationScore(state,startIndex){
   );
 }
 
+function groupEntryIndexes(){
+  return GROUP_ORDER
+    .map(group=>groupTileIndexes(group)[0])
+    .filter(Number.isInteger);
+}
+
+function ownedGroupRepresentatives(state,player){
+  return GROUP_ORDER
+    .map(group=>{
+      const indexes=groupTileIndexes(group).filter(index=>state.tiles?.[index]?.owner===player.seat);
+      if(indexes.length===0)return null;
+      return indexes
+        .map(index=>({index,price:Number(state.tiles?.[index]?.price)||0,group}))
+        .sort((a,b)=>b.price-a.price||a.index-b.index)[0];
+    })
+    .filter(Boolean);
+}
+
 export function createPendingTransport(state,player){
   const sourceIndex=Number(player?.position);
   if(!player||!isTransportNodeIndex(sourceIndex))return null;
+  const source=TRANSPORT_NODE_BY_INDEX[sourceIndex];
+  if(!source)return null;
+
+  if(source.id==="central_station"){
+    return{
+      seat:player.seat,
+      sourceIndex,
+      kind:"station",
+      fee:source.fee,
+      resolveLanding:false,
+      destinationIndexes:transportDestinations(sourceIndex).map(node=>node.index)
+    };
+  }
+
+  if(source.id==="international_airport"){
+    return{
+      seat:player.seat,
+      sourceIndex,
+      kind:"airport",
+      fee:source.fee,
+      resolveLanding:true,
+      destinationIndexes:groupEntryIndexes()
+    };
+  }
+
+  if(source.id==="international_port"){
+    const options=ownedGroupRepresentatives(state,player);
+    return{
+      seat:player.seat,
+      sourceIndex,
+      kind:"port_logistics",
+      fee:source.fee,
+      resolveLanding:false,
+      destinationIndexes:options.map(option=>option.index)
+    };
+  }
+
   return{
     seat:player.seat,
     sourceIndex,
-    destinationIndexes:transportDestinations(sourceIndex).map(node=>node.index)
+    kind:"bridge",
+    fee:source.fee,
+    resolveLanding:false,
+    destinationIndexes:BRIDGE_EXIT_INDEXES.filter(index=>index!==sourceIndex)
   };
 }
 
@@ -51,23 +112,34 @@ export function canUseTransport(state,seat,destinationIndex){
   if(!pending||state.phase!=="transport"||!player)return false;
   if(Number(seat)!==pending.seat||player.position!==pending.sourceIndex)return false;
   const destination=Number(destinationIndex);
-  return(
-    destination!==pending.sourceIndex&&
-    pending.destinationIndexes.includes(destination)&&
-    isTransportNodeIndex(destination)
-  );
+  if(!pending.destinationIndexes.includes(destination))return false;
+  if(player.cash<Math.max(0,Number(pending.fee)||0))return false;
+
+  if(pending.kind==="port_logistics"){
+    const tile=state.tiles?.[destination];
+    return Boolean(tile?.type==="property"&&tile.owner===Number(seat));
+  }
+  if(pending.kind==="airport"){
+    return state.tiles?.[destination]?.type==="property";
+  }
+  return isTransportNodeIndex(destination);
 }
 
 export function chooseAiTransportDestination(state,seat){
   const pending=state.pendingTransport;
   if(!pending||pending.seat!==Number(seat))return null;
-  const destinations=transportDestinations(pending.sourceIndex);
-  if(destinations.length===0)return null;
+  if(pending.destinationIndexes.length===0)return null;
 
-  return destinations
-    .map(node=>({
-      index:node.index,
-      score:destinationScore(state,node.index)
+  if(pending.kind==="port_logistics"){
+    return pending.destinationIndexes
+      .map(index=>({index,score:Number(state.tiles?.[index]?.price)||0}))
+      .sort((a,b)=>b.score-a.score||a.index-b.index)[0]?.index??null;
+  }
+
+  return pending.destinationIndexes
+    .map(index=>({
+      index,
+      score:destinationScore(state,index)
     }))
     .sort((a,b)=>b.score-a.score||a.index-b.index)[0]?.index??null;
 }
