@@ -548,6 +548,7 @@ export class GameEngine{
         return;
       }
 
+      if(resolved.pendingChoice)this.state.phase="world_choice";
       const isChance=tile.type==="chance";
       const label=isChance?"機會":"命運";
       const effectText=this.describeEventEffect(resolved);
@@ -1372,6 +1373,7 @@ export class GameEngine{
 
   describeEventEffect(result){
     if(!result)return"沒有額外效果";
+    if(result.summary)return result.summary;
     if(result.blockedBy==="tax")return"稅務抵免生效，本次負面金錢事件取消";
     if(result.blockedBy==="hospital")return"醫療保護生效，本次後退事件取消";
     if(result.kind==="cash"){
