@@ -401,7 +401,7 @@ function noticeView(event){
         metric:Number.isFinite(Number(data.offer))?noticeMoney(data.offer):"可收購",
         details:[
           data.source==="landing"?"已先完成本次過路費結算；是否收購由你決定":null,
-          data.affordable===false?"目前現金不足，只能選擇不收購":"未滿級且未受保護；若你確認收購，對手不能拒絕"
+          data.affordable===false?"目前現金不足，只能選擇不收購":"未滿級且未受保護；確認收購後會直接取得地產並自動升 1 級"
         ].filter(Boolean)
       };
 
@@ -1412,8 +1412,8 @@ function renderAcquisitionDialog(){
   }
   if(summaryNote){
     summaryNote.textContent=landingOffer
-      ?"收購價＝目前資產估值 ×125%。只有你按下「確認收購」才會扣款並轉移地產；也可以選擇這次不收購。"
-      :"滿級 LV.2 或受保護地產依既有規則不可強制收購。";
+      ?"收購價＝目前資產估值 ×125%。確認後會轉移地產並免費自動升 1 級（最高 LV.2）；也可以選擇這次不收購。"
+      :"符合條件的收購成交後會免費自動升 1 級；滿級 LV.2 或受保護地產不可強制收購。";
   }
 
   document.getElementById("acquisitionCash").textContent=noticeMoney(player.cash);
@@ -1433,7 +1433,7 @@ function renderAcquisitionDialog(){
     const title=document.createElement("strong");
     title.textContent=option.tileName;
     const badge=document.createElement("b");
-    badge.textContent="LV."+option.level;
+    badge.textContent="LV."+option.level+" → LV."+option.levelAfterAcquisition;
     heading.append(title,badge);
 
     const meta=document.createElement("span");
@@ -1449,14 +1449,14 @@ function renderAcquisitionDialog(){
     const status=document.createElement("small");
     status.textContent=landingOffer
       ?(option.affordable
-        ?"按下後才會成交；對手無法拒絕"
+        ?"按下後成交並自動升 1 級；對手無法拒絕"
         :"現金不足，無法執行收購")
       :(option.affordable?"可收購":"現金不足");
 
     button.setAttribute(
       "aria-label",
       landingOffer
-        ?"確認收購 "+option.tileName+"，價格 "+noticeMoney(option.offer)
+        ?"確認收購 "+option.tileName+"，價格 "+noticeMoney(option.offer)+"，收購後升至 LV."+option.levelAfterAcquisition
         :"收購 "+option.tileName
     );
     button.append(heading,meta,offer,status);
