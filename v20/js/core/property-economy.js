@@ -5,6 +5,7 @@ import{
   PROPERTY_LEVEL_RENT_BONUS,
   PROPERTY_UPGRADE_COST_RATE
 }from"../data/board.js";
+import{worldRentMultiplier}from"./world-events.js";
 
 export function propertyTilesForGroup(state,group){
   return state.tiles.filter(tile=>tile.type==="property"&&tile.group===group);
@@ -47,8 +48,16 @@ export function rentBreakdown(state,tile){
   const groupMultiplier=completeGroup
     ? (GROUP_RENT_MULTIPLIERS[tile.group]??1)
     : 1;
+  const afterGroupRent=Math.round(baseRent*levelMultiplier*permanentMultiplier*groupMultiplier);
+  const leaseMultiplier=Math.floor(Number(tile.leaseBonusCharges)||0)>0
+    ? Math.max(1,Number(tile.leaseBonusMultiplier)||1.15)
+    : 1;
+  const maintenanceMultiplier=Math.floor(Number(tile.rentPenaltyCharges)||0)>0
+    ? Math.max(.1,Math.min(1,Number(tile.rentPenaltyMultiplier)||.70))
+    : 1;
+  const worldMultiplier=worldRentMultiplier(state,tile.group);
   const finalRent=Math.round(
-    baseRent*levelMultiplier*permanentMultiplier*groupMultiplier
+    afterGroupRent*leaseMultiplier*maintenanceMultiplier*worldMultiplier
   );
 
   return{
@@ -58,7 +67,11 @@ export function rentBreakdown(state,tile){
     permanentMultiplier,
     beforeGroupRent,
     groupMultiplier,
-    groupBonus:Math.max(0,finalRent-beforeGroupRent),
+    groupBonus:Math.max(0,afterGroupRent-beforeGroupRent),
+    afterGroupRent,
+    leaseMultiplier,
+    maintenanceMultiplier,
+    worldMultiplier,
     finalRent,
     completeGroup
   };
@@ -84,7 +97,9 @@ export function canUpgradeProperty(playerSeat,tile){
 
 export function propertyValue(tile){
   if(!tile||tile.type!=="property")return 0;
-  return tile.price+upgradeCost(tile)*Math.max(0,tile.level||0);
+  const base=tile.price+upgradeCost(tile)*Math.max(0,tile.level||0);
+  const multiplier=Math.max(.6,Math.min(1.6,Number(tile.assetValueMultiplier)||1));
+  return Math.round(base*multiplier);
 }
 
 /*
