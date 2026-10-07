@@ -1,11 +1,11 @@
 import{shouldBuyProperty,chooseStockOrders,chooseUpgrade}from"./ai.js";
 import{fillAiMinigameResults,finalizeMinigame,startMinigame,submitMinigameResult as submitGameResult}from"./minigames.js";
-import{canUpgradeProperty,ownsCompleteGroup,rentBreakdown,rentFor,upgradeCost}from"./property-economy.js?v=alpha32-227";
+import{canUpgradeProperty,ownsCompleteGroup,rentBreakdown,rentFor,upgradeCost}from"./property-economy.js?v=alpha32-234";
 import{GROUP_SIZES,groupRentMultiplier}from"../data/board.js";
 import{advanceStockMarket,buyStock as executeBuyStock,getMarketStock,sellStock as executeSellStock}from"./stock-market.js";
 import{playerAssetRankings}from"./player-assets.js?v=alpha32-228";
-import{resolveSpecialEvent}from"./special-events.js";
-import{canUseTransport,chooseAiTransportDestination,createPendingTransport,transportNode}from"./transport.js";
+import{resolveSpecialEvent}from"./special-events.js?v=alpha32-234";
+import{canUseTransport,chooseAiTransportDestination,createPendingTransport,transportNode}from"./transport.js?v=alpha32-234";
 import{chooseAiAcquisition,createPendingAcquisition,executeAcquisition}from"./acquisition-center.js?v=alpha32-233";
 import{canUseUrban,chooseAiUrbanDestination,createPendingUrban,resolveCivicEvent}from"./civic-specials.js?v=alpha32-226";
 import{
@@ -23,10 +23,10 @@ import{
   recordMissionAction,
   settleBankDeposits,
   startBankDeposit
-}from"./central-features.js";
+}from"./central-features.js?v=alpha32-234";
 import{canUseDevelopmentPermit,canUsePropertyProtectionPermit,eligibleOwnedPropertyIndexes,eligibleProtectionPropertyIndexes,useDevelopmentPermit,usePropertyProtectionPermit}from"./property-events.js";
-import{chooseAiItemAction,useItem as executeItemUse}from"./items.js";
-import{chooseAiStrategicChoice,recordStrategicAction,resolvePendingStrategicChoice,settleStrategicRound}from"./strategic-events.js";
+import{chooseAiItemAction,useItem as executeItemUse}from"./items.js?v=alpha32-234";
+import{chooseAiStrategicChoice,recordStrategicAction,resolvePendingStrategicChoice,settleStrategicRound}from"./strategic-events.js?v=alpha32-234";
 
 export class GameEngine{
   constructor(state,onChange){
