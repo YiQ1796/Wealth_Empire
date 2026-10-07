@@ -13,7 +13,8 @@ assert.match(html,/main\.js\?v=alpha32-229/);
 assert.match(main,/\.\/ui\/stock-render\.js\?v=alpha32-229/);
 assert.match(main,/\.\/core\/game\.js\?v=alpha32-229/);
 
-assert.match(stock,/const desktopTradeSurface=/);\nassert.match(stock,/stock-market-grid--desktop-popup/);
+assert.match(stock,/const desktopTradeSurface=/);
+assert.match(stock,/stock-market-grid--desktop-popup/);
 assert.match(stock,/\(desktopTradeSurface\|\|state\.currentPlayer===localSeat\)/);
 assert.match(stock,/const cardsPerRow=desktopTradeSurface\?1:2/);
 
