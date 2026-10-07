@@ -35,4 +35,4 @@ assert.equal(canTradeStock(state,seat),true,"pending decisions must not block an
 state.phase="finished";
 assert.equal(canTradeStock(state,seat),false,"finished games must block trading");
 
-console.log("V20 Alpha32.3.12 anytime stock trading regression PASS");
+console.log("V20 Alpha32.3.13 anytime stock trading regression PASS");
