@@ -101,7 +101,7 @@ board.appendChild(actionToastStack);
 
 // Dice outcome is a visual-only replay of a confirmed host move event.
 // Keep game rules / dice generation in GameEngine; never roll again in the UI.
-const diceRollPopup=document.createElement("div");
+const diceRollPopup=document.createElement("dialog");
 diceRollPopup.className="dice-roll-popup";
 diceRollPopup.hidden=true;
 diceRollPopup.setAttribute("role","status");
@@ -110,7 +110,7 @@ diceRollPopup.innerHTML=
   '<span class="dice-roll-popup__caption"></span>'+
   '<strong class="dice-roll-popup__total"></strong>'+
   '<span class="dice-roll-popup__destination"></span>';
-board.appendChild(diceRollPopup);
+document.body.appendChild(diceRollPopup);
 let diceRollPopupTimer=null;
 
 function showConfirmedDiceRoll(event){
@@ -128,10 +128,17 @@ function showConfirmedDiceRoll(event){
   diceRollPopup.querySelector(".dice-roll-popup__total").textContent="🎲 "+d1+" + "+d2+" = "+total;
   diceRollPopup.querySelector(".dice-roll-popup__destination").textContent="前進 "+total+" 格｜抵達 "+tileName;
   clearTimeout(diceRollPopupTimer);
+  // A short top-layer dialog stays visible above landing/purchase dialogs.
+  // It changes presentation only; the roll and landing have already been committed.
+  const bounds=board.getBoundingClientRect();
+  diceRollPopup.style.left=(bounds.left+bounds.width/2)+"px";
+  diceRollPopup.style.top=(bounds.top+bounds.height*0.29)+"px";
   diceRollPopup.hidden=false;
+  if(!diceRollPopup.open)diceRollPopup.showModal();
   diceRollPopup.classList.add("is-visible");
   diceRollPopupTimer=setTimeout(()=>{
     diceRollPopup.classList.remove("is-visible");
+    if(diceRollPopup.open)diceRollPopup.close();
     diceRollPopup.hidden=true;
     diceRollPopupTimer=null;
   },1400);
@@ -356,6 +363,7 @@ function resetToastTracker(targetState=state){
   clearTimeout(diceRollPopupTimer);
   diceRollPopupTimer=null;
   diceRollPopup.classList.remove("is-visible");
+  if(diceRollPopup.open)diceRollPopup.close();
   diceRollPopup.hidden=true;
 }
 
