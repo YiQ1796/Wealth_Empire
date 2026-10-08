@@ -21,7 +21,7 @@
 .tile.property{background:var(--green)} .tile.station{background:var(--purple)} .tile.start,.tile.chance,.tile.fate,.tile.tax{background:#fff0cc} .tile.highlow,.tile.horse,.tile.market,.tile.court,.tile.acquisition,.tile.auction,.tile.urban,.tile.hospital{background:var(--special)}
 .center-zone{grid-column:2 / 13;grid-row:2 / 11;display:grid;grid-template-rows:1fr auto;gap:10px;min-height:0}
 .center-blue{border:2px solid #aac7db;border-radius:24px;background:linear-gradient(180deg,#fffdf9,#f5eadd);padding:18px;display:grid;grid-template-columns:1fr 1.15fr;gap:14px;min-height:360px;position:relative;overflow:hidden}
-.center-blue:before{content:'🏠  💰  🎲  💎';position:absolute;right:18px;top:12px;font-size:20px;letter-spacing:6px;opacity:.22}
+
 .central-showcase{display:grid;grid-template-rows:auto 1fr auto;gap:12px;min-height:0}
 .central-words{font-family:Georgia,'Times New Roman',serif;font-size:clamp(18px,2vw,29px);font-weight:750;line-height:1.35;color:#37281b;white-space:pre-line}
 .central-brand{display:flex;align-items:end;gap:14px;justify-content:center;color:var(--gold);font-weight:900;font-size:clamp(22px,2.6vw,38px)}
@@ -66,8 +66,8 @@
   .header,.page{max-width:1700px;width:100%}
   .page{padding-left:22px;padding-right:22px}
   .board-shell{overflow:visible}
-  .board{width:100%;min-width:0;grid-template-columns:repeat(13,minmax(0,1fr));grid-template-rows:repeat(11,103px)!important;gap:8px;padding:12px;overflow:visible}
-  .tile{min-height:0;padding:8px 5px;border-radius:14px}
+  .board{width:100%;min-width:0;grid-template-columns:repeat(13,minmax(0,1fr));grid-template-rows:repeat(11,clamp(51px,6.2dvh,66px))!important;gap:6px;padding:9px;overflow:visible}
+  .tile{min-height:0;padding:5px 4px;border-radius:12px}
   .tile small{font-size:13px}
   .tile strong{font-size:clamp(13px,.95vw,16px);line-height:1.35}
   .center-zone{grid-template-rows:minmax(0,1.08fr) minmax(0,.92fr)!important;gap:12px}
@@ -87,6 +87,36 @@
 /* Full handbook remains usable on phones and inside the narrower in-game window. */
 @media(max-width:1099px){
   .center-card,.tile-detail>.left,.tile-detail>.tile-side{scrollbar-width:thin}
+}
+
+/* Fit the desktop board within the visible screen without restoring inner scrolling. */
+@media(min-width:1100px){
+  .hero{padding:12px 20px}
+  .header{padding-top:8px;padding-bottom:5px}
+  .hero h1{font-size:clamp(26px,2.5vw,38px);margin-bottom:3px}
+  .hero p{font-size:13px;line-height:1.35}
+  .hero .chips{margin-top:7px}
+  .hero .chip{padding:5px 9px;font-size:12px}
+  .hero .legend{margin:6px 0 0}
+  .hero .badge{padding:4px 8px;font-size:12px}
+  .center-blue{padding:11px;gap:10px}
+  .center-blue::before{display:none!important;content:none!important}
+  .central-showcase{gap:5px}
+  .central-brand{font-size:clamp(22px,2.2vw,32px)}
+  .central-sub{font-size:13px}
+  .central-building-grid{gap:5px}
+  .central-btn{padding:4px 6px;border-radius:10px}
+  .central-btn strong{font-size:14px}
+  .central-card{padding:11px;gap:5px}
+  .central-card h2{font-size:clamp(19px,1.55vw,25px)}
+  .central-card p,.central-card ul{font-size:clamp(12px,.87vw,15px);line-height:1.4}
+  .tile-detail{padding:10px 13px;gap:9px}
+  .tile-detail .left h2{font-size:clamp(21px,1.65vw,27px)}
+  .tile-detail .left p,.tile-detail .left ul{font-size:clamp(12px,.85vw,15px);line-height:1.45}
+  .tile-detail .left .badge,.tile-side,.tile-side .mini-card{font-size:13px}
+  .tile-side{padding:9px;gap:5px}
+  .mini-grid{gap:6px}
+  .mini-card{padding:7px}
 }
 </style>
 </head>
