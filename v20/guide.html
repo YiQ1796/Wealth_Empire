@@ -59,6 +59,35 @@
 .tile-detail .left ul{font-size:13px}
 .tile-side{align-content:start}
 @media(max-width:900px){.board{min-width:1050px;grid-template-rows:repeat(11,76px)!important}.center-zone{display:grid!important;grid-column:2 / 13!important;grid-row:2 / 11!important}.center-blue{margin:0!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}.tile-detail{margin:0!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+
+/* Desktop visual revision: larger 44-tile board, readable text, no nested scrollbars.
+   The document can scroll naturally to the remaining handbook chapters. */
+@media(min-width:1100px){
+  .header,.page{max-width:1700px;width:100%}
+  .page{padding-left:22px;padding-right:22px}
+  .board-shell{overflow:visible}
+  .board{width:100%;min-width:0;grid-template-columns:repeat(13,minmax(0,1fr));grid-template-rows:repeat(11,103px)!important;gap:8px;padding:12px;overflow:visible}
+  .tile{min-height:0;padding:8px 5px;border-radius:14px}
+  .tile small{font-size:13px}
+  .tile strong{font-size:clamp(13px,.95vw,16px);line-height:1.35}
+  .center-zone{grid-template-rows:minmax(0,1.08fr) minmax(0,.92fr)!important;gap:12px}
+  .center-blue,.tile-detail{overflow:visible;min-height:0;height:100%}
+  .central-card{overflow:visible;display:flex;flex-direction:column;justify-content:center;gap:10px}
+  .central-card h2{font-size:clamp(23px,1.65vw,29px)}
+  .central-card p,.central-card ul{font-size:clamp(15px,.98vw,17px);line-height:1.6}
+  .central-btn strong{font-size:16px}
+  .central-sub{font-size:15px}
+  .tile-detail>.left,.tile-detail>.tile-side{overflow:visible;min-width:0;min-height:0}
+  .tile-detail .left h2{font-size:clamp(25px,1.8vw,32px)}
+  .tile-detail .left p,.tile-detail .left ul{font-size:clamp(15px,.95vw,17px);line-height:1.6}
+  .tile-detail .left .badge,.tile-side{font-size:15px}
+  .tile-side .mini-card{font-size:15px}
+  .manual-section{font-size:16px}
+}
+/* Full handbook remains usable on phones and inside the narrower in-game window. */
+@media(max-width:1099px){
+  .center-card,.tile-detail>.left,.tile-detail>.tile-side{scrollbar-width:thin}
+}
 </style>
 </head>
 <body>
