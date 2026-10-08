@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f3eee4">
 <title>財富帝國｜互動遊玩說明書</title>
+<script>if(new URLSearchParams(location.search).get("embedded")==="1")document.documentElement.classList.add("we-embedded-guide");</script>
 <style>
 :root{--bg:#f4efe7;--bg-2:#efe7da;--panel:#fffdfa;--panel-2:#faf5ed;--card:#ffffff;--text:#3e3328;--muted:#78695a;--accent:#9a6d2f;--accent-2:#cda96a;--deep:#2f2419;--line:#d7c6b0;--shadow:0 14px 32px rgba(79,56,23,.08);--prop:#eaf3eb;--prop-line:#8ea88d;--event:#fff3d9;--event-line:#cda458;--station:#efe8fb;--station-line:#9883be;--special:#e7eff7;--special-line:#7a97b6;--select:#fff0c8;}
 *{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;background:linear-gradient(180deg,var(--bg),var(--bg-2));color:var(--text);font-family:system-ui,-apple-system,'Noto Sans TC','Microsoft JhengHei',sans-serif;line-height:1.65} a{color:#7b5320} button,input{font:inherit} button{cursor:pointer} 
@@ -29,6 +30,38 @@ table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;ove
 @media (max-width:1120px){.board-layout{grid-template-columns:1fr} .detail-panel{position:static} .hero-grid{grid-template-columns:1fr} }
 @media (max-width:900px){.center-grid{grid-template-columns:repeat(2,minmax(140px,1fr))} .center-stage h2{font-size:40px} }
 @media (max-width:640px){.wrap{padding:14px} .panel{padding:14px} .summary-grid{grid-template-columns:1fr} .center-grid{grid-template-columns:1fr} .board-grid{min-width:860px} .tile strong{font-size:14px} }
+
+/* V20 in-game guide: concise phone landscape presentation. Public full guide remains unchanged. */
+.we-guide-compact{display:none}
+.we-embedded-guide body{height:100dvh;overflow:hidden;background:#f6f0e5}
+.we-embedded-guide body>header,.we-embedded-guide body>.wrap{display:none}
+.we-embedded-guide .we-guide-compact{height:100dvh;width:100%;display:flex;flex-direction:column;overflow:hidden}
+.we-guide-compact__tabs{flex:0 0 auto;display:flex;gap:6px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;padding:8px 9px;border-bottom:1px solid #ddcbb5;background:#fffaf2}
+.we-guide-compact__tab{flex:0 0 auto;min-height:35px;padding:6px 11px;border:1px solid #d6c3ab;border-radius:12px;background:#f9f4eb;color:#665139;font-size:13px;font-weight:800;white-space:nowrap}
+.we-guide-compact__tab[aria-selected="true"]{color:#fff;background:#8b663d;border-color:#8b663d}
+.we-guide-compact__content{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:11px 13px 20px;scrollbar-width:thin}
+.we-guide-compact__content h2{margin:2px 0 8px;color:#624420;font-size:17px;line-height:1.3}
+.we-guide-compact__content h3{margin:3px 0 6px;color:#4c3825;font-size:16px;line-height:1.35}
+.we-guide-compact__content p{margin:5px 0 9px;font-size:13px;line-height:1.5}
+.we-guide-compact__content .we-guide-compact__note{font-size:11px;color:#755e45}
+.we-guide-compact__controls{display:grid;grid-template-columns:1fr 1.2fr;gap:7px;align-items:center;margin:0 0 8px}
+.we-guide-compact__controls input,.we-guide-compact__controls select{width:100%;min-width:0;min-height:36px;background:#fff;border:1px solid #cdb99f;border-radius:9px;padding:5px 7px;color:#443527;font-size:13px}
+.we-guide-compact__quick{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 8px}
+.we-guide-compact__choice{min-height:34px;padding:5px 9px;background:#fffaf2;border:1px solid #d0b999;border-radius:9px;font-size:12px;font-weight:700;color:#5d482e}
+.we-guide-compact__choice[aria-pressed="true"]{background:#fff0cd;border-color:#bd8b39;color:#67491a}
+.we-guide-compact__card{padding:10px 12px;border:1px solid #decbb0;border-radius:12px;background:#fffdf9;box-shadow:0 4px 11px rgba(70,50,24,.06)}
+.we-guide-compact__card p{color:#4c4237}
+.we-guide-compact__pill{display:inline-block;margin:0 5px 5px 0;padding:3px 8px;border-radius:99px;background:#f2e9da;color:#674e2e;font-size:11px;font-weight:700}
+.we-guide-compact__card ul{padding-left:18px;margin:5px 0;color:#6d5943;font-size:12px}
+.we-guide-compact__card li{margin:2px 0}
+.we-guide-compact__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:4px 0 9px}
+.we-guide-compact__grid .we-guide-compact__choice{min-width:0;white-space:normal;text-align:left;line-height:1.25}
+.we-guide-compact__stack{display:grid;gap:7px}
+.we-guide-compact__listcard{padding:10px 11px;border:1px solid #decbb0;border-radius:11px;background:#fffefb}
+.we-guide-compact__listcard strong{display:block;font-size:13px;color:#634624}
+.we-guide-compact__listcard p{font-size:12px;margin:4px 0 0}
+@media(max-width:520px){.we-guide-compact__tabs{gap:4px;padding:6px}.we-guide-compact__tab{font-size:12px;padding:5px 8px}.we-guide-compact__content{padding:8px}.we-guide-compact__controls{grid-template-columns:1fr}.we-guide-compact__grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
 </style>
 </head>
 <body>
@@ -226,6 +259,207 @@ const eventCards=document.getElementById('eventCards'); const seen=new Set();
 tiles.filter(t=>t.kind!=='property' && t.kind!=='station').forEach(t=>{if(seen.has(t.name)) return; seen.add(t.name); const card=el('div','card'); card.innerHTML=`<h3>${t.name}</h3><p>${t.desc}</p>`; eventCards.append(card);});
 const itemCards=document.getElementById('itemCards'); items.forEach(([n,d])=>{const card=el('div','card'); card.innerHTML=`<h3>${n}</h3><p>${d}</p>`; itemCards.append(card);});
 const stockTags=document.getElementById('stockTags'); stocks.forEach(s=>stockTags.append(el('span','tag',s)));
+
+/* The in-game compact reader uses the same tile/region/item/central data
+   as the complete public guide. No second rules table is maintained. */
+if(document.documentElement.classList.contains("we-embedded-guide")){
+  const reader=document.createElement("main");
+  reader.className="we-guide-compact";
+  reader.setAttribute("aria-label","遊戲內精簡遊玩說明");
+  const tabbar=document.createElement("div");
+  tabbar.className="we-guide-compact__tabs";
+  tabbar.setAttribute("role","tablist");
+  tabbar.setAttribute("aria-label","遊玩說明分類");
+  const body=document.createElement("div");
+  body.className="we-guide-compact__content";
+  reader.append(tabbar,body);
+  document.body.prepend(reader);
+
+  const sections=[
+    ["board","棋盤44格"],["central","中央五棟"],["newbie","新手"],["regions","地產"],
+    ["transport","交通"],["events","事件"],["items","道具"],["stocks","股票"],["friends","好友"]
+  ];
+  function add(tag,className,content,parent){
+    const n=document.createElement(tag);
+    if(className)n.className=className;
+    if(content!==undefined)n.textContent=content;
+    if(parent)parent.append(n);
+    return n;
+  }
+  function addButton(label,handler,parent,selected=false){
+    const button=add("button","we-guide-compact__choice",label,parent);
+    button.type="button";
+    button.setAttribute("aria-pressed",String(selected));
+    button.addEventListener("click",handler);
+    return button;
+  }
+  function addTitle(label){add("h2","",label,body);}
+  function addCard(title,description,notes=[],tags=[]){
+    const card=add("section","we-guide-compact__card",undefined,body);
+    add("h3","",title,card);
+    if(tags.length){
+      const line=add("div","",undefined,card);
+      for(const tag of tags)add("span","we-guide-compact__pill",tag,line);
+    }
+    add("p","",description,card);
+    if(notes.length){
+      const ul=add("ul","",undefined,card);
+      notes.forEach(note=>add("li","",note,ul));
+    }
+    return card;
+  }
+  function choosePanel(items,label,description,tags,extraNotes){
+    let activeIndex=0;
+    const menu=add("div","we-guide-compact__grid",undefined,body);
+    const view=add("div","we-guide-compact__card",undefined,body);
+    const buttons=[];
+    function select(i){
+      activeIndex=i;
+      buttons.forEach((b,j)=>b.setAttribute("aria-pressed",String(i===j)));
+      view.replaceChildren();
+      const item=items[i];
+      add("h3","",label(item),view);
+      for(const tag of tags(item)||[])add("span","we-guide-compact__pill",tag,view);
+      add("p","",description(item),view);
+      const notes=extraNotes(item)||[];
+      if(notes.length){
+        const ul=add("ul","",undefined,view);
+        notes.forEach(n=>add("li","",n,ul));
+      }
+    }
+    items.forEach((item,i)=>buttons.push(addButton(label(item),()=>select(i),menu,i===0)));
+    if(items.length)select(0);
+  }
+  function showTile(tile,card){
+    card.replaceChildren();
+    add("h3","",String(tile.num).padStart(2,"0")+"｜"+tile.name,card);
+    add("span","we-guide-compact__pill",labels[tile.kind]||"棋盤事件",card);
+    if(tile.region)add("span","we-guide-compact__pill",tile.region,card);
+    if(tile.region&&regions[tile.region])add("span","we-guide-compact__pill","買齊 "+regions[tile.region][1],card);
+    add("p","",tile.desc,card);
+    const tips=(extraTips[tile.kind]||[]).slice(0,3);
+    if(tips.length){const ul=add("ul","",undefined,card);tips.forEach(t=>add("li","",t,ul));}
+  }
+  function renderBoard(){
+    addTitle("選擇格子，立即看說明");
+    const controls=add("div","we-guide-compact__controls",undefined,body);
+    const input=add("input","",undefined,controls);
+    input.type="search";input.placeholder="搜尋名稱／格號";input.setAttribute("aria-label","搜尋棋盤格");
+    const picker=add("select","",undefined,controls);
+    picker.setAttribute("aria-label","44格目的地選擇");
+    const details=add("div","we-guide-compact__card",undefined,body);
+    const quick=add("div","we-guide-compact__quick",undefined,body);
+    const shortcuts=[1,2,11,14,18,23,33,44];
+    let currentNumber=14;
+    function choose(number){
+      const tile=tiles.find(item=>item.num===number);
+      if(!tile)return;
+      currentNumber=number;
+      picker.value=String(number);
+      showTile(tile,details);
+      for(const button of quick.children){
+        button.setAttribute("aria-pressed",String(Number(button.dataset.num)===number));
+      }
+    }
+    shortcuts.forEach(num=>{
+      const tile=tiles.find(item=>item.num===num);if(!tile)return;
+      const button=addButton(String(num).padStart(2,"0")+" "+tile.name,()=>choose(num),quick,num===14);
+      button.dataset.num=String(num);
+    });
+    function refreshOptions(){
+      const q=input.value.trim().toLocaleLowerCase();
+      picker.replaceChildren();
+      const found=tiles.filter(item=>(String(item.num).padStart(2,"0")+" "+item.num+" "+item.name+" "+item.region+" "+(labels[item.kind]||"")).toLocaleLowerCase().includes(q));
+      for(const tile of found){
+        const option=document.createElement("option");
+        option.value=String(tile.num);
+        option.textContent=String(tile.num).padStart(2,"0")+"｜"+tile.name;
+        picker.append(option);
+      }
+      if(found.length){
+        choose(found.some(tile=>tile.num===currentNumber)?currentNumber:found[0].num);
+      }else{
+        const empty=document.createElement("option");empty.textContent="找不到符合格子";empty.disabled=true;picker.append(empty);
+        details.replaceChildren();add("p","we-guide-compact__note","沒有符合的棋盤格，請換個關鍵字。",details);
+      }
+    }
+    picker.addEventListener("change",()=>choose(Number(picker.value)));
+    input.addEventListener("input",refreshOptions);
+    refreshOptions();
+    // Details are shown first after selection on narrow screens; no long page jump.
+    body.insertBefore(quick,details);
+  }
+  function renderCentral(){
+    addTitle("棋盤中央五棟建築");
+    choosePanel(central,item=>item.name,item=>item.desc,
+      ()=>["中央五功能"],item=>item.tips||[]);
+  }
+  function renderNewbie(){
+    addTitle("第一次玩，先看這裡");
+    const steps=[
+      ["選擇遊玩模式","單機由一名真人與三名 AI 參與；好友遊玩由房主建立房間，其他人輸入房號加入。"],
+      ["擲骰前進","輪到自己擲骰子，依點數沿外圈移動；經過起點可拿到 $2,500。"],
+      ["買地與升級","落在未持有的地產可依條件購買，在「我的房產」操作升級；最高 LV.2。"],
+      ["經營資產","除了收租，也能買賣股票、使用道具、處理機會與命運事件。"],
+      ["結算勝負","遊戲最多 30 ROUND；最終依遊戲內總資產排名。"]
+    ];
+    const stack=add("div","we-guide-compact__stack",undefined,body);
+    steps.forEach(([name,desc])=>{const card=add("div","we-guide-compact__listcard",undefined,stack);add("strong","",name,card);add("p","",desc,card);});
+  }
+  function renderRegions(){
+    addTitle("八大地產區與完整持有加成");
+    choosePanel(Object.entries(regions),a=>a[0],a=>
+      "此區共 "+a[1][0]+" 格。買齊全部地產後，租金倍率為 "+a[1][1]+"。",
+      ()=>["同區完整持有"],a=>["包含："+tiles.filter(t=>t.region===a[0]).map(t=>t.name).join("、")]);
+  }
+  function renderTransport(){
+    addTitle("四個交通設施");
+    const facilities=tiles.filter(t=>t.kind==="station");
+    choosePanel(facilities,t=>String(t.num).padStart(2,"0")+"｜"+t.name,t=>t.desc,
+      ()=>["交通設施"],()=>["傳送是否觸發抵達事件、可選位置與收費，應以實際遊戲畫面為準。"]);
+  }
+  function renderEvents(){
+    addTitle("機會、命運與特殊事件");
+    const unique=[...new Map(tiles.filter(t=>t.kind!=="property"&&t.kind!=="station").map(t=>[t.name,t])).values()];
+    choosePanel(unique,t=>t.name,t=>t.desc, t=>[labels[t.kind]||"特殊事件"],()=>[]);
+  }
+  function renderItems(){
+    addTitle("策略道具的用途");
+    choosePanel(items,item=>item[0],item=>item[1],()=>["道具效果"],()=>[]);
+  }
+  function renderStocks(){
+    addTitle("股票市場");
+    add("p","we-guide-compact__note","共十檔股票；價格跟隨遊戲市場變化，並非保證獲利。",body);
+    const grid=add("div","we-guide-compact__grid",undefined,body);
+    stocks.forEach(name=>add("span","we-guide-compact__pill",name,grid));
+    addCard("交易與損益","在「市場操作」中查看即時價格、持股、平均成本與損益。一般情況下，即使不是你的回合也可交易，但部分結算期間會暫停。");
+  }
+  function renderFriends(){
+    addTitle("好友連線與重連");
+    addCard("建立房間","在首頁選擇好友遊玩，由房主建立房間並分享六位數房號。");
+    addCard("加入房間","好友輸入房號加入，尚未滿人的位置由 AI 暫時補上。");
+    addCard("意外重新整理","遊戲具有重連與座位恢復機制；如暫時無法連入，先確認房主仍在線上。");
+  }
+  const renders={board:renderBoard,central:renderCentral,newbie:renderNewbie,
+    regions:renderRegions,transport:renderTransport,events:renderEvents,
+    items:renderItems,stocks:renderStocks,friends:renderFriends};
+  function chooseTab(id){
+    body.replaceChildren();
+    const selected=tabbar.querySelector('[data-tab="'+id+'"]');
+    for(const button of tabbar.children)button.setAttribute("aria-selected",String(button===selected));
+    renders[id]?.();
+    body.scrollTop=0;
+    selected?.scrollIntoView({block:"nearest",inline:"nearest"});
+  }
+  sections.forEach(([id,title])=>{
+    const button=add("button","we-guide-compact__tab",title,tabbar);
+    button.type="button";button.dataset.tab=id;button.setAttribute("role","tab");
+    button.setAttribute("aria-selected","false");
+    button.addEventListener("click",()=>chooseTab(id));
+  });
+  chooseTab("board");
+}
+
 </script>
 </body>
 </html>
