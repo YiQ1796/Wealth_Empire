@@ -118,6 +118,21 @@
   .mini-grid{gap:6px}
   .mini-card{padding:7px}
 }
+
+/* Give long property details more vertical room without changing the outer 44-tile footprint. */
+@media(min-width:1100px){
+ .center-zone{grid-template-rows:minmax(0,.78fr) minmax(0,1.22fr)!important}
+ .center-blue{padding:8px 10px}
+ .central-building-grid{gap:3px}
+ .central-btn{padding:2px 5px}
+ .central-card{padding:9px}
+ .tile-detail{padding:9px 12px}
+ .tile-detail .left h2{margin-bottom:5px}
+ .tile-detail .left .typebadges{margin-bottom:6px}
+ .tile-detail .left p{margin:0}
+ .tile-detail .left ul{margin:5px 0 0;padding-left:18px}
+ .tile-detail .left li{margin:0;line-height:1.35}
+}
 </style>
 </head>
 <body>
