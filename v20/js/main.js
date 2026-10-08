@@ -101,9 +101,10 @@ board.appendChild(actionToastStack);
 
 // Dice outcome is a visual-only replay of a confirmed host move event.
 // Keep game rules / dice generation in GameEngine; never roll again in the UI.
-const diceRollPopup=document.createElement("dialog");
+const diceRollPopup=document.createElement("div");
 diceRollPopup.className="dice-roll-popup";
 diceRollPopup.hidden=true;
+diceRollPopup.setAttribute("role","status");
 diceRollPopup.setAttribute("aria-label","擲骰結果");
 diceRollPopup.setAttribute("aria-live","polite");
 diceRollPopup.innerHTML=
@@ -129,11 +130,9 @@ function showConfirmedDiceRoll(event){
   clearTimeout(diceRollPopupTimer);
   // Position inside the board below notifications, on phone and desktop alike.
   diceRollPopup.hidden=false;
-  if(!diceRollPopup.open)diceRollPopup.show();
   diceRollPopup.classList.add("is-visible");
   diceRollPopupTimer=setTimeout(()=>{
     diceRollPopup.classList.remove("is-visible");
-    if(diceRollPopup.open)diceRollPopup.close();
     diceRollPopup.hidden=true;
     diceRollPopupTimer=null;
   },2100);
@@ -358,7 +357,6 @@ function resetToastTracker(targetState=state){
   clearTimeout(diceRollPopupTimer);
   diceRollPopupTimer=null;
   diceRollPopup.classList.remove("is-visible");
-  if(diceRollPopup.open)diceRollPopup.close();
   diceRollPopup.hidden=true;
 }
 
