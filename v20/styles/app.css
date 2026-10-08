@@ -7435,3 +7435,110 @@ body.entry-pending .app-shell{
     transform:translateY(1px)
   }
 }
+
+/* Phone dice feedback is separate from the compact HUD; desktop dice stays visible.
+   Do not overlay the dice result on the already-existing action notification art. */
+.dice-roll-popup{
+  position:absolute;
+  top:30%;
+  left:50%;
+  z-index:12010;
+  width:min(320px,58%);
+  display:grid;
+  justify-items:center;
+  gap:2px;
+  padding:12px 18px;
+  border:2px solid #e0ae4e;
+  border-radius:18px;
+  background:linear-gradient(145deg,#fffcf5,#fff0ce);
+  box-shadow:0 12px 30px rgba(70,49,20,.24);
+  color:#62441e;
+  text-align:center;
+  pointer-events:none;
+  transform:translate(-50%,-50%);
+}
+.dice-roll-popup[hidden]{display:none}
+.dice-roll-popup__caption{font-size:13px;font-weight:800}
+.dice-roll-popup__total{font-size:clamp(21px,2.7vw,32px);line-height:1.25;white-space:nowrap}
+.dice-roll-popup__destination{font-size:12px;font-weight:700}
+.hud-log-icon{display:none}
+
+/* Small landscape screens: the two header controls get equal space.
+   Preserve event history via an icon inside the player-information half. */
+@media (orientation:landscape) and (max-height:650px) and (max-width:1180px){
+  .hud-panel .hud-header{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:5px;
+    align-items:stretch;
+    min-width:0;
+    width:100%;
+  }
+  .hud-panel .hud-heading{
+    grid-column:1;
+    grid-row:1;
+    min-width:0;
+    width:100%;
+    margin:0;
+    padding:2px 0;
+    align-self:center;
+  }
+  .hud-heading__title-line{
+    display:flex;
+    align-items:center;
+    gap:4px;
+    min-width:0;
+  }
+  .hud-header .hud-heading h1{
+    flex:1;
+    min-width:0;
+    font-size:clamp(13px,1.75vw,17px);
+    white-space:nowrap;
+    line-height:1.15;
+  }
+  .hud-log-icon{
+    display:grid;
+    place-items:center;
+    flex:0 0 27px;
+    width:27px;
+    height:27px;
+    padding:2px;
+    background:#f4f0ff;
+    border:1px solid #cfc1ee;
+    border-radius:8px;
+    cursor:pointer;
+  }
+  .hud-log-icon img{display:block;width:21px;height:21px;object-fit:contain}
+  .hud-panel .hud-header #gameGuideButton{
+    grid-column:2;
+    grid-row:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:100%;
+    min-width:0;
+    height:100%;
+    min-height:39px;
+    margin:0;
+    padding:4px 5px;
+    font-size:clamp(11px,1.6vw,14px);
+    line-height:1.15;
+    white-space:nowrap;
+    overflow:hidden;
+  }
+  .hud-panel .hud-turn-tools--compact{display:none}
+  .hud-panel .dice-result{display:none}
+  .dice-roll-popup{width:min(280px,60%);top:29%;padding:9px 12px;gap:1px}
+  .dice-roll-popup__caption{font-size:11px}
+  .dice-roll-popup__total{font-size:clamp(18px,2.5vw,26px)}
+  .dice-roll-popup__destination{font-size:10px}
+  .board .action-toast-stack{top:62%}
+}
+@media (orientation:landscape) and (max-height:430px) and (max-width:1180px){
+  .dice-roll-popup{top:28%;width:min(240px,58%);padding:6px 10px}
+  .dice-roll-popup__total{font-size:20px}
+  .board .action-toast-stack{top:64%}
+}
+@media (prefers-reduced-motion:reduce){
+  .dice-roll-popup{transition:none}
+}
