@@ -7690,3 +7690,69 @@ body.entry-pending .app-shell{
    width:27px!important;height:27px!important;flex:0 0 27px!important;
  }
 }
+
+/* Desktop player-card regions: rank in top-left, avatar in left column,
+   status summary in three equal cells across the bottom. */
+@media(min-width:1181px) and (min-height:651px){
+ .hud-panel .player-card{
+   display:grid!important;
+   grid-template-columns:53px minmax(0,1fr)!important;
+   grid-template-rows:minmax(0,1fr) 24px!important;
+   column-gap:9px!important;
+   row-gap:4px!important;
+   padding:7px 9px!important;
+   align-items:stretch;
+   position:relative;
+ }
+ .hud-panel .player-card>.player-rank-badge{
+   display:flex!important;
+   grid-column:1!important;
+   grid-row:1!important;
+   place-self:start center!important;
+   z-index:2;
+   min-width:44px!important;
+   height:24px!important;
+   padding:2px 5px!important;
+   font-size:12px!important;
+ }
+ .hud-panel .player-card>.player-pawn{
+   grid-column:1!important;
+   grid-row:1!important;
+   place-self:center!important;
+   width:45px!important;height:52px!important;
+   max-height:65%!important;
+   object-fit:contain;
+   margin-top:19px!important;
+ }
+ .hud-panel .player-card>.player-card__body{
+   grid-column:2!important;grid-row:1!important;
+   min-width:0!important;min-height:0!important;
+   align-self:center;
+   overflow:hidden;
+ }
+ .hud-panel .player-card .player-card__headline{min-width:0}
+ .hud-panel .player-card .player-card__headline h3{
+   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ }
+ .hud-panel .player-card>.player-card__details{
+   display:grid!important;
+   grid-column:1 / -1!important;grid-row:2!important;
+   grid-template-columns:repeat(3,minmax(0,1fr))!important;
+   margin:0!important;gap:4px!important;
+   min-width:0;min-height:24px;
+   line-height:1.1!important;
+ }
+ .hud-panel .player-card>.player-card__details span{
+   min-width:0;display:flex;align-items:center;justify-content:center;gap:3px;
+   padding:2px 3px;border-radius:6px;
+   background:color-mix(in srgb,var(--player-accent,#377bd1) 7%,#fff);
+   border:1px solid color-mix(in srgb,var(--player-accent,#377bd1) 17%,#e0e7ef);
+   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+   font-size:10px!important;
+ }
+ .hud-panel .player-card>.player-card__details b{
+   min-width:0;max-width:100%;
+   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+   font-size:10px!important;
+ }
+}
