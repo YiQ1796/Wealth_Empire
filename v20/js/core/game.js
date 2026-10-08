@@ -5,7 +5,7 @@ import{GROUP_SIZES,groupRentMultiplier}from"../data/board.js";
 import{advanceStockMarket,buyStock as executeBuyStock,getMarketStock,sellStock as executeSellStock}from"./stock-market.js";
 import{playerAssetRankings}from"./player-assets.js?v=alpha32-239-rank3";
 import{resolveSpecialEvent}from"./special-events.js?v=alpha32-234";
-import{canUseTransport,chooseAiTransportDestination,createPendingTransport,transportNode}from"./transport.js?v=alpha32-234";
+import{canUseTransport,chooseAiTransportDestination,createPendingTransport,transportNode}from"./transport.js?v=alpha32-240-airport-direct-20261008";
 import{chooseAiAcquisition,createPendingAcquisition,executeAcquisition}from"./acquisition-center.js?v=alpha32-233";
 import{canUseUrban,chooseAiUrbanDestination,createPendingUrban,resolveCivicEvent}from"./civic-specials.js?v=alpha32-226";
 import{
