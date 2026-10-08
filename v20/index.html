@@ -485,8 +485,8 @@
 <div id="actionToastStack" class="action-toast-stack" aria-live="polite" aria-atomic="false"></div>
 
 <aside id="gameGuidePanel" class="we-guide-panel" data-open="false" aria-label="遊玩說明視窗" aria-hidden="true">
-<div class="we-guide-panel-header"><span>📖 遊玩說明</span><a href="./guide.html?v=20261008-guide-c15b7acc" target="_blank" rel="noopener noreferrer">完整網頁 ↗</a><button id="gameGuideCloseButton" type="button" class="we-guide-close">關閉</button></div>
-<iframe class="we-guide-frame" title="財富帝國互動遊玩說明書" data-src="./guide.html?embedded=1&amp;v=20261008-guide-c15b7acc" data-full-src="./guide.html?v=20261008-guide-c15b7acc" loading="lazy"></iframe>
+<div class="we-guide-panel-header"><span>📖 遊玩說明</span><a href="./guide.html?v=20261008-guide-c712c57" target="_blank" rel="noopener noreferrer">完整網頁 ↗</a><button id="gameGuideCloseButton" type="button" class="we-guide-close">關閉</button></div>
+<iframe class="we-guide-frame" title="財富帝國互動遊玩說明書" data-src="./guide.html?embedded=1&amp;v=20261008-guide-c712c57" data-full-src="./guide.html?v=20261008-guide-c712c57" loading="lazy"></iframe>
 </aside>
 <script id="game-guide-integration-script">
 (()=>{const panel=document.getElementById('gameGuidePanel');const buttons=[document.getElementById('gameGuideButton'),document.getElementById('entryGuideButton')];const frame=panel.querySelector('iframe');const phoneQuery=window.matchMedia('(orientation:landscape) and (max-height:650px) and (max-width:1180px), (max-width:750px)');function toggle(open){if(open){frame.src=phoneQuery.matches?frame.dataset.src:frame.dataset.fullSrc;}else{frame.removeAttribute('src');}panel.dataset.open=String(open);panel.setAttribute('aria-hidden',String(!open));buttons.forEach(button=>button?.setAttribute('aria-expanded',String(open)));}buttons.forEach(button=>button?.addEventListener('click',()=>toggle(panel.dataset.open!=='true')));document.getElementById('gameGuideCloseButton').addEventListener('click',()=>toggle(false));document.addEventListener('keydown',event=>{if(event.key==='Escape'&&panel.dataset.open==='true')toggle(false)});})();
