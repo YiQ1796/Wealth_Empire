@@ -7439,9 +7439,11 @@ body.entry-pending .app-shell{
 /* Phone dice feedback is separate from the compact HUD; desktop dice stays visible.
    Do not overlay the dice result on the already-existing action notification art. */
 .dice-roll-popup{
-  position:absolute;
+  position:fixed;
   top:30%;
   left:50%;
+  margin:0;
+  max-width:calc(100vw - 20px);
   z-index:12010;
   width:min(320px,58%);
   display:grid;
@@ -7458,6 +7460,7 @@ body.entry-pending .app-shell{
   transform:translate(-50%,-50%);
 }
 .dice-roll-popup[hidden]{display:none}
+.dice-roll-popup::backdrop{background:transparent}
 .dice-roll-popup__caption{font-size:13px;font-weight:800}
 .dice-roll-popup__total{font-size:clamp(21px,2.7vw,32px);line-height:1.25;white-space:nowrap}
 .dice-roll-popup__destination{font-size:12px;font-weight:700}
