@@ -1655,6 +1655,40 @@ function renderAcquisitionDialog(){
   if(!acquisitionDialog.open)acquisitionDialog.showModal();
 }
 
+function syncAirportBoardSelection(enabled){
+  if(board.classList.contains("is-airport-picking")===enabled)return;
+  board.classList.toggle("is-airport-picking",enabled);
+  board.querySelectorAll(".tile[data-index]").forEach(tile=>{
+    const index=Number(tile.dataset.index);
+    const isProperty=tile.classList.contains("tile--property");
+    if(enabled){
+      tile.tabIndex=0;
+      tile.setAttribute("role","button");
+      tile.setAttribute("aria-label",
+        index===state.pendingTransport?.sourceIndex
+          ?"國際機場目前位置，請選擇其他棋盤格"
+          :"搭乘國際機場前往第 "+(index+1)+" 格："+(state.tiles?.[index]?.name??"目的地")
+      );
+    }else if(isProperty){
+      tile.tabIndex=0;
+      tile.setAttribute("role","button");
+      tile.setAttribute("aria-label","查看地產資訊："+(state.tiles?.[index]?.name??"地產"));
+    }else{
+      tile.removeAttribute("tabindex");
+      tile.removeAttribute("role");
+      tile.removeAttribute("aria-label");
+    }
+  });
+}
+
+function isAirportBoardSelectionActive(){
+  const pending=state.pendingTransport;
+  return state.phase==="transport"&&pending?.kind==="airport"&&
+    pending.seat===currentLocalSeat()&&
+    state.players?.[pending.seat]?.kind==="human"&&
+    state.players?.[pending.seat]?.connected!==false;
+}
+
 function renderTransportDialog(){
   const pending=state.pendingTransport;
   const localSeat=currentLocalSeat();
@@ -1668,6 +1702,7 @@ function renderTransportDialog(){
     player.connected!==false
   );
 
+  syncAirportBoardSelection(shouldShow&&pending.kind==="airport");
   if(!shouldShow){
     transportMinimized=false;
     transportDialog?.classList.remove("is-minimized");
@@ -1676,7 +1711,9 @@ function renderTransportDialog(){
   }
 
   const source=TRANSPORT_NODE_BY_INDEX[pending.sourceIndex];
-  document.getElementById("transportTitle").textContent=source?.name??"交通節點";
+  document.getElementById("transportTitle").textContent=pending.kind==="airport"
+    ?"國際機場｜點選棋盤格"
+    :source?.name??"交通節點";
   document.getElementById("transportSubtitle").textContent=source?.description??"選擇本回合交通功能。";
   document.getElementById("transportSourceName").textContent=(source?.icon?source.icon+" ":"")+(source?.name??"交通設施");
   const ruleNote=document.getElementById("transportRuleNote");
@@ -1689,7 +1726,7 @@ function renderTransportDialog(){
         :pending.kind==="station"
           ?"前往其他交通節點，不重複觸發第二次交通。"
           :pending.kind==="airport"
-            ?"直接飛到所選區域入口，抵達後正常結算該格。"
+            ?"可直接點任意其他棋盤格飛行；下方八區入口仍可快捷選擇。抵達正常結算。"
             :pending.kind==="port_logistics"
               ?"不移動；選一個已持有區域，接下來 2 次該區收租 +15%。"
               :"直接跨越到主要交通出口，不觸發沿途格子。")+
@@ -1758,13 +1795,21 @@ function renderTransportDialog(){
     list.appendChild(empty);
   }
 
+  // Airport selection must be non-modal: a modal dialog makes every board tile inert.
+  // Start with a small dock so both the board and eight shortcuts remain available.
+  if(!transportDialog.open&&pending.kind==="airport")transportMinimized=true;
   transportDialog.classList.toggle("is-minimized",transportMinimized);
   const toggle=document.getElementById("toggleTransportMinimizeButton");
   if(toggle){
-    toggle.textContent=transportMinimized?"展開選擇":"縮小看棋盤";
+    toggle.textContent=transportMinimized
+      ?pending.kind==="airport"?"展開八區捷徑":"展開選擇"
+      :pending.kind==="airport"?"收合，直接點棋盤":"縮小看棋盤";
     toggle.setAttribute("aria-expanded",String(!transportMinimized));
   }
-  if(!transportDialog.open)transportDialog.showModal();
+  if(!transportDialog.open){
+    if(pending.kind==="airport")transportDialog.show();
+    else transportDialog.showModal();
+  }
 }
 
 function renderStrategicChoiceDialog(){
@@ -2037,17 +2082,28 @@ document.getElementById("confirmUpgradeButton").addEventListener("click",()=>{
 });
 document.getElementById("declineUpgradeButton").addEventListener("click",()=>dispatchAction({type:"decline_upgrade"}));
 
-board.addEventListener("click",event=>{
-  const tileNode=event.target.closest(".tile--property[data-index]");
+function handleBoardTileActivation(tileNode){
   if(!tileNode)return;
-  openPropertyInfo(tileNode.dataset.index);
+  if(isAirportBoardSelectionActive()){
+    const destinationIndex=Number(tileNode.dataset.index);
+    // Clicking the departure airport does not consume an action.
+    if(destinationIndex!==state.pendingTransport.sourceIndex){
+      dispatchAction({type:"transport_travel",destinationIndex});
+    }
+    return;
+  }
+  if(tileNode.classList.contains("tile--property"))openPropertyInfo(tileNode.dataset.index);
+}
+board.addEventListener("click",event=>{
+  handleBoardTileActivation(event.target.closest(".tile[data-index]"));
 });
 board.addEventListener("keydown",event=>{
   if(!["Enter"," "].includes(event.key))return;
-  const tileNode=event.target.closest(".tile--property[data-index]");
+  const tileNode=event.target.closest(".tile[data-index]");
   if(!tileNode)return;
+  if(!isAirportBoardSelectionActive()&&!tileNode.classList.contains("tile--property"))return;
   event.preventDefault();
-  openPropertyInfo(tileNode.dataset.index);
+  handleBoardTileActivation(tileNode);
 });
 
 document.getElementById("closePropertyInfoDialog").addEventListener("click",()=>propertyInfoDialog.close());
