@@ -11,7 +11,7 @@ import{UI_ASSETS}from"../data/ui-assets.js";
 import{groupProgress,propertyValue,rentBreakdown,rentFor,upgradeCost}from"../core/property-economy.js?v=alpha32-227";
 import{canUseDevelopmentPermit,canUsePropertyProtectionPermit}from"../core/property-events.js";
 import{itemUiSummary,renderStrategyItems}from"./item-render.js";
-import{playerAssetRankings}from"../core/player-assets.js?v=alpha32-228";
+import{playerAssetRankings}from"../core/player-assets.js?v=alpha32-239-rank3";
 
 function money(value){return"$"+Math.round(value).toLocaleString()}
 
@@ -409,11 +409,11 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
     return '<article class="player-card '+(index===state.currentPlayer?"active":"")+
       ' '+(ranking?.rank===1?"player-card--wealth-leader":"")+
       '" style="--player-accent:'+(player.color??"#377bd1")+'">'+
+      '<span class="player-rank-badge player-rank-badge--'+(ranking?.rank??4)+'" aria-label="總資產排名 '+(ranking?.rank??"—")+'">#'+(ranking?.rank??"—")+'</span>'+
       '<img class="player-pawn" data-player-avatar="'+index+'" src="'+playerCharacter(player,"idle")+'" alt="">'+
       '<div class="player-card__body">'+
         '<div class="player-card__headline">'+
           '<h3>'+player.name+(index===state.currentPlayer?" 👑":"")+statusBadge+thinkingBadge+offlineLabel+'</h3>'+
-          '<span class="player-rank-badge player-rank-badge--'+(ranking?.rank??4)+'">#'+(ranking?.rank??"—")+'</span>'+
         '</div>'+
         '<div class="player-stats">'+
           '<span>現金 <b>'+money(player.cash)+'</b></span>'+
@@ -425,12 +425,13 @@ export function render(state,{localSeat=0,networkMode="offline"}={}){
           '<small>現金 '+money(assets.cash)+'｜地產 '+money(assets.properties)+'｜股票 '+money(assets.stocks)+
             (assets.bankDeposit>0?'｜定存 '+money(assets.bankDeposit):"")+'</small>'+
         '</div>'+
-        '<div class="player-card__details">'+
-          '<span>所在地 <b>'+tileName+'</b></span>'+
-          '<span>持股 <b>'+totalShares+' 股</b></span>'+
-          '<span>完整連區 <b>'+completedRegions+'</b></span>'+
-        '</div>'+
+
         (civicBadges?'<div class="player-civic-badges">'+civicBadges+'</div>':"")+
+      '</div>'+
+      '<div class="player-card__details">'+
+        '<span>所在地 <b>'+escapeHtml(tileName)+'</b></span>'+
+        '<span>持股 <b>'+totalShares+' 股</b></span>'+
+        '<span>完整連區 <b>'+completedRegions+'</b></span>'+
       '</div>'+
     '</article>';
   }).join("");
