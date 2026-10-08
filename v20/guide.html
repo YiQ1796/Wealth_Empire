@@ -39,7 +39,27 @@
 .legend{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 4px} .legend .badge{background:#fff}
 @media (max-width:1200px){.center-blue{grid-template-columns:1fr} .tile-detail{grid-template-columns:1fr} .board{grid-template-columns:repeat(13,minmax(56px,1fr))}}
 @media (max-width:900px){.page,.header{padding-left:12px;padding-right:12px} .board-shell{padding:6px} .board{grid-template-columns:repeat(13,minmax(48px,1fr));overflow:auto;min-height:auto} .center-zone{grid-column:1 / -1;grid-row:auto;display:block} .tile{min-height:60px} .center-blue,.tile-detail{margin-top:12px} .central-building-grid{grid-template-columns:repeat(2,1fr);grid-template-rows:none}}
-.manual-section{margin:16px 0;background:#fffaf2;border:1px solid #dcc8a7;border-radius:18px;padding:16px}.manual-section .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}.manual-section .card{background:#fff6e8;border:1px solid #e2d0b5;border-radius:13px;padding:13px}.manual-section table{width:100%;border-collapse:collapse}.manual-section td,.manual-section th{padding:9px;border-bottom:1px solid #eadbc3;text-align:left}.manual-section .detail-tags{display:flex;gap:8px;flex-wrap:wrap}.manual-section .tag{background:#faebd2;border-radius:20px;padding:6px 10px}</style>
+.manual-section{margin:16px 0;background:#fffaf2;border:1px solid #dcc8a7;border-radius:18px;padding:16px}.manual-section .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}.manual-section .card{background:#fff6e8;border:1px solid #e2d0b5;border-radius:13px;padding:13px}.manual-section table{width:100%;border-collapse:collapse}.manual-section td,.manual-section th{padding:9px;border-bottom:1px solid #eadbc3;text-align:left}.manual-section .detail-tags{display:flex;gap:8px;flex-wrap:wrap}.manual-section .tag{background:#faebd2;border-radius:20px;padding:6px 10px}
+/* Stable interactive board: selection never changes grid track heights. */
+.board{grid-template-rows:repeat(11,76px)!important;min-height:0!important;align-content:start}
+.center-zone{min-height:0!important;height:100%;grid-template-rows:minmax(0,1.2fr) minmax(0,.8fr)!important}
+.center-blue,.tile-detail{min-height:0!important;height:100%;overflow:hidden}
+.center-blue{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}
+.central-showcase{display:flex!important;flex-direction:column;justify-content:center;gap:8px}
+.central-brand{align-items:center;flex-wrap:wrap}
+.central-building-grid{flex:1;min-height:0;align-items:stretch;grid-template-rows:repeat(3,minmax(0,1fr))}
+.central-btn{min-height:0}
+.central-card{min-height:0;overflow:auto;grid-template-rows:auto auto auto 1fr}
+.central-card h2{font-size:clamp(19px,2vw,29px)}
+.central-card p,.central-card ul{font-size:clamp(12px,1.05vw,16px)}
+.tile-detail{grid-template-columns:repeat(2,minmax(0,1fr))!important;align-items:stretch;gap:14px}
+.tile-detail>.left,.tile-detail>.tile-side{min-width:0;min-height:0;overflow:auto}
+.tile-detail .left h2{font-size:clamp(19px,2vw,27px)}
+.tile-detail .left p{font-size:clamp(12px,1.05vw,16px)}
+.tile-detail .left ul{font-size:13px}
+.tile-side{align-content:start}
+@media(max-width:900px){.board{min-width:1050px;grid-template-rows:repeat(11,76px)!important}.center-zone{display:grid!important;grid-column:2 / 13!important;grid-row:2 / 11!important}.center-blue{margin:0!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}.tile-detail{margin:0!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+</style>
 </head>
 <body>
 <div class="header">
@@ -143,8 +163,8 @@ function propertyList(region){ return tiles.filter(t=>t.region===region).map(t=>
 const board=document.getElementById('board');
 const center=el('section','center-zone');
 const blue=el('div','center-blue');
-const centralWords=central.map(x=>x.name).join('\n');
-blue.innerHTML=`<div class="central-showcase"><div class="central-words">${centralWords}</div><div class="central-brand"><span class="brand-icons">💰 🏠 💎</span><span>財富帝國</span></div><div class="central-sub">點擊下方五棟建築，右邊會立即顯示用途說明；搭配財寶、地產、資金與移動系統一起理解更直覺。</div></div><div class="central-card" id="centralDetail"><span class="tag">中央五功能</span><h2>城市委託中心</h2><p>用來查看或承接城市委託／任務類內容，是中央的目標型玩法入口。</p><ul><li>偏向任務與目標玩法入口</li><li>可能與回合進度或條件解鎖有關</li><li>細節請以遊戲內當前畫面為準</li></ul></div>`;
+
+blue.innerHTML=`<div class="central-showcase"><div class="central-brand"><span class="brand-icons">💰 🏠 💎</span><span>財富帝國</span></div><div class="central-sub">點擊下方五棟建築，右邊會立即顯示用途說明；搭配財寶、地產、資金與移動系統一起理解更直覺。</div></div><div class="central-card" id="centralDetail"><span class="tag">中央五功能</span><h2>城市委託中心</h2><p>用來查看或承接城市委託／任務類內容，是中央的目標型玩法入口。</p><ul><li>偏向任務與目標玩法入口</li><li>可能與回合進度或條件解鎖有關</li><li>細節請以遊戲內當前畫面為準</li></ul></div>`;
 const btnGrid=el('div','central-building-grid');
 central.forEach(item=>{ const btn=el('button','central-btn',`<small>中央五功能</small><strong>${item.name}</strong>`); const pos=centralPos[item.id]; if(pos){btn.style.gridColumn=pos[1]; btn.style.gridRow=pos[0];} btn.addEventListener('click',()=>selectCentral(item,btn)); btnGrid.append(btn); item._btn=btn; });
 blue.querySelector('.central-showcase').append(btnGrid);
