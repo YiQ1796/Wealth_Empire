@@ -113,23 +113,20 @@
 
     <aside class="hud-panel" aria-label="玩家與功能資訊">
       <header class="hud-header">
-        
-<button id="gameGuideButton" type="button" class="we-guide-button" aria-controls="gameGuidePanel" aria-expanded="false">📖 遊玩說明</button>
-<div class="hud-heading">
-          <h1>玩家資訊</h1>
+        <div class="hud-heading">
+          <div class="hud-heading__title-line">
+            <h1>玩家資訊</h1>
+            <button id="mobileEventLogButton" type="button" class="hud-log-icon" data-feature="info" aria-label="查看事件紀錄" title="事件紀錄">
+              <img src="./assets/v5/ui/modal/MODAL_INFO_ICON.webp" alt="">
+            </button>
+          </div>
           <div class="round-inline">ROUND <strong id="roundValue">1</strong> / 30</div>
         </div>
-
+        <button id="gameGuideButton" type="button" class="we-guide-button" aria-controls="gameGuidePanel" aria-expanded="false">📖 遊玩說明</button>
         <div class="hud-turn-tools hud-turn-tools--compact">
           <div class="dice-result" aria-label="骰子結果">
             <span class="dice-result__faces" id="diceFacesValue">🎲 —</span>
             <strong class="dice-result__total" id="diceTotalValue">= —</strong>
-          </div>
-          <div class="control-actions control-actions--turn mobile-header-event-log">
-            <button id="mobileEventLogButton" type="button" class="action-button" data-feature="info">
-              <img src="./assets/v5/ui/modal/MODAL_INFO_ICON.webp" alt="">
-              <span>事件紀錄</span>
-            </button>
           </div>
           <button id="desktopMarketButton" type="button" class="hud-market-button" data-feature="market">
             <img src="./assets/v5/ui/modal/MODAL_STOCK_ICON.webp" alt="">
