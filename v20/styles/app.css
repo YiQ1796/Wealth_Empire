@@ -3652,6 +3652,10 @@ body.entry-pending .app-shell{
 
 
 /* Airport-only direct board picking: change interaction affordance, not tile art or layout. */
+.transport-dialog.is-airport-selector{
+  position:fixed;
+  z-index:7000;
+}
 .board.is-airport-picking .tile[data-index]{cursor:pointer}
 .board.is-airport-picking .tile[data-index]:not([data-index="13"]):is(:hover,:focus-visible){
   outline:3px solid #e4aa47;
