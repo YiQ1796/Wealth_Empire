@@ -1,5 +1,5 @@
 import{createInitialState,createLobbyState,hydrateState,setAiSeat,setHumanSeat,setPlayerCharacter}from"./core/state.js?v=alpha32-239";
-import{GameEngine}from"./core/game.js?v=alpha32-239-rank3";
+import{GameEngine}from"./core/game.js?v=alpha32-240-airport-direct-20261008";
 import{
   PeerNetwork,
   clearNetworkSession,
@@ -19,8 +19,8 @@ import{UI_ASSETS}from"./data/ui-assets.js";
 import{MinigameUI}from"./ui/minigame-ui.js";
 import{GROUP_SIZES,MAX_PROPERTY_LEVEL,groupRentMultiplier}from"./data/board.js";
 import{canForceAcquireProperty,groupProgress,propertyValue,rentFor,suggestedAcquisitionOffer,upgradeCost}from"./core/property-economy.js?v=alpha32-239";
-import{TRANSPORT_NODE_BY_INDEX}from"./data/transport.js?v=alpha32-239";
-import{transportDestinationPreview}from"./core/transport.js?v=alpha32-239";
+import{TRANSPORT_NODE_BY_INDEX}from"./data/transport.js?v=alpha32-240-airport-direct-20261008";
+import{transportDestinationPreview}from"./core/transport.js?v=alpha32-240-airport-direct-20261008";
 import{
   CENTRAL_FEATURE_BY_ID,
   CENTRAL_MISSIONS,
