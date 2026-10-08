@@ -31,7 +31,9 @@ export function playerAssetBreakdown(state,playerOrSeat){
     },0);
 
   const bankDeposit=safeMoney(player.centralBankDeposit?.principal);
-  const total=cash+properties+stocks+bankDeposit;
+  // Ranking and final settlement count liquid cash, property value and quoted stock holdings only.
+  // Bank deposits remain visible separately but are excluded until they mature into cash.
+  const total=cash+properties+stocks;
 
   return{
     cash:Math.round(cash),
