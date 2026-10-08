@@ -7631,3 +7631,19 @@ body.entry-pending .app-shell{
   .hud-panel .player-wealth strong{font-size:clamp(15px,1.08vw,19px)!important}
   .hud-panel .player-card__details{font-size:clamp(11px,.82vw,14px)!important}
 }
+
+/* Desktop HUD fine tuning: moderate button height and balanced player cards. */
+@media (min-width:1181px) and (min-height:651px){
+ .hud-panel .desktop-command-dock{gap:7px!important}
+ .hud-panel .desktop-command-dock .feature-tab,
+ .hud-panel .desktop-command-dock .action-button{
+   min-height:46px!important;max-height:53px!important;padding:7px 9px!important;
+   gap:8px;font-size:clamp(14px,1.05vw,17px)!important;
+ }
+ .hud-panel .desktop-command-dock .feature-tab span,
+ .hud-panel .desktop-command-dock .action-button span{font-size:clamp(14px,1.05vw,17px)!important}
+ .hud-panel .desktop-command-dock .feature-tab img,
+ .hud-panel .desktop-command-dock .action-button img{width:28px!important;height:28px!important;flex:0 0 28px}
+ .hud-panel .players{gap:10px}
+ .hud-panel .player-card{padding:clamp(13px,1.55vh,20px) 14px!important;gap:13px!important}
+}
