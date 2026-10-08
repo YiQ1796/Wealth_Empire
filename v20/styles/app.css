@@ -7545,3 +7545,46 @@ body.entry-pending .app-shell{
 @media (prefers-reduced-motion:reduce){
   .dice-roll-popup{transition:none}
 }
+
+/* Central dice panel: shared position and scale for desktop and landscape phones.
+   This replaces the former temporary upper-board dice toast and hides the HUD dice. */
+.hud-panel .hud-dice-data{display:none!important}
+.hud-panel .hud-header{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);gap:6px;align-items:stretch;min-width:0;width:100%}
+.hud-panel .hud-heading{grid-column:1;min-width:0;align-self:center}
+.hud-panel .hud-heading h1{font-size:clamp(14px,1.5vw,23px);white-space:nowrap}
+.hud-panel .hud-header #gameGuideButton{grid-column:2;display:flex;justify-content:center;align-items:center;width:100%;min-width:0;margin:0;padding:5px 4px;white-space:nowrap;font-size:clamp(10px,1.2vw,15px)}
+.hud-panel .hud-header #desktopMarketButton{grid-column:3;display:flex;min-width:0;width:100%;min-height:40px;height:auto;padding:5px 4px;font-size:clamp(10px,1.1vw,14px)}
+.hud-panel .hud-header #desktopMarketButton img{width:23px;height:23px;flex:0 0 23px}
+.hud-panel .hud-header #mobileEventLogButton{display:none!important}
+.board .dice-roll-popup{
+  position:absolute!important;
+  left:50%!important;
+  top:52%!important;
+  width:clamp(250px,37%,550px)!important;
+  max-width:calc(100% - 30px)!important;
+  min-height:clamp(88px,17%,160px);
+  margin:0!important;
+  padding:12px 20px!important;
+  transform:translate(-50%,-50%)!important;
+  border:3px solid #dbad53;
+  border-radius:22px;
+  background:linear-gradient(135deg,#fffdf8,#fff2d8);
+  z-index:12500;
+  box-shadow:0 12px 25px #634a2640;
+}
+.board .dice-roll-popup__caption{font-size:clamp(12px,1.25vw,19px)}
+.board .dice-roll-popup__total{font-size:clamp(23px,2.65vw,39px)}
+.board .dice-roll-popup__destination{font-size:clamp(11px,1.15vw,17px)}
+.board .action-toast-stack{top:20%!important}
+@media (orientation:landscape) and (max-height:650px) and (max-width:1180px){
+  .hud-panel .hud-header{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:4px}
+  .hud-panel .hud-heading{grid-column:1;grid-row:1;min-width:0}
+  .hud-panel .hud-heading h1{font-size:clamp(12px,1.65vw,16px)}
+  .hud-panel .hud-header #gameGuideButton{grid-column:2;grid-row:1;font-size:clamp(10px,1.4vw,13px);min-height:36px}
+  .hud-panel .hud-header #desktopMarketButton{grid-column:1/-1;grid-row:2;min-height:30px;padding:2px 6px;font-size:11px}
+  .board .dice-roll-popup{top:52%!important;width:clamp(200px,38%,400px)!important;min-height:70px;padding:6px 10px!important}
+  .board .dice-roll-popup__caption{font-size:10px}
+  .board .dice-roll-popup__total{font-size:clamp(19px,3vw,27px)}
+  .board .dice-roll-popup__destination{font-size:10px}
+  .board .action-toast-stack{top:20%!important}
+}
