@@ -7634,7 +7634,21 @@ body.entry-pending .app-shell{
 
 /* Desktop HUD fit: reserve full height for the 3+2 command rows without clipping. */
 @media (min-width:1181px) and (min-height:651px){
- .hud-panel{min-height:0;overflow:hidden}
+ .hud-panel{min-height:0;overflow:hidden;grid-template-rows:auto minmax(0,1fr) 104px!important}
+ .hud-panel.has-network-lobby{grid-template-rows:auto auto minmax(0,1fr) 104px!important}
+ .hud-panel .players{
+   height:100%!important;
+   min-height:0!important;
+   overflow-y:auto;
+   overflow-x:hidden;
+   display:grid!important;
+   grid-template-rows:repeat(4,minmax(0,1fr))!important;
+   align-content:stretch!important;
+   scrollbar-width:thin;
+ }
+ .hud-panel .player-card{height:100%!important;min-height:0!important;overflow:hidden!important}
+ .hud-panel .player-card__details{min-width:0}
+
  .hud-panel .players{min-height:0;gap:6px!important}
  .hud-panel .player-card{
    min-height:0;
