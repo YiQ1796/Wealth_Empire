@@ -110,11 +110,10 @@ diceRollPopup.innerHTML=
   '<span class="dice-roll-popup__caption"></span>'+
   '<strong class="dice-roll-popup__total"></strong>'+
   '<span class="dice-roll-popup__destination"></span>';
-document.body.appendChild(diceRollPopup);
+board.appendChild(diceRollPopup);
 let diceRollPopupTimer=null;
 
 function showConfirmedDiceRoll(event){
-  if(!window.matchMedia("(orientation:landscape) and (max-height:650px) and (max-width:1180px)").matches)return;
   const data=event?.data??{};
   const d1=Number(data.d1);
   const d2=Number(data.d2);
@@ -128,20 +127,16 @@ function showConfirmedDiceRoll(event){
   diceRollPopup.querySelector(".dice-roll-popup__total").textContent="🎲 "+d1+" + "+d2+" = "+total;
   diceRollPopup.querySelector(".dice-roll-popup__destination").textContent="前進 "+total+" 格｜抵達 "+tileName;
   clearTimeout(diceRollPopupTimer);
-  // A short top-layer dialog stays visible above landing/purchase dialogs.
-  // It changes presentation only; the roll and landing have already been committed.
-  const bounds=board.getBoundingClientRect();
-  diceRollPopup.style.left=(bounds.left+bounds.width/2)+"px";
-  diceRollPopup.style.top=(bounds.top+bounds.height*0.29)+"px";
+  // Position inside the board below notifications, on phone and desktop alike.
   diceRollPopup.hidden=false;
-  if(!diceRollPopup.open)diceRollPopup.showModal();
+  if(!diceRollPopup.open)diceRollPopup.show();
   diceRollPopup.classList.add("is-visible");
   diceRollPopupTimer=setTimeout(()=>{
     diceRollPopup.classList.remove("is-visible");
     if(diceRollPopup.open)diceRollPopup.close();
     diceRollPopup.hidden=true;
     diceRollPopupTimer=null;
-  },1400);
+  },2100);
 }
 
 function setNetworkStatus(text,kind="info"){
