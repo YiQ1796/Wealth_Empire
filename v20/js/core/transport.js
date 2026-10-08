@@ -139,15 +139,16 @@ export function canUseTransport(state,seat,destinationIndex){
   if(!pending||state.phase!=="transport"||!player)return false;
   if(Number(seat)!==pending.seat||player.position!==pending.sourceIndex)return false;
   const destination=Number(destinationIndex);
-  if(!pending.destinationIndexes.includes(destination))return false;
+  // The airport accepts any other board square; the eight region entries remain
+  // shortcuts and must not restrict a manual tile selection (including old saves).
+  if(!Number.isInteger(destination)||destination<0||destination>=state.tiles.length)return false;
   if(player.cash<Math.max(0,Number(pending.fee)||0))return false;
+  if(pending.kind==="airport")return destination!==pending.sourceIndex;
+  if(!pending.destinationIndexes?.includes(destination))return false;
 
   if(pending.kind==="port_logistics"){
     const tile=state.tiles?.[destination];
     return Boolean(tile?.type==="property"&&tile.owner===Number(seat));
-  }
-  if(pending.kind==="airport"){
-    return state.tiles?.[destination]?.type==="property";
   }
   return isTransportNodeIndex(destination);
 }

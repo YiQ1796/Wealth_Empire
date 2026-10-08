@@ -5,7 +5,7 @@ import{GROUP_SIZES,groupRentMultiplier}from"../data/board.js";
 import{advanceStockMarket,buyStock as executeBuyStock,getMarketStock,sellStock as executeSellStock}from"./stock-market.js";
 import{playerAssetRankings}from"./player-assets.js?v=alpha32-239-rank3";
 import{resolveSpecialEvent}from"./special-events.js?v=alpha32-234";
-import{canUseTransport,chooseAiTransportDestination,createPendingTransport,transportNode}from"./transport.js?v=alpha32-234";
+import{canUseTransport,chooseAiTransportDestination,createPendingTransport,transportNode}from"./transport.js?v=alpha32-240-airport-direct-20261008";
 import{chooseAiAcquisition,createPendingAcquisition,executeAcquisition}from"./acquisition-center.js?v=alpha32-233";
 import{canUseUrban,chooseAiUrbanDestination,createPendingUrban,resolveCivicEvent}from"./civic-specials.js?v=alpha32-226";
 import{
@@ -922,7 +922,10 @@ export class GameEngine{
     );
 
     if(pending.resolveLanding){
-      this.resolveLanding(player,{specialChainDepth:1});
+      // A direct airport flight can target chance/fate as well as property.
+      // Resolve that first destination normally; an event-triggered second
+      // movement still uses the existing chain-depth guard.
+      this.resolveLanding(player,{specialChainDepth:pending.kind==="airport"?0:1});
     }
     this.notify();
     return true;

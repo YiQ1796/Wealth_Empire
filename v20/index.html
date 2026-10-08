@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#eef3f7">
 <title>財富帝國 V20 Alpha 32.3.13</title>
-<link rel="stylesheet" href="./styles/app.css?v=alpha32-239-phone-dice-compact-20261008">
+<link rel="stylesheet" href="./styles/app.css?v=alpha32-239-phone-dice-compact-20261008&amp;rev=alpha32-240-airport-direct-20261008">
 
 <style id="guide-integration-style">
 .we-guide-button{border:1px solid #ad8847;border-radius:10px;background:#213956;color:#fff2ca;font:700 14px system-ui,'Microsoft JhengHei',sans-serif;padding:8px 13px;cursor:pointer;white-space:nowrap}
@@ -486,11 +486,11 @@
 
 <aside id="gameGuidePanel" class="we-guide-panel" data-open="false" aria-label="遊玩說明視窗" aria-hidden="true">
 <div class="we-guide-panel-header"><span>📖 遊玩說明</span><a href="./guide.html" target="_blank" rel="noopener noreferrer">完整網頁 ↗</a><button id="gameGuideCloseButton" type="button" class="we-guide-close">關閉</button></div>
-<iframe class="we-guide-frame" title="財富帝國互動遊玩說明書" data-src="./guide.html?embedded=1&amp;rev=e7fbc9c6" data-full-src="./guide.html" loading="lazy"></iframe>
+<iframe class="we-guide-frame" title="財富帝國互動遊玩說明書" data-src="./guide.html?embedded=1&amp;rev=alpha32-240-airport-direct-20261008" data-full-src="./guide.html" loading="lazy"></iframe>
 </aside>
 <script id="game-guide-integration-script">
 (()=>{const panel=document.getElementById('gameGuidePanel');const buttons=[document.getElementById('gameGuideButton'),document.getElementById('entryGuideButton')];const frame=panel.querySelector('iframe');const phoneQuery=window.matchMedia('(orientation:landscape) and (max-height:650px) and (max-width:1180px), (max-width:750px)');function toggle(open){if(open){frame.src=phoneQuery.matches?frame.dataset.src:frame.dataset.fullSrc;}else{frame.removeAttribute('src');}panel.dataset.open=String(open);panel.setAttribute('aria-hidden',String(!open));buttons.forEach(button=>button?.setAttribute('aria-expanded',String(open)));}buttons.forEach(button=>button?.addEventListener('click',()=>toggle(panel.dataset.open!=='true')));document.getElementById('gameGuideCloseButton').addEventListener('click',()=>toggle(false));document.addEventListener('keydown',event=>{if(event.key==='Escape'&&panel.dataset.open==='true')toggle(false)});})();
 </script>
-<script type="module" src="./js/main.js?v=alpha32-239-phone-dice-compact-20261008"></script>
+<script type="module" src="./js/main.js?v=alpha32-239-phone-dice-compact-20261008&amp;rev=alpha32-240-airport-direct-20261008"></script>
 </body>
 </html>
