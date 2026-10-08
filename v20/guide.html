@@ -13,6 +13,7 @@
 .hero:before,.hero:after{content:'';position:absolute;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(215,176,107,.18),transparent 70%);pointer-events:none}
 .hero:before{top:-70px;right:-45px} .hero:after{left:-60px;bottom:-80px}
 .hero h1{margin:0 0 8px;font-size:clamp(30px,4vw,50px);color:#6b4a1b} .hero p{margin:0;color:var(--muted);max-width:900px} .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px} .chip{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;border:1px solid #dbc39b;background:#fff7e7;color:#6f522a;font-weight:800} .chip .icon{font-size:18px}
+.chip{text-decoration:none}.chip:hover,.chip:focus-visible{background:#f6e7c6;border-color:#b88a47;outline-offset:2px}html{scroll-behavior:smooth}section[id],#board{scroll-margin-top:12px}
 .page{max-width:1420px;margin:0 auto;padding:0 18px 26px}
 .board-shell{overflow-x:auto;background:rgba(255,251,244,.55);border:1px solid var(--line);border-radius:24px;padding:10px;box-shadow:var(--shadow)}
 .board{min-width:1050px;display:grid;grid-template-columns:repeat(13,minmax(68px,1fr));grid-template-rows:repeat(11,minmax(70px,auto));gap:6px;min-height:880px;background:linear-gradient(180deg,#f8f1e5,#efe2cf);border-radius:18px;padding:8px;position:relative;overflow:hidden}
@@ -155,12 +156,12 @@
     <h1>財富帝國｜互動遊玩說明書</h1>
     <p>這一版已改成更接近你指定的版型：中間藍框是中央五棟建築說明，下方黃框是點擊棋盤格後的詳細說明，整體也加上金幣、地產、寶箱、骰子等大富翁風格裝飾。</p>
     <div class="chips">
-      <span class="chip"><span class="icon">💰</span> 財寶與資產</span>
-      <span class="chip"><span class="icon">🏠</span> 地產與升級</span>
-      <span class="chip"><span class="icon">📜</span> 規則與事件</span>
-      <span class="chip"><span class="icon">🎁</span> 道具與驚喜</span>
-      <span class="chip"><span class="icon">🎲</span> 棋盤與移動</span>
-      <span class="chip"><span class="icon">💎</span> 財富帝國風格</span>
+      <a class="chip" href="#regions"><span class="icon">💰</span> 財寶與資產</a>
+      <a class="chip" href="#regions"><span class="icon">🏠</span> 地產與升級</a>
+      <a class="chip" href="#events"><span class="icon">📜</span> 規則與事件</a>
+      <a class="chip" href="#items"><span class="icon">🎁</span> 道具與驚喜</a>
+      <a class="chip" href="#board"><span class="icon">🎲</span> 棋盤與移動</a>
+      <a class="chip" href="#newbie"><span class="icon">💎</span> 財富帝國風格</a>
     </div>
     <div class="legend">
       <span class="badge">點棋盤外圈格子 → 看下方詳細說明</span>
