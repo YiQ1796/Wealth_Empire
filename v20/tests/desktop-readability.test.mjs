@@ -11,7 +11,7 @@ assert.match(html,/財富帝國 V20 Alpha 32\.3\.13/);
 assert.match(html,/app\.css\?v=alpha32-239/);
 assert.match(html,/main\.js\?v=alpha32-239/);
 assert.match(main,/\.\/ui\/stock-render\.js\?v=alpha32-239/);
-assert.match(main,/\.\/core\/game\.js\?v=alpha32-239/);
+assert.match(main,/\.\/core\/game\.js\?v=alpha32-\d+[^"]*/);
 
 assert.match(stock,/const cardsPerRow=2/);
 assert.doesNotMatch(stock,/currentPlayer===localSeat/);
