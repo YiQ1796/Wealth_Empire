@@ -1,34 +1,231 @@
 <!doctype html>
-<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0d182b"><title>財富帝國｜互動遊玩說明書</title>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f3eee4">
+<title>財富帝國｜互動遊玩說明書</title>
 <style>
-:root{color-scheme:dark;--bg:#0c1627;--panel:#15243a;--card:#1c314c;--text:#f2f7ff;--muted:#b7c9df;--accent:#f4c979;--line:#37516f;--good:#80e0b3;--warn:#ffd18c}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:linear-gradient(140deg,#0c1627,#122440 58%,#0c1627);font-family:system-ui,-apple-system,'Noto Sans TC','Microsoft JhengHei',sans-serif;color:var(--text);line-height:1.65}button,input{font:inherit}button{cursor:pointer}a{color:#8bd5ff}header{padding:30px max(18px,calc((100vw - 1280px)/2));border-bottom:1px solid var(--line);background:#101d31}header .eyebrow{color:var(--accent);letter-spacing:.18em;font-size:12px}h1{font-size:clamp(27px,4vw,46px);margin:6px 0}header p{max-width:830px;color:var(--muted);margin:8px 0 0}.wrap{max-width:1320px;margin:auto;padding:20px 18px 70px}.notice{border:1px solid #aa7b38;background:#48361f;padding:12px 17px;border-radius:12px;margin-bottom:18px;color:#ffe6b6}nav{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 22px;position:sticky;top:0;background:#0c1627ee;z-index:5;padding:10px 0;backdrop-filter:blur(12px)}nav a,.chip{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:8px 13px;text-decoration:none;color:var(--text);background:#1a2c45;font-size:14px}h2{color:var(--accent);margin:34px 0 12px;font-size:25px}h3{margin:10px 0;color:#e7f1ff}.muted,.small{color:var(--muted)}.small{font-size:13px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;margin:16px 0;box-shadow:0 15px 40px #0002}.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}.card{background:var(--card);border-radius:14px;padding:14px;border:1px solid var(--line)}.card p{margin:.35em 0}.boardwrap{overflow:auto;border:1px solid var(--line);border-radius:18px;padding:10px;background:#0e1b30}.board{display:grid;grid-template-columns:repeat(13,minmax(65px,1fr));grid-template-rows:repeat(11,minmax(64px,1fr));gap:4px;min-width:870px;aspect-ratio:13/10}.tile{background:#24405b;border:1px solid #54708e;border-radius:9px;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3px 2px;min-height:64px;line-height:1.2;text-align:center;transition:.12s}.tile:hover,.tile:focus-visible{outline:2px solid var(--accent);transform:scale(1.03);z-index:2}.tile small{opacity:.8;font-size:11px}.tile strong{font-size:clamp(10px,1.1vw,13px);margin-top:3px;overflow-wrap:anywhere}.tile.property{background:#214e46}.tile.station{background:#554b80}.tile.chance,.tile.fate{background:#60502d}.tile.start{background:#726043}.tile.active{box-shadow:0 0 0 3px #ffd587 inset}.boardcenter{grid-column:2/13;grid-row:2/11;border:1px dashed #55708c;background:radial-gradient(ellipse at center,#254366,#0e1b30 75%);border-radius:12px;display:flex;justify-content:center;align-items:center;flex-direction:column;text-align:center;padding:20px}.boardcenter b{font-size:clamp(24px,3.5vw,50px);color:var(--accent)}.boardcenter span{color:var(--muted);max-width:600px}.selection{margin-top:12px;min-height:145px;border:1px solid #7f9ab8;border-radius:14px;padding:14px;background:#18304c}.selection h3{color:var(--accent)}.selection .tag{display:inline-block;border:1px solid #5e7f9c;border-radius:7px;padding:1px 9px;margin-right:8px;color:#c9ebff}.guideTable{width:100%;border-collapse:collapse}.guideTable th,.guideTable td{text-align:left;padding:10px;border-bottom:1px solid var(--line)}.guideTable th{color:var(--accent)}.tablewrap{overflow-x:auto}.searchrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.searchrow input{border-radius:12px;padding:11px;background:#10233c;border:1px solid #6984a2;color:#fff;min-width:220px;flex:1}.pill{display:inline-block;padding:2px 9px;border-radius:999px;background:#36536e;font-size:12px}.qa details{background:#213650;border:1px solid var(--line);border-radius:12px;padding:12px;margin:8px 0}.qa summary{cursor:pointer;font-weight:bold}.btn{background:var(--accent);color:#162238;border:0;border-radius:10px;padding:10px 14px;font-weight:700}.footer{border-top:1px solid var(--line);margin-top:36px;padding-top:20px;color:var(--muted)}@media(max-width:700px){header{padding:20px 15px}.wrap{padding:12px}.panel{padding:12px}nav{position:static}.board{min-width:870px}h2{font-size:22px}}
-</style></head><body><header><div class="eyebrow">WEALTH EMPIRE · 玩家操作指南</div><h1>財富帝國｜互動遊玩說明書</h1><p>依照 V20 Alpha 32 系列的實際 44 格棋盤資料製作。點選任何格子查看用途，也能查詢地產區域、租金倍率、交通設施、事件、股票與道具。</p></header><main class="wrap">
-<div class="notice">版本說明：本頁是可獨立開啟的網頁說明書，不會改動或操控正式遊戲。國際機場「直接點選任意棋盤格傳送」是你提出的新版需求，目前尚未宣稱實裝。隨機事件的實際金額與機率，未完成原始程式逐筆驗證前不會臆測。</div>
-<nav><a href="#board">44 格棋盤</a><a href="#start">新手入門</a><a href="#property">地產與租金</a><a href="#transport">交通設施</a><a href="#events">特殊事件</a><a href="#items">策略道具</a><a href="#stock">股票市場</a><a href="#multiplayer">好友遊玩</a><a href="#faq">常見問題</a></nav>
-<section id="board"><h2>① 44 格實際棋盤｜直接點選查詢</h2><p class="muted">依遊戲程式排列成四邊棋盤，格子順序、名稱和位置與 V20 棋盤資料一致。綠色是可購買地產、紫色是交通設施、金褐色是隨機事件。這是說明用互動棋盤，不是正式遊戲畫面的截圖。</p><div class="boardwrap"><div id="boardGrid" class="board"><div class="boardcenter"><b>財富帝國</b><span>點選棋盤上的任何格子，下方會顯示用途與玩法；手機可左右捲動查看完整棋盤。</span></div></div></div><article class="selection" id="selectedTile" aria-live="polite">請先點選任一棋盤格。</article><div class="panel"><div class="searchrow"><input id="tileSearch" type="search" placeholder="搜尋格子名稱、區域或編號，例如：國際機場" aria-label="搜尋棋盤格"><button class="btn" id="resetSearch">清除搜尋</button></div><div id="tileList" class="cols" style="margin-top:12px"></div></div></section>
-<section id="start"><h2>② 第一次玩：從進入遊戲到完成回合</h2><div class="cols"><div class="card"><h3>1. 選擇遊玩模式</h3><p>單機遊玩：1 名真人與 3 名 AI。好友遊玩：建立或輸入六位數房號加入房間，空位可由 AI 補上。</p></div><div class="card"><h3>2. 擲骰子移動</h3><p>輪到自己時點選擲骰子，角色沿棋盤移動並依落腳格觸發流程。操作前可注意策略道具是否有適用效果。</p></div><div class="card"><h3>3. 處理所在格子</h3><p>可能購地、向其他玩家付租金，或遇到稅務、機會、命運、股市、交通與特殊事件。請閱讀遊戲當次的提示並完成選擇。</p></div><div class="card"><h3>4. 管理投資</h3><p>在「我的房產」升級與查詢租金；在市場操作買賣股票。當流程結束，遊戲交接至下一位玩家。</p></div></div><p class="small">V20 規格最多進行 30 ROUND；實際結算排名以遊戲程式為準。</p></section>
-<section id="property"><h2>③ 地產、房屋等級及八個區域</h2><p>44 格中有 24 塊可購買地產。購得地產後可在「我的房產」管理。未升級顯示一棟房屋、LV.1 兩棟、LV.2 三棟；每級升級花費地產原價 50%，LV.2 是最高等級。完整持有一區可提高該區收租倍率。</p><div class="tablewrap panel"><table class="guideTable"><thead><tr><th>區域</th><th>地產數</th><th>買齊後租金倍率</th><th>所屬地產</th></tr></thead><tbody id="regionRows"></tbody></table></div><p class="small">注意：上述是目前 board.js 的倍率，不是舊版統一 +25% 的規則。個別地產租金仍可能再受房屋升級、道具、事件影響。</p></section>
-<section id="transport"><h2>④ 交通設施與國際機場</h2><div class="cols"><div class="card"><h3>11 中央車站</h3><p>基本費用 <b>$400</b>。可選其他交通節點快速轉乘。</p></div><div class="card"><h3>14 國際機場</h3><p>基本費用 <b>$1,200</b>。正式程式目前可選八個地產區域入口。</p><span class="pill">新增點棋盤傳送：尚待實裝</span></div><div class="card"><h3>33 國際港口</h3><p>基本費用 <b>$800</b>。前往自己持有的區域，取得接下來兩次收租 +15% 的物流效果。</p></div><div class="card"><h3>44 跨海大橋</h3><p><b>免費</b>前往三個主要交通出口，不觸發途中格子。</p></div></div><div class="panel"><h3>國際機場新版點格操作（預定）</h3><p>到達機場 → 開啟棋盤選擇狀態 → 點選目的地 → 顯示抵達效果與費用 → 確認或取消。是否允許選取全部 44 格，需連同遊戲平衡、費用、事件與多人同步規則正式實作。此說明頁僅供查閱，不會將角色傳送至目標。</p></div></section>
-<section id="events"><h2>⑤ 棋盤事件說明</h2><div id="eventCards" class="cols"></div><div class="notice" style="margin-top:16px">注意：機會、命運、稅務、法院、醫療中心、城市更新、拍賣等事件有不同內部分支；沒有查證的獎勵金額、扣款公式、出現機率與完整觸發條件，這份說明不會假裝已確認。</div></section>
-<section id="items"><h2>⑥ 策略道具</h2><p>目前道具背包上限是六張。部分道具只能在擲骰前使用，部分必須符合土地或股票條件；實際按鈕是否能使用由遊戲判定。</p><div id="itemCards" class="cols"></div></section>
-<section id="stock"><h2>⑦ 股票市場與交易</h2><p>遊戲有十檔股票。一般情況下不必等到自己的回合即可交易；小遊戲或特殊結算時可能暫停。股票價格會隨玩家回合交接而變動，購買時應查看現價、持有量、平均成本、未實現與已實現損益。</p><div id="stockTags" class="panel"></div><p class="small">股票價格會上下波動，沒有保證獲利。買賣操作、金額及價格以遊戲當前資料為準。</p></section>
-<section id="multiplayer"><h2>⑧ 好友連線、AI 與重新整理</h2><div class="cols"><div class="card"><h3>建立房間</h3><p>選好友遊玩建立房間，將六位數房號提供朋友。</p></div><div class="card"><h3>加入房間</h3><p>輸入房號加入；未滿四名真人時，剩餘席位可由 AI 使用。</p></div><div class="card"><h3>重新整理與短暫斷線</h3><p>系統設計有重新連線和保留玩家席位的機制，但跨裝置能否成功仍取決於當次網路與遊戲狀態。</p></div><div class="card"><h3>事件同步</h3><p>購地、租金、股票及主要動作應由遊戲確認後同步給所有玩家。若畫面不同步，先避免重複操作。</p></div></div></section>
-<section id="faq"><h2>⑨ 常見問題</h2><div class="qa"><details><summary>可以從國際機場點任何一格直接飛過去嗎？</summary><p>目前程式仍只允許八個地產區域入口。新增棋盤直接點格是待製作功能，不應當作已發布。</p></details><details><summary>每個地產都能升級嗎？</summary><p>已持有的地產依遊戲當前條件升級，最高 LV.2；具體可否升級要看資金、持有者與當時流程。</p></details><details><summary>要買齊幾塊地才有區域加成？</summary><p>海港、帝王 2 塊；商業、豪宅 4 塊；其餘 3 塊。各區加成倍率請見上表。</p></details><details><summary>可以在別人的回合買賣股票嗎？</summary><p>根據 V20 規格，一般進行中的回合可以；小遊戲或結算狀態例外。</p></details><details><summary>遊戲進行幾輪？</summary><p>最多 30 ROUND，遊戲結束後依結算規則排名。</p></details><details><summary>這份網頁能直接控制遊戲嗎？</summary><p>不行。這是離線可開啟的互動說明書，並非遊戲控制面板。</p></details></div></section>
-<div class="footer">資料基準：YiQ1796/Wealth_Empire，main 307c7eff5938a6b30c556ed1dc808da64b1c3a1e；V20 Alpha 32 系列（2026-10-08 查閱）。本頁文字棋盤並非真實遊戲截圖，不使用新生成圖片。<br><a href="https://yiq1796.github.io/Wealth_Empire/v20/" target="_blank" rel="noopener noreferrer">開啟《財富帝國》遊戲</a>　·　<a href="https://github.com/YiQ1796/Wealth_Empire" target="_blank" rel="noopener noreferrer">GitHub 原始專案</a></div>
-</main><script>
+:root{--bg:#f4efe7;--bg-2:#efe7da;--panel:#fffdfa;--panel-2:#faf5ed;--card:#ffffff;--text:#3e3328;--muted:#78695a;--accent:#9a6d2f;--accent-2:#cda96a;--deep:#2f2419;--line:#d7c6b0;--shadow:0 14px 32px rgba(79,56,23,.08);--prop:#eaf3eb;--prop-line:#8ea88d;--event:#fff3d9;--event-line:#cda458;--station:#efe8fb;--station-line:#9883be;--special:#e7eff7;--special-line:#7a97b6;--select:#fff0c8;}
+*{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;background:linear-gradient(180deg,var(--bg),var(--bg-2));color:var(--text);font-family:system-ui,-apple-system,'Noto Sans TC','Microsoft JhengHei',sans-serif;line-height:1.65} a{color:#7b5320} button,input{font:inherit} button{cursor:pointer} 
+header{background:linear-gradient(135deg,#2f2419,#43311f 55%,#5a432a);color:#fff7eb;padding:28px 18px 20px;border-bottom:1px solid #6f5538;box-shadow:0 8px 20px rgba(0,0,0,.08)}
+.header-inner{max-width:1380px;margin:auto} .eyebrow{font-size:12px;letter-spacing:.16em;color:#e8c791} h1{margin:6px 0 10px;font-size:clamp(28px,4vw,44px)} header p{margin:0;color:#f3e6d3;max-width:920px}
+.wrap{max-width:1380px;margin:auto;padding:18px} .notice{background:#fff7e8;border:1px solid #e2c691;border-radius:16px;padding:14px 16px;color:#6f4d17;box-shadow:var(--shadow);margin:0 0 18px}
+nav{display:flex;gap:8px;flex-wrap:wrap;position:sticky;top:0;background:rgba(244,239,231,.92);backdrop-filter:blur(12px);padding:10px 0 14px;z-index:10;border-bottom:1px solid rgba(215,198,176,.8)}
+nav a,.chip{display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:#fffaf1;text-decoration:none;color:var(--deep);font-weight:600;font-size:14px}
+section{margin:20px 0} .panel{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:var(--shadow)}
+.hero-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:16px} .summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px} .mini{background:var(--panel-2);border:1px solid var(--line);border-radius:18px;padding:14px} .mini strong{display:block;font-size:18px;color:var(--accent)}
+.board-layout{display:grid;grid-template-columns:minmax(720px,1fr) 360px;gap:16px;align-items:start} .board-panel{min-width:0} .detail-panel{position:sticky;top:84px} .detail-panel .title{display:flex;justify-content:space-between;align-items:center;gap:10px} .detail-panel h3{margin:0;font-size:24px;color:var(--deep)} .detail-panel p{margin:.65em 0} .detail-tags{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 12px} .tag{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:#f4ecdf;border:1px solid var(--line);font-size:13px;color:#6d5840;font-weight:700} .tips{margin:12px 0 0;padding-left:18px;color:var(--muted)}
+.boardwrap{overflow:auto;border:1px solid var(--line);border-radius:24px;background:linear-gradient(180deg,#fdfaf4,#f7efe4);padding:14px} .board-grid{min-width:1020px;display:grid;grid-template-columns:repeat(13, minmax(68px,1fr));grid-template-rows:repeat(11, minmax(78px,auto));gap:5px}
+.tile,.center-card{border-radius:16px;border:1px solid var(--line);padding:8px 6px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;min-height:78px;background:#fff;transition:.18s transform,.18s box-shadow,.18s border-color} .tile small{font-size:12px;color:var(--muted)} .tile strong{font-size:15px;line-height:1.3} .tile:hover,.center-card:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(0,0,0,.06)} .tile.active,.center-card.active{border-color:#c99231;box-shadow:0 0 0 3px #f9e2a9 inset,0 10px 24px rgba(180,120,35,.15);background:var(--select)}
+.tile.property{background:var(--prop);border-color:var(--prop-line)} .tile.chance,.tile.fate,.tile.tax{background:var(--event);border-color:var(--event-line)} .tile.station{background:var(--station);border-color:var(--station-line)} .tile.start{background:#fff1df;border-color:#d9a760} .tile.highlow,.tile.horse,.tile.market,.tile.court,.tile.acquisition,.tile.auction,.tile.urban,.tile.hospital{background:var(--special);border-color:var(--special-line)}
+.center-stage{grid-row:2 / 11;grid-column:2 / 13;background:linear-gradient(180deg,#fbf7ef,#f3e7d6);border:1px dashed #cbb396;border-radius:24px;padding:24px;display:flex;flex-direction:column;justify-content:center;gap:18px;position:relative;overflow:hidden} .center-stage::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at center, rgba(222,193,146,.18), transparent 56%);pointer-events:none} .center-stage h2{margin:0;text-align:center;font-size:54px;color:#9a6d2f} .center-stage p{margin:0;text-align:center;color:#715e48}
+.center-grid{display:grid;grid-template-columns:repeat(5,minmax(120px,1fr));gap:12px;position:relative;z-index:1} .center-card{background:#fffaf3;padding:12px 10px;min-height:132px} .center-card small{display:block;color:#9d7b44;font-weight:700;font-size:12px;margin-bottom:6px} .center-card strong{display:block;font-size:16px} .center-card span{display:block;color:var(--muted);font-size:13px;margin-top:6px;line-height:1.45}
+.control-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px} .searchbox{flex:1 1 260px;display:flex;gap:8px} input[type=text]{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:#fff} .button{border:1px solid #c7b091;background:#fff7e8;border-radius:14px;padding:11px 14px;font-weight:700;color:#6d4a1e}
+.matches{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-top:12px} .match-btn{background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:12px;text-align:left;color:var(--text)}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px} .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:var(--shadow)} .card h3{margin:0 0 8px;color:var(--deep)}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;overflow:hidden} th,td{padding:12px 10px;border-bottom:1px solid #eadfd2;text-align:left;vertical-align:top} th{background:#faf2e8;color:#6f4d17} tr:last-child td{border-bottom:0}
+.footer{margin:26px 0 8px;color:var(--muted);font-size:13px}
+@media (max-width:1120px){.board-layout{grid-template-columns:1fr} .detail-panel{position:static} .hero-grid{grid-template-columns:1fr} }
+@media (max-width:900px){.center-grid{grid-template-columns:repeat(2,minmax(140px,1fr))} .center-stage h2{font-size:40px} }
+@media (max-width:640px){.wrap{padding:14px} .panel{padding:14px} .summary-grid{grid-template-columns:1fr} .center-grid{grid-template-columns:1fr} .board-grid{min-width:860px} .tile strong{font-size:14px} }
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <div class="eyebrow">WEALTH EMPIRE V20 GUIDE</div>
+    <h1>財富帝國｜互動遊玩說明書</h1>
+    <p>這一版已依你的回饋調整：背景改成比較舒服的暖色系，格子點選後會直接在棋盤旁邊顯示說明，中間的五棟中央設施也能直接點選查看，不用再一直往下拉對照。</p>
+  </div>
+</header>
+<div class="wrap">
+  <div class="notice">本說明書以《財富帝國》V20 的實際棋盤與功能定義為基礎整理。未正式實裝的內容，會明確標示為「規劃中／待實裝」，不會假裝成正式功能。</div>
+  <nav>
+    <a href="#board">44 格棋盤</a>
+    <a href="#central">中央五功能</a>
+    <a href="#newbie">新手入門</a>
+    <a href="#regions">地產與租金</a>
+    <a href="#transport">交通設施</a>
+    <a href="#events">特殊事件</a>
+    <a href="#items">策略道具</a>
+    <a href="#stocks">股票市場</a>
+    <a href="#multiplayer">好友遊玩</a>
+    <a href="#faq">常見問題</a>
+  </nav>
+
+  <section class="hero-grid">
+    <div class="panel">
+      <div class="eyebrow" style="color:var(--accent)">快速看懂</div>
+      <h2 style="margin-top:4px">先知道這一局在玩什麼</h2>
+      <p>你會在 44 格棋盤上移動，透過購買地產、升級、收租、交易股票、使用道具，以及各種交通與特殊事件來累積資產。標準遊戲最長 30 ROUND，最後比的是總資產，不是只比手上現金。</p>
+    </div>
+    <div class="summary-grid">
+      <div class="mini"><strong>44 格</strong><span>完整棋盤格可逐一點選查看</span></div>
+      <div class="mini"><strong>8 區</strong><span>地產區域，有不同買齊倍率</span></div>
+      <div class="mini"><strong>4 交通</strong><span>中央車站、國際機場、國際港口、跨海大橋</span></div>
+      <div class="mini"><strong>5 中央功能</strong><span>可對照中間五棟建築的用途</span></div>
+    </div>
+  </section>
+
+  <section id="board" class="panel">
+    <div class="title"><div><div class="eyebrow" style="color:var(--accent)">一目了然</div><h2 style="margin:4px 0 0">44 格棋盤對照</h2></div><p style="margin:0;color:var(--muted)">點任何格子，右邊立即顯示說明；點中間五棟房子，也能直接看用途。</p></div>
+    <div class="board-layout">
+      <div class="board-panel">
+        <div class="boardwrap">
+          <div id="boardGrid" class="board-grid" aria-label="44 格棋盤"></div>
+        </div>
+        <div class="control-row">
+          <div class="searchbox">
+            <input id="tileSearch" type="text" placeholder="輸入格號、地名、區域或功能，例如：機場、金融、31、賽馬場">
+            <button id="resetSearch" class="button" type="button">清除</button>
+          </div>
+          <button id="jumpAirport" class="button" type="button">看國際機場</button>
+          <button id="jumpStart" class="button" type="button">看起點</button>
+          <button id="jumpCenter" class="button" type="button">看中央五功能</button>
+        </div>
+        <div id="tileMatches" class="matches"></div>
+      </div>
+      <aside class="detail-panel panel">
+        <div class="title"><h3 id="detailTitle">14｜國際機場</h3><span id="detailType" class="tag">交通設施</span></div>
+        <div id="detailTags" class="detail-tags"></div>
+        <p id="detailDesc"></p>
+        <ul id="detailTips" class="tips"></ul>
+      </aside>
+    </div>
+  </section>
+
+  <section id="central" class="panel">
+    <div class="eyebrow" style="color:var(--accent)">你剛剛提到的部分</div>
+    <h2 style="margin-top:4px">中間五棟房子是什麼？</h2>
+    <div class="cols" id="centralCards"></div>
+    <p style="margin-top:12px;color:var(--muted)">這五個中央設施就是遊戲棋盤中央的主要功能建築。由於不同版本可能還會持續調整細節，所以這裡以「用途定位」幫你快速理解，不把還沒正式確認的數值寫死。</p>
+  </section>
+
+  <section id="newbie" class="panel">
+    <h2>新手入門</h2>
+    <div class="cols">
+      <div class="card"><h3>1. 先選模式</h3><p>可以選單機遊玩或好友遊玩。單機是你加上 AI；好友遊玩則是建立或加入房間。</p></div>
+      <div class="card"><h3>2. 輪到你時擲骰</h3><p>角色沿著棋盤走，走到哪格就依該格規則處理。經過起點可獲得 $2,500。</p></div>
+      <div class="card"><h3>3. 買地與升級</h3><p>走到未出售地產可考慮購買。地產最高 LV.2，每次升級成本為原地價 50%。</p></div>
+      <div class="card"><h3>4. 不只房地產</h3><p>股票、道具、交通、中央功能與特殊事件，都會影響你的總資產。</p></div>
+    </div>
+  </section>
+
+  <section id="regions" class="panel">
+    <h2>八大地產區與租金加成</h2>
+    <p>同一區的地產全買齊之後，該區的租金會有額外倍率。不同區域的格數和倍率不一樣，所以不能只看單塊地價。</p>
+    <table><thead><tr><th>區域</th><th>格數</th><th>買齊倍率</th><th>包含地產</th></tr></thead><tbody id="regionRows"></tbody></table>
+  </section>
+
+  <section id="transport" class="panel">
+    <h2>四大交通設施</h2>
+    <div class="cols">
+      <div class="card"><h3>中央車站</h3><p>基本費用 $400，可前往其他交通節點。</p></div>
+      <div class="card"><h3>國際機場</h3><p>基本費用 $1,200。<strong>目前正式功能</strong>是選八個地產區域入口。你提出的「直接點選任意棋盤格前往該地」屬於規劃需求，不是目前正式功能。</p></div>
+      <div class="card"><h3>國際港口</h3><p>基本費用 $800，可選擇自己持有地產的區域，並啟動物流收租加成。</p></div>
+      <div class="card"><h3>跨海大橋</h3><p>免費，可前往主要交通出口，不需要沿途一格一格走。</p></div>
+    </div>
+  </section>
+
+  <section id="events" class="panel">
+    <h2>特殊事件</h2>
+    <div class="cols" id="eventCards"></div>
+  </section>
+
+  <section id="items" class="panel">
+    <h2>策略道具</h2>
+    <div class="cols" id="itemCards"></div>
+  </section>
+
+  <section id="stocks" class="panel">
+    <h2>股票市場</h2>
+    <p>目前有 10 檔股票。玩家可以透過市場操作查看價格、持股、成本與損益，搭配特殊事件與道具決定進出場時機。</p>
+    <div id="stockTags" class="detail-tags"></div>
+  </section>
+
+  <section id="multiplayer" class="panel">
+    <h2>好友遊玩</h2>
+    <div class="cols">
+      <div class="card"><h3>建立 / 加入房間</h3><p>好友模式採 6 位數房號。房主建立房間後，可邀請朋友輸入房號加入。</p></div>
+      <div class="card"><h3>人數不足由 AI 補位</h3><p>若好友房尚未滿人，空位會先由 AI 補上，讓遊戲可直接開始。</p></div>
+      <div class="card"><h3>重新整理後的恢復</h3><p>多人模式設計有重連邏輯，但仍建議不要在進行中隨意重整，以免影響流程。</p></div>
+    </div>
+  </section>
+
+  <section id="faq" class="panel">
+    <h2>常見問題</h2>
+    <div class="cols">
+      <div class="card"><h3>為什麼國際機場不能直接點任何格子？</h3><p>因為目前正式版的交通規則仍是「八個區域入口」，你要求的自由點格傳送是新規劃，不是現行正式功能。</p></div>
+      <div class="card"><h3>為什麼有些事件沒有寫死金額？</h3><p>因為這份說明書是依正式玩法整理，未完全核對或可能持續調整的數值，不會硬寫成確定答案。</p></div>
+      <div class="card"><h3>要怎麼最快找某一格？</h3><p>直接點棋盤、或在上方搜尋框輸入格號、名稱、區域都可以，找到後右側會立即更新說明。</p></div>
+    </div>
+  </section>
+
+  <div class="footer">版本備註：本頁已調整為暖色百科風格，並把格子說明改為棋盤旁固定顯示；同時補上中央五功能說明。若後續正式規則再改，應同步更新此說明書。</div>
+</div>
+<script>
 const tiles=[{"num": 1, "name": "起點", "kind": "start", "region": "", "desc": "經過起點可獲得 $2,500（依 V20 專案說明）。"}, {"num": 2, "name": "機會", "kind": "chance", "region": "", "desc": "抽取機會事件；實際效果依遊戲當次抽到的事件顯示。"}, {"num": 3, "name": "星港住宅", "kind": "property", "region": "海港區", "desc": "屬於「海港區」，購買後可在我的房產管理；抵達他人持有地產可能要支付租金。地產最多升級至 LV.2，每級升級成本為地價 50%。"}, {"num": 4, "name": "海灣公寓", "kind": "property", "region": "海港區", "desc": "屬於「海港區」，購買後可在我的房產管理；抵達他人持有地產可能要支付租金。地產最多升級至 LV.2，每級升級成本為地價 50%。"}, {"num": 5, "name": "稅務局", "kind": "tax", "region": "", "desc": "觸發稅務相關結算；具體公式尚待逐項核對。"}, {"num": 6, "name": "命運", "kind": "fate", "region": "", "desc": "抽取命運事件；可能有不同的資金或其他效果，應以事件內容為準。"}, {"num": 7, "name": "翡翠商圈", "kind": "property", "region": "商業區", "desc": "屬於「商業區」，購買後可在我的房產管理；抵達他人持有地產可能要支付租金。地產最多升級至 LV.2，每級升級成本為地價 50%。"}, {"num": 8, "name": "黃金商圈", "kind": "property", "region": "商業區", "desc": "屬於「商業區」，購買後可在我的房產管理；抵達他人持有地產可能要支付租金。地產最多升級至 LV.2，每級升級成本為地價 50%。"}, {"num": 9, "name": "百貨商場", "kind": "property", "region": "商業區", "desc": "屬於「商業區」，購買後可在我的房產管理；抵達他人持有地產可能要支付租金。地產最多升級至 LV.2，每級升級成本為地價 50%。"}, {"num": 10, "name": "商務中心", "kind": "property", "region": "商業區", "desc": "屬於「商業區」，購買後可在我的房產管理；抵達他人持有地產可能要支付租金。地產最多升級至 LV.2，每級升級成本為地價 50%。"}, {"num": 11, "name": "中央車站", "kind": "station", "region": "", "desc": "基本費用 $400。可移動至其他交通節點。"}, {"num": 12, "name": "機會", "kind": "chance", "region": "", "desc": "抽取機會事件；實際效果依遊戲當次抽到的事件顯示。"}, {"num": 13, "name": "高低骰對決", "kind": "highlow", "region": "", "desc": "競賽類入口；V20 曾以共用小遊戲池取代舊小遊戲，當次玩法以實際畫面為準。"}, {"num": 14, "name": "國際機場", "kind": "station", "region": "", "desc": "基本費用 $1,200。目前只能選八個地產區域入口。直接點選任意棋盤格傳送屬於待實裝的新需求，不是目前正式功能。"}, {"num": 15, "name": "科技園區", "kind": "property", "region": "科技區", "desc": "屬於「科技區」，購買後可在我的房產管理；抵達他人持有地產可能要支付租金。地產最多升級至 LV.2，每級升級成本為地價 50%。"}, {"num": 16, "name": "創新園區", "kind": "property", "region": "科技區", "desc": "屬於「科技區」，購買後可在我的房產管理；抵達他人持有地產可能要支付租金。地產最多升級至 LV.2，每級升級成本為地價 50%。"}, {"num": 17, "name": "雲端科技城", "kind": "property", "region": "科技區", "desc": "屬於「科技區」，購買後可在我的房產管理；抵達他人持有地產可能要支付租金。地產最多升級至 LV.2，每級升級成本為地價 50%。"}, {"num": 18, "name": "收購中心", "kind": "acquisition", "region": "", "desc": "處理地產收購相關流程；最高等級與保護狀態須遵守既有規則。"}, {"num": 19, "name": "水岸別墅", "kind": "property", "region": "住宅區", "desc": "屬於「住宅區」，購買後可在我的房產管理；抵達他人持有地產可能要支付租金。地產最多升級至 LV.2，每級升級成本為地價 50%。"}, {"num": 20, "name": "北城豪宅", "kind": "property", "region": "住宅區", "desc": "屬於「住宅區」，購買後可在我的房產管理；抵達他人持有地產可能要支付租金。地產最多升級至 LV.2，每級升級成本為地價 50%。"}, {"num": 21, "name": "綠能園區", "kind": "property", "region": "住宅區", "desc": "屬於「住宅區」，購買後可在我的房產管理；抵達他人持有地產可能要支付租金。地產最多升級至 LV.2，每級升級成本為地價 50%。"}, {"num": 22, "name": "財富賽馬場", "kind": "horse", "region": "", "desc": "競賽類入口；當次參與方式與獎勵以實際畫面為準。"}, {"num": 23, "name": "股市事件", "kind": "market", "region": "", "desc": "觸發股市相關事件；具體價格與效果以當次事件為準。"}, {"num": 24, "name": "命運", "kind": "fate", "region": "", "desc": "抽取命運事件；可能有不同的資金或其他效果，應以事件內容為準。"}, {"num": 25, "name": "金融大道", "kind": "property", "region": "金融區", "desc": "屬於「金融區」，購買後可在我的房產管理；抵達他人持有地產可能要支付租金。地產最多升級至 LV.2，每級升級成本為地價 50%。"}, {"num": 26, "name": "晶鑽商業區", "kind": "property", "region": "金融區", "desc": "屬於「金融區」，購買後可在我的房產管理；抵達他人持有地產可能要支付租金。地產最多升級至 LV.2，每級升級成本為地價 50%。"}, {"num": 27, "name": "世界中心", "kind": "property", "region": "金融區", "desc": "屬於「金融區」，購買後可在我的房產管理；抵達他人持有地產可能要支付租金。地產最多升級至 LV.2，每級升級成本為地價 50%。"}, {"num": 28, "name": "法院", "kind": "court", "region": "", "desc": "司法類事件；實際判定、扣款或效果以遊戲事件為準。"}, {"num": 29, "name": "機會", "kind": "chance", "region": "", "desc": "抽取機會事件；實際效果依遊戲當次抽到的事件顯示。"}, {"num": 30, "name": "影城", "kind": "property", "region": "觀光區", "desc": "屬於「觀光區」，購買後可在我的房產管理；抵達他人持有地產可能要支付租金。地產最多升級至 LV.2，每級升級成本為地價 50%。"}, {"num": 31, "name": "國際飯店", "kind": "property", "region": "觀光區", "desc": "屬於「觀光區」，購買後可在我的房產管理；抵達他人持有地產可能要支付租金。地產最多升級至 LV.2，每級升級成本為地價 50%。"}, {"num": 32, "name": "頂級飯店", "kind": "property", "region": "觀光區", "desc": "屬於「觀光區」，購買後可在我的房產管理；抵達他人持有地產可能要支付租金。地產最多升級至 LV.2，每級升級成本為地價 50%。"}, {"num": 33, "name": "國際港口", "kind": "station", "region": "", "desc": "基本費用 $800。選擇自己持有的地產區域，啟動接下來兩次收租 +15% 的物流加成。"}, {"num": 34, "name": "地產拍賣行", "kind": "auction", "region": "", "desc": "地產拍賣相關流程；起標、加價及成交限制以畫面為準。"}, {"num": 35, "name": "城市更新局", "kind": "urban", "region": "", "desc": "城市更新事件；實際影響以遊戲當次結果為準。"}, {"num": 36, "name": "命運", "kind": "fate", "region": "", "desc": "抽取命運事件；可能有不同的資金或其他效果，應以事件內容為準。"}, {"num": 37, "name": "湖畔豪宅", "kind": "property", "region": "豪宅區", "desc": "屬於「豪宅區」，購買後可在我的房產管理；抵達他人持有地產可能要支付租金。地產最多升級至 LV.2，每級升級成本為地價 50%。"}, {"num": 38, "name": "山景莊園", "kind": "property", "region": "豪宅區", "desc": "屬於「豪宅區」，購買後可在我的房產管理；抵達他人持有地產可能要支付租金。地產最多升級至 LV.2，每級升級成本為地價 50%。"}, {"num": 39, "name": "天空豪宅", "kind": "property", "region": "豪宅區", "desc": "屬於「豪宅區」，購買後可在我的房產管理；抵達他人持有地產可能要支付租金。地產最多升級至 LV.2，每級升級成本為地價 50%。"}, {"num": 40, "name": "奢華莊園", "kind": "property", "region": "豪宅區", "desc": "屬於「豪宅區」，購買後可在我的房產管理；抵達他人持有地產可能要支付租金。地產最多升級至 LV.2，每級升級成本為地價 50%。"}, {"num": 41, "name": "醫療中心", "kind": "hospital", "region": "", "desc": "醫療相關事件；實際資金與狀態效果以畫面為準。"}, {"num": 42, "name": "皇后大道", "kind": "property", "region": "帝王區", "desc": "屬於「帝王區」，購買後可在我的房產管理；抵達他人持有地產可能要支付租金。地產最多升級至 LV.2，每級升級成本為地價 50%。"}, {"num": 43, "name": "帝王商圈", "kind": "property", "region": "帝王區", "desc": "屬於「帝王區」，購買後可在我的房產管理；抵達他人持有地產可能要支付租金。地產最多升級至 LV.2，每級升級成本為地價 50%。"}, {"num": 44, "name": "跨海大橋", "kind": "station", "region": "", "desc": "基本費用 免費。前往三個主要交通出口，不觸發沿途格子。"}];
 const regions={"海港區": [2, "×1.50"], "商業區": [4, "×2.25"], "科技區": [3, "×1.75"], "住宅區": [3, "×1.75"], "金融區": [3, "×1.75"], "觀光區": [3, "×1.75"], "豪宅區": [4, "×2.25"], "帝王區": [2, "×1.50"]};
 const items=[["地租增幅卡", "自己一塊地產永久增加 20% 過路費，同一地產最多使用一次。"], ["過路費爆發卡", "自己指定的一塊地產，下位對手踩中時，本次過路費 ×2。"], ["遙控骰子", "擲骰前將本回合骰子總點數設定在 2～12。"], ["股票拉升卡", "指定一檔股票立即上漲 12%。"], ["股票打壓卡", "指定一檔股票立即下跌 9%。"], ["租金封鎖卡", "使指定對手地產的下一次符合條件收租無效。"], ["產權保全卡", "保護指定的自己地產兩個 ROUND 免遭強制收購。"]];
 const stocks=["星辰科技", "聯城地產", "海港運輸", "恆光能源", "銀河金融", "樂園娛樂", "天晶半導體", "新紀生技", "豐盛食品", "都會零售"];
-const descriptions={"start": "經過起點可獲得 $2,500（依 V20 專案說明）。", "chance": "抽取機會事件；實際效果依遊戲當次抽到的事件顯示。", "fate": "抽取命運事件；可能有不同的資金或其他效果，應以事件內容為準。", "tax": "觸發稅務相關結算；具體公式尚待逐項核對。", "highlow": "競賽類入口；V20 曾以共用小遊戲池取代舊小遊戲，當次玩法以實際畫面為準。", "horse": "競賽類入口；當次參與方式與獎勵以實際畫面為準。", "market": "觸發股市相關事件；具體價格與效果以當次事件為準。", "court": "司法類事件；實際判定、扣款或效果以遊戲事件為準。", "acquisition": "處理地產收購相關流程；最高等級與保護狀態須遵守既有規則。", "auction": "地產拍賣相關流程；起標、加價及成交限制以畫面為準。", "urban": "城市更新事件；實際影響以遊戲當次結果為準。", "hospital": "醫療相關事件；實際資金與狀態效果以畫面為準。"};
-const labels={property:'可購買地產',station:'交通設施',chance:'機會事件',fate:'命運事件',start:'起點',tax:'稅務局',highlow:'競賽事件',horse:'競賽事件',market:'股市事件',court:'法院事件',acquisition:'收購事件',auction:'拍賣事件',urban:'城市更新',hospital:'醫療事件'};
-function placement(index){if(index<=12)return {row:1,col:index+1};if(index<=21)return {row:index-11,col:13};if(index<=34)return {row:11,col:35-index};return {row:45-index,col:1}}
-function e(tag,cls,text){const node=document.createElement(tag);if(cls)node.className=cls;if(text!==undefined)node.textContent=text;return node}
-function selectTile(index){const t=tiles[index];document.querySelectorAll('.tile').forEach(x=>x.classList.toggle('active',Number(x.dataset.index)===index));const d=document.getElementById('selectedTile');d.replaceChildren();const h=e('h3','',String(t.num).padStart(2,'0')+'｜'+t.name);const tags=e('div');tags.append(e('span','tag',labels[t.kind]||'棋盤事件'));if(t.region)tags.append(e('span','tag',t.region));d.append(h,tags,e('p','',t.desc));if(t.kind==='property')d.append(e('p','small',`此區共 ${regions[t.region][0]} 格，買齊倍率 ${regions[t.region][1]}。`));if(window.innerWidth<800)d.scrollIntoView({behavior:'smooth',block:'nearest'});}
-const board=document.getElementById('boardGrid');tiles.forEach((t,i)=>{const pos=placement(i),btn=e('button','tile '+t.kind);btn.type='button';btn.dataset.index=i;btn.style.gridRow=pos.row;btn.style.gridColumn=pos.col;btn.setAttribute('aria-label',`${t.num} ${t.name}，按下查看`);btn.append(e('small','',String(t.num).padStart(2,'0')),e('strong','',t.name));btn.addEventListener('click',()=>selectTile(i));board.append(btn)});
-const list=document.getElementById('tileList');function showSearch(){const term=document.getElementById('tileSearch').value.trim().toLowerCase();list.replaceChildren();const matches=tiles.filter(t=>`${t.num} ${String(t.num).padStart(2,'0')} ${t.name} ${t.region} ${labels[t.kind]}`.toLowerCase().includes(term));if(!term){list.append(e('p','small','輸入關鍵字，即可列出相符的棋盤格。'));return}if(!matches.length){list.append(e('p','muted','沒有符合的格子。'));return}matches.forEach(t=>{const b=e('button','card',`${String(t.num).padStart(2,'0')}｜${t.name} · ${t.region||labels[t.kind]}`);b.style.color='var(--text)';b.style.textAlign='left';b.onclick=()=>{selectTile(t.num-1);document.getElementById('selectedTile').scrollIntoView({behavior:'smooth',block:'center'})};list.append(b)})}
-document.getElementById('tileSearch').addEventListener('input',showSearch);document.getElementById('resetSearch').onclick=()=>{document.getElementById('tileSearch').value='';showSearch()};showSearch();selectTile(13);
-const rows=document.getElementById('regionRows');Object.entries(regions).forEach(([name,[count,mult]])=>{const row=e('tr');[name,String(count),mult,tiles.filter(t=>t.region===name).map(t=>t.name).join('、')].forEach(x=>row.append(e('td','',x)));rows.append(row)});
-const events=document.getElementById('eventCards');const encountered=new Set();tiles.filter(t=>t.kind!=='property'&&t.kind!=='station').forEach(t=>{if(encountered.has(t.name))return;encountered.add(t.name);const card=e('div','card');card.append(e('h3','',t.name),e('p','',t.desc));events.append(card)});
-const ic=document.getElementById('itemCards');items.forEach(([name,desc])=>{const card=e('div','card');card.append(e('h3','',name),e('p','',desc));ic.append(card)});const st=document.getElementById('stockTags');stocks.forEach(name=>st.append(e('span','chip',name)));
-</script></body></html>
+const central=[{"id": "mission", "name": "城市委託中心", "type": "中央五功能", "desc": "用來查看或承接城市委託／任務類內容的中央設施。重點是讓玩家有額外的目標與獎勵來源；實際可接內容、獎勵與冷卻時間以遊戲正式版本畫面為準。", "tips": ["偏向任務與目標玩法入口", "可能與回合進度或條件解鎖有關", "細節請以遊戲內當前畫面為準"]}, {"id": "insurance", "name": "租金保險中心", "type": "中央五功能", "desc": "與租金保護、風險管理相關的中央設施。當玩家想降低被收租或收租落差帶來的波動時，這類功能會是重要參考入口。", "tips": ["偏向風險保護類型功能", "適合用來穩定資產表現", "實際效果仍以遊戲內說明為準"]}, {"id": "bank", "name": "都會銀行", "type": "中央五功能", "desc": "提供資金管理相關功能的中央設施。玩家需要處理金流、資產安排或資金運用時，可優先查看這個入口。", "tips": ["偏向資金與金流管理", "是中央五功能中的財務核心入口", "實際數值與功能要看正式遊戲版本"]}, {"id": "transit", "name": "快捷通車", "type": "中央五功能", "desc": "與快速移動、通行效率或交通策略有關的中央設施。適合與棋盤上的交通節點一起理解，幫助玩家更有效率地規劃移動。", "tips": ["偏向移動效率與交通規劃", "可搭配中央車站、國際機場、國際港口、跨海大橋一起理解", "實作內容請以遊戲內為準"]}, {"id": "development", "name": "城市建案中心", "type": "中央五功能", "desc": "用來對照城市建設、投資或開發類內容的中央設施。對想拉高資產成長或掌握額外建設玩法的玩家很重要。", "tips": ["偏向城市建設／投資類玩法", "通常與長期資產成長理解有關", "具體機制仍以正式畫面為準"]}];
+const labels={property:'可購買地產',station:'交通設施',chance:'機會事件',fate:'命運事件',start:'起點',tax:'稅務結算',highlow:'競賽事件',horse:'競賽事件',market:'股市事件',court:'法院事件',acquisition:'收購事件',auction:'拍賣事件',urban:'城市更新',hospital:'醫療事件',central:'中央五功能'};
+const extraTips={
+  start:['經過起點可拿到固定獎勵。','適合當作新手最先熟悉的格子。'],
+  property:['如果還沒有人買，可以考慮買下。','買齊同區後，租金倍率會提高。','升級請到「我的房產」管理。'],
+  station:['交通格適合用來調整移動節奏。','是否值得使用，通常要看你當前資金與目的地。'],
+  chance:['效果不是固定的，要以抽到的事件為準。'],
+  fate:['效果不是固定的，要以抽到的事件為準。'],
+  highlow:['屬於競賽類入口。','以實際當次遊戲畫面呈現為準。'],
+  horse:['屬於競賽類入口。','以實際當次遊戲畫面呈現為準。'],
+  market:['和股票系統有關。','適合搭配股票市場一起理解。'],
+  tax:['通常和現金支出有關，進入前要注意手上資金。'],
+  court:['屬於特殊事件，請以遊戲當次判定為準。'],
+  acquisition:['與地產收購流程有關。','LV.2 或受保護地產要遵守既有規則。'],
+  auction:['與地產拍賣流程有關。'],
+  urban:['和重新部署或城市發展有關，實際效果看當次畫面。'],
+  hospital:['和醫療相關特殊事件有關，實際效果看畫面。']
+};
+function placement(index){if(index<=12)return {row:1,col:index+1};if(index<=21)return {row:index-11,col:13};if(index<=34)return {row:11,col:35-index};return {row:45-index,col:1};}
+function el(tag,cls,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;}
+function clearActive(){document.querySelectorAll('.tile,.center-card').forEach(x=>x.classList.remove('active'));}
+function renderDetail(obj,kind='tile'){
+  document.getElementById('detailTitle').textContent = obj.num ? `${String(obj.num).padStart(2,'0')}｜${obj.name}` : obj.name;
+  document.getElementById('detailType').textContent = obj.type || labels[obj.kind] || '說明';
+  const tags=document.getElementById('detailTags'); tags.replaceChildren();
+  if(obj.region) tags.append(el('span','tag',obj.region));
+  if(obj.kind && labels[obj.kind]) tags.append(el('span','tag',labels[obj.kind]));
+  if(obj.kind==='property' && regions[obj.region]){tags.append(el('span','tag',`買齊倍率 ${regions[obj.region][1]}`));}
+  document.getElementById('detailDesc').textContent=obj.desc;
+  const tipList=document.getElementById('detailTips'); tipList.replaceChildren();
+  const tips=(obj.tips||[]).concat(obj.kind && extraTips[obj.kind] ? extraTips[obj.kind] : []);
+  if(obj.kind==='property' && regions[obj.region]) tips.push(`此區共有 ${regions[obj.region][0]} 格：${tiles.filter(t=>t.region===obj.region).map(t=>t.name).join('、')}。`);
+  tips.forEach(t=>{const li=document.createElement('li');li.textContent=t;tipList.append(li);});
+}
+const board=document.getElementById('boardGrid');
+const centerStage=el('div','center-stage');
+centerStage.innerHTML='<h2>財富帝國</h2><p>直接點外圈棋盤格，或點中間五棟建築，右側都會立即顯示說明。</p>';
+const centerGrid=el('div','center-grid');
+central.forEach(c=>{const b=el('button','center-card');b.type='button';b.setAttribute('aria-label',c.name);b.innerHTML=`<small>中央五功能</small><strong>${c.name}</strong><span>${c.desc.slice(0,32)}...</span>`;b.addEventListener('click',()=>{clearActive();b.classList.add('active');renderDetail(c,'central');});centerGrid.append(b);});
+centerStage.append(centerGrid); board.append(centerStage);
+tiles.forEach((t,i)=>{const pos=placement(i),btn=el('button','tile '+t.kind);btn.type='button';btn.dataset.index=i;btn.style.gridRow=pos.row;btn.style.gridColumn=pos.col;btn.setAttribute('aria-label',`${t.num} ${t.name}`);btn.innerHTML=`<small>${String(t.num).padStart(2,'0')}</small><strong>${t.name}</strong>`;btn.addEventListener('click',()=>{clearActive();btn.classList.add('active');renderDetail(t);});board.append(btn);});
+const matches=document.getElementById('tileMatches');
+function renderMatches(){const q=document.getElementById('tileSearch').value.trim().toLowerCase();matches.replaceChildren();let arr=tiles;if(q) arr=tiles.filter(t=>`${t.num} ${String(t.num).padStart(2,'0')} ${t.name} ${t.region} ${labels[t.kind]||''}`.toLowerCase().includes(q)); if(!q){matches.append(el('div','mini','可輸入格號、名稱、區域或功能快速搜尋。')); return;} if(!arr.length){matches.append(el('div','mini','沒有符合的格子。'));return;} arr.slice(0,18).forEach(t=>{const b=el('button','match-btn');b.type='button';b.innerHTML=`<strong>${String(t.num).padStart(2,'0')}｜${t.name}</strong><div class="small">${t.region||labels[t.kind]}</div>`;b.addEventListener('click',()=>{const tileBtn=[...document.querySelectorAll('.tile')].find(x=>Number(x.dataset.index)===t.num-1); if(tileBtn) tileBtn.click();});matches.append(b);})}
+document.getElementById('tileSearch').addEventListener('input',renderMatches);
+document.getElementById('resetSearch').addEventListener('click',()=>{document.getElementById('tileSearch').value='';renderMatches();});
+document.getElementById('jumpAirport').addEventListener('click',()=>{[...document.querySelectorAll('.tile')].find(x=>Number(x.dataset.index)===13)?.click();});
+document.getElementById('jumpStart').addEventListener('click',()=>{[...document.querySelectorAll('.tile')].find(x=>Number(x.dataset.index)===0)?.click();});
+document.getElementById('jumpCenter').addEventListener('click',()=>{document.querySelector('.center-card')?.click(); document.getElementById('central').scrollIntoView({behavior:'smooth',block:'start'});});
+renderMatches(); [...document.querySelectorAll('.tile')].find(x=>Number(x.dataset.index)===13)?.click();
+const regionRows=document.getElementById('regionRows');
+Object.entries(regions).forEach(([name,[count,mult]])=>{const tr=document.createElement('tr');[name,count,mult,tiles.filter(t=>t.region===name).map(t=>t.name).join('、')].forEach(v=>{const td=document.createElement('td');td.textContent=v;tr.append(td);});regionRows.append(tr);});
+const centralCards=document.getElementById('centralCards');
+central.forEach(c=>{const card=el('div','card');card.innerHTML=`<h3>${c.name}</h3><p>${c.desc}</p><p class="small">${c.tips.join('｜')}</p>`;centralCards.append(card);});
+const eventCards=document.getElementById('eventCards'); const seen=new Set();
+tiles.filter(t=>t.kind!=='property' && t.kind!=='station').forEach(t=>{if(seen.has(t.name)) return; seen.add(t.name); const card=el('div','card'); card.innerHTML=`<h3>${t.name}</h3><p>${t.desc}</p>`; eventCards.append(card);});
+const itemCards=document.getElementById('itemCards'); items.forEach(([n,d])=>{const card=el('div','card'); card.innerHTML=`<h3>${n}</h3><p>${d}</p>`; itemCards.append(card);});
+const stockTags=document.getElementById('stockTags'); stocks.forEach(s=>stockTags.append(el('span','tag',s)));
+</script>
+</body>
+</html>
