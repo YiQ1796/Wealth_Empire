@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#eef3f7">
 <title>財富帝國 V20 Alpha 32.3.13</title>
-<link rel="stylesheet" href="./styles/app.css?v=alpha32-239-phonehud-20261008-v2">
+<link rel="stylesheet" href="./styles/app.css?v=alpha32-239-center-dice-20261008">
 
 <style id="guide-integration-style">
 .we-guide-button{border:1px solid #ad8847;border-radius:10px;background:#213956;color:#fff2ca;font:700 14px system-ui,'Microsoft JhengHei',sans-serif;padding:8px 13px;cursor:pointer;white-space:nowrap}
@@ -114,24 +114,19 @@
     <aside class="hud-panel" aria-label="玩家與功能資訊">
       <header class="hud-header">
         <div class="hud-heading">
-          <div class="hud-heading__title-line">
-            <h1>玩家資訊</h1>
-            <button id="mobileEventLogButton" type="button" class="hud-log-icon" data-feature="info" aria-label="查看事件紀錄" title="事件紀錄">
-              <img src="./assets/v5/ui/modal/MODAL_INFO_ICON.webp" alt="">
-            </button>
-          </div>
+          <h1>玩家資訊</h1>
           <div class="round-inline">ROUND <strong id="roundValue">1</strong> / 30</div>
         </div>
         <button id="gameGuideButton" type="button" class="we-guide-button" aria-controls="gameGuidePanel" aria-expanded="false">📖 遊玩說明</button>
-        <div class="hud-turn-tools hud-turn-tools--compact">
-          <div class="dice-result" aria-label="骰子結果">
-            <span class="dice-result__faces" id="diceFacesValue">🎲 —</span>
-            <strong class="dice-result__total" id="diceTotalValue">= —</strong>
-          </div>
-          <button id="desktopMarketButton" type="button" class="hud-market-button" data-feature="market">
-            <img src="./assets/v5/ui/modal/MODAL_STOCK_ICON.webp" alt="">
-            <span>股票市場</span>
-          </button>
+        <button id="desktopMarketButton" type="button" class="hud-market-button" data-feature="info">
+          <img src="./assets/v5/ui/modal/MODAL_INFO_ICON.webp" alt=""><span>事件紀錄</span>
+        </button>
+        <button id="mobileEventLogButton" type="button" class="hud-log-icon" data-feature="info" aria-label="事件紀錄" title="事件紀錄">
+          <img src="./assets/v5/ui/modal/MODAL_INFO_ICON.webp" alt="">
+        </button>
+        <div class="dice-result hud-dice-data" aria-hidden="true">
+          <span class="dice-result__faces" id="diceFacesValue">🎲 —</span>
+          <strong class="dice-result__total" id="diceTotalValue">= —</strong>
         </div>
       </header>
 
@@ -176,8 +171,8 @@
         <button id="rollButton" class="action-button action-button--primary desktop-command-dock__turn">
           <img src="./assets/ui/ACTION_ROLL.webp" alt=""><span>擲骰子</span>
         </button>
-        <button id="desktopEventLogButton" type="button" class="action-button desktop-command-dock__turn" data-feature="info">
-          <img src="./assets/v5/ui/modal/MODAL_INFO_ICON.webp" alt=""><span>事件紀錄</span>
+        <button id="desktopEventLogButton" type="button" class="action-button desktop-command-dock__turn" data-feature="market">
+          <img src="./assets/v5/ui/modal/MODAL_STOCK_ICON.webp" alt=""><span>股票市場</span>
         </button>
       </nav>
     </aside>
@@ -475,6 +470,6 @@
 <script id="game-guide-integration-script">
 (()=>{const panel=document.getElementById('gameGuidePanel');const buttons=[document.getElementById('gameGuideButton'),document.getElementById('entryGuideButton')];const frame=panel.querySelector('iframe');function toggle(open){if(open&&!frame.src)frame.src=frame.dataset.src;panel.dataset.open=String(open);panel.setAttribute('aria-hidden',String(!open));buttons.forEach(button=>button?.setAttribute('aria-expanded',String(open)));}buttons.forEach(button=>button?.addEventListener('click',()=>toggle(panel.dataset.open!=='true')));document.getElementById('gameGuideCloseButton').addEventListener('click',()=>toggle(false));document.addEventListener('keydown',event=>{if(event.key==='Escape'&&panel.dataset.open==='true')toggle(false)});})();
 </script>
-<script type="module" src="./js/main.js?v=alpha32-239-phonehud-20261008-v2"></script>
+<script type="module" src="./js/main.js?v=alpha32-239-center-dice-20261008"></script>
 </body>
 </html>
