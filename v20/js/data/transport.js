@@ -17,7 +17,7 @@ export const TRANSPORT_NODES=Object.freeze([
     mode:"跨區航班",
     icon:"✈️",
     fee:1200,
-    description:"高成本精準移動：可直接選擇 8 個地產區域入口。"
+    description:"高成本精準移動：點選棋盤上任意其他格子直達，亦可選八區快捷入口。"
   },
   {
     index:32,
