@@ -7632,18 +7632,45 @@ body.entry-pending .app-shell{
   .hud-panel .player-card__details{font-size:clamp(11px,.82vw,14px)!important}
 }
 
-/* Desktop HUD fine tuning: moderate button height and balanced player cards. */
+/* Desktop HUD fit: reserve full height for the 3+2 command rows without clipping. */
 @media (min-width:1181px) and (min-height:651px){
- .hud-panel .desktop-command-dock{gap:7px!important}
+ .hud-panel{min-height:0;overflow:hidden}
+ .hud-panel .players{min-height:0;gap:6px!important}
+ .hud-panel .player-card{
+   min-height:0;
+   padding:clamp(8px,1vh,12px) 12px!important;
+   gap:10px!important;
+ }
+ .hud-panel .desktop-command-dock{
+   display:grid!important;
+   grid-template-columns:repeat(6,minmax(0,1fr));
+   grid-template-rows:repeat(2,42px)!important;
+   grid-auto-rows:42px!important;
+   flex-shrink:0;
+   gap:5px!important;
+   align-content:end;
+   min-height:89px;
+   max-height:89px;
+   overflow:hidden;
+ }
  .hud-panel .desktop-command-dock .feature-tab,
  .hud-panel .desktop-command-dock .action-button{
-   min-height:46px!important;max-height:53px!important;padding:7px 9px!important;
-   gap:8px;font-size:clamp(14px,1.05vw,17px)!important;
+   height:42px!important;
+   min-height:42px!important;
+   max-height:42px!important;
+   padding:5px 6px!important;
+   gap:5px!important;
+   font-size:clamp(13px,.92vw,15px)!important;
+   line-height:1.15!important;
+   white-space:nowrap;
  }
  .hud-panel .desktop-command-dock .feature-tab span,
- .hud-panel .desktop-command-dock .action-button span{font-size:clamp(14px,1.05vw,17px)!important}
+ .hud-panel .desktop-command-dock .action-button span{
+   font-size:clamp(13px,.92vw,15px)!important;
+   line-height:1.15!important;
+ }
  .hud-panel .desktop-command-dock .feature-tab img,
- .hud-panel .desktop-command-dock .action-button img{width:28px!important;height:28px!important;flex:0 0 28px}
- .hud-panel .players{gap:10px}
- .hud-panel .player-card{padding:clamp(13px,1.55vh,20px) 14px!important;gap:13px!important}
+ .hud-panel .desktop-command-dock .action-button img{
+   width:25px!important;height:25px!important;flex:0 0 25px!important;
+ }
 }
