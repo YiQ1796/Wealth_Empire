@@ -17,6 +17,20 @@
 .we-guide-frame{width:100%;height:100%;border:0;background:#0c1627}
 .we-guide-entry{display:block;margin:16px auto 0;padding:9px 20px}
 @media(max-width:750px){.we-guide-panel{left:2vw;right:2vw;top:auto;bottom:3vh;width:96vw;height:62vh}.we-guide-panel-header{font-size:13px}}
+
+/* The game board stays visible beside the compact guide on landscape phones. */
+@media (orientation:landscape) and (max-height:650px) and (max-width:1180px){
+  .we-guide-panel{left:auto;right:6px;bottom:auto;top:4dvh;width:min(530px,50vw);height:91dvh;max-height:calc(100dvh - 12px)}
+  .we-guide-panel-header{flex:0 0 auto;gap:6px;padding:6px 8px;font-size:12px;white-space:nowrap}
+  .we-guide-panel-header a{font-size:11px;white-space:nowrap}
+  .we-guide-close{min-width:45px;min-height:34px;padding:5px 8px}
+  .we-guide-frame{min-height:0;flex:1;background:#f6f0e5}
+}
+@media (max-width:750px) and (orientation:portrait){
+  .we-guide-panel{left:2vw;right:2vw;top:auto;bottom:2dvh;width:96vw;height:78dvh}
+  .we-guide-panel-header{gap:6px;padding:7px 9px;font-size:12px}
+  .we-guide-panel-header a{font-size:11px}
+}
 </style>
 </head>
 <body class="entry-pending">
@@ -464,11 +478,11 @@
 <div id="actionToastStack" class="action-toast-stack" aria-live="polite" aria-atomic="false"></div>
 
 <aside id="gameGuidePanel" class="we-guide-panel" data-open="false" aria-label="遊玩說明視窗" aria-hidden="true">
-<div class="we-guide-panel-header"><span>📖 遊玩說明｜棋盤對照</span><a href="./guide.html?v=745d8614-warm" target="_blank" rel="noopener noreferrer">開啟完整網頁 ↗</a><button id="gameGuideCloseButton" type="button" class="we-guide-close">關閉</button></div>
-<iframe class="we-guide-frame" title="財富帝國互動遊玩說明書" data-src="./guide.html?v=745d8614-warm" loading="lazy"></iframe>
+<div class="we-guide-panel-header"><span>📖 遊玩說明</span><a href="./guide.html?v=20261008-guidecompact01" target="_blank" rel="noopener noreferrer">完整網頁 ↗</a><button id="gameGuideCloseButton" type="button" class="we-guide-close">關閉</button></div>
+<iframe class="we-guide-frame" title="財富帝國互動遊玩說明書" data-src="./guide.html?embedded=1&amp;v=20261008-guidecompact01" data-full-src="./guide.html?v=20261008-guidecompact01" loading="lazy"></iframe>
 </aside>
 <script id="game-guide-integration-script">
-(()=>{const panel=document.getElementById('gameGuidePanel');const buttons=[document.getElementById('gameGuideButton'),document.getElementById('entryGuideButton')];const frame=panel.querySelector('iframe');function toggle(open){if(open){frame.src=frame.dataset.src;}else{frame.removeAttribute('src');}panel.dataset.open=String(open);panel.setAttribute('aria-hidden',String(!open));buttons.forEach(button=>button?.setAttribute('aria-expanded',String(open)));}buttons.forEach(button=>button?.addEventListener('click',()=>toggle(panel.dataset.open!=='true')));document.getElementById('gameGuideCloseButton').addEventListener('click',()=>toggle(false));document.addEventListener('keydown',event=>{if(event.key==='Escape'&&panel.dataset.open==='true')toggle(false)});})();
+(()=>{const panel=document.getElementById('gameGuidePanel');const buttons=[document.getElementById('gameGuideButton'),document.getElementById('entryGuideButton')];const frame=panel.querySelector('iframe');const phoneQuery=window.matchMedia('(orientation:landscape) and (max-height:650px) and (max-width:1180px), (max-width:750px)');function toggle(open){if(open){frame.src=phoneQuery.matches?frame.dataset.src:frame.dataset.fullSrc;}else{frame.removeAttribute('src');}panel.dataset.open=String(open);panel.setAttribute('aria-hidden',String(!open));buttons.forEach(button=>button?.setAttribute('aria-expanded',String(open)));}buttons.forEach(button=>button?.addEventListener('click',()=>toggle(panel.dataset.open!=='true')));document.getElementById('gameGuideCloseButton').addEventListener('click',()=>toggle(false));document.addEventListener('keydown',event=>{if(event.key==='Escape'&&panel.dataset.open==='true')toggle(false)});})();
 </script>
 <script type="module" src="./js/main.js?v=alpha32-239-center-dice-20261008"></script>
 </body>
