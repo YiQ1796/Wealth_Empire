@@ -1702,13 +1702,23 @@ function renderTransportDialog(){
     player.connected!==false
   );
 
-  syncAirportBoardSelection(shouldShow&&pending.kind==="airport");
+  const airportSelector=shouldShow&&pending.kind==="airport";
+  syncAirportBoardSelection(airportSelector);
   if(!shouldShow){
     transportMinimized=false;
-    transportDialog?.classList.remove("is-minimized");
+    transportDialog?.classList.remove("is-minimized","is-airport-selector");
     if(transportDialog?.open)transportDialog.close();
     return;
   }
+
+  // A flight may land on another station. Switch between non-modal airport
+  // picking and standard modal transport without leaving a stale dialog mode.
+  const priorAirportSelector=transportDialog.classList.contains("is-airport-selector");
+  if(transportDialog.open&&priorAirportSelector!==airportSelector){
+    transportDialog.close();
+    transportMinimized=airportSelector;
+  }
+  transportDialog.classList.toggle("is-airport-selector",airportSelector);
 
   const source=TRANSPORT_NODE_BY_INDEX[pending.sourceIndex];
   document.getElementById("transportTitle").textContent=pending.kind==="airport"
