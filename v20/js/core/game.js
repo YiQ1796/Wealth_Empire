@@ -922,7 +922,10 @@ export class GameEngine{
     );
 
     if(pending.resolveLanding){
-      this.resolveLanding(player,{specialChainDepth:1});
+      // A direct airport flight can target chance/fate as well as property.
+      // Resolve that first destination normally; an event-triggered second
+      // movement still uses the existing chain-depth guard.
+      this.resolveLanding(player,{specialChainDepth:pending.kind==="airport"?0:1});
     }
     this.notify();
     return true;
