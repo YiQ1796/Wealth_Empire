@@ -7644,20 +7644,20 @@ body.entry-pending .app-shell{
  .hud-panel .desktop-command-dock{
    display:grid!important;
    grid-template-columns:repeat(6,minmax(0,1fr));
-   grid-template-rows:repeat(2,42px)!important;
-   grid-auto-rows:42px!important;
+   grid-template-rows:repeat(2,49px)!important;
+   grid-auto-rows:49px!important;
    flex-shrink:0;
-   gap:5px!important;
+   gap:6px!important;
    align-content:end;
-   min-height:89px;
-   max-height:89px;
+   min-height:104px;
+   max-height:104px;
    overflow:hidden;
  }
  .hud-panel .desktop-command-dock .feature-tab,
  .hud-panel .desktop-command-dock .action-button{
-   height:42px!important;
-   min-height:42px!important;
-   max-height:42px!important;
+   height:49px!important;
+   min-height:49px!important;
+   max-height:49px!important;
    padding:5px 6px!important;
    gap:5px!important;
    font-size:clamp(13px,.92vw,15px)!important;
@@ -7671,6 +7671,6 @@ body.entry-pending .app-shell{
  }
  .hud-panel .desktop-command-dock .feature-tab img,
  .hud-panel .desktop-command-dock .action-button img{
-   width:25px!important;height:25px!important;flex:0 0 25px!important;
+   width:27px!important;height:27px!important;flex:0 0 27px!important;
  }
 }
