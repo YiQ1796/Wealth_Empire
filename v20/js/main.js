@@ -99,6 +99,44 @@ const entryGate=document.getElementById("entryGate");
 const actionToastStack=document.getElementById("actionToastStack");
 board.appendChild(actionToastStack);
 
+// Dice outcome is a visual-only replay of a confirmed host move event.
+// Keep game rules / dice generation in GameEngine; never roll again in the UI.
+const diceRollPopup=document.createElement("div");
+diceRollPopup.className="dice-roll-popup";
+diceRollPopup.hidden=true;
+diceRollPopup.setAttribute("role","status");
+diceRollPopup.setAttribute("aria-live","polite");
+diceRollPopup.innerHTML=
+  '<span class="dice-roll-popup__caption"></span>'+
+  '<strong class="dice-roll-popup__total"></strong>'+
+  '<span class="dice-roll-popup__destination"></span>';
+board.appendChild(diceRollPopup);
+let diceRollPopupTimer=null;
+
+function showConfirmedDiceRoll(event){
+  if(!window.matchMedia("(orientation:landscape) and (max-height:650px) and (max-width:1180px)").matches)return;
+  const data=event?.data??{};
+  const d1=Number(data.d1);
+  const d2=Number(data.d2);
+  const total=Number(data.total);
+  if(!Number.isInteger(d1)||!Number.isInteger(d2)||d1<1||d1>6||d2<1||d2>6||total!==d1+d2)return;
+
+  const destination=Number(data.to);
+  const tileName=state.tiles?.[destination]?.name??"目的地";
+  const playerName=state.players?.[Number(data.seat)]?.name??"玩家";
+  diceRollPopup.querySelector(".dice-roll-popup__caption").textContent=playerName+" 擲出";
+  diceRollPopup.querySelector(".dice-roll-popup__total").textContent="🎲 "+d1+" + "+d2+" = "+total;
+  diceRollPopup.querySelector(".dice-roll-popup__destination").textContent="前進 "+total+" 格｜抵達 "+tileName;
+  clearTimeout(diceRollPopupTimer);
+  diceRollPopup.hidden=false;
+  diceRollPopup.classList.add("is-visible");
+  diceRollPopupTimer=setTimeout(()=>{
+    diceRollPopup.classList.remove("is-visible");
+    diceRollPopup.hidden=true;
+    diceRollPopupTimer=null;
+  },1400);
+}
+
 function setNetworkStatus(text,kind="info"){
   const node=document.getElementById("networkStatus");
   if(node){
@@ -315,6 +353,10 @@ function resetToastTracker(targetState=state){
   noticeActive=false;
   lastItemPromptKey="";
   actionToastStack.replaceChildren();
+  clearTimeout(diceRollPopupTimer);
+  diceRollPopupTimer=null;
+  diceRollPopup.classList.remove("is-visible");
+  diceRollPopup.hidden=true;
 }
 
 function noticeConfig(event){
@@ -846,6 +888,7 @@ async function animateMoveEvent(event){
   const from=Number(event.data?.from);
   if(!Number.isInteger(seat)||!Number.isInteger(from)||path.length===0)return;
 
+  showConfirmedDiceRoll(event);
   const start=tileCenter(from);
   if(!start)return;
 
