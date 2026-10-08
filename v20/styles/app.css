@@ -7641,12 +7641,14 @@ body.entry-pending .app-shell{
    min-height:0!important;
    overflow-y:auto;
    overflow-x:hidden;
-   display:grid!important;
-   grid-template-rows:repeat(4,minmax(0,1fr))!important;
-   align-content:stretch!important;
+   display:flex!important;
+   flex-direction:column!important;
+   justify-content:flex-start!important;
+   align-items:stretch!important;
+   gap:6px!important;
    scrollbar-width:thin;
  }
- .hud-panel .player-card{height:100%!important;min-height:0!important;overflow:hidden!important}
+ .hud-panel .player-card{flex:1 1 0!important;height:auto!important;min-height:0!important;overflow:hidden!important}
  .hud-panel .player-card__details{min-width:0}
 
  .hud-panel .players{min-height:0;gap:6px!important}
