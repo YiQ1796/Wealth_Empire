@@ -104,7 +104,7 @@ board.appendChild(actionToastStack);
 const diceRollPopup=document.createElement("dialog");
 diceRollPopup.className="dice-roll-popup";
 diceRollPopup.hidden=true;
-diceRollPopup.setAttribute("role","status");
+diceRollPopup.setAttribute("aria-label","擲骰結果");
 diceRollPopup.setAttribute("aria-live","polite");
 diceRollPopup.innerHTML=
   '<span class="dice-roll-popup__caption"></span>'+
